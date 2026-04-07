@@ -1,0 +1,1064 @@
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+% ======================== TITLE ================================
+\ifSubfilesClassLoaded{%
+  \begin{center}
+    {\LARGE\bfseries\color{isublue}
+     Chapter 4: Potential Outcomes and the Connection to Do-Calculus}\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  \chapter{Potential Outcomes and the Connection to Do-Calculus}
+}
+
+% ======================== LEARNING OBJECTIVES ==================
+\begin{tcolorbox}[defstyle, title={Learning Objectives}]
+By the end of this chapter, students should be able to:
+\begin{enumerate}
+  \item Define the potential outcome $Y(t)$, state SUTVA precisely, and
+        derive the consistency equation $Y = Y(T)$.
+  \item Define the ATE and ATT, explain how they relate to each other,
+        and re-express them as functionals of the structural equation for $Y$.
+  \item Show that the linear SEM structural coefficient $\beta$ equals
+        the ATE under homogeneous effects, and explain why ATE and ATT
+        diverge under treatment effect heterogeneity.
+  \item State the ignorability assumption, interpret it graphically as a
+        back-door condition, and explain why overlap is a necessary
+        companion assumption.
+  \item Describe the SWIG construction of \citet{richardson2014ace},
+        state the two SWIG-specific d-separation rules, and use them
+        to derive the ignorability condition directly from the graph.
+  \item Give a complete account of the Gaussian linear IV model in all
+        three languages --- SEM, DAG/do-calculus, and potential outcomes
+        --- and explain which language is most transparent for each task.
+\end{enumerate}
+\end{tcolorbox}
+
+% ---------------------------------------------------------------
+% Chapter-local styles and macros
+% ---------------------------------------------------------------
+% (\E defined in master.tex)
+% (remarkstyle and remark environment are defined in causal_inference_master.tex)
+% ==============================================================
+\section{Motivation: A Third Language for Causality}
+\label{w4:sec:motivation}
+% ==============================================================
+
+Part~I has built its identification theory in two languages: structural
+equations (Chapter~1) and directed acyclic graphs with the do-calculus
+(Chapters~2--3).  Both languages share a common syntax for the act of
+intervention --- the operator $\doop(T{=}t)$ --- and both are
+\emph{graphical} in the sense that causal assumptions are encoded as
+directed edges.
+
+A third language, the \emph{potential outcomes framework} of
+\citet{neyman1923application} and \citet{rubin1974estimating}, approaches
+causality differently.  Rather than modeling the mechanism by which $T$
+affects $Y$, it defines the \emph{outcome that would be observed under each
+possible treatment} as a random variable in its own right.  This language
+dominates the biostatistics and econometrics literatures for one compelling
+reason: it is the natural language for \emph{defining} causal estimands such
+as the average treatment effect.
+
+The strategic position of Chapter~4 in this course is deliberate.  Having
+completed the full identification machinery of Chapters~1--3, students can now
+see potential outcomes for what they are: a powerful vocabulary for
+\emph{asking} causal questions that is, on its own, largely silent about
+identification without additional structural assumptions.  The do-calculus
+fills precisely that gap.
+
+\begin{center}
+\begin{tikzpicture}[
+    stage/.style = {
+      rectangle, rounded corners=5pt,
+      draw=isublue, fill=defbg, thick,
+      minimum width=2.8cm, minimum height=1.0cm,
+      align=center, font=\small\bfseries\color{isublue}
+    },
+    hilight/.style = {
+      rectangle, rounded corners=5pt,
+      draw=accent, fill=defbg, thick,
+      minimum width=2.8cm, minimum height=1.0cm,
+      align=center, font=\small\bfseries\color{accent}
+    },
+    sub/.style  = {font=\scriptsize\itshape\color{darkgrey}, align=center},
+    arr/.style  = {-{Stealth[length=7pt,width=5pt]},
+                   line width=1.8pt, color=accent},
+    node distance = 0.5cm
+  ]
+  \node[stage]   (ID)  {Identification\\(Chs.\ 1--3)};
+  \node[hilight, right=1.2cm of ID]  (PO)
+    {Potential Outcomes\\(Ch.\ 4) $\leftarrow$ \textit{here}};
+  \node[stage, right=1.2cm of PO]   (RD)  {Research Designs\\(Chs.\ 5--8)};
+  \node[stage, right=1.2cm of RD]   (EST) {Estimation\\(Part~III)};
+  \draw[arr] (ID)  -- (PO);
+  \draw[arr] (PO)  -- (RD);
+  \draw[arr] (RD)  -- (EST);
+  \node[sub, below=0.28cm of ID]  {DAGs, do-calculus,\\identification};
+  \node[sub, below=0.28cm of PO]  {Define estimands;\\bridge frameworks};
+  \node[sub, below=0.28cm of RD]  {Mediation, IV,\\propensity scores};
+  \node[sub, below=0.28cm of EST] {Regression, IPW,\\doubly robust};
+\end{tikzpicture}
+\end{center}
+
+\medskip
+This chapter establishes the bridge between potential outcomes and the
+do-calculus.  Section~\ref{w4:sec:po} defines the potential outcome framework
+rigorously.  Section~\ref{w4:sec:estimands} develops the three principal causal
+estimands: ATE and ATT.  Section~\ref{w4:sec:ignorability} connects
+ignorability to the back-door criterion.  Section~\ref{w4:sec:swig} introduces
+Single World Intervention Graphs (SWIGs) as a unified graphical framework.
+Section~\ref{w4:sec:synthesis} revisits the Gaussian IV model in all three
+languages to complete the Part~I synthesis.
+
+\subsection{Three Languages for the Same Intervention: The Causal Trinity}
+\label{w4:subsec:trinity}
+
+The following table was first introduced in Chapter~1 and is reproduced
+here for reference.  Throughout this course we will use these three
+complementary languages --- collectively the \emph{causal trinity} ---
+for expressing causal questions.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{@{\hspace{6pt}}p{4.2cm}@{\hspace{10pt}}p{7.8cm}@{\hspace{6pt}}}
+\toprule
+\textbf{Framework} & \textbf{How the intervention $T{=}t$ is represented} \\
+\midrule
+Structural equations (SEM)
+  & Replace the equation for $T$ with $T := t$ \\
+DAG / do-calculus
+  & Graph surgery producing $f(y \mid \doop(T{=}t))$ \\
+Potential outcomes
+  & Define the counterfactual variable $Y(t)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+All three members of the causal trinity describe the same conceptual
+operation: externally setting the treatment to $t$.  Structural equations
+describe the data-generating mechanism; DAGs make conditional independence
+and identification transparent; and potential outcomes provide the most
+natural notation for defining causal estimands such as the ATE and ATT.
+
+\subsection{Part I Roadmap: Where Chapter 4 Sits}
+\label{w4:subsec:roadmap}
+
+Chapters~1--3 have built the identification machinery: SEMs define what
+intervention means (Chapter~1), DAGs encode assumptions and license
+d-separation (Chapter~2), and the do-calculus turns graph surgery into
+identification formulas (Chapter~3).  What the first three chapters
+\emph{do not} provide is a language for naming the quantities being
+identified.  That is the job of potential outcomes.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{@{\hspace{4pt}}c@{\hspace{10pt}}p{3.8cm}@{\hspace{10pt}}p{6.8cm}@{\hspace{4pt}}}
+\toprule
+\textbf{Chapter} & \textbf{Framework} & \textbf{New contribution} \\
+\midrule
+1--3 & SEM, DAGs, do-calculus
+  & Identification: express $f(y \mid \doop(t))$ as a
+    functional of observable distributions \\
+4 & Potential outcomes
+  & Definition: name the causal estimands
+    $\tau_{\mathrm{ATE}} = \E[Y(1)-Y(0)]$,
+    $\tau_{\mathrm{ATT}}$; connect them to $f(y \mid \doop(t))$
+    and to the structural equation $g(T, \mathbf{X}, U_Y)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The division of labor is therefore:
+\[
+  \textbf{Define the causal quantity}
+  \quad\text{(potential outcomes)}
+  \qquad
+  \textbf{Identify it from data}
+  \quad\text{(DAGs and do-calculus).}
+\]
+
+% ==============================================================
+\section{The Neyman--Rubin Potential Outcomes Framework}
+\label{w4:sec:po}
+% ==============================================================
+
+\subsection{The Potential Outcome}
+
+\begin{defn}{Potential Outcome \citep{neyman1923application,rubin1974estimating}}
+\label{w4:defn:po}
+For each unit $i$ and each possible treatment value $t \in \mathcal{T}$,
+the \emph{potential outcome} $Y_i(t)$ is the value of the outcome that
+unit $i$ \emph{would have exhibited} had its treatment been set to $t$,
+possibly contrary to fact.
+
+The collection $\{Y_i(t) : t \in \mathcal{T}\}$ is called the
+\emph{schedule of potential outcomes} for unit $i$.  In the binary case
+$\mathcal{T} = \{0,1\}$, the schedule is $(Y_i(0),\, Y_i(1))$.
+\end{defn}
+
+\paragraph{Interpretation.}
+$Y_i(1)$ is the outcome unit $i$ would achieve \emph{under treatment};
+$Y_i(0)$ is the outcome under \emph{control}.  Only one of these is ever
+observed for any given unit.  The unobserved potential outcome is called the
+\emph{counterfactual}.
+
+\begin{warn}{The Fundamental Problem of Causal Inference}
+\citep{holland1986statistics}\ For any unit $i$, at most one potential
+outcome $Y_i(t)$ is observed.
+The individual-level causal effect $Y_i(1) - Y_i(0)$ is therefore
+\emph{never directly observable}.  Causal inference is an inference problem
+precisely because this quantity must be recovered from a population of units
+rather than from a single unit.
+\end{warn}
+
+\subsection{SUTVA and Consistency}
+
+The potential outcome $Y_i(t)$ is only well-defined if it does not depend
+on the treatments assigned to \emph{other} units, and if there is a single,
+unambiguous version of each treatment level.  These requirements are
+formalized as SUTVA.
+
+\begin{defn}{SUTVA \citep{rubin1980randomization}}
+\label{w4:defn:sutva}
+The \emph{stable unit treatment value assumption} has two components:
+\begin{enumerate}
+  \item \textbf{No interference.}  The potential outcome $Y_i(t)$ depends
+        only on unit $i$'s own treatment, not on the treatments of other
+        units: $Y_i(t_1, \ldots, t_n) = Y_i(t_i)$.
+  \item \textbf{No hidden versions.}  For each treatment level $t$, there
+        is a single well-defined version.  If two units both receive $T=1$,
+        the treatment is the same in both cases.
+\end{enumerate}
+\end{defn}
+
+\noindent\textbf{The consistency equation.}
+Under SUTVA, the observed outcome $Y_i$ equals the potential outcome at the
+treatment actually received:
+\begin{equation}
+  Y_i \;=\; Y_i(T_i).
+  \label{w4:eq:consistency}
+\end{equation}
+This equation is the bridge between the potential outcome world and the
+observed data world.  It fails whenever SUTVA fails: if treatment spills
+over between units (e.g., vaccination provides herd immunity), or if the
+treatment label $T=1$ covers multiple distinct interventions.
+
+\subsection{Connection to the Do-Operator}
+
+Under SUTVA and the structural assumptions of Chapters~1--3, the potential
+outcome and the interventional distribution are linked by:
+
+\begin{prop}{Potential Outcomes and the Do-Operator}
+\label{w4:prop:po-do}
+Under SUTVA,
+\begin{equation}
+  Y(t) \;\sim\; f\!\left(y \mid \doop(T{=}t)\right).
+  \label{w4:eq:po-do}
+\end{equation}
+Equivalently, $\E[Y(t)] = \E[Y \mid \doop(T{=}t)]$.
+\end{prop}
+
+\noindent\textit{Proof sketch.}
+In the mutilated SEM $\Gcal_{\overline{T}}$, the structural equation for
+$T$ is replaced by $T := t$ for every unit.  The resulting value of $Y$ for
+unit $i$ is determined solely by $t$ and unit $i$'s own background variables
+--- which is precisely what the potential outcomes framework defines as
+$Y_i(t)$.  SUTVA's no-interference condition ensures $Y_i(t)$ does not
+depend on other units' treatment values, so the marginal distribution of $Y$
+in $\Gcal_{\overline{T}}$ equals the marginal distribution of $Y(t)$.  By
+definition of the do-operator, the former is $f(y \mid \doop(T{=}t))$.
+\hfill$\square$
+
+\begin{remark}
+Equation~\eqref{w4:eq:po-do} shows that the do-operator and the potential
+outcome notation are two ways of writing the same quantity.  The
+do-operator makes the \emph{interventional/observational distinction}
+syntactically explicit: $f(y \mid \doop(t)) \neq f(y \mid T{=}t)$
+whenever $T$ is endogenous (established formally in Chapter~1).
+The potential outcome notation $Y(t)$ is silent on this distinction ---
+it does not carry a symbol that alerts the reader to the gap.  This is the
+do-calculus language's primary advantage for identification.
+\end{remark}
+
+% ==============================================================
+\section{Causal Estimands}
+\label{w4:sec:estimands}
+% ==============================================================
+
+\subsection{The Average Treatment Effect and Its Relatives}
+
+\begin{defn}{ATE, ATT, and ATC}
+\label{w4:defn:ate}
+For a binary treatment $T \in \{0,1\}$:
+\begin{itemize}
+  \item The \emph{average treatment effect} (ATE) is
+        $\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)]$.
+  \item The \emph{average treatment effect on the treated} (ATT) is
+        $\tau_{\mathrm{ATT}} = \E[Y(1) - Y(0) \mid T{=}1]$.
+  \item The \emph{average treatment effect on the controls} (ATC) is
+        $\tau_{\mathrm{ATC}} = \E[Y(1) - Y(0) \mid T{=}0]$.
+\end{itemize}
+\end{defn}
+
+The three estimands are related by:
+\begin{equation}
+  \tau_{\mathrm{ATE}}
+  \;=\; P(T{=}1)\,\tau_{\mathrm{ATT}}
+       + P(T{=}0)\,\tau_{\mathrm{ATC}}.
+  \label{w4:eq:ate-decomp}
+\end{equation}
+This follows from the law of total expectation applied to $t \in \{0,1\}$.
+The ATE and ATT coincide only when the treatment effect does not depend on
+who selected into treatment.
+
+None of these quantities is directly observable.  The naive estimator
+$\hat\tau_{\mathrm{naive}} = \bar{Y}_{T=1} - \bar{Y}_{T=0}$ estimates
+$\E[Y \mid T{=}1] - \E[Y \mid T{=}0] \neq \E[Y(1)] - \E[Y(0)]$,
+with the gap being the selection bias induced by endogeneity.
+
+\begin{remark}
+ATE, ATT, and ATC coincide when $\E[Y(t) \mid T] = \E[Y(t)]$ for
+$t \in \{0,1\}$, i.e.\ when treatment assignment is mean-independent of
+potential outcomes.  In a randomized experiment, this holds by design.
+\end{remark}
+
+\subsection{Causal Estimands as Functionals of the Structural Equation}
+\label{w4:subsec:sem-po}
+
+The potential outcome $Y_i(t)$ was introduced as a \emph{hypothetical}:
+the value unit $i$ would have exhibited under treatment $t$.  The SEM
+framework of Chapter~1 gives this hypothetical a precise generative
+meaning, and thereby expresses the potential-outcome estimands as
+functionals of the structural equation for $Y$.
+
+\paragraph{From structural equation to potential outcome.}
+In the SEM, the outcome is determined by a structural equation
+\begin{equation}
+  Y \;=\; g(T,\, \mathbf{X},\, U_Y),
+  \label{w4:eq:sem-y}
+\end{equation}
+where $U_Y$ collects all sources of variation in $Y$ not already
+accounted for by $(T, \mathbf{X})$.  The potential outcome under
+$\doop(T{=}t)$ is obtained by substituting $t$ for $T$ while holding
+everything else fixed:
+\begin{equation}
+  Y_i(t) \;=\; g(t,\, \mathbf{X}_i,\, U_{Y,i}).
+  \label{w4:eq:po-from-sem}
+\end{equation}
+This is precisely what graph surgery does: the mutilated graph
+$\Gcal_{\overline{T}}$ replaces the equation for $T$ with the constant
+$t$, leaving the equation for $Y$ unchanged.  Equation~\eqref{w4:eq:po-from-sem}
+makes explicit that the potential outcome is a unit-level quantity
+determined by $g$, $\mathbf{X}_i$, and the unit's own error $U_{Y,i}$ ---
+never by the treatments of other units, which is exactly SUTVA.
+
+\paragraph{ATE and ATT as structural parameters.}
+Substituting \eqref{w4:eq:po-from-sem} into the definitions gives:
+\begin{align}
+  \tau_{\mathrm{ATE}}
+    &= \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y)\right],
+    \label{w4:eq:ate-sem} \\
+  \tau_{\mathrm{ATT}}
+    &= \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y)
+               \mid T{=}1\right].
+    \label{w4:eq:att-sem}
+\end{align}
+Both quantities are averages of the unit-level causal effect
+$g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$
+over different reference populations.
+
+\paragraph{The linear SEM as a special case.}
+In the Gaussian linear SEM of Chapter~1,
+\begin{equation}
+  Y \;=\; \beta T + \boldsymbol{\gamma}^{\top}\mathbf{X} + \varepsilon,
+  \label{w4:eq:linear-sem}
+\end{equation}
+the structural equation is additive and separable in $T$, so
+$Y_i(t) = \beta t + \boldsymbol{\gamma}^{\top}\mathbf{X}_i + \varepsilon_i$
+and the unit-level effect is $Y_i(1) - Y_i(0) = \beta$ for every unit.
+Consequently,
+\[
+  \tau_{\mathrm{ATE}} \;=\; \tau_{\mathrm{ATT}} \;=\; \beta.
+\]
+The structural coefficient $\beta$ \emph{is} the average treatment effect:
+no averaging over heterogeneity is needed because there is none.  This
+homogeneity is a special property of the linear additive model, not a
+general feature.
+
+\paragraph{Heterogeneous effects.}
+In the nonparametric SEM~\eqref{w4:eq:sem-y}, the unit-level effect
+$g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ varies
+across units.  The ATE averages this over the full population; the ATT
+averages it over the treated subpopulation.  The two differ whenever
+treatment selection correlates with the individual effect size ---
+i.e., whenever units who tend to benefit more also tend to self-select
+into treatment.
+
+\begin{remark}
+The SEM representation~\eqref{w4:eq:po-from-sem} clarifies why the
+potential outcomes framework and the do-calculus are \emph{equivalent in
+content but different in emphasis}.  The do-calculus works with the
+interventional distribution $f(y \mid \doop(T{=}t))$ as a population-level
+object and asks when it can be recovered from observational data.  The
+potential outcomes framework works with unit-level quantities $Y_i(t)$ and
+asks what population summaries (ATE, ATT) are scientifically meaningful.
+The SEM ties the two together: $Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i})$
+is the unit-level object, and integrating over the distribution of
+$(\mathbf{X}, U_Y)$ recovers the interventional distribution.
+\end{remark}
+
+% ==============================================================
+\section{Ignorability and the Back-Door Criterion}
+\label{w4:sec:ignorability}
+% ==============================================================
+
+\subsection{The Ignorability Assumption}
+
+The central identifying assumption in observational studies is that
+treatment assignment is as good as random after conditioning on observed
+covariates $X$.
+
+\begin{defn}{Strong Ignorability \citep{rosenbaum1983central}}
+\label{w4:defn:ignorability}
+The treatment assignment $T$ is \emph{strongly ignorable} given $X$ if:
+\begin{enumerate}
+  \item \textbf{Unconfoundedness:}
+        $\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X$.
+  \item \textbf{Overlap (positivity):}
+        $0 < P(T{=}1 \mid X{=}x) < 1$ for all $x$ in the support of $X$.
+\end{enumerate}
+\end{defn}
+
+Under strong ignorability, the ATE is identified:
+\begin{equation}
+  \tau_{\mathrm{ATE}}
+  \;=\; \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right].
+  \label{w4:eq:ate-id}
+\end{equation}
+This is the back-door adjustment formula of Chapter~3, written in
+potential-outcome notation.
+
+\subsection{Ignorability as a Graphical Statement}
+
+\begin{defn}{Faithfulness}
+\label{w4:defn:faithfulness}
+A distribution $P$ is \textbf{faithful} to a DAG $\Gcal$ if every
+conditional independence that holds in $P$ is entailed by
+$d$-separation in $\Gcal$: that is, $X \indep Y \mid \mathbf{Z}$ in
+$P$ only if $X$ and $Y$ are $d$-separated by $\mathbf{Z}$ in $\Gcal$.
+
+Equivalently, faithfulness rules out \emph{accidental} cancellations of
+causal paths: no two directed paths between any pair of nodes exactly
+cancel each other's effects for all parameter values.  Under the Markov
+property, $d$-separation implies conditional independence; faithfulness
+adds the converse, making $d$-separation a complete characterization of
+the conditional independence structure of $P$.
+\end{defn}
+
+\begin{thm}{Ignorability $\Leftrightarrow$ Back-Door Criterion}
+\label{w4:thm:ign-bd}
+Under the Markov and faithfulness assumptions for the DAG $\Gcal$,
+unconfoundedness $(Y(0), Y(1)) \indep T \mid X$ is equivalent to $X$
+satisfying the back-door criterion for the effect of $T$ on $Y$ in $\Gcal$:
+\begin{enumerate}
+  \item No node in $X$ is a descendant of $T$.
+  \item $X$ blocks every back-door path from $T$ to $Y$.
+\end{enumerate}
+\end{thm}
+
+\noindent\textit{Proof sketch.}
+The back-door criterion guarantees that in the mutilated graph
+$\Gcal_{\overline{T}}$, conditioning on $X$ renders $Y$ independent of all
+paths from $T$ except the causal ones.  In the potential outcome language,
+this means the assignment mechanism is mean-independent of $Y(t)$ within
+strata of $X$.  The Markov property gives the conditional independence.
+\hfill$\square$
+
+\paragraph{Intuition.}
+The ignorability condition $(Y(0),Y(1)) \indep T \mid X$ states that,
+within strata of $X$, treatment assignment carries no information about
+the potential outcomes.  Graphically, every back-door path from $T$ to $Y$
+must be blocked by $X$: if such a path remained open, information about
+unobserved variables would flow from $T$ to $Y(t)$, violating the
+independence.  Thus ignorability is exactly the potential-outcome expression
+of the back-door criterion --- the potential outcomes framework
+\emph{assumes} the criterion but does not \emph{name} it.
+
+\begin{example}{Labor Training Program}
+\label{w4:ex:lalonde}
+Following \citet{lalonde1986evaluating} and \citet{dehejia1999causal},
+let $T$ = receipt of job training, $Y$ = earnings two years later,
+$X$ = (age, education, prior earnings, race, marital status).
+
+The back-door path $T \leftarrow X \to Y$ is blocked by conditioning on
+$X$, leaving only the causal path $T \to Y$.  Ignorability holds if this
+DAG is correctly specified.  If there is an unobserved variable $U$
+(motivation, ability) that affects both training participation and earnings,
+$X$ fails the back-door criterion and ignorability fails.
+\end{example}
+
+\subsection{Overlap and Positivity}
+
+\begin{warn}{Why Overlap Is Non-Negotiable}
+Without overlap, some covariate strata contain only treated or only control
+units.  In those strata, $\E[Y \mid T{=}0, X{=}x]$ or
+$\E[Y \mid T{=}1, X{=}x]$ is unobservable, and
+Equation~\eqref{w4:eq:ate-id} cannot be evaluated at those values of $x$.
+Identification of the ATE fails not because the causal structure is wrong,
+but because the data do not span the support needed.  The ATT may remain
+identified even when full overlap fails, because ATT averages only over the
+treated population where $P(T{=}1 \mid X) > 0$ by construction.
+\end{warn}
+
+% ==============================================================
+\section{Single World Intervention Graphs}
+\label{w4:sec:swig}
+% ==============================================================
+
+The potential outcomes framework and the do-calculus share a common goal
+but differ in representation.  Single World Intervention Graphs (SWIGs),
+introduced by \citet{richardson2014ace} and given an accessible practical
+treatment by \citet{bezuidenhout2025swigs}, provide a unified graphical
+representation that encodes both.  A SWIG is constructed directly from a
+DAG and is therefore easy to adopt for anyone familiar with the graphical
+language of Chapters~2--3.  Its key advantage is making potential outcomes
+and identifiability assumptions \emph{visually explicit} in a single
+diagram, rather than leaving them implicit as in a standard DAG.
+
+\subsection{The SWIG Construction}
+\label{w4:subsec:swig-def}
+
+In the original DAG $\Gcal$, the node $T$ represents the treatment as it
+naturally occurs.  Under $\doop(T{=}t)$, however, the treatment is
+externally fixed.  The SWIG separates these two roles by \emph{splitting}
+$T$ into two pieces displayed side by side in the graph:
+\begin{itemize}
+  \item a \textbf{random half} (left side, capital letter $T$): represents
+        the treatment value that would naturally occur, and retains all
+        incoming edges from $T$'s causal parents;
+  \item a \textbf{fixed half} (right side, lowercase letter $t$): represents
+        the externally imposed intervention value, retains all outgoing
+        edges that formerly left $T$, and has \emph{no} direct edge to or
+        from the random half.
+\end{itemize}
+
+\begin{defn}{Single World Intervention Graph \citep{richardson2014ace}}
+\label{w4:defn:swig}
+The \emph{SWIG} $\Gcal(t)$ is constructed from $\Gcal$ by:
+\begin{enumerate}
+  \item Replacing $T$ with two nodes: random half $T$ (all incoming edges
+        retained) and fixed half $t$ (all outgoing edges retained).
+  \item Severing the direct connection between the two halves.
+  \item Redrawing causal arrows at the split node:
+        \emph{all arrows into the split node land on the random half};
+        \emph{all arrows departing the split node leave from the fixed half}.
+  \item Relabeling every descendant $V$ of $T$ in $\Gcal$ as $V(t)$,
+        indicating it is a potential outcome under $\doop(T{=}t)$.
+\end{enumerate}
+\end{defn}
+
+Figure~\ref{w4:fig:swig} illustrates the construction for the simple
+confounded-treatment graph.  Splitting $A$ into its random and fixed
+halves immediately reveals $Y(a)$ as a potential outcome and makes the
+key independence $A \indep Y(a) \mid L$ graphically transparent.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[>=stealth]
+  \tikzstyle{rnd}=[circle,draw=isublue,fill=defbg,thick,
+                   minimum size=9mm,font=\small\bfseries]
+  \tikzstyle{fix}=[rectangle,draw=isublue,fill=gray!15,thick,
+                   minimum size=9mm,font=\small\bfseries]
+  %--- DAG (left panel) ---
+  \begin{scope}[xshift=0cm]
+    \node[rnd] (L)  at (1.4, 1.5) {$L$};
+    \node[rnd] (A)  at (0,   0)   {$A$};
+    \node[rnd] (Y)  at (2.8, 0)   {$Y$};
+    \draw[->,thick,color=isublue](L)--(A);
+    \draw[->,thick,color=isublue](L)--(Y);
+    \draw[->,thick,color=isublue](A)--(Y);
+    \node[font=\small\itshape\color{darkgrey}] at (1.4,-0.85) {DAG};
+  \end{scope}
+  %--- Arrow ---
+  \node[font=\large] at (3.9, 0.4) {$\Rightarrow$};
+  %--- SWIG (right panel) ---
+  \begin{scope}[xshift=4.9cm]
+    \node[rnd] (Lr)  at (1.9, 1.5) {$L$};
+    \node[rnd] (Ar)  at (0.4, 0)   {$A$};
+    \node[fix] (af)  at (1.5, 0)   {$a$};
+    \node[rnd] (Ya)  at (3.5, 0)   {$Y(a)$};
+    \draw[->,thick,color=isublue](Lr)--(Ar);
+    \draw[->,thick,color=isublue](Lr)--(Ya);
+    \draw[->,thick,color=isublue](af)--(Ya);
+    \node[font=\small\itshape\color{darkgrey}] at (1.9,-0.85)
+      {SWIG $\Gcal(a)$};
+  \end{scope}
+\end{tikzpicture}
+\caption{Converting the confounded-treatment DAG ($L$ is a confounder)
+  into the SWIG for $\doop(A{=}a)$.  The treatment node splits: the
+  random half $A$ (circle) retains the incoming arrow from $L$; the
+  fixed half $a$ (square) carries the outgoing arrow to $Y(a)$.
+  The potential outcome $Y(a)$ is caused by $a$, not by the natural
+  treatment $A$.  D-separation in the SWIG gives
+  $A \indep Y(a) \mid L$ (conditional ignorability).}
+\label{w4:fig:swig}
+\end{figure}
+
+\subsection{SWIG D-Separation Rules}
+\label{w4:subsec:swig-dsep}
+
+All standard d-separation rules from Chapter~2 apply within a SWIG.
+In addition, the split-node structure introduces two rules specific to
+fixed (intervention) nodes \citep{richardson2014ace,bezuidenhout2025swigs}.
+
+\begin{tcolorbox}[defstyle, title={SWIG-Specific D-Separation Rules}]
+\begin{enumerate}
+  \item \textbf{Paths through a fixed node are always blocked.}
+        A path that \emph{passes through} the fixed half (e.g.\
+        $A \to a \to Y(a)$) is always blocked, because in the single
+        world where everyone receives treatment $a$, the natural value
+        $A$ cannot affect $Y(a)$ through the fixed half.  Note: the
+        path \emph{originating} from $a$ (i.e.\ $a \to Y(a)$) is
+        \emph{not} blocked --- it is a direct causal arrow and remains
+        open.
+  \item \textbf{A fixed node connects to a random node only via open
+        paths.}  A fixed node can be d-connected to a random node only
+        if the path between them is not already blocked by the standard
+        d-separation rules.
+\end{enumerate}
+\end{tcolorbox}
+
+\paragraph{Key consequence: recovering ignorability from the SWIG.}
+In Figure~\ref{w4:fig:swig}, the two paths from the random half $A$ to
+$Y(a)$ are:
+\begin{itemize}
+  \item $A \to a \to Y(a)$: blocked by Rule~1 (transits the fixed half).
+  \item $A \leftarrow L \to Y(a)$: open unless $L$ is conditioned on.
+\end{itemize}
+Conditioning on $L$ blocks the second path.  D-separation in the SWIG
+then gives
+\[
+  A \;\indep\; Y(a) \;\big|\; L,
+\]
+which is exactly the \emph{conditional ignorability} assumption of
+Definition~\ref{w4:defn:ignorability}, now \emph{derived as a
+graph-theoretic consequence} from the SWIG rather than asserted as a
+modeling assumption.
+
+\begin{remark}
+More than one node may be split in a single SWIG.  In longitudinal
+settings with time-varying treatments $(A_0, A_1)$, splitting both nodes
+yields the sequential-randomization SWIG, from which the two
+\emph{sequential exchangeability} conditions needed to identify the
+g-formula follow directly by d-separation.  This construction is
+developed in detail when longitudinal treatments are covered in a later chapter.
+\end{remark}
+
+\subsection{What SWIGs Achieve}
+\label{w4:subsec:swig-achieve}
+
+\paragraph{1.\ Potential outcomes as random variables.}
+In $\Gcal(t)$, the variable $Y(t)$ has well-defined parents $t$ and $U$.
+Its distribution is the interventional distribution
+$f(y \mid \doop(T{=}t))$, establishing
+Proposition~\ref{w4:prop:po-do} graphically.
+
+\paragraph{2.\ The mutilated graph as a special case.}
+Marginalizing out the random half $T$ from $\Gcal(t)$ yields exactly the
+mutilated graph $\Gcal_{\overline{T}}$: the SWIG is a more detailed version
+that tracks what would have determined $T$ in the absence of intervention.
+
+\paragraph{3.\ Cross-world independence made visible.}
+Unconfoundedness $(Y(t) \indep T \mid X)$ is a d-separation statement
+\emph{in the SWIG} $\Gcal(t)$, verifiable by inspecting the graph.
+
+\begin{warn}{Cross-World Independence and Its Limits}
+Consider $Y(1) \indep Y(0)$: $Y(1)$ lives in SWIG $\Gcal(1)$ and $Y(0)$
+lives in SWIG $\Gcal(0)$.  No unit is ever observed in both worlds
+simultaneously, so no data can directly test this independence.  More
+generally, statements such as $Y(t) \indep T(t') \mid X$ for $t \neq t'$
+involve variables from \emph{different SWIGs}.  SWIGs make such
+assumptions explicit: the analyst must specify a joint distribution across
+multiple SWIGs --- a commitment that potential-outcome notation alone does
+not force.
+\end{warn}
+
+\subsection{Ignorability in the SWIG}
+\label{w4:subsec:swig-ign}
+
+In $\Gcal(t)$, the random half $T$ retains all its natural parents.
+The condition $(Y(t) \indep T \mid X)_{\Gcal(t)}$ holds if and only if
+$X$ blocks all paths between $T$ and $Y(t)$ in $\Gcal(t)$.  Since $Y(t)$
+descends from the fixed half $t$ (not from the random half $T$), such paths
+must pass through $X$ --- which is exactly the back-door condition of
+Theorem~\ref{w4:thm:ign-bd}, now expressed as a single d-separation
+statement.  The SWIG thus provides a \emph{unified} perspective:
+ignorability is neither an assumption of the potential outcomes framework
+nor an assumption of the do-calculus in isolation, but a graph-structural
+property of the SWIG that both frameworks share.
+
+% ==============================================================
+\section{Where the Frameworks Agree and Diverge}
+\label{w4:sec:comparison}
+% ==============================================================
+
+\subsection{A Systematic Comparison}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{3.2cm}p{3.4cm}p{3.4cm}p{3.4cm}@{}}
+\toprule
+\textbf{Task}
+  & \textbf{Potential Outcomes}
+  & \textbf{Do-Calculus / DAG}
+  & \textbf{SEM} \\
+\midrule
+Define causal estimands (ATE, ATT)
+  & \checkmark\ Native language
+  & Via $\E[Y \mid \doop(t)]$
+  & Via structural equations \\
+\addlinespace
+Encode causal assumptions
+  & Stated informally; graph hidden
+  & \checkmark\ Explicit directed edges
+  & \checkmark\ Structural equations \\
+\addlinespace
+Read conditional independence
+  & Not possible without a graph
+  & \checkmark\ d-separation
+  & With graph only \\
+\addlinespace
+Identification from observational data
+  & Via ignorability assumptions
+  & \checkmark\ Back-door, front-door, do-calculus
+  & \checkmark\ Via exclusion restrictions \\
+\addlinespace
+Likelihood construction
+  & Moment restrictions only
+  & \checkmark\ Via back-door/front-door
+  & \checkmark\ Via structural model \\
+\addlinespace
+Cross-world assumptions (e.g.\ monotonicity)
+  & \checkmark\ Natural to state
+  & Requires multiple SWIGs
+  & Implicit in structural model \\
+\addlinespace
+Standard in statistics/epidemiology
+  & \checkmark\ Dominant
+  & Growing rapidly
+  & Econometrics \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tcolorbox}[defstyle, title={Our Position in This Course}]
+Both frameworks are indispensable.  We use \emph{potential outcomes} to
+\emph{define} causal estimands.  We use the \emph{do-calculus and DAGs} for
+\emph{identification}.  SWIGs provide the formal bridge when both are needed
+simultaneously.
+
+The do-operator language is preferred throughout this course because it
+makes the interventional/observational distinction \emph{syntactically
+enforced}: $f(y \mid \doop(t))$ cannot be confused with $f(y \mid T{=}t)$,
+whereas $\E[Y(t)]$ carries no such syntactic marker.  For likelihood
+construction in Part~III, this distinction determines whether the
+estimating equations are correctly derived.
+\end{tcolorbox}
+
+% ==============================================================
+\section{Part I Synthesis: The Gaussian Linear IV Model}
+\label{w4:sec:synthesis}
+% ==============================================================
+
+The Gaussian linear IV model, introduced in Chapter~1, can now be given a
+complete account in all three languages.  Table~\ref{w4:tab:synthesis}
+summarizes the translation.
+
+\begin{table}[h]
+\centering
+\small
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{2.6cm}p{3.6cm}p{4.2cm}p{3.6cm}@{}}
+\toprule
+\textbf{Concept}
+  & \textbf{SEM}
+  & \textbf{DAG / Do-Calculus}
+  & \textbf{Potential Outcomes} \\
+\midrule
+Treatment model
+  & $T = \pi Z + \delta$,\; $\delta \sim \mathcal{N}(0,\tau^2)$
+  & $Z\to T\to Y$; hidden $U\to T$, $U\to Y$; graph surgery yields $\Gcal_{\overline{T}}$
+  & $T(z) = \pi z + \delta$; potential treatment indexed by $z$ \\
+Outcome model
+  & $Y = \beta T + \varepsilon$,\; $\mathrm{Cov}(\varepsilon,\delta)\neq 0$
+  & $f(y\mid\doop(T{=}t))$ is the causal quantity; OLS targets $f(y\mid T{=}t)$
+  & $Y(t) = \beta t + \varepsilon$; linear homogeneous potential outcome \\
+Relevance
+  & $\pi \neq 0$; $Z$ predicts $T$
+  & $Z \nindep T$ in $\Gcal$; $Z$ and $T$ are d-connected
+  & $\E[T(1)] \neq \E[T(0)]$ \\
+Exclusion restriction
+  & $Z$ absent from outcome equation
+  & No direct edge $Z\to Y$;\; $f(y\mid\doop(T{=}t),z) = f(y\mid\doop(T{=}t))$
+  & $Y_i(t, z) = Y_i(t, z')$ for all $z, z'$ \\
+Exogeneity
+  & $\mathrm{Cov}(Z,\delta) = \mathrm{Cov}(Z,\varepsilon) = 0$
+  & $Z \indep U$ in $\Gcal$; no back-door path $Z\leftarrow\cdots\to Y$
+  & $Z \indep (Y(0), Y(1), T(0), T(1))$ \\
+Identified estimand
+  & $\beta = \mathrm{Cov}(Y,Z)/\mathrm{Cov}(T,Z)$ (Wald)
+  & $\E[Y\mid\doop(T{=}1)] - \E[Y\mid\doop(T{=}0)]$; IV licenses graph surgery
+  & $\beta = \tau_{\mathrm{LATE}} = \tau_{\mathrm{ATE}}$ (homogeneous effects) \\
+Endogeneity bias
+  & $\mathrm{plim}\;\hat\beta_{\mathrm{OLS}} = \beta + \rho\sigma/\tau$
+  & Back-door path $T\leftarrow U\to Y$ open; do-calculus blocks it via $Z$
+  & Selection bias: $\E[Y\mid T{=}1] - \E[Y\mid T{=}0] \neq \tau_{\mathrm{ATE}}$ \\
+\bottomrule
+\end{tabular}
+\caption{The Gaussian linear IV model in all three languages.  In the
+linear homogeneous model $\tau_{\mathrm{LATE}} = \tau_{\mathrm{ATE}} = \beta$,
+so all three languages identify the same quantity.}
+\label{w4:tab:synthesis}
+\end{table}
+
+\paragraph{Why the Homogeneous Linear Case is Special.}
+In this model, $Y(t) = \beta t + \varepsilon$ with the \emph{same}
+coefficient $\beta$ for all units.  Consequently:
+\[
+  \tau_{\mathrm{LATE}}
+  = \E[Y(1) - Y(0) \mid \text{compliers}]
+  = \beta
+  = \E[Y(1) - Y(0)]
+  = \tau_{\mathrm{ATE}}.
+\]
+This collapse is a special feature of the linear homogeneous model.  In the
+binary treatment, heterogeneous-effects setting of Chapter~7, the distinction
+between LATE and ATE is fundamental.
+
+\paragraph{Part I in Retrospect.}
+
+\begin{center}
+\begin{tikzpicture}[
+    box/.style = {rectangle, rounded corners=5pt, draw=isublue, fill=defbg,
+                  thick, text width=6.8cm, align=left, minimum height=1.0cm,
+                  inner sep=8pt, font=\small},
+    arr/.style = {-{Stealth[length=7pt,width=5pt]}, line width=1.6pt,
+                  color=accent},
+    lbl/.style = {font=\scriptsize\bfseries\color{isublue},
+                  minimum width=1.4cm, align=center},
+    node distance = 0.4cm
+  ]
+  \node[box] (C1) {\textbf{Chapter 1.} Interventional vs.\ observational:
+    $f(y \mid \doop(t)) \neq f(y \mid T{=}t)$.  The gap is endogeneity bias.};
+  \node[box, below=0.55cm of C1] (C2)
+    {\textbf{Chapter 2.} DAGs and d-separation: read independence from the
+    graph; identify which paths are confounded.};
+  \node[box, below=0.55cm of C2] (C3)
+    {\textbf{Chapter 3.} Do-calculus: translate graph surgery into
+    identification formulas (back-door, front-door).};
+  \node[box, below=0.55cm of C3] (C4)
+    {\textbf{Chapter 4.} Potential outcomes: define the estimands
+    ($\tau_{\mathrm{ATE}}, \tau_{\mathrm{ATT}}$); connect them to the
+    do-calculus and to the structural equation.  SWIGs unify all three
+    languages in a single graph.};
+  \draw[arr] (C1) -- (C2);
+  \draw[arr] (C2) -- (C3);
+  \draw[arr] (C3) -- (C4);
+  \node[lbl, left=0.6cm of C1] {Ch.\ 1};
+  \node[lbl, left=0.6cm of C2] {Ch.\ 2};
+  \node[lbl, left=0.6cm of C3] {Ch.\ 3};
+  \node[lbl, left=0.6cm of C4] {Ch.\ 4};
+\end{tikzpicture}
+\end{center}
+
+\medskip
+Part~II (Chapters~5--8) applies this foundation to randomization and
+back-door adjustment (Chapter~5), propensity score methods (Chapter~6),
+instrumental variables (Chapter~7), and mediation analysis (Chapter~8).
+
+% ==============================================================
+\section{Summary}
+\label{w4:sec:summary}
+% ==============================================================
+
+\begin{enumerate}
+  \item The potential outcome $Y(t)$ is the outcome that would be observed
+        under the intervention $T = t$.  Under SUTVA and consistency,
+        $Y_i = Y_i(T_i)$ and $Y(t) \sim f(y \mid \doop(T{=}t))$.
+
+  \item The ATE and ATT are averages of the unit-level causal effect
+        $Y_i(1) - Y_i(0) = g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$
+        over the full population and the treated subpopulation respectively.
+        In the linear SEM, both equal the structural coefficient $\beta$.
+        They diverge under heterogeneous effects when treatment selection
+        correlates with individual effect size.
+
+  \item Strong ignorability $(Y(0),Y(1)) \indep T \mid X$ with overlap
+        identifies the ATE via Equation~\eqref{w4:eq:ate-id}.  By
+        Theorem~\ref{w4:thm:ign-bd}, unconfoundedness is equivalent to the
+        back-door criterion.
+
+  \item SWIGs \citep{richardson2014ace,bezuidenhout2025swigs} are constructed
+        from a DAG by splitting each intervened node into a random half
+        (capital letter, incoming edges) and a fixed half (lowercase letter,
+        outgoing edges), and relabeling descendants as potential outcomes.
+        Two SWIG-specific d-separation rules supplement the standard ones:
+        (i)~paths \emph{transiting} a fixed node are always blocked;
+        (ii)~a fixed node connects to a random node only via paths that are
+        open under the standard rules.  Together these rules make ignorability
+        readable directly from the graph.  In longitudinal settings, splitting
+        multiple treatment nodes yields sequential exchangeability conditions
+        by the same d-separation logic (to be developed in a later chapter).
+
+  \item The frameworks are complementary: potential outcomes define
+        estimands; the do-calculus identifies them.  SWIGs provide the
+        formal bridge when both are needed simultaneously.
+\end{enumerate}
+
+\subsection*{From Ignorability to Randomization}
+
+In observational studies, ignorability must be justified by substantive
+knowledge encoded in a causal graph.  Because unobserved confounding can
+never be ruled out empirically, this justification is often debated.
+
+Randomized experiments provide a fundamentally different solution.  When
+treatment is assigned randomly, $(Y(0),Y(1)) \indep T$ holds by design,
+guaranteeing ignorability \emph{without any covariate adjustment}.  Chapter~5
+studies randomized experiments as the canonical design where causal effects
+are identifiable directly from the data-generating mechanism.
+
+\bigskip
+\begin{center}
+  \large\textbf{Causal inference}
+  $=$ counterfactual questions
+  $+$ graphical assumptions
+  $+$ statistical estimation.
+\end{center}
+
+\subsection*{Identification vs.\ Estimation}
+
+The first four chapters have focused on \emph{identification}: whether a
+causal quantity $\tau = \E[Y(1) - Y(0)]$ can be written as
+$\tau = \Phi(P(Y,T,X))$ for some functional $\Phi$ of the observed
+distribution.  Estimation --- constructing $\hat\tau$ from a finite sample
+$(Y_i, T_i, X_i)_{i=1}^n$ to approximate $\Phi(P)$ --- is studied in
+Part~III, covering regression adjustment, inverse probability weighting,
+doubly robust estimators, and instrumental variables.
+
+% ==============================================================
+\newpage
+\addcontentsline{toc}{section}{Problems}
+\section*{Problems}
+% ==============================================================
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*, itemsep=10pt]
+
+  \item \textbf{SUTVA and consistency.}
+  Suppose $n = 3$ units receive binary treatments $(T_1, T_2, T_3)$ and
+  unit $i$'s outcome may depend on all three treatments:
+  $Y_i = Y_i(T_1, T_2, T_3)$.
+  \begin{enumerate}[label=(\alph*)]
+    \item How many potential outcomes does unit~1 have?  Write them out
+          explicitly.
+    \item SUTVA imposes no interference: $Y_i(T_1,T_2,T_3) = Y_i(T_i)$.
+          How many distinct potential outcomes remain?
+    \item Give a real-world example where no-interference plausibly holds
+          and one where it plausibly fails.  In the latter case, explain
+          what identification strategy (if any) remains available.
+  \end{enumerate}
+
+  \item \textbf{ATE, ATT, and selection bias.}
+  Let $(Y(0), Y(1), T) \sim P$ with $P(T{=}1) = 0.5$.  Suppose
+  $\E[Y(1)] = 3$, $\E[Y(0)] = 1$, $\E[Y(1) \mid T{=}1] = 4$,
+  $\E[Y(0) \mid T{=}1] = 2$, $\E[Y(1) \mid T{=}0] = 2$,
+  $\E[Y(0) \mid T{=}0] = 0$.
+  \begin{enumerate}[label=(\alph*)]
+    \item Compute the ATE and ATT.  Are they equal?
+    \item Compute the naive estimator $\E[Y \mid T{=}1] - \E[Y \mid T{=}0]$.
+          Decompose the gap between this and the ATE into a selection bias
+          term and an ATT--ATE difference.
+    \item Under what graphical condition on the DAG would the naive
+          estimator equal the ATE?  State this condition in both potential
+          outcome language (ignorability) and do-calculus language
+          (back-door criterion).
+  \end{enumerate}
+
+  \item \textbf{Causal estimands from the structural equation.}
+  Consider the nonparametric SEM $Y = g(T, X, U_Y)$ with binary treatment
+  $T \in \{0,1\}$, observed covariate $X$, and unobserved error $U_Y$
+  independent of $(T, X)$ in the mutilated graph.
+  \begin{enumerate}[label=(\alph*)]
+    \item Write $\tau_{\mathrm{ATE}}$ and $\tau_{\mathrm{ATT}}$ as
+          expectations of $g(1, X, U_Y) - g(0, X, U_Y)$ over the
+          appropriate distribution.  Under what condition do they coincide?
+    \item Specialize to the linear SEM $g(t, x, u) = \alpha + \beta t
+          + \gamma x + u$.  Show that the unit-level causal effect
+          $Y_i(1) - Y_i(0)$ is constant across all units, and hence
+          $\tau_{\mathrm{ATE}} = \tau_{\mathrm{ATT}} = \beta$.
+    \item Now consider the heterogeneous SEM $g(t, x, u) = (\alpha + u)\,t
+          + \gamma x$, where $U_Y \sim \mathcal{N}(0, \sigma^2)$ and
+          $\mathrm{Cov}(U_Y, T) = \rho$.  Compute $\tau_{\mathrm{ATE}}$
+          and $\tau_{\mathrm{ATT}}$.  Show that they differ when $\rho \neq 0$,
+          and interpret this difference in words.
+    \item In part~(c), explain why OLS estimation of $Y$ on $T$ and $X$
+          does not recover either $\tau_{\mathrm{ATE}}$ or
+          $\tau_{\mathrm{ATT}}$ when $\rho \neq 0$.  What additional
+          structure would be needed for identification?
+  \end{enumerate}
+
+  \item \textbf{SWIGs and ignorability.}
+  Consider the DAG: $X \to T$, $X \to Y$, $T \to Y$, with $X$ fully
+  observed.
+  \begin{enumerate}[label=(\alph*)]
+    \item Construct the SWIG $\Gcal(t)$ by splitting $T$ into its random
+          and fixed halves (Definition~\ref{w4:defn:swig}).  Draw the result,
+          labeling the random half, fixed half, and the potential outcome $Y(t)$.
+    \item In $\Gcal(t)$, identify all paths between the random half $T$
+          and $Y(t)$.  Apply the SWIG d-separation rules to determine
+          which paths are blocked and which are open before conditioning.
+    \item Use d-separation in $\Gcal(t)$ to verify that
+          $(Y(t) \indep T \mid X)_{\Gcal(t)}$ holds.  Conclude that $X$
+          satisfies the back-door criterion, confirming
+          Theorem~\ref{w4:thm:ign-bd}.
+    \item Now add a hidden common cause $U \to T$, $U \to Y$.  Draw the
+          revised SWIG.  Does the ignorability argument still hold?
+          State the correct conclusion and identify what additional
+          structure (if any) would be needed for identification.
+  \end{enumerate}
+
+\end{enumerate}
+
+% ==============================================================
+% Bibliography note: the following entry must be added to
+% causal_inference.bib if not already present.
+%
+% @article{bezuidenhout2025swigs,
+%   author  = {Bezuidenhout, Dana and Forthal, Sarah and
+%              Rudolph, Kara and Lamb, Matthew R.},
+%   title   = {Single world intervention graphs ({SWIGs}):
+%              a practical guide},
+%   journal = {American Journal of Epidemiology},
+%   year    = {2025},
+%   volume  = {194},
+%   pages   = {2047--2052},
+%   doi     = {10.1093/aje/kwae353}
+% }
+% ==============================================================
+
+\ifSubfilesClassLoaded{
+  \newpage
+  \section*{References}
+  \addcontentsline{toc}{section}{References}
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}
+

@@ -1,0 +1,1467 @@
+% ============================================================
+%  Chapter 10 — Doubly Robust Estimation and Semiparametric Efficiency
+%  Compile standalone:  pdflatex chapter_10.tex
+%  Compile via master:  pdflatex master.tex
+% ============================================================
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+% ------------------------------------------------------------
+%  Title block (standalone) / chapter heading (master)
+% ------------------------------------------------------------
+\ifSubfilesClassLoaded{%
+  \begin{center}
+    {\LARGE\bfseries\color{isublue}
+     Chapter 10: Doubly Robust Estimation and Semiparametric Efficiency}\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  \chapter{Doubly Robust Estimation and Semiparametric Efficiency}
+}
+
+% ------------------------------------------------------------
+%  Learning objectives
+% ------------------------------------------------------------
+\begin{tcolorbox}[defstyle, title={Learning Objectives}]
+By the end of this lecture, students should be able to:
+\begin{enumerate}
+  \item Derive the AIPW estimator as a bias-corrected prediction
+    estimator, and explain the role of each term.
+  \item Prove the double robustness property using the law of
+    iterated expectations.
+  \item Describe the class of augmented IPW estimators indexed by
+    arbitrary control functions $b_t(x)$, verify unbiasedness for
+    any $b_t$, and identify the optimal choice that minimizes total
+    variance.
+  \item Interpret the augmentation step as a Hilbert-space projection
+    onto the orthogonal complement of the augmentation space, and
+    derive the Pythagorean variance decomposition.
+  \item Carry out the projection argument in the causal inference
+    setting, starting from the Horvitz--Thompson estimator.
+  \item Derive the two approaches to building double robustness
+    directly into the outcome model: IPW-weighted regression and the
+    augmented model with clever covariate; explain why including
+    $\hat\pi_i^{-1}$ acts as a debiasing correction and connect this
+    to TMLE \citep{vanderLaan2006targeted}.
+  \item Describe internal bias calibration as an approach to achieving
+    double robustness through constrained weight optimization.
+  \item State the semiparametric efficiency bound for the ATE and
+    explain why the AIPW estimating function is the efficient
+    influence function.
+  \item Identify the product-rate condition as the key sufficient
+    condition for nuisance estimation error to be asymptotically
+    negligible in the AIPW estimator, explain its connection to
+    Neyman orthogonality, and construct a consistent variance
+    estimator and Wald confidence interval from the estimated
+    influence values.
+\end{enumerate}
+\end{tcolorbox}
+
+
+% ============================================================
+\section{Why Combine Outcome Regression and Weighting?}
+\label{w10:sec:motivation}
+% ============================================================
+
+Under consistency, conditional exchangeability, and positivity, the
+average treatment effect (ATE)
+\[
+  \tau = \E\{Y(1) - Y(0)\}
+\]
+is identified by either of the following equivalent expressions:
+\[
+  \tau = \E\{\mu_1(X) - \mu_0(X)\},
+\]
+where $\mu_t(x) = \E(Y \mid T=t,\, X=x)$ for $t \in \{0,1\}$, or
+\[
+  \tau
+  = \E\!\left\{
+      \frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}
+    \right\},
+\]
+where $\pi(x) = P(T=1 \mid X=x)$ is the propensity score.
+
+These formulas suggest two basic estimation strategies.
+\begin{itemize}
+  \item \textbf{Outcome regression (prediction estimator):} estimate
+    $\mu_1(x)$ and $\mu_0(x)$, then average
+    $\hat\mu_1(X_i)-\hat\mu_0(X_i)$ over the sample.
+  \item \textbf{Inverse probability weighting (IPW):} estimate
+    $\pi(x)$ and reweight observed outcomes to reconstruct the
+    potential-outcome means.
+\end{itemize}
+
+Each strategy has strengths and weaknesses.  Regression-based
+estimators can be statistically efficient when the outcome model is
+well specified, but may be biased under misspecification.  IPW
+estimators are often conceptually appealing because they directly use
+the treatment model, but they can be unstable when estimated
+propensity scores are close to $0$ or $1$
+\citep{rosenbaum1983central}.
+
+This chapter develops a third strategy: combine both models to
+construct an estimator that is consistent when \emph{either} model is
+correct, and achieves the semiparametric efficiency bound when both
+are correct.
+We derive the same estimator in three complementary ways: first as a
+bias-corrected prediction estimator
+(Section~\ref{w10:sec:prediction}), then as the optimal member of a
+class of augmented estimators (Sections~\ref{w10:sec:aipw}--\ref{w10:sec:proj-causal}),
+and finally as the efficient influence function in a semiparametric
+model (Section~\ref{w10:sec:eif}).
+
+% ============================================================
+\section{The Prediction Estimator and Its Bias}
+\label{w10:sec:prediction}
+% ============================================================
+
+To understand the source of bias it is useful to work first with
+generic \emph{working regression functions} $m_t(x)$, not necessarily
+equal to the true conditional means.  The \emph{prediction estimator}
+(also called the regression estimator) based on $m_t$ is
+\[
+  \hat\tau_{\mathrm{pred}}(m)
+  = \frac{1}{n}\sum_{i=1}^n
+    \bigl\{m_1(X_i) - m_0(X_i)\bigr\}.
+\]
+Define the corresponding population prediction estimand
+$\tau_{\mathrm{pred}}(m) = \E\{m_1(X)-m_0(X)\}$.
+Under ignorability, the target parameter is
+$\tau = \E\{\mu_1(X)-\mu_0(X)\}$,
+where $\mu_t(x)=\E\{Y(t)\mid X=x\}=\E(Y\mid T=t,X=x)$.  Hence
+\begin{align}
+  \tau_{\mathrm{pred}}(m) - \tau
+  = \E\bigl[(m_1(X)-\mu_1(X)) - (m_0(X)-\mu_0(X))\bigr].
+  \label{w10:eq:pred-bias}
+\end{align}
+This shows that the prediction estimator is unbiased only when the
+working regressions equal the true outcome regressions.  In practice
+we substitute fitted models $m_t = \hat\mu_t$, and the same
+decomposition explains the first-order bias induced by outcome-model
+misspecification.
+
+If the propensity score model is available, we can estimate the two
+bias terms in \eqref{w10:eq:pred-bias} from the observed data.
+Define residuals $e_i(t) = Y_i(t) - \hat\mu_t(X_i)$.  Since
+$Y_i(1)$ is observed only for treated units and $Y_i(0)$ only for
+control units,
+\[
+  \widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}})
+  = -\frac{1}{n}\sum_{i=1}^n \frac{T_i}{\pi(X_i)}\,e_i(1)
+    + \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\pi(X_i)}\,e_i(0).
+\]
+The bias-corrected prediction estimator is therefore
+\begin{align}
+  \hat\tau_{\mathrm{AIPW}}
+  = \hat\tau_{\mathrm{pred}}
+    - \widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}})
+  = \hat\mu_{1,\mathrm{dr}} - \hat\mu_{0,\mathrm{dr}},
+  \label{w10:eq:aipw-biascorr}
+\end{align}
+where, using estimated nuisance functions $\hat\mu_t$ and
+$\hat\pi$,
+\begin{align}
+  \hat\mu_{1,\mathrm{dr}}
+  &= \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi(X_i)}\,
+     \bigl\{Y_i - \hat\mu_1(X_i)\bigr\}
+     + \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i),
+  \label{w10:eq:mu1dr} \\[4pt]
+  \hat\mu_{0,\mathrm{dr}}
+  &= \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\hat\pi(X_i)}\,
+     \bigl\{Y_i - \hat\mu_0(X_i)\bigr\}
+     + \frac{1}{n}\sum_{i=1}^n \hat\mu_0(X_i).
+  \label{w10:eq:mu0dr}
+\end{align}
+
+\begin{remark}[Two roles of the augmentation terms]
+\label{w10:rem:two-interp}
+The terms $T_i\{Y_i-\hat\mu_1(X_i)\}/\hat\pi(X_i)$ and
+$(1-T_i)\{Y_i-\hat\mu_0(X_i)\}/(1-\hat\pi(X_i))$ have two
+complementary roles.  From the bias-correction perspective, they are
+IPW-weighted residuals that estimate the prediction error of the
+outcome regression.  From an estimating-equation perspective
+(Section~\ref{w10:sec:aipw}), they are exactly the terms that make
+the estimating function orthogonal to nuisance perturbations.  The
+estimated bias term has zero expectation when the outcome model is
+correct; the bias-corrected estimator is unbiased when the propensity
+model is correct.  Hence the name \emph{doubly robust}.
+\end{remark}
+
+% ============================================================
+\section{The Augmented IPW Estimator}
+\label{w10:sec:aipw}
+% ============================================================
+
+Collecting the terms in \eqref{w10:eq:aipw-biascorr} gives the
+estimating-equation form.  The AIPW estimator solves
+$\mathbb{P}_n\{\phi(O;\tau,\hat\eta)\} = 0$ where
+\begin{align}
+  \phi(O;\tau,\eta)
+  &= \left[
+       \frac{T}{\pi(X)}\{Y-\mu_1(X)\}+\mu_1(X)
+     \right]
+     - \left[
+         \frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\}+\mu_0(X)
+       \right]
+     - \tau,
+  \label{w10:eq:dr-score}
+\end{align}
+and $O=(X,T,Y)$ denotes one observation.  Solving explicitly,
+\begin{align}
+  \hat\tau_{\mathrm{AIPW}}
+  = \frac{1}{n}\sum_{i=1}^n
+    \Bigg[
+      \hat\mu_1(X_i) - \hat\mu_0(X_i)
+      + \frac{T_i}{\hat\pi(X_i)}\{Y_i - \hat\mu_1(X_i)\}
+      - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i - \hat\mu_0(X_i)\}
+    \Bigg].
+  \label{w10:eq:aipw}
+\end{align}
+
+\begin{defn}{Augmented Inverse Probability Weighted Estimator}
+\label{w10:defn:aipw}
+The estimator in \eqref{w10:eq:aipw} is the \emph{augmented
+inverse probability weighted (AIPW) estimator} of the ATE.  It
+equals the prediction estimator plus a weighted-residual bias
+correction.
+\end{defn}
+
+The AIPW estimator enjoys two important properties: double robustness
+and optimality within the augmented estimator class.  We establish
+double robustness here; the optimality property is developed in
+Section~\ref{w10:sec:class}.
+
+\begin{thm}{Double Robustness}
+\label{w10:thm:dr}
+\label{w10:thm:dr}
+Let $\phi(O;\tau,\eta)$ be the estimating function in
+\eqref{w10:eq:dr-score}.  Suppose consistency, conditional
+exchangeability, and positivity hold, so that
+$\tau = \E\{\mu_1^*(X)-\mu_0^*(X)\}$ where
+$\mu_t^*(x) = \E(Y\mid T=t,X=x)$.  Then
+$\E\{\phi(O;\tau,\eta)\} = 0$ if either:
+\begin{enumerate}
+  \item $\mu_t(x) = \mu_t^*(x)$ for $t=0,1$, regardless of
+    whether $\pi(x)$ is correctly specified; or
+  \item $\pi(x) = P(T=1\mid X=x)$, regardless of whether $\mu_0$
+    and $\mu_1$ are correctly specified.
+\end{enumerate}
+\end{thm}
+
+\begin{proof}
+\textbf{Case~1: outcome regression correct.}
+If $\mu_t(X) = \E(Y\mid T=t,X)$, then conditional on $X$,
+\[
+  \E\!\left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\}\,\middle|\,X\right]
+  = \frac{P(T=1\mid X)}{\pi(X)}\,\E\{Y-\mu_1(X)\mid T=1,X\} = 0,
+\]
+and similarly the untreated augmentation term vanishes.  Therefore
+$\E\{\phi\} = \E\{\mu_1(X)-\mu_0(X)\} - \tau = 0$.
+
+\medskip\noindent
+\textbf{Case~2: propensity score correct.}
+If $\pi(X) = P(T=1\mid X)$, then conditional on $X$,
+$\E[TY/\pi(X)\mid X] = \E(Y\mid T=1,X)$ and
+$\E[(1-T)Y/(1-\pi(X))\mid X] = \E(Y\mid T=0,X)$, so
+$\E\{\phi\mid X\} = \E(Y\mid T=1,X)-\E(Y\mid T=0,X)-\tau$.
+Taking expectations over $X$ gives $\E\{\phi\} = 0$.
+\end{proof}
+
+\begin{remark}[Scope of double robustness]
+\label{w10:rem:dr-scope}
+Double robustness guarantees consistency if \emph{either} model is
+correct; it does \emph{not} protect against misspecification of
+both models simultaneously.
+\end{remark}
+
+The importance of the AIPW estimator goes beyond bias correction.  In
+Section~\ref{w10:sec:class} we show that it is the variance-optimal
+member of a natural class of augmented estimators indexed by arbitrary
+control functions $b_t(x)$.  Later, in Section~\ref{w10:sec:eif}, we
+will see that the same estimating function $\phi$ in
+\eqref{w10:eq:dr-score} is exactly the efficient influence function
+for the ATE under the nonparametric model.  Thus the same object
+arises from three perspectives: bias correction, optimal augmentation,
+and semiparametric efficiency.
+
+% ============================================================
+\section{A Class of Augmented Estimators}
+\label{w10:sec:class}
+% ============================================================
+
+The AIPW estimator has a second important property beyond double
+robustness: it is the optimal estimator within a broad class of
+augmented IPW estimators.  We now define this class and establish
+the optimality result.
+
+For any square-integrable functions $b_1(x)$ and $b_0(x)$, define
+\begin{align}
+  \hat\mu_{1,b}
+  &= \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\pi(X_i)}\,Y_i
+     - \frac{1}{n}\sum_{i=1}^n
+       \left\{\frac{T_i}{\pi(X_i)}-1\right\} b_1(X_i),
+  \label{w10:eq:mu1b} \\[4pt]
+  \hat\mu_{0,b}
+  &= \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\pi(X_i)}\,Y_i
+     - \frac{1}{n}\sum_{i=1}^n
+       \left\{\frac{1-T_i}{1-\pi(X_i)}-1\right\} b_0(X_i),
+  \label{w10:eq:mu0b}
+\end{align}
+and let $\hat\tau_b = \hat\mu_{1,b} - \hat\mu_{0,b}$.
+
+\begin{remark}[Connection to the AIPW form]
+\label{w10:rem:equiv}
+The estimator $\hat\mu_{1,b}$ in \eqref{w10:eq:mu1b} and
+$\hat\mu_{1,\mathrm{dr}}$ in \eqref{w10:eq:mu1dr} are identical
+when $b_1(x) = \mu_1(x)$:
+$\frac{T}{\pi}Y - (\frac{T}{\pi}-1)\mu_1
+ = \frac{T}{\pi}\{Y-\mu_1\}+\mu_1$.
+So the class \eqref{w10:eq:mu1b}--\eqref{w10:eq:mu0b} contains the
+standard AIPW estimator as the special case $b_t = \mu_t$.
+\end{remark}
+
+The following theorem shows that every estimator in this class is
+unbiased for $\tau$ under a correctly specified propensity score,
+regardless of the choice of $b_t$, and provides an explicit formula
+for its total variance.
+
+\begin{thm}{Unbiasedness and Variance of the AIPW Class}
+\label{w10:thm:cond-unbiased}
+Under strong ignorability, SUTVA, positivity, and a correctly
+specified propensity score $\pi(x) = P(T=1\mid X=x)$, for any
+square-integrable $b_0$, $b_1$:
+\begin{enumerate}
+  \item \textbf{Unbiasedness:} $\E(\hat\tau_b) = \tau$.
+  \item \textbf{Total variance:}
+    \begin{align}
+      \mathrm{Var}(\hat\tau_b)
+      &= \frac{1}{n}\,\E\!\left[
+           \left(\frac{1}{\pi(X)}-1\right)
+           \{Y(1)-b_1(X)\}^2
+           + 2\{Y(1)-b_1(X)\}\{Y(0)-b_0(X)\}
+         \right. \nonumber \\
+      &\hspace{5em}\left.
+           + \left(\frac{1}{1-\pi(X)}-1\right)
+           \{Y(0)-b_0(X)\}^2
+         \right]
+      + \frac{1}{n}\,\mathrm{Var}\{Y(1)-Y(0)\}.
+      \label{w10:eq:var-b}
+    \end{align}
+\end{enumerate}
+\end{thm}
+
+\begin{proof}
+Let $\xi = \frac{T}{\pi(X)}\{Y-b_1(X)\} + b_1(X)
+           - \frac{1-T}{1-\pi(X)}\{Y-b_0(X)\} - b_0(X)$,
+so that $\hat\tau_b = n^{-1}\sum_{i=1}^n \xi_i$ and, for i.i.d.\
+observations, $\mathrm{Var}(\hat\tau_b) = n^{-1}\mathrm{Var}(\xi)$.
+By SUTVA, $Y = TY(1)+(1-T)Y(0)$, so
+\[
+  \xi = \frac{T}{\pi(X)}\{Y(1)-b_1(X)\} + b_1(X)
+        - \frac{1-T}{1-\pi(X)}\{Y(0)-b_0(X)\} - b_0(X).
+\]
+
+\noindent\textbf{Part~(i).}  Under strong ignorability,
+$\E[T/\pi(X)\mid X] = 1$, so
+$\E[(T/\pi(X)-1)b_1(X)] = \E[\E(T/\pi(X)-1\mid X)b_1(X)] = 0$.
+Also $\E[T/\pi(X)\cdot Y(1)\mid X] = \E[Y(1)\mid X] = \mu_1^*(X)$.
+Hence $\E[\hat\mu_{1,b}] = \mu_1$ and, by symmetry,
+$\E[\hat\mu_{0,b}] = \mu_0$, so $\E(\hat\tau_b) = \tau$.
+
+\medskip\noindent\textbf{Part~(ii).}
+We apply the law of total variance, conditioning on
+$(X, Y(1), Y(0))$.  Given these, the only remaining randomness
+is $T \mid X \sim \mathrm{Bernoulli}(\pi(X))$.
+
+\emph{Conditional mean.}
+Since $\E[T/\pi(X)\mid X]=1$ and $\E[(1-T)/(1-\pi(X))\mid X]=1$,
+\[
+  \E[\xi \mid X, Y(1), Y(0)] = Y(1) - Y(0).
+\]
+
+\emph{Conditional variance.}
+$\xi$ is linear in $T$:
+\[
+  \xi = T\!\left[
+           \frac{Y(1)-b_1(X)}{\pi(X)}
+           + \frac{Y(0)-b_0(X)}{1-\pi(X)}
+        \right]
+        - \frac{Y(0)-b_0(X)}{1-\pi(X)} + b_1(X) - b_0(X).
+\]
+Using $\mathrm{Var}(T\mid X) = \pi(X)(1-\pi(X))$,
+\begin{align}
+  \mathrm{Var}(\xi \mid X, Y(1), Y(0))
+  &= \pi(X)(1\!-\!\pi(X))
+     \left[\frac{Y(1)-b_1(X)}{\pi(X)}+\frac{Y(0)-b_0(X)}{1-\pi(X)}\right]^{\!2}
+     \nonumber \\
+  &= \left(\frac{1}{\pi(X)}-1\right)\{Y(1)-b_1(X)\}^2
+     + 2\{Y(1)-b_1(X)\}\{Y(0)-b_0(X)\}
+     \nonumber \\
+  &\quad + \left(\frac{1}{1-\pi(X)}-1\right)\{Y(0)-b_0(X)\}^2.
+  \label{w10:eq:cond-var-xi}
+\end{align}
+
+Taking expectations over $(X, Y(1), Y(0))$ and adding the between-group
+term $\mathrm{Var}(\E[\xi\mid X,Y(1),Y(0)]) = \mathrm{Var}(Y(1)-Y(0))$
+gives \eqref{w10:eq:var-b}.
+\end{proof}
+
+Every member of the class is unbiased for $\tau$, for any choice of
+$b_t$.  The first term of \eqref{w10:eq:var-b} depends on $b_t$;
+the second, $n^{-1}\mathrm{Var}\{Y(1)-Y(0)\}$, does not.
+
+\begin{thm}{Optimal Control Functions}
+\label{w10:thm:opt-b}
+The functions that minimize the total variance in
+\eqref{w10:eq:var-b} are
+\[
+  b_1^*(X) = \E\{Y(1)\mid X\}
+  \qquad\text{and}\qquad
+  b_0^*(X) = \E\{Y(0)\mid X\}.
+\]
+The resulting optimal AIPW estimator coincides with the
+bias-corrected prediction estimator in \eqref{w10:eq:aipw-biascorr}.
+\end{thm}
+
+\begin{proof}
+Write $\mu_t^*(x) = \E\{Y(t)\mid X=x\}$ and set
+$u(X) = \mu_1^*(X)-b_1(X)$ and $v(X)=\mu_0^*(X)-b_0(X)$.
+Decompose
+\[
+  Y(t) - b_t(X) = (\mu_t^*(X)-b_t(X)) + (Y(t)-\mu_t^*(X))
+                = d_t(X) + \varepsilon_t,
+\]
+where $d_1=u$, $d_0=v$, and $\E[\varepsilon_t\mid X]=0$.
+Under strong ignorability, $T\indep (Y(1),Y(0))\mid X$, so
+$\varepsilon_t$ is also independent of $T$ given $X$.
+
+Substituting into the $b_t$-dependent term of \eqref{w10:eq:var-b}:
+\begin{align*}
+  &\E\!\left[
+     \left(\frac{1}{\pi}-1\right)\{Y(1)-b_1\}^2
+     + 2\{Y(1)-b_1\}\{Y(0)-b_0\}
+     + \left(\frac{1}{1-\pi}-1\right)\{Y(0)-b_0\}^2
+   \right] \\
+  &= \E\!\left[
+       \left(\frac{1}{\pi}-1\right)(u+\varepsilon_1)^2
+       + 2(u+\varepsilon_1)(v+\varepsilon_0)
+       + \left(\frac{1}{1-\pi}-1\right)(v+\varepsilon_0)^2
+     \right].
+\end{align*}
+Because $\E[\varepsilon_t\mid X]=0$, the law of iterated expectations
+eliminates every cross term between $(u,v)$ and $(\varepsilon_1,\varepsilon_0)$:
+\begin{align}
+  &= \underbrace{\E\!\left[
+       \left(\frac{1}{\pi(X)}-1\right)u(X)^2
+       + 2\,u(X)v(X)
+       + \left(\frac{1}{1-\pi(X)}-1\right)v(X)^2
+     \right]}_{=:\,Q(b_0,b_1)}
+     + C,
+  \label{w10:eq:var-decomp}
+\end{align}
+where $C = \E[(1/\pi-1)\mathrm{Var}\{Y(1)\mid X\}
+             +(1/(1-\pi)-1)\mathrm{Var}\{Y(0)\mid X\}]
+           + 2\E[\varepsilon_1\varepsilon_0]$
+does not depend on $b_0$ or $b_1$.
+
+It remains to show $Q(b_0,b_1)\geq 0$ with equality at
+$u\equiv 0$, $v\equiv 0$.  Write
+\[
+  \left(\frac{1}{\pi}-1\right)u^2+2uv+\left(\frac{1}{1-\pi}-1\right)v^2
+  = \frac{1-\pi}{\pi}\,u^2 + 2uv + \frac{\pi}{1-\pi}\,v^2
+  = \left(\sqrt{\frac{1-\pi}{\pi}}\,u+\sqrt{\frac{\pi}{1-\pi}}\,v\right)^{\!2},
+\]
+a perfect square, so $Q(b_0,b_1)\geq 0$.
+The minimum $Q=0$ is achieved at $u\equiv 0$ and $v\equiv 0$, i.e.\
+$b_t^*(X)=\mu_t^*(X)$, which gives
+\[
+  \mathrm{Var}(\hat\tau_b)
+  \geq \frac{1}{n}\bigl[C + \mathrm{Var}\{Y(1)-Y(0)\}\bigr]
+  =: \mathrm{Var}(\hat\tau_{b^*}).  \qedhere
+\]
+\end{proof}
+
+\begin{remark}[Interpretation of Theorem~\ref{w10:thm:opt-b}]
+\label{w10:rem:opt-b-interp}
+Theorem~\ref{w10:thm:opt-b} shows that among the augmented estimators
+$\{\hat\tau_b : b_t \in \mathcal{L}^2\}$, the choice
+$b_t^*(X) = \E\{Y(t)\mid X\}$ minimizes asymptotic variance.  Thus
+AIPW is optimal within this estimator class when both nuisance
+components are correctly specified.  This is a class-specific
+optimality result; the broader semiparametric efficiency
+interpretation---showing that no regular asymptotically linear
+estimator, inside or outside this class, can improve upon AIPW---will
+be developed in Section~\ref{w10:sec:eif}.  When either model is
+misspecified, the AIPW estimator retains consistency by double
+robustness but no longer necessarily achieves the minimum variance
+within the class.
+\end{remark}
+
+% ============================================================
+\section{The Projection Interpretation}
+\label{w10:sec:projection}
+% ============================================================
+
+The optimality of AIPW has an elegant interpretation in terms of
+projections in a Hilbert space of estimators.
+This projection view does not define a new estimator; rather, it
+explains why the augmentation used in Section~\ref{w10:sec:class} is
+variance reducing and why the optimal correction must be orthogonal to
+the augmentation space.
+
+\subsection{Optimal estimation via projection}
+\label{w10:subsec:proj-general}
+
+Let $\hat\theta_0$ be an unbiased estimator of $\theta$.  Define the
+\emph{augmentation space}
+\[
+  \Lambda = \bigl\{\hat b : \E(\hat b) = 0\bigr\}
+\]
+as the collection of all estimators that are unbiased for zero.  For
+any $\hat b \in \Lambda$ the estimator
+\begin{align}
+  \hat\theta_b = \hat\theta_0 - \hat b
+  \label{w10:eq:theta-b}
+\end{align}
+remains unbiased for $\theta$.  We seek the $\hat b^* \in \Lambda$
+that minimizes $\mathrm{Var}(\hat\theta_b)$.
+
+\begin{thm}{Optimal Projection}
+\label{w10:thm:projection}
+The optimal correction is $\hat b^* = \Pi(\hat\theta_0\mid\Lambda)$,
+the $L^2$ projection of $\hat\theta_0$ onto $\Lambda$.  It is
+characterized by:
+\begin{enumerate}
+  \item $\hat b^* \in \Lambda$;
+  \item $\mathrm{Cov}(\hat\theta_0-\hat b^*,\;\hat b) = 0$ for
+    all $\hat b \in \Lambda$.
+\end{enumerate}
+The optimal estimator is
+\[
+  \hat\theta_{\mathrm{opt}}
+  = \hat\theta_0 - \hat b^*
+  = \Pi(\hat\theta_0 \mid \Lambda^\perp),
+\]
+the projection of $\hat\theta_0$ onto the orthogonal complement
+$\Lambda^\perp$.  It satisfies the \emph{Pythagorean identity}
+\begin{align}
+  \mathrm{Var}(\hat\theta_0)
+  = \mathrm{Var}(\hat\theta_{\mathrm{opt}})
+    + \mathrm{Var}(\hat b^*),
+  \label{w10:eq:pythagoras}
+\end{align}
+so in particular
+$\mathrm{Var}(\hat\theta_{\mathrm{opt}}) \leq
+ \mathrm{Var}(\hat\theta_0)$.
+\end{thm}
+
+The Pythagorean identity \eqref{w10:eq:pythagoras} shows that the
+variance of the initial estimator decomposes orthogonally: the
+optimal estimator retains only the component in $\Lambda^\perp$, and
+the discarded component $\hat b^*$ accounts for the remainder.
+\citet{tsiatis2006semiparametric} calls $\Lambda$ the
+\emph{augmentation space} precisely because its elements are the
+corrections that reduce variance.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.1]
+  \draw[->] (-0.3,0) -- (3.2,0) node[right] {$\Lambda$};
+  \draw[->] (0,-0.3) -- (0,2.8) node[above] {$\Lambda^\perp$};
+  \draw[->,thick,color=isublue] (0,0) -- (2.4,2.1)
+    node[above right] {$\hat\theta_0$};
+  \draw[->,thick,color=causalgreen] (0,0) -- (0,2.1)
+    node[left] {$\hat\theta_{\mathrm{opt}}$};
+  \draw[->,thick,color=backdoorred] (0,0) -- (2.4,0)
+    node[below] {$\hat b^*$};
+  \draw[dashed,gray] (2.4,0) -- (2.4,2.1);
+  \draw (2.0,0) rectangle (2.4,0.4);
+\end{tikzpicture}
+\caption{Geometric illustration of the projection.
+$\hat\theta_0$ decomposes into $\hat\theta_{\mathrm{opt}} \in
+\Lambda^\perp$ and $\hat b^* \in \Lambda$.
+The Pythagorean identity gives
+$\mathrm{Var}(\hat\theta_0)
+ = \mathrm{Var}(\hat\theta_{\mathrm{opt}})
+ + \mathrm{Var}(\hat b^*)$.}
+\label{w10:fig:projection}
+\end{figure}
+
+% ============================================================
+\section{Projection in the Causal Inference Setting}
+\label{w10:sec:proj-causal}
+% ============================================================
+
+We now specialize the projection framework to the ATE, assuming
+$\pi(X)$ is known.  To align with the arm-by-arm structure of
+Section~\ref{w10:sec:class}, we decompose the Horvitz--Thompson
+estimator as $\hat\tau_{\mathrm{HT}} = \hat\mu_{1,\mathrm{HT}}
+- \hat\mu_{0,\mathrm{HT}}$, where
+\[
+  \hat\mu_{1,\mathrm{HT}} = \frac{1}{n}\sum_{i=1}^n \frac{T_i Y_i}{\pi_i},
+  \qquad
+  \hat\mu_{0,\mathrm{HT}} = \frac{1}{n}\sum_{i=1}^n \frac{(1-T_i)Y_i}{1-\pi_i},
+\]
+and $\pi_i = \pi(X_i)$.
+
+\subsection{Arm-wise augmentation spaces}
+\label{w10:subsec:aug-space}
+
+Define separate augmentation spaces for the treated and control arms:
+\begin{align}
+  \Lambda_1
+  &= \left\{
+       n^{-1}\sum_{i=1}^n
+       \!\left(\frac{T_i}{\pi_i}-1\right) b_1(X_i)
+       : b_1 \in \mathcal{L}^2
+     \right\},
+  \label{w10:eq:aug-space-1} \\[4pt]
+  \Lambda_0
+  &= \left\{
+       n^{-1}\sum_{i=1}^n
+       \!\left(\frac{1-T_i}{1-\pi_i}-1\right) b_0(X_i)
+       : b_0 \in \mathcal{L}^2
+     \right\}.
+  \label{w10:eq:aug-space-0}
+\end{align}
+Because $\E\bigl[(T_i/\pi_i-1)\mid X_i\bigr]=0$ and
+$\E\bigl[(1-T_i)/(1-\pi_i)-1\mid X_i\bigr]=0$, every element
+of $\Lambda_1$ (resp.\ $\Lambda_0$) has expectation zero, so
+$\hat\mu_{1,\mathrm{HT}} - \hat b_1$ (resp.\
+$\hat\mu_{0,\mathrm{HT}} - \hat b_0$) remains unbiased for $\mu_1$
+(resp.\ $\mu_0$) for any $b_t$.  The combined augmentation space
+\begin{align}
+  \Lambda = \Lambda_1 \oplus \Lambda_0
+  \label{w10:eq:aug-space}
+\end{align}
+is the direct sum, whose elements are corrections that leave
+$\hat\tau_{\mathrm{HT}}$ unbiased for $\tau$.
+
+\begin{remark}[Connection to the estimator class]
+\label{w10:rem:conn-class}
+The estimator $\hat\mu_{1,b}$ in \eqref{w10:eq:mu1b} is exactly
+$\hat\mu_{1,\mathrm{HT}}$ augmented by an element of $\Lambda_1$.
+Similarly, $\hat\mu_{0,b}$ augments $\hat\mu_{0,\mathrm{HT}}$ by an
+element of $\Lambda_0$.  Subtracting gives $\hat\tau_b$, the full
+AIPW class of Section~\ref{w10:sec:class}.
+\end{remark}
+
+\subsection{Computing the projections}
+\label{w10:subsec:proj-compute}
+
+\begin{thm}{Arm-wise Projections onto the Augmentation Spaces}
+\label{w10:thm:proj-causal}
+The optimal corrections are
+\begin{align}
+  \Pi(\hat\mu_{1,\mathrm{HT}} \mid \Lambda_1)
+  &= n^{-1}\sum_{i=1}^n
+     \!\left(\frac{T_i}{\pi_i}-1\right) b_1^*(X_i),
+  &b_1^*(x) &= \E\{Y(1)\mid x\},
+  \label{w10:eq:proj-causal-1} \\[4pt]
+  \Pi(\hat\mu_{0,\mathrm{HT}} \mid \Lambda_0)
+  &= n^{-1}\sum_{i=1}^n
+     \!\left(\frac{1-T_i}{1-\pi_i}-1\right) b_0^*(X_i),
+  &b_0^*(x) &= \E\{Y(0)\mid x\}.
+  \label{w10:eq:proj-causal-0}
+\end{align}
+\end{thm}
+
+\begin{proof}
+We verify the treated-arm projection; the control arm follows by
+symmetry.  By Theorem~\ref{w10:thm:projection}, we must show that
+\[
+  R_{1i}
+  := \hat\mu_{1,\mathrm{HT}} - n^{-1}\!\sum_i
+     \!\left(\frac{T_i}{\pi_i}-1\right)b_1^*(X_i)
+   = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\pi_i}\{Y_i - b_1^*(X_i)\}
+     + \frac{1}{n}\sum_{i=1}^n b_1^*(X_i)
+\]
+is uncorrelated with every element of $\Lambda_1$.  By i.i.d., it
+suffices to check the unit-level covariance.  Condition on
+$(X_i, Y_i(1), Y_i(0))$; the only remaining randomness is
+$T_i \mid X_i \sim \mathrm{Bernoulli}(\pi_i)$.  Using
+$T_i Y_i = T_i Y_i(1)$ and $b_1^*(X_i) = \E\{Y_i(1)\mid X_i\}$,
+\begin{align*}
+  \E\!\left[
+    \frac{T_i}{\pi_i}\{Y_i(1) - b_1^*(X_i)\}
+    \cdot
+    \left(\frac{T_i}{\pi_i}-1\right)
+  \,\middle|\, X_i, Y_i(1), Y_i(0)
+  \right]
+  &=
+  \{Y_i(1)-b_1^*(X_i)\}
+  \,\E\!\left[
+    \frac{T_i}{\pi_i}\!\left(\frac{T_i}{\pi_i}-1\right)
+  \,\middle|\, X_i
+  \right].
+\end{align*}
+Since $T_i^2 = T_i$,
+$\E[T_i^2/\pi_i^2 \mid X_i] = 1/\pi_i$
+and
+$\E[T_i/\pi_i \mid X_i] = 1$, so
+$\E[T_i/\pi_i\cdot(T_i/\pi_i - 1)\mid X_i]
+ = 1/\pi_i - 1$.
+Taking the outer expectation and using
+$\E\{Y_i(1)-b_1^*(X_i)\mid X_i\} = 0$,
+the whole expression vanishes.  The constant term $b_1^*(X_i)$
+contributes zero covariance with $\Lambda_1$ because
+$\E[(T_i/\pi_i - 1)\mid X_i] = 0$.
+\end{proof}
+
+\subsection{Recovering the AIPW estimator}
+\label{w10:subsec:proj-recover}
+
+By Theorem~\ref{w10:thm:projection}, the optimal estimators of
+$\mu_1$ and $\mu_0$ are the projections onto $\Lambda_1^\perp$ and
+$\Lambda_0^\perp$, respectively:
+\begin{align*}
+  \hat\mu_{1,\mathrm{opt}}
+  &= \hat\mu_{1,\mathrm{HT}}
+     - n^{-1}\!\sum_{i=1}^n\!\left(\frac{T_i}{\pi_i}-1\right)\mu_1^*(X_i)
+   = \frac{1}{n}\sum_{i=1}^n
+     \left[\frac{T_i}{\pi_i}\{Y_i-\mu_1^*(X_i)\}+\mu_1^*(X_i)\right], \\
+  \hat\mu_{0,\mathrm{opt}}
+  &= \hat\mu_{0,\mathrm{HT}}
+     - n^{-1}\!\sum_{i=1}^n\!\left(\frac{1-T_i}{1-\pi_i}-1\right)\mu_0^*(X_i)
+   = \frac{1}{n}\sum_{i=1}^n
+     \left[\frac{1-T_i}{1-\pi_i}\{Y_i-\mu_0^*(X_i)\}+\mu_0^*(X_i)\right].
+\end{align*}
+Subtracting,
+\[
+  \hat\tau_{\mathrm{opt}}
+  = \hat\mu_{1,\mathrm{opt}} - \hat\mu_{0,\mathrm{opt}},
+\]
+which is precisely the AIPW estimator \eqref{w10:eq:aipw} with
+$b_t^*(X) = \E\{Y(t)\mid X\}$, confirming
+Theorem~\ref{w10:thm:opt-b} by a different route.  The arm-wise
+decomposition makes the symmetry between the treated and control
+corrections transparent and shows that the asymmetric-looking
+function $b^*(x)$ in the single-space formulation is an artifact of
+combining two symmetric corrections into one.
+
+% ============================================================
+\section{Doubly Robust Regression: Weighted and Augmented Approaches}
+\label{w10:sec:ibc}
+% ============================================================
+
+The AIPW estimator achieves double robustness by adding an explicit
+bias-correction term to the prediction estimator.  An equally
+important question is how to build double robustness \emph{directly
+into the outcome model fit}, so that the prediction estimator is
+itself doubly robust without any separate augmentation step.  This
+section presents two general approaches and connects the second to
+the TMLE framework.
+
+\subsection{The internal bias calibration conditions}
+\label{w10:subsec:ibc-conditions}
+
+Let $\hat\mu_t(x)$ denote any fitted outcome model for arm $t$, and
+let $\hat\pi_i = \hat\pi(X_i)$.  The prediction estimator
+$\hat\tau_{\mathrm{pred}} = n^{-1}\sum_i\{\hat\mu_1(X_i)-\hat\mu_0(X_i)\}$
+requires no augmentation if the IPW-weighted residuals vanish:
+\begin{align}
+  \sum_{i=1}^n \frac{T_i}{\hat\pi_i}
+    \bigl\{Y_i - \hat\mu_1(X_i)\bigr\} &= 0,
+  \label{w10:eq:ibc-cond1} \\
+  \sum_{i=1}^n \frac{1-T_i}{1-\hat\pi_i}
+    \bigl\{Y_i - \hat\mu_0(X_i)\bigr\} &= 0.
+  \label{w10:eq:ibc-cond2}
+\end{align}
+We call \eqref{w10:eq:ibc-cond1}--\eqref{w10:eq:ibc-cond2} the
+\emph{internal bias calibration} (IBC) conditions
+\citep{firth1998robust}, following the terminology introduced in the
+context of prediction estimation in survey sampling.  The word
+\emph{internal} reflects the fact that these constraints are imposed
+within the outcome-model fitting step itself: once they hold, no
+separate bias-correction term is needed afterward.  When both IBC
+conditions hold, the augmentation terms in \eqref{w10:eq:aipw} are
+zero by construction, so $\hat\tau_{\mathrm{pred}} =
+\hat\tau_{\mathrm{AIPW}}$ and the prediction estimator is itself
+doubly robust.  The two approaches below are two ways of fitting
+$\hat\mu_t$ so that the IBC conditions are satisfied by construction.
+
+\subsection{Weighted regression approach}
+\label{w10:subsec:wls}
+
+Suppose the outcome model for arm $t$ is parameterized as
+$\mu_t(X;\theta_t)$ for a finite-dimensional parameter $\theta_t$,
+with the model including a constant term.  Instead of fitting
+$\theta_t$ by ordinary least squares among the units with $T_i=t$,
+use \emph{IPW-weighted} least squares: minimize
+\begin{align}
+  \sum_{i=1}^n \frac{T_i}{\hat\pi_i}
+    \bigl\{Y_i - \mu_1(X_i;\theta_1)\bigr\}^2
+  \label{w10:eq:wls1}
+\end{align}
+for $t=1$, and analogously with $(1-T_i)/(1-\hat\pi_i)$ for $t=0$.
+This is essentially IPW-weighted estimation of the regression
+coefficients: each unit's contribution to the least-squares criterion
+is upweighted by the inverse of its probability of being in that
+treatment arm.  The normal equation of \eqref{w10:eq:wls1} with
+respect to the intercept component of $\theta_1$ is
+\[
+  \sum_{i=1}^n \frac{T_i}{\hat\pi_i}
+    \bigl\{Y_i - \mu_1(X_i;\hat\theta_1)\bigr\} = 0,
+\]
+which is exactly the IBC condition \eqref{w10:eq:ibc-cond1}.  Hence
+the IPW-weighted fitted values automatically satisfy the IBC
+condition for any model containing a constant, and the resulting
+prediction estimator is doubly robust; see \citet{robins1994estimation}
+and \citet{bang2005doubly} for a general treatment.
+The key point is not that weighted least squares creates a
+fundamentally different doubly robust estimator; rather, it constructs
+fitted values for which the prediction estimator algebraically equals
+the AIPW estimator.
+
+\subsection{Augmented model approach and the clever covariate}
+\label{w10:subsec:augmented}
+
+The augmented approach achieves the same calibration by modifying
+the covariate set rather than the fitting weights.  Let
+$\hat\mu_1^{(0)}(X_i)$ be any initial fit of the treated outcome
+model (e.g., from OLS or a flexible machine-learning method).
+Augment it by including the \emph{clever covariate}
+$\hat\pi_i^{-1}$ \citep{vanderLaan2006targeted,vanderLaan2011targeted}
+and run OLS of $Y_i$ on $\hat\mu_1^{(0)}(X_i)$ and $\hat\pi_i^{-1}$
+among treated units, fitting the model
+\begin{align}
+  Y_i = \alpha_1 + \beta_1\hat\mu_1^{(0)}(X_i)
+        + \gamma_1\hat\pi_i^{-1} + e_i(1),
+  \qquad T_i = 1.
+  \label{w10:eq:aug-model}
+\end{align}
+Denote the OLS estimates by $\hat\alpha_1$, $\hat\beta_1$,
+$\hat\gamma_1$.  The fitted outcome model evaluated at all units is
+\begin{align}
+  \hat\mu_1(X_i)
+  = \hat\alpha_1 + \hat\beta_1\hat\mu_1^{(0)}(X_i)
+    + \hat\gamma_1\hat\pi_i^{-1},
+  \label{w10:eq:aug-fit}
+\end{align}
+and the prediction estimator of $\mu_1 = \E\{Y(1)\}$ is
+\begin{align}
+  \hat\mu_1^{\mathrm{pred}}
+  = \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i).
+  \label{w10:eq:aug-pred}
+\end{align}
+
+The normal equation of \eqref{w10:eq:aug-model} for $\hat\gamma_1$
+(the coefficient on $\hat\pi_i^{-1}$) is
+\begin{align}
+  \sum_{i=1}^n \frac{T_i}{\hat\pi_i}
+    \bigl\{Y_i - \hat\mu_1(X_i)\bigr\} = 0,
+  \label{w10:eq:score-gamma}
+\end{align}
+which is exactly the IBC condition \eqref{w10:eq:ibc-cond1}.
+Since \eqref{w10:eq:score-gamma} equals zero, we can add it to
+\eqref{w10:eq:aug-pred} without changing its value, giving the AIPW
+representation:
+\begin{align}
+  \hat\mu_1^{\mathrm{pred}}
+  = \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i)
+    + \frac{1}{n}\sum_{i=1}^n
+      \frac{T_i}{\hat\pi_i}
+      \bigl\{Y_i - \hat\mu_1(X_i)\bigr\}.
+  \label{w10:eq:aug-aipw}
+\end{align}
+The IPW-weighted residual sum is zero by the IBC condition, so the
+prediction estimator coincides with the AIPW estimator.
+
+The model \eqref{w10:eq:aug-model} improves upon the simpler
+fixed-offset augmentation $\hat\mu_1^{(0)}(X_i) + \hat\gamma_1\hat\pi_i^{-1}$
+in two respects.  First, the free coefficient $\hat\beta_1$ allows
+the scale of the initial fit to be recalibrated: if
+$\hat\mu_1^{(0)}$ systematically over- or under-predicts, $\hat\beta_1
+\neq 1$ absorbs this global scaling error.  Second, the intercept
+$\hat\alpha_1$ absorbs any residual mean shift.  The covariate
+$\hat\pi_i^{-1}$ is called \emph{clever} because it is chosen so
+that the fitted regression satisfies the same score equation
+\eqref{w10:eq:score-gamma} that appears in the AIPW bias correction.
+When the initial outcome model is misspecified, including this
+covariate lets the regression absorb the component of the
+model error that would otherwise appear in the augmentation term, so
+the fitted prediction estimator becomes algebraically equivalent to a
+debiased estimator.  Together, $(\hat\alpha_1, \hat\beta_1,
+\hat\gamma_1)$ provide additional recalibration of the initial
+prediction beyond what the canonical fixed-offset form achieves,
+yielding a lower residual variance and hence greater efficiency than
+either the fixed-offset version or plain AIPW when the OR model is
+misspecified.
+
+\begin{remark}[Behavior under correct outcome model]
+\label{w10:rem:gamma-zero}
+If the initial outcome model $\hat\mu_1^{(0)}$ is correctly
+specified, then $\hat\alpha_1 \overset{p}{\to} 0$,
+$\hat\beta_1 \overset{p}{\to} 1$, and
+$\hat\gamma_1 \overset{p}{\to} 0$: the augmented model
+\eqref{w10:eq:aug-model} reduces asymptotically to
+$\hat\mu_1^{(0)}(X_i)$, and $\hat\mu_1^{\mathrm{pred}}$ coincides
+with the standard prediction estimator.  Including the additional
+covariates therefore carries no asymptotic efficiency cost when the
+OR model is correct.
+\end{remark}
+
+\begin{remark}[Connection to TMLE]
+\label{w10:rem:tmle}
+The augmented model approach captures the same targeting idea that
+underlies \emph{targeted minimum loss-based estimation} (TMLE),
+introduced by \citet{vanderLaan2006targeted} and developed
+comprehensively in \citet{vanderLaan2011targeted}.  The standard TMLE
+targeting step uses the fixed-offset form (coefficient on
+$\hat\mu_1^{(0)}$ fixed at~1), which is the minimal fluctuation
+sufficient to satisfy the IBC condition.  The model
+\eqref{w10:eq:aug-model} goes further by freely estimating
+$\hat\beta_1$, providing additional recalibration of the initial fit
+beyond what canonical TMLE achieves in its one-dimensional targeting
+step.  A thorough treatment of TMLE, including its asymptotic theory
+and connections to cross-fitting, is beyond the scope of these notes;
+see \citet{vanderLaan2011targeted} and \citet{rose2020targeted} for
+details.
+\end{remark}
+
+% ============================================================
+\section{Lab: Simulation Study}
+\label{w10:sec:lab}
+% ============================================================
+
+This lab compares four estimators of the ATE: the IPW estimator
+$\hat\tau_{\mathrm{HT}}$, the AIPW estimator $\hat\tau_{\mathrm{AIPW}}$,
+the fixed-offset augmented-model estimator $\hat\tau_{\mathrm{aug}}$,
+and the improved augmented-model estimator $\hat\tau_{\mathrm{aug}^+}$
+of \eqref{w10:eq:aug-model}.  The propensity score model is correctly
+specified throughout; two scenarios differ in whether the outcome
+regression model is correctly specified.  Full \textsf{R} code is
+provided in the supplementary file \texttt{chapter10\_lab.R}.
+
+\subsection{Simulation setup}
+\label{w10:subsec:lab-setup}
+
+Generate $n = 1000$ i.i.d.\ observations as follows.  Draw
+$X_i \sim N(0,1)$, then $T_i \mid X_i \sim
+\mathrm{Bernoulli}(\pi(X_i))$ with true propensity score
+$\pi(x) = \mathrm{expit}(0.5x)$.  The potential outcomes are
+\begin{align*}
+  Y_i(1) &= 1 + X_i + 0.5X_i^2 + \varepsilon_i(1), \\
+  Y_i(0) &= \phantom{1 +{}} X_i + 0.5X_i^2 + \varepsilon_i(0),
+\end{align*}
+with $\varepsilon_i(t) \overset{\mathrm{i.i.d.}}{\sim} N(0,1)$
+independent of $(X_i, T_i)$, giving true ATE $\tau = 1$.  The
+observed outcome is $Y_i = T_i Y_i(1) + (1-T_i)Y_i(0)$.  The
+quadratic term $0.5X_i^2$ is the component that a linear outcome
+model omits.
+
+The propensity score is estimated by logistic regression of $T_i$
+on $X_i$ (correctly specified by construction).  Two outcome
+regression scenarios are considered.
+\begin{itemize}
+  \item \textbf{Scenario~1 (OR correct):} fit separate linear
+    regressions of $Y_i$ on $(1, X_i, X_i^2)$ within each arm.
+  \item \textbf{Scenario~2 (OR misspecified):} fit separate linear
+    regressions of $Y_i$ on $(1, X_i)$ only, omitting the quadratic
+    term.
+\end{itemize}
+
+\subsection{Estimator construction}
+\label{w10:subsec:lab-estimators}
+
+Given $\hat\pi_i = \hat\pi(X_i)$ and initial fitted values
+$\hat\mu_t(X_i) \equiv \hat\mu_t^{(0)}(X_i)$, let
+$c_{1i} = \hat\pi_i^{-1}$ and $c_{0i} = (1-\hat\pi_i)^{-1}$.
+
+\medskip\noindent
+\textbf{IPW estimator.}
+\[
+  \hat\tau_{\mathrm{HT}}
+  = \frac{1}{n}\sum_{i=1}^n
+    \left\{
+      \frac{T_i Y_i}{\hat\pi_i}
+      - \frac{(1-T_i)Y_i}{1-\hat\pi_i}
+    \right\}.
+\]
+
+\medskip\noindent
+\textbf{AIPW estimator.}
+\[
+  \hat\tau_{\mathrm{AIPW}}
+  = \frac{1}{n}\sum_{i=1}^n
+    \left[
+      \hat\mu_1(X_i) - \hat\mu_0(X_i)
+      + \frac{T_i}{\hat\pi_i}\{Y_i - \hat\mu_1(X_i)\}
+      - \frac{1-T_i}{1-\hat\pi_i}\{Y_i - \hat\mu_0(X_i)\}
+    \right].
+\]
+
+\medskip\noindent
+\textbf{Fixed-offset augmented-model estimator.}  Within each arm,
+regress $Y_i - \hat\mu_t(X_i)$ on $c_{ti}$ without an intercept to
+obtain $\hat\gamma_t$, set
+$\hat\mu_t^{\mathrm{aug}}(X_i) = \hat\mu_t(X_i) + \hat\gamma_t c_{ti}$,
+and compute
+$\hat\tau_{\mathrm{aug}}
+ = n^{-1}\sum_i\{\hat\mu_1^{\mathrm{aug}}(X_i)
+   - \hat\mu_0^{\mathrm{aug}}(X_i)\}$.
+
+\medskip\noindent
+\textbf{Improved augmented-model estimator.}  Within each arm,
+regress $Y_i$ on $(1, \hat\mu_t^{(0)}(X_i), c_{ti})$ by OLS to
+obtain $(\hat\alpha_t, \hat\beta_t, \hat\gamma_t)$, set
+$\hat\mu_t^{\mathrm{aug}^+}(X_i)
+ = \hat\alpha_t + \hat\beta_t\hat\mu_t(X_i) + \hat\gamma_t c_{ti}$,
+and compute
+$\hat\tau_{\mathrm{aug}^+}
+ = n^{-1}\sum_i\{\hat\mu_1^{\mathrm{aug}^+}(X_i)
+   - \hat\mu_0^{\mathrm{aug}^+}(X_i)\}$.
+
+\subsection{Results}
+\label{w10:subsec:lab-results}
+
+Repeat the simulation $B = 2000$ times and record bias, variance,
+and MSE for each estimator.  Table~\ref{w10:tab:sim} reports the
+results; the improved estimator $\hat\tau_{\mathrm{aug}^+}$ is
+expected to match or outperform $\hat\tau_{\mathrm{aug}}$ in both
+scenarios.
+
+\begin{table}[h]
+\centering
+\caption{Simulation results ($n=1000$, $B=2000$ replications,
+\texttt{set.seed(2025)}).  PS model correctly specified in both
+scenarios.  Entries are bias, variance, and MSE $\times 10^{3}$.
+$\hat\tau_{\mathrm{aug}}$: fixed-offset augmented model.
+$\hat\tau_{\mathrm{aug}^+}$: improved augmented model
+\eqref{w10:eq:aug-model}.}
+\label{w10:tab:sim}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{llrrrr}
+\hline
+Scenario & & $\hat\tau_{\mathrm{HT}}$ &
+             $\hat\tau_{\mathrm{AIPW}}$ &
+             $\hat\tau_{\mathrm{aug}}$ &
+             $\hat\tau_{\mathrm{aug}^+}$ \\
+\hline
+\multirow{3}{*}{1: OR correct}
+  & Bias$\times 10^3$     & $-0.37$ & $0.19$          & $0.19$          & $0.20$ \\
+  & Var$\times 10^3$      & $7.78$  & $4.25$          & $4.25$          & $4.24$ \\
+  & MSE$\times 10^3$      & $7.78$  & $4.25$          & $4.25$          & $4.24$ \\[4pt]
+\multirow{3}{*}{2: OR misspecified}
+  & Bias$\times 10^3$     & $2.41$  & $2.20$          & $2.20$          & $1.06$ \\
+  & Var$\times 10^3$      & $7.72$  & $7.70$          & $7.54$          & $4.49$ \\
+  & MSE$\times 10^3$      & $7.73$  & $7.71$          & $7.55$          & $4.49$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent The results reveal a striking pattern.
+
+\begin{itemize}
+  \item \textbf{Scenario~1 (OR correct).}  All four estimators are
+    approximately unbiased.  $\hat\tau_{\mathrm{HT}}$ has roughly
+    twice the MSE of the other three because it discards the outcome
+    model entirely.  $\hat\tau_{\mathrm{AIPW}}$, $\hat\tau_{\mathrm{aug}}$,
+    and $\hat\tau_{\mathrm{aug}^+}$ are essentially identical
+    (MSE $\approx 4.25 \times 10^{-3}$), confirming that when the OR
+    model is correctly specified the augmented parameters
+    $(\hat\alpha_t, \hat\beta_t, \hat\gamma_t)$ converge to
+    $(0, 1, 0)$ and the improved model incurs no efficiency cost.
+
+  \item \textbf{Scenario~2 (OR misspecified).}  All four estimators
+    remain nearly unbiased (PS is correct throughout), confirming
+    double robustness.  The efficiency ordering is
+    \[
+      \hat\tau_{\mathrm{aug}^+} \;\ll\;
+      \hat\tau_{\mathrm{aug}} \;<\;
+      \hat\tau_{\mathrm{AIPW}} \;\ll\;
+      \hat\tau_{\mathrm{HT}}.
+    \]
+    The simulation suggests that when the propensity score model is
+    correct but the initial outcome model is misspecified, the
+    augmented-model estimator can be more efficient than the plug-in
+    AIPW estimator.  The reason is not that AIPW still carries
+    first-order bias---all three PS-adjusted estimators are
+    approximately unbiased---but that the targeted regression fit
+    can reduce residual variance while preserving the same
+    bias-correction property enforced by the IBC condition.
+    The fixed-offset estimator $\hat\tau_{\mathrm{aug}}$ achieves
+    only a modest 2\% MSE reduction relative to AIPW
+    ($7.55$ vs $7.71 \times 10^{-3}$): with $\hat\beta_t$ fixed
+    at~1, the regression can only reduce the component of the
+    omitted quadratic $0.5X_i^2$ that is captured by $\hat\pi_i^{-1}$
+    alone.  The improved estimator $\hat\tau_{\mathrm{aug}^+}$,
+    by contrast, achieves a \emph{42\% MSE reduction} relative to AIPW
+    ($4.49$ vs $7.71 \times 10^{-3}$).  The free coefficient
+    $\hat\beta_t$ recalibrates the scale of the initial fit, so the
+    regression of $Y_i$ on $(\hat\mu_t^{(0)}(X_i), \hat\pi_i^{-1})$
+    approximates a much larger portion of $\E(Y\mid T=t, X)$, leaving
+    residuals far smaller than those from the misspecified
+    $\hat\mu_t^{(0)}$ alone.  The result is a substantially lower
+    residual variance and hence lower MSE.
+\end{itemize}
+
+% ============================================================
+\section{The Efficient Influence Function and Semiparametric Efficiency}
+\label{w10:sec:eif}
+% ============================================================
+
+\emph{This section states the semiparametric efficiency result and
+interprets it in light of the estimator development above; no new
+derivation is given.  A complete proof requires explicit
+characterization of the nuisance tangent space and is beyond the
+scope of these notes; see \citet{tsiatis2006semiparametric} for a
+rigorous development.}
+
+\medskip
+
+We now return to the efficient influence function introduced in
+Chapter~9 and show that it is exactly the estimating function
+underlying AIPW.  This identification is crucial: it explains why
+AIPW is not only doubly robust, but also semiparametrically efficient
+when both nuisance functions are estimated consistently at suitable
+rates.
+
+Under the nonparametric model for $O=(X,T,Y)$, the efficient
+influence function for the ATE is
+\begin{align}
+  \varphi_{\mathrm{eff}}(O)
+  = \frac{T}{\pi(X)}\{Y-\mu_1(X)\}
+    - \frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\}
+    + \mu_1(X) - \mu_0(X) - \tau.
+  \label{w10:eq:eif-ate}
+\end{align}
+Comparing \eqref{w10:eq:eif-ate} with \eqref{w10:eq:dr-score}, the
+AIPW estimating function \emph{is} the efficient influence function.
+Consequently, AIPW is not merely doubly robust: it is the canonical
+regular asymptotically linear estimator for the ATE when the nuisance
+functions are estimated consistently at suitable rates.  The
+augmentation space $\Lambda$ in \eqref{w10:eq:aug-space} corresponds
+to the nuisance tangent space in semiparametric theory, and projection
+onto $\Lambda^\perp$ corresponds to removing nuisance variation; see
+Chapter~9, Remark~\ref{w9:rem:eif-ate} for a complementary
+discussion.
+
+\begin{thm}{Semiparametric Efficiency Bound for the ATE}
+\label{w10:thm:bound}
+Among regular asymptotically linear estimators of the ATE under the
+nonparametric model, every such estimator has asymptotic variance at
+least $\E\{\varphi_{\mathrm{eff}}(O)^2\}$.  An estimator whose
+influence function equals $\varphi_{\mathrm{eff}}$ achieves this
+lower bound.
+\end{thm}
+
+\begin{remark}[EIF as the semiparametric score]
+\label{w10:rem:eif-as-score}
+The efficient influence function plays the same role in semiparametric
+theory that the score plays in parametric models: its variance gives
+the information lower bound, analogous to the Cramér--Rao bound.
+The three derivations in this chapter---bias correction
+(Section~\ref{w10:sec:prediction}), optimal augmentation
+(Section~\ref{w10:sec:class}), and the present semiparametric
+identification---converge on the same estimating function, which is
+the deepest explanation of why AIPW occupies a central place in the
+causal inference toolkit.
+\end{remark}
+
+% ============================================================
+\section{Asymptotic Inference with Estimated Nuisance Functions}
+\label{w10:sec:asymp}
+% ============================================================
+
+A fundamental question in the practical use of the AIPW estimator
+is: under what conditions is the effect of estimating the nuisance
+functions $\pi$ and $\mu_t$ asymptotically negligible, so that
+$\hat\tau_{\mathrm{AIPW}}$ behaves as if the nuisance functions were
+known?  Answering this question determines when plug-in nuisance
+estimators, including flexible machine-learning methods, can be used
+without invalidating large-sample inference on $\tau$.
+
+\subsection{Asymptotic normality}
+\label{w10:subsec:asymp-normality}
+
+Under suitable regularity conditions,
+\[
+  \sqrt{n}(\hat\tau_{\mathrm{AIPW}}-\tau)
+  = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i)
+    + o_p(1)
+  \overset{d}{\longrightarrow}
+  N\!\bigl(0,\;\E\{\varphi_{\mathrm{eff}}(O)^2\}\bigr).
+\]
+The $o_p(1)$ remainder captures the effect of nuisance estimation
+error.  Neyman orthogonality implies that this error enters the AIPW
+estimator only through a second-order remainder: the Gateaux
+derivative of the estimating equation with respect to each nuisance
+function, evaluated at the truth, is zero.  A sufficient condition
+for the remainder to be negligible is the \emph{product-rate
+condition}
+\begin{align}
+  \|\hat\pi-\pi\|\cdot\|\hat\mu_t-\mu_t\| = o_p(n^{-1/2}),
+  \qquad t=0,1,
+  \label{w10:eq:product-rate}
+\end{align}
+where the norms are mean-squared-error norms.  This allows each
+nuisance estimator, in principle, to converge at rate $n^{-1/4}$,
+which is much weaker than the parametric rate $n^{-1/2}$ required of
+each individually.  In modern applications with flexible
+machine-learning methods, this statement is usually paired with
+\emph{sample splitting} or \emph{cross-fitting}; without such
+devices, additional empirical-process conditions are needed to justify
+the asymptotic expansion.  Chapter~11 develops the cross-fitting
+approach in detail.
+
+\begin{remark}[Neyman orthogonality]
+\label{w10:rem:neyman}
+The first-order insensitivity of the AIPW estimating function to
+nuisance perturbations is an instance of \emph{Neyman orthogonality},
+a property shared by a broad class of semiparametric estimators.
+Chapter~11 exploits this property systematically through
+cross-fitting, which eliminates the need for additional
+empirical-process conditions on the nuisance estimators.
+\end{remark}
+
+\subsection{Variance estimation and confidence intervals}
+\label{w10:subsec:variance}
+
+Because $\hat\tau_{\mathrm{AIPW}}$ is asymptotically linear with
+influence function $\varphi_{\mathrm{eff}}$, its asymptotic variance
+can be estimated consistently by the empirical variance of the
+plug-in influence values.  Compute
+\begin{align}
+  \hat\varphi_i
+  = \frac{T_i}{\hat\pi(X_i)}\{Y_i-\hat\mu_1(X_i)\}
+    - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i-\hat\mu_0(X_i)\}
+    + \hat\mu_1(X_i)-\hat\mu_0(X_i)
+    - \hat\tau_{\mathrm{AIPW}},
+  \label{w10:eq:ifhat}
+\end{align}
+and set
+\begin{align}
+  \hat V
+  = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i-\bar\varphi)^2,
+  \qquad
+  \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i.
+  \label{w10:eq:var-aipw}
+\end{align}
+The Wald confidence interval is
+$\hat\tau_{\mathrm{AIPW}} \pm z_{1-\alpha/2}\sqrt{\hat V}$.
+
+\begin{prop}{Consistency of the Variance Estimator}
+\label{w10:prop:var-consistency}
+If $\sqrt{n}(\hat\tau_{\mathrm{AIPW}}-\tau)
+ = n^{-1/2}\sum_i\varphi_{\mathrm{eff}}(O_i)+o_p(1)$, then
+$\hat V$ in \eqref{w10:eq:var-aipw} is consistent for the asymptotic
+variance of $\hat\tau_{\mathrm{AIPW}}$.
+\end{prop}
+
+\begin{warn}{Extreme Propensity Scores}
+\label{w10:warn:overlap}
+When $\hat\pi(X_i)$ is near $0$ or $1$, the IPW weights become large
+and can destabilize the estimator.  Practical remedies include overlap
+diagnostics, truncation of extreme propensity scores, or restricting
+the target population to a subgroup with adequate overlap.  The
+augmented model approach of Section~\ref{w10:sec:ibc} provides a
+complementary strategy by building the propensity score into the
+outcome regression itself.
+\end{warn}
+
+% ============================================================
+\section{Comparison of Regression, IPW, and AIPW}
+\label{w10:sec:comparison}
+% ============================================================
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcclp{4.8cm}}
+\hline
+Estimator & Uses $\mu_t$ & Uses $\pi$ & Consistent if & Main weakness \\
+\hline
+Regression (prediction) & Yes & No  & outcome model correct
+  & Sensitive to OR misspecification \\
+IPW (Horvitz--Thompson) & No  & Yes & propensity model correct
+  & Unstable under weak overlap \\
+AIPW                    & Yes & Yes & either model correct
+  & Requires estimating both nuisances and careful inference (cross-fitting or regularity conditions) \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{remark}[When both models are correctly specified]
+\label{w10:rem:both-correct}
+When both models are correct, AIPW achieves the semiparametric
+efficiency bound.  When overlap is weak, large IPW weights may
+destabilize the estimator; the weighted regression and augmented
+model approaches of Section~\ref{w10:sec:ibc} provide more stable
+alternatives by incorporating balance constraints directly into the
+outcome fitting step.
+\end{remark}
+
+% ============================================================
+\section{Chapter Summary}
+\label{w10:sec:summary}
+% ============================================================
+
+\begin{enumerate}
+  \item The prediction estimator is biased when the outcome model is
+    misspecified; the bias can be estimated with the propensity score
+    and subtracted to yield the AIPW estimator
+    (Section~\ref{w10:sec:prediction}).
+  \item The AIPW estimator has two key properties.  First, double
+    robustness (Theorem~\ref{w10:thm:dr}): it is consistent whenever
+    either the outcome model or the propensity score model is correctly
+    specified.  Second, within the class of augmented IPW estimators
+    indexed by $b_t(x)$, the choice $b_t^*(x)=\E\{Y(t)\mid X\}$
+    minimizes variance when both nuisance components are correctly
+    specified (Theorems~\ref{w10:thm:cond-unbiased}--\ref{w10:thm:opt-b}).
+  \item The optimality of AIPW follows also from a Hilbert-space
+    projection: the optimal estimator is the projection of the HT
+    estimator onto $\Lambda^\perp$, and the Pythagorean identity
+    governs the variance reduction (Theorem~\ref{w10:thm:projection}).
+  \item Double robustness can also be enforced within the
+    outcome-regression fitting step, either by IPW-weighted regression
+    or by an augmented regression model that includes the inverse
+    propensity score as a clever covariate.  The latter is closely
+    related to the targeting idea used in TMLE
+    \citep{vanderLaan2006targeted} (Section~\ref{w10:sec:ibc}).
+  \item The simulation study (Section~\ref{w10:sec:lab}) shows that
+    when the propensity score model is correct, IPW, AIPW, and the
+    augmented-model estimator are all consistent.  When the outcome
+    regression is misspecified, the augmented-model estimator can
+    outperform the plug-in AIPW estimator because the targeted
+    regression fit may reduce residual variance while preserving the
+    calibration equations.
+  \item The AIPW estimating function is the efficient influence
+    function for the ATE, and its variance gives the semiparametric
+    efficiency bound (Section~\ref{w10:sec:eif}).
+  \item For asymptotic inference, the central issue is whether the
+    effect of estimating nuisance functions is asymptotically
+    negligible.  Neyman orthogonality yields a second-order remainder,
+    and the product-rate condition \eqref{w10:eq:product-rate} is
+    sufficient for root-$n$ inference.  In modern machine-learning
+    settings, cross-fitting is often used to make these conditions
+    more plausible; Chapter~11 develops this approach
+    (Section~\ref{w10:sec:asymp}).
+\end{enumerate}
+
+% ------------------------------------------------------------
+%  Key objects
+% ------------------------------------------------------------
+\begin{tcolorbox}[defstyle, title={Key Objects in This Chapter}]
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{lp{8.5cm}}
+\hline
+\textbf{Symbol} & \textbf{Meaning} \\
+\hline
+$\tau$               & ATE $= \E\{Y(1)-Y(0)\}$ \\
+$\mu_t(x)$           & Outcome regression $\E(Y\mid T=t,X=x)$ \\
+$\pi(x)$             & Propensity score $P(T=1\mid X=x)$ \\
+$b_t(x)$             & Control function; optimal choice $b_t^*(x)=\E\{Y(t)\mid X=x\}$ \\
+$\hat\tau_{\mathrm{AIPW}}$ & AIPW estimator \eqref{w10:eq:aipw} \\
+$\Lambda$            & Augmentation space \eqref{w10:eq:aug-space} \\
+$\Lambda^\perp$      & Orthogonal complement of $\Lambda$ \\
+$\varphi_{\mathrm{eff}}(O)$ & Efficient influence function \eqref{w10:eq:eif-ate} \\
+$\hat\pi_i^{-1}$     & Clever covariate; its normal equation enforces the IBC condition \eqref{w10:eq:ibc-cond1} \\
+$\hat\gamma_1$       & Targeting coefficient; $\hat\gamma_1\overset{p}{\to}0$ when outcome model correct \\
+IBC                  & Internal bias calibration conditions \eqref{w10:eq:ibc-cond1}--\eqref{w10:eq:ibc-cond2} \citep{firth1998robust} \\
+\hline
+\end{tabular}
+\end{center}
+\end{tcolorbox}
+
+% ============================================================
+\section*{Exercises}
+\label{w10:sec:exercises}
+% ============================================================
+
+\begin{enumerate}
+
+\item \textbf{Bias of the prediction estimator.}
+  \begin{enumerate}
+    \item Verify the bias formula \eqref{w10:eq:pred-bias} by
+      writing $\tau_{\mathrm{pred}}(m)-\tau$ as a difference of
+      working-model errors and simplifying.
+    \item Under what condition on the propensity score model does
+      $\widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}})$ have zero
+      expectation?  Provide a careful argument using iterated
+      expectations.
+    \item Construct a simple example (binary $X$, binary $T$,
+      binary $Y$) in which both the estimated bias is nonzero and
+      the outcome model is misspecified, but the AIPW estimator
+      is still consistent.
+  \end{enumerate}
+
+\item \textbf{The AIPW class and optimal control functions.}
+  \begin{enumerate}
+    \item Verify that $\hat\tau_b$ with $b_t=\mu_t$ equals the
+      AIPW estimator \eqref{w10:eq:aipw}.
+    \item Using \eqref{w10:eq:var-b}, show that
+      $b_t^*(x)=\E\{Y(t)\mid x\}$ minimizes conditional variance
+      by completing the square in $b_t$.
+    \item Suppose $\pi(x)=1/2$ for all $x$.  Simplify
+      \eqref{w10:eq:var-b} and interpret the result.
+  \end{enumerate}
+
+\item \textbf{Double robustness.}
+  \begin{enumerate}
+    \item Verify Case~1 of Theorem~\ref{w10:thm:dr}: with
+      $\mu_t=\mu_t^*$ and arbitrary $\pi$, show
+      $\E\{\phi\}=0$.
+    \item Verify Case~2: with $\pi=\pi^*$ and arbitrary $\mu_t$,
+      show $\E\{\phi\}=0$.
+    \item Provide a counterexample showing $\E\{\phi\}\neq 0$ when
+      both models are misspecified.
+  \end{enumerate}
+
+\item \textbf{Projection and the Pythagorean identity.}
+  \begin{enumerate}
+    \item Verify $\mathrm{Cov}(\hat\theta_{\mathrm{opt}},\hat b^*)=0$
+      from the definition of $\hat b^*$.
+    \item Deduce \eqref{w10:eq:pythagoras} from the decomposition
+      $\hat\theta_0 = \hat\theta_{\mathrm{opt}} + \hat b^*$.
+    \item Explain why $\hat\theta_{\mathrm{opt}}$ is still unbiased
+      for $\theta$ even though $\hat b^* \in \Lambda$ is subtracted.
+  \end{enumerate}
+
+\item \textbf{Augmented model and the clever covariate.}
+  \begin{enumerate}
+    \item Let $\hat\mu_1^{(0)}(X_i)$ be any initial outcome model
+      fit.  Show that the normal equation for $\hat\gamma_1$ in
+      the augmented model \eqref{w10:eq:aug-model} is exactly the
+      IBC condition \eqref{w10:eq:ibc-cond1}, and conclude
+      that \eqref{w10:eq:aug-pred} can always be written in AIPW
+      form as in \eqref{w10:eq:aug-aipw}.
+    \item Explain why $\hat\gamma_1 \overset{p}{\to} 0$ when the
+      initial model $\hat\mu_1^{(0)}$ is correctly specified, and
+      what this implies about the efficiency cost of including the
+      clever covariate.
+    \item Explain in words why $\hat\pi_i^{-1}$ is called the clever
+      covariate: what bias does it absorb, and why does this make the
+      prediction estimator a debiased estimator even when
+      $\hat\mu_1^{(0)}$ is misspecified?
+  \end{enumerate}
+
+\item \textbf{Semiparametric efficiency.}
+  \begin{enumerate}
+    \item Show $\E\{\varphi_{\mathrm{eff}}(O)^2\}
+      \leq \E\{\varphi_{\mathrm{IPW}}(O)^2\}$ by writing
+      $\varphi_{\mathrm{IPW}} = \varphi_{\mathrm{eff}}
+       + (\varphi_{\mathrm{IPW}}-\varphi_{\mathrm{eff}})$ and
+      showing the cross term vanishes.
+    \item Interpret the efficiency gain
+      $\E\{\varphi_{\mathrm{IPW}}^2\}-\E\{\varphi_{\mathrm{eff}}^2\}$
+      in terms of the variance of the outcome regression.
+    \item Give one reason why an efficient estimator based on
+      $\varphi_{\mathrm{eff}}$ may still be disfavored in
+      practice relative to a simpler, less efficient alternative.
+  \end{enumerate}
+
+\end{enumerate}
+
+% Bibliography (standalone only)
+\ifSubfilesClassLoaded{%
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}

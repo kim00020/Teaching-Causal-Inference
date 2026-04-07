@@ -1,0 +1,872 @@
+% ============================================================
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+\ifSubfilesClassLoaded{%
+  \begin{center}
+    {\LARGE\bfseries\color{isublue}
+     Chapter 13:
+     Policy Evaluation
+     }\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  \chapter{Policy Evaluation}
+}
+
+\section{Why Policy Evaluation?}
+\label{w13:sec:motivation}
+
+Up to this point, the course has focused mainly on causal effects of fixed treatments, such as the average treatment effect and its semiparametric estimation. In many applications, however, the scientific or policy question is not merely whether treatment works on average, but whether a decision rule that assigns treatment based on covariates would perform well in a target population.
+
+This chapter studies \emph{policy evaluation}: given a fixed rule $d(x)$, what would be the expected outcome if treatment were assigned according to that rule? This is a causal question because the rule specifies an intervention, not merely an observed association.
+
+Policy evaluation should be distinguished from \emph{policy learning}. In this chapter, the rule is assumed to be fixed in advance and the task is to evaluate its value. In Chapter~\ref{w14:sec:motivation}, the rule itself will be chosen from data. Thus Chapter~13 is about evaluating a known intervention rule, whereas Chapter~14 is about optimizing over a class of rules.
+
+The average treatment effect is a special case of this broader framework: it compares the values of two static policies, ``treat all'' and ``treat none.'' In this sense, policy evaluation generalizes the treatment-effect framework developed in earlier chapters.
+
+\subsection*{Learning Objectives}
+By the end of this chapter, students should be able to:
+\begin{enumerate}
+    \item define stochastic and deterministic evaluation policies and recognize that deterministic policies are a special case;
+    \item define policy value as a causal estimand and distinguish it from treatment-effect estimation;
+    \item identify policy value under consistency, ignorability, and positivity;
+    \item derive outcome-regression, inverse probability weighted, and doubly robust estimators of policy value;
+    \item state the efficient influence function for policy value and connect it to the doubly robust estimator;
+    \item explain off-policy evaluation and understand the role of overlap between the behavior policy and the evaluation policy.
+\end{enumerate}
+
+\section{Evaluation Policies, Potential Outcomes, and Value}
+\label{w13:sec:policies}
+
+We consider i.i.d.\ observations
+\[
+O_i=(X_i,A_i,Y_i), \qquad i=1,\dots,n,
+\]
+where $X\in\mathcal X$ is a vector of baseline covariates, $A\in\{0,1\}$ is a binary treatment, and $Y\in\mathbb R$ is the observed outcome.  The \emph{behavior policy}
+\[
+\pi_b(a\mid x)=P(A=a\mid X=x), \qquad a\in\{0,1\},
+\]
+encodes the treatment-assignment mechanism under which the data were collected; in the binary case $\pi_b(1\mid x)=\pi(x)$ reduces to the familiar propensity score.  The \emph{outcome regression} is $\mu_a(x)=\E(Y\mid X=x,A=a)$.
+
+\subsection{Deterministic treatment rules}
+\label{w13:subsec:det-rules}
+
+\begin{defn}{Deterministic treatment rule}
+\label{w13:defn:det-rule}
+A \emph{deterministic treatment rule} is a measurable function
+\[
+d:\mathcal X\to\{0,1\},
+\]
+which assigns treatment $d(x)$ to an individual with covariate value $x$.
+\end{defn}
+
+Canonical examples are the \emph{static rules}
+\[
+d(x)\equiv 0 \quad\text{(treat none)},
+\qquad
+d(x)\equiv 1 \quad\text{(treat all)},
+\]
+and threshold rules such as $d(x)=I(x_1>0)$ or $d(x)=I(x^\top\beta>c)$.
+
+\subsection{Policy value under the potential-outcomes framework}
+\label{w13:subsec:value-po}
+
+Let $Y(1)$ and $Y(0)$ denote the potential outcomes under treatment and control, respectively.  The potential outcome that would be realized under rule $d$ is
+\[
+Y\{d(X)\} = Y(1)\,d(X) + Y(0)\,\{1-d(X)\}.
+\]
+
+\begin{defn}{Value of a deterministic rule}
+\label{w13:defn:value-det}
+The \emph{value} of a deterministic rule $d$ is
+\[
+V(d) = \E\bigl[Y\{d(X)\}\bigr],
+\]
+the mean outcome that would result if treatment were assigned according to $d$ in the target population.
+\end{defn}
+
+\subsection{Stochastic evaluation policies as a generalization}
+\label{w13:subsec:stochastic}
+
+A deterministic rule can be embedded in a richer class of \emph{stochastic evaluation policies}.
+
+\begin{defn}{Stochastic evaluation policy}
+\label{w13:defn:eval-policy}
+A \emph{stochastic evaluation policy} is a conditional distribution
+\[
+\pi_e(a\mid x) = P(A=a\mid X=x;\,\text{policy }e), \qquad a\in\{0,1\},
+\]
+satisfying $\pi_e(0\mid x)+\pi_e(1\mid x)=1$ for all $x\in\mathcal X$.  A deterministic rule $d$ is the special case $\pi_e(a\mid x)=I\{a=d(x)\}$.
+\end{defn}
+
+\begin{defn}{Policy value}
+\label{w13:defn:value}
+The \emph{value} of a stochastic evaluation policy $\pi_e$ is
+\[
+V(\pi_e)
+=
+\E\!\left[\sum_{a=0}^1\pi_e(a\mid X)\,Y(a)\right].
+\]
+For a deterministic rule $d$, the sum collapses to $V(\pi_e)=V(d)=\E[Y\{d(X)\}]$.
+\end{defn}
+
+In this chapter, deterministic rules are the main object of interest, because they correspond directly to treatment recommendations.  Stochastic policies are introduced because they provide a convenient unified framework and are central to off-policy evaluation (Section~\ref{w13:sec:ope}).
+
+\begin{remark}
+Setting $\pi_e=\pi_b$ (the behavior policy itself) yields $V(\pi_b)=\E[Y]$, which requires no causal assumptions and serves as a useful baseline.  Setting $\pi_e(1\mid x)=\alpha$ for a constant $\alpha\in[0,1]$ gives a uniform stochastic policy with $V(\pi_e)=\alpha\,V(d_1)+(1-\alpha)\,V(d_0)$, where $d_1$ and $d_0$ are the treat-all and treat-none rules.
+\end{remark}
+
+\subsection{ATE as a contrast of two policies}
+\label{w13:subsec:ate-contrast}
+
+The average treatment effect is a special case of a policy-value contrast.  Let
+\[
+\pi_e^1(a\mid x)=I(a=1), \qquad \pi_e^0(a\mid x)=I(a=0)
+\]
+be the treat-all and treat-none policies, respectively.  Then
+\[
+V(\pi_e^1)-V(\pi_e^0)
+= \E[Y(1)] - \E[Y(0)]
+= \E\{Y(1)-Y(0)\},
+\]
+which is the average treatment effect.  Thus the ATE is the policy contrast between two static rules, and the entire treatment-effect framework developed in Chapters~\ref{w5:sec:identification}--\ref{w12:sec:summary} is contained within the policy-evaluation framework as a special case.
+
+\section{Identification of Policy Value}
+\label{w13:sec:identification}
+
+To identify policy value from observed data, we impose three assumptions.
+
+\begin{tcolorbox}[defstyle, title={Assumption (Consistency)}]
+\label{w13:asm:consistency}
+\[
+Y=Y(A).
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[defstyle, title={Assumption (Ignorability)}]
+\label{w13:asm:ignorability}
+\[
+\{Y(0),Y(1)\}\indep A \mid X.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[defstyle, title={Assumption (Support condition)}]
+\label{w13:asm:positivity}
+For all $x$ in the support of $X$ and $a\in\{0,1\}$,
+\[
+\pi_e(a\mid x)>0
+\;\Longrightarrow\;
+\pi_b(a\mid x)>0.
+\]
+\end{tcolorbox}
+
+The support condition requires that wherever the evaluation policy assigns positive probability, the behavior policy also does so.  This ensures that the conditional mean $\mu_a(x)=\E(Y\mid X=x,A=a)$ is estimable from the observed data at every covariate value that the evaluation policy actually uses.
+
+\begin{remark}[Support condition versus full positivity]
+\label{w13:rem:support}
+The support condition is strictly weaker than full positivity ($0<\pi_b(a\mid x)<1$ for all $a$ and $x$).  For a deterministic evaluation rule $d$, it requires only $\pi_b(d(x)\mid x)>0$: both treatment arms need not be observed at every covariate value, only the arm prescribed by the rule.  For instance, the treat-all rule needs only $\pi_b(1\mid x)>0$.  Working with the weaker condition is essential for evaluating rules in populations where one arm is rare for some subgroups.
+\end{remark}
+
+Under these three assumptions, the value of a deterministic rule $d$ is identified by the g-formula:
+\[
+V(d)=\E\bigl[\mu_{d(X)}(X)\bigr], \qquad \mu_a(x)=\E(Y\mid X=x,A=a).
+\]
+This is the g-formula specialized to a treatment rule: the value equals the average of the conditional mean outcome under the action prescribed by the rule.
+
+\begin{thm}{Identification of policy value}
+\label{w13:thm:id}
+Under consistency, ignorability, and the support condition, for a deterministic rule $d$,
+\[
+V(d)=\E\bigl[\mu_{d(X)}(X)\bigr].
+\]
+More generally, for a stochastic evaluation policy $\pi_e$,
+\[
+V(\pi_e)=\E\!\left[\sum_{a=0}^1\pi_e(a\mid X)\,\mu_a(X)\right].
+\]
+\end{thm}
+
+\begin{proof}
+By the law of iterated expectations and linearity,
+\[
+V(\pi_e)
+=\E\!\left[\sum_a\pi_e(a\mid X)\,\E[Y(a)\mid X]\right].
+\]
+Conditional on $X$, ignorability gives $\E[Y(a)\mid X]=\E[Y(a)\mid X,A=a]$, and consistency gives $\E[Y(a)\mid X,A=a]=\E[Y\mid X,A=a]=\mu_a(X)$.  The deterministic case follows by setting $\pi_e(a\mid x)=I\{a=d(x)\}$.
+\end{proof}
+
+The general formula $V(\pi_e)=\E[\sum_a\pi_e(a\mid X)\mu_a(X)]$ does not explicitly contain the behavior policy $\pi_b$, but $\pi_b$ still enters through the support condition: without it, $\mu_a(x)$ may not be estimable for the actions required by $\pi_e$.
+
+\begin{thm}{Inverse probability representation}
+\label{w13:thm:ipw-rep}
+Under consistency, ignorability, and the support condition,
+\[
+V(\pi_e)
+=
+\E\!\left[\frac{\pi_e(A\mid X)}{\pi_b(A\mid X)}\,Y\right].
+\]
+For a deterministic rule $d$, this becomes
+$\E\bigl[I\{A=d(X)\}Y/\pi_b(A\mid X)\bigr]$.
+\end{thm}
+
+\begin{proof}
+Since $A\in\{0,1\}$, conditioning on $X$ gives
+\[
+\E\!\left[\frac{\pi_e(A\mid X)}{\pi_b(A\mid X)}Y\,\Bigm|\,X\right]
+=
+\sum_{a=0}^1
+\frac{\pi_e(a\mid X)}{\pi_b(a\mid X)}\,\pi_b(a\mid X)\,\mu_a(X)
+=
+\sum_{a=0}^1\pi_e(a\mid X)\,\mu_a(X).
+\]
+Taking expectations over $X$ and applying Theorem~\ref{w13:thm:id} gives the result.
+\end{proof}
+
+The ratio $\pi_e(A\mid X)/\pi_b(A\mid X)$ is the importance weight that reweights each observed outcome from the behavior policy to the evaluation policy.  For a deterministic target rule, units whose observed treatment disagrees with $d$ receive weight zero; those whose treatment agrees are upweighted by $1/\pi_b(A\mid X)$.
+
+\section{Outcome-Regression Estimation of Policy Value}
+\label{w13:sec:or}
+
+The most direct estimator of policy value uses the g-formula with estimated outcome regressions.  Let $\hat\mu_a(x)$ denote an estimate of $\mu_a(x)=\E(Y\mid X=x,A=a)$ for $a\in\{0,1\}$.
+
+\begin{defn}{Outcome-regression estimator}
+\label{w13:defn:or-est}
+For a deterministic rule $d$, the \emph{outcome-regression estimator} is
+\[
+\hat V_{\mathrm{OR}}(d)
+=
+\frac{1}{n}\sum_{i=1}^n
+\hat\mu_{d(X_i)}(X_i).
+\]
+For a stochastic evaluation policy $\pi_e$, the estimator is
+\[
+\hat V_{\mathrm{OR}}(\pi_e)
+=
+\frac{1}{n}\sum_{i=1}^n
+\sum_{a=0}^1
+\pi_e(a\mid X_i)\,\hat\mu_a(X_i).
+\]
+\end{defn}
+
+For a deterministic rule, the estimator predicts the outcome under the action prescribed by the rule for each individual, and then averages these predicted outcomes over the empirical covariate distribution.  This is the direct analogue of regression adjustment and standardization from Section~\ref{w5:sec:regression}: the only difference is that the target estimand is a policy value rather than an average treatment effect.
+
+\begin{example}{Threshold rule}
+\label{w13:ex:or-threshold}
+Let $d(x)=I(x_1>0)$.  Then
+\[
+\hat V_{\mathrm{OR}}(d)
+=
+\frac{1}{n}\sum_{i=1}^n
+\Bigl[
+I(X_{i1}>0)\,\hat\mu_1(X_i)
++
+I(X_{i1}\le 0)\,\hat\mu_0(X_i)
+\Bigr].
+\]
+Units with $X_{i1}>0$ contribute their predicted treated outcome; units with $X_{i1}\le 0$ contribute their predicted control outcome.  The estimator averages these model-based predictions over the sample.
+\end{example}
+
+\begin{prop}{Consistency of the outcome-regression estimator}
+\label{w13:prop:or-consistent}
+If $\hat\mu_a(x)\pto\mu_a(x)$ for $a=0,1$, then $\hat V_{\mathrm{OR}}(\pi_e)\pto V(\pi_e)$.
+\end{prop}
+
+\begin{proof}
+For each $i$, $\sum_a\pi_e(a\mid X_i)\hat\mu_a(X_i)\pto\sum_a\pi_e(a\mid X_i)\mu_a(X_i)$ by consistency of $\hat\mu_a$. The law of large numbers then gives $\hat V_{\mathrm{OR}}(\pi_e)\pto\E[\sum_a\pi_e(a\mid X)\mu_a(X)]=V(\pi_e)$.
+\end{proof}
+
+\begin{remark}
+The OR estimator's main vulnerability is misspecification of the outcome model $\E(Y\mid X,A)$.  If the model is misspecified, the estimator may be inconsistent for $V(\pi_e)$ even when $n\to\infty$.  The doubly robust estimator in Section~\ref{w13:sec:dr} corrects for this by incorporating an estimate of the behavior policy.
+\end{remark}
+
+\section{Inverse Probability Weighting for Policy Value}
+\label{w13:sec:ipw}
+
+An alternative estimator uses inverse probability weighting.  Define the \emph{importance ratio}
+\[
+w(X,A) = \frac{\pi_e(A\mid X)}{\pi_b(A\mid X)}.
+\]
+By Theorem~\ref{w13:thm:ipw-rep}, the policy value admits the representation $V(\pi_e)=\E[w(X,A)\,Y]$, which suggests a sample-analog estimator.
+
+\begin{defn}{IPW estimator for policy value}
+\label{w13:defn:ipw-est}
+Let $\hat\pi_b(a\mid x)$ estimate $\pi_b(a\mid x)$.  The \emph{IPW estimator} of $V(\pi_e)$ is
+\[
+\hat V_{\mathrm{IPW}}(\pi_e)
+=
+\frac{1}{n}\sum_{i=1}^n
+\frac{\pi_e(A_i\mid X_i)}{\hat\pi_b(A_i\mid X_i)}\,Y_i.
+\]
+For a deterministic rule $d$, $\pi_e(A_i\mid X_i)=I\{A_i=d(X_i)\}$, so this becomes
+\[
+\hat V_{\mathrm{IPW}}(d)
+=
+\frac{1}{n}\sum_{i=1}^n
+\frac{I\{A_i=d(X_i)\}}{\hat\pi_b(A_i\mid X_i)}\,Y_i.
+\]
+\end{defn}
+
+For a stochastic evaluation policy, every unit receives a positive weight.  For a deterministic rule, only units whose observed treatment agrees with $d$ contribute; the inverse weight corrects for the fact that such agreement may be rare.
+
+The IPW estimator is consistent when the behavior-policy model is correctly specified and the support condition holds.  However, it can be highly unstable when $\pi_b(a\mid x)$ is small for actions assigned positive probability by $\pi_e$.  This is the policy-evaluation analogue of weak overlap in treatment-effect estimation (see Section~\ref{w5:sec:ignorability}).
+
+\begin{warn}{Weight instability}
+\label{w13:warn:instability}
+If the target policy frequently chooses actions that were rarely taken under the observed behavior policy, the importance weights $\pi_e(A_i\mid X_i)/\hat\pi_b(A_i\mid X_i)$ can be highly variable, leading to unstable estimates with large variance.  The divergence between $\pi_e$ and $\pi_b$ governs the degree of instability: a stochastic evaluation policy close to $\pi_b$ produces moderate weights, while a deterministic rule that differs sharply from $\pi_b$ can produce extreme weights for many units.
+\end{warn}
+
+\begin{remark}[Practical remedies for weight instability]
+\label{w13:rem:remedies}
+Several strategies are used in practice to stabilize IPW-type estimators:
+\begin{enumerate}
+    \item \textbf{Trimming}: exclude units whose estimated importance weight exceeds a threshold.
+    \item \textbf{Truncation}: cap extreme weights at a fixed upper bound.
+    \item \textbf{Self-normalization}: replace $n^{-1}\sum_i \hat w_i Y_i$ by $(\sum_i \hat w_i)^{-1}\sum_i \hat w_i Y_i$, a ratio estimator with lower variance at the cost of a small bias.
+\end{enumerate}
+The doubly robust estimator of Section~\ref{w13:sec:dr} is more resistant to weight instability than $\hat V_{\mathrm{IPW}}$, provided the outcome model is well specified.
+\end{remark}
+
+\section{Doubly Robust Estimation and the Efficient Influence Function}
+\label{w13:sec:dr}
+
+As in average treatment-effect estimation, outcome regression and inverse weighting can be combined to form a doubly robust estimator \citep{robins1994estimation,bang2005doubly,dudik2014doubly}.  This estimator remains consistent if either the outcome model $\mu_a(x)$ or the behavior-policy model $\pi_b(a\mid x)$ is correctly specified.  The unifying object is the efficient influence function.
+
+\begin{thm}{Efficient influence function for policy value}
+\label{w13:thm:eif}
+In the nonparametric model, the efficient influence function for $V(\pi_e)$ is \citep{tsiatis2006semiparametric}
+\[
+\phi_{\pi_e}(O)
+=
+\sum_{a=0}^1\pi_e(a\mid X)\,\mu_a(X)
++
+\frac{\pi_e(A\mid X)}{\pi_b(A\mid X)}
+\bigl\{Y-\mu_A(X)\bigr\}
+-
+V(\pi_e).
+\]
+For a deterministic rule $d$, this becomes
+\[
+\phi_d(O)
+=
+\mu_{d(X)}(X)
++
+\frac{I\{A=d(X)\}}{\pi_b(A\mid X)}
+\bigl\{Y-\mu_A(X)\bigr\}
+-
+V(d).
+\]
+The importance of the efficient influence function is threefold: (i)~it yields a doubly robust estimator; (ii)~it determines the asymptotic variance; and (iii)~it characterizes the semiparametric efficiency bound $\mathrm{Var}(\phi_{\pi_e}(O))$.
+\end{thm}
+
+\begin{defn}{Doubly robust estimator for policy value}
+\label{w13:defn:dr-est}
+Let $\hat\mu_a(x)$ and $\hat\pi_b(a\mid x)$ estimate $\mu_a(x)$ and $\pi_b(a\mid x)$, respectively.  The \emph{doubly robust estimator} is the empirical mean of $\phi_{\pi_e}(O)+V(\pi_e)$ with nuisance functions replaced by estimates:
+\[
+\hat V_{\mathrm{DR}}(\pi_e)
+=
+\frac{1}{n}\sum_{i=1}^n
+\left[
+\sum_{a=0}^1\pi_e(a\mid X_i)\,\hat\mu_a(X_i)
++
+\frac{\pi_e(A_i\mid X_i)}{\hat\pi_b(A_i\mid X_i)}
+\bigl\{Y_i-\hat\mu_{A_i}(X_i)\bigr\}
+\right].
+\]
+For a deterministic rule $d$, this reduces to
+\[
+\hat V_{\mathrm{DR}}(d)
+=
+\frac{1}{n}\sum_{i=1}^n
+\left[
+\hat\mu_{d(X_i)}(X_i)
++
+\frac{I\{A_i=d(X_i)\}}{\hat\pi_b(A_i\mid X_i)}
+\bigl\{Y_i-\hat\mu_{A_i}(X_i)\bigr\}
+\right].
+\]
+\end{defn}
+
+This is the direct policy-value analogue of the augmented inverse probability weighted (AIPW) estimator for the ATE developed in Chapter~\ref{w10:sec:lab}.  The first term is the outcome-regression estimator $\hat V_{\mathrm{OR}}$; the second term is an IPW-weighted residual that corrects its bias when the outcome model is misspecified.  Thus the doubly robust estimator is not merely an algebraic compromise between OR and IPW; it is the canonical first-order efficient estimator in the semiparametric model.
+
+\begin{thm}{Double robustness}
+\label{w13:thm:dr}
+Under consistency, ignorability, the support condition, and standard regularity conditions, $\hat V_{\mathrm{DR}}(\pi_e)$ is consistent for $V(\pi_e)$ if either
+\begin{enumerate}
+    \item $\hat\mu_a(x)$ is consistent for $\mu_a(x)$ for $a=0,1$, or
+    \item $\hat\pi_b(a\mid x)$ is consistent for $\pi_b(a\mid x)$ for $a=0,1$.
+\end{enumerate}
+When both nuisance models are consistent and converge at suitable rates, $\hat V_{\mathrm{DR}}(\pi_e)$ is asymptotically normal with variance equal to the semiparametric efficiency bound.
+\end{thm}
+
+\begin{proof}[Proof sketch]
+Take expectations conditional on $X$.
+\textit{Case~1} (outcome model correct): the augmentation term has conditional mean zero given $X$, so the first (OR) term alone targets $V(\pi_e)$.
+\textit{Case~2} (behavior model correct): the weighted residual corrects the bias of the OR term, and the expectation of each summand equals $\sum_a\pi_e(a\mid X)\mu_a(X)$.
+In either case the estimator is consistent.  The efficiency claim follows from standard semiparametric theory \citep{tsiatis2006semiparametric}: the estimating equation is the efficient influence function, so no regular estimator can achieve smaller asymptotic variance.
+\end{proof}
+
+\begin{tcolorbox}[defstyle, title={Summary: Consistency requirements for the three estimators}]
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{ll}
+\hline
+\textbf{Estimator} & \textbf{Consistent if} \\
+\hline
+$\hat V_{\mathrm{OR}}(\pi_e)$ & $\hat\mu_a$ is correctly specified \\
+$\hat V_{\mathrm{IPW}}(\pi_e)$ & $\hat\pi_b$ is correctly specified \\
+$\hat V_{\mathrm{DR}}(\pi_e)$ & \textit{either} $\hat\mu_a$ \textit{or} $\hat\pi_b$ is correctly specified \\
+\hline
+\end{tabular}
+\end{tcolorbox}
+
+\subsection{Cross-Fitting}
+\label{w13:subsec:crossfit}
+
+When flexible or machine-learning estimators are used for $\mu_a$ and $\pi_b$, the same issues arise here as in Chapter~\ref{w11:sec:crossfit}.  If nuisance functions are trained and evaluated on the same data, the plug-in remainder may fail to be negligible, invalidating the asymptotic linearity of $\hat V_{\mathrm{DR}}$.
+
+Cross-fitting resolves this by estimating nuisance functions on one part of the data and evaluating the policy-value score on another.  Under standard product-rate conditions, this restores asymptotic linearity and permits valid inference without strong empirical-process assumptions \citep{chernozhukov2018double}.
+
+Conceptually, nothing new is happening here: cross-fitting is the same device introduced in Chapter~\ref{w11:sec:crossfit}, now applied to policy-value estimation rather than average treatment-effect estimation.
+
+\section{Off-Policy Evaluation}
+\label{w13:sec:ope}
+
+Off-policy evaluation is the problem of estimating the value of an evaluation policy $\pi_e$ using data generated under a different behavior policy $\pi_b$.  In this sense, off-policy evaluation is not a separate estimand; it is a practically important setting of policy evaluation, and the estimators developed in Sections~\ref{w13:sec:or}--\ref{w13:sec:dr} apply directly.
+
+The terminology comes from the contextual bandit and reinforcement-learning literature \citep{dudik2014doubly,uehara2022review}, but the underlying statistical problem is the same one studied here: identify and estimate the mean outcome under a target intervention rule from data collected under a different treatment mechanism.  Table~\ref{w13:tab:terminology} records the correspondence between the two literatures.
+
+\begin{table}[ht]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{ll}
+\hline
+\textbf{Causal inference} & \textbf{OPE / bandit literature} \\
+\hline
+Outcome $Y$ & Reward $R$ \\
+Behavior policy $\pi_b(a\mid x)$ & Behavior policy \\
+Evaluation policy $\pi_e(a\mid x)$ & Evaluation policy \\
+Outcome-regression estimator $\hat V_{\mathrm{OR}}$ & Direct method estimator \\
+IPW estimator $\hat V_{\mathrm{IPW}}$ & Importance sampling estimator \\
+Doubly robust estimator $\hat V_{\mathrm{DR}}$ & Doubly robust estimator \\
+\hline
+\end{tabular}
+\caption{Correspondence between causal inference and OPE terminology.}
+\label{w13:tab:terminology}
+\end{table}
+
+The main practical difficulty is lack of overlap between $\pi_e$ and $\pi_b$.  When the target policy puts substantial mass on actions rarely taken under the behavior policy, IPW estimators become unstable, and even doubly robust estimators may exhibit large variance.  The remedies --- weight truncation, trimming, and self-normalization --- are discussed in Section~\ref{w13:sec:ipw}; they trade a small amount of bias for improved stability.
+
+\section{Interpreting Policy Value and Practical Decision Criteria}
+\label{w13:sec:interpretation}
+
+A policy-value estimate answers the question: what mean outcome would be expected if this rule were implemented in the target population?  This is a decision-oriented estimand, so its interpretation should go beyond statistical significance alone.
+
+In practice, a policy is attractive not only when its estimated value is high, but also when:
+\begin{itemize}
+  \item its estimated advantage over alternatives is practically meaningful;
+  \item the estimate is stable across plausible nuisance models;
+  \item the policy satisfies feasibility, cost, or fairness constraints;
+  \item the required support condition is credible in the population of interest.
+\end{itemize}
+Thus policy evaluation is an input into decision-making, not a mechanical ranking exercise.  A rule with the highest estimated value may still be undesirable if it is difficult to implement, relies on weak overlap, or exhibits large sensitivity to modeling choices.
+
+Two formal tools support this kind of comparative reasoning.
+
+\begin{defn}{Policy contrast}
+\label{w13:defn:contrast}
+For two evaluation policies $\pi_e^1$ and $\pi_e^0$, the \emph{policy contrast} is
+\[
+\Delta(\pi_e^1,\pi_e^0)=V(\pi_e^1)-V(\pi_e^0).
+\]
+\end{defn}
+
+The policy contrast measures the expected gain from implementing $\pi_e^1$ instead of $\pi_e^0$.  The average treatment effect is the special case $\pi_e^1(a\mid x)=I(a=1)$ and $\pi_e^0(a\mid x)=I(a=0)$.  Comparing a candidate rule against a credible status-quo policy (rather than against the treat-all or treat-none benchmarks) typically produces more actionable assessments.
+
+When treatment incurs cost or burden, policy value should be adjusted accordingly.  The \emph{cost-adjusted value} is
+\[
+V_c(\pi_e)=V(\pi_e)-c\cdot\E\bigl[\pi_e(1\mid X)\bigr],
+\]
+where $c>0$ is the per-unit treatment cost and $\E[\pi_e(1\mid X)]$ is the expected treatment rate under the policy.  For a deterministic rule $d$, this reduces to $V_c(d)=\E\{Y(d(X))-c\cdot d(X)\}$.  Chapter~\ref{w14:sec:motivation} builds on this quantity by asking which rule $d$ maximizes $V_c(d)$ over a class of decision functions.
+
+\section{Lab: Evaluating Candidate Treatment Rules}
+\label{w13:sec:lab}
+
+This lab illustrates the three estimators of policy value --- the
+outcome-regression estimator $\hat V_{\mathrm{OR}}$, the IPW estimator
+$\hat V_{\mathrm{IPW}}$, and the doubly robust estimator
+$\hat V_{\mathrm{DR}}$ --- across four candidate policies and four
+data-generating scenarios that vary the degree of overlap and the
+correctness of each nuisance model.  All four candidate policies are
+deterministic and hence are special cases of the general evaluation-policy
+framework of Section~\ref{w13:sec:policies}, with
+$\pi_e(a\mid x)=I(a=d(x))$ for each.  Full \textsf{R} code is provided
+in the supplementary file \texttt{chapter13\_simulation.R}.
+
+\subsection{Simulation setup}
+\label{w13:subsec:lab-setup}
+
+Generate $n=2{,}000$ i.i.d.\ observations as follows.  Draw
+$X_i\sim N(0,1)$, then $A_i\mid X_i\sim
+\mathrm{Bernoulli}(\pi_b(1\mid X_i))$ with behavior policy
+$\pi_b(1\mid x)=\mathrm{expit}(\alpha_1 x)$.  The outcome model is
+\[
+Y_i = X_i + \beta_2 A_i + A_i X_i + \varepsilon_i,
+\qquad \varepsilon_i \overset{\mathrm{i.i.d.}}{\sim} N(0,1),
+\]
+giving conditional treatment effect
+$\tau(x) = \E\{Y(1)-Y(0)\mid X=x\} = \beta_2 + x$
+with $\beta_2=0.5$.
+The CATE is positive for $x > -0.5$, so the optimal policy treats
+units with $X > -0.5$.
+
+Four scenarios are considered.
+\begin{itemize}
+  \item \textbf{S1 (baseline):} $\alpha_1=1$; both nuisance models
+    correctly specified.
+  \item \textbf{S2 (poor overlap):} $\alpha_1=3$; both nuisance models
+    correctly specified.
+  \item \textbf{S3 (misspecified outcome model):} $\alpha_1=1$; the
+    outcome regression omits the $A_i X_i$ interaction, fitting instead a
+    pooled linear model in $X_i$ and $A_i$ only.
+  \item \textbf{S4 (misspecified propensity model):} $\alpha_1=1$; the
+    propensity score is estimated by an intercept-only logistic regression
+    that ignores $X_i$.
+\end{itemize}
+The propensity score and outcome regression are estimated from the same
+sample used to evaluate the policy (no cross-fitting).  All results are
+based on $B=2{,}000$ Monte Carlo replications with
+\texttt{set.seed(20240101)}.
+
+\subsection{Candidate policies}
+\label{w13:subsec:lab-policies}
+
+Four deterministic policies are evaluated, each corresponding to the
+evaluation policy $\pi_e(a\mid x)=I(a=d_k(x))$:
+\[
+d_0(x)\equiv 0,\qquad
+d_1(x)\equiv 1,\qquad
+d_2(x)=I(x>0),\qquad
+d_3(x)=I\{\hat\tau(x)>0\},
+\]
+where $\hat\tau(x)=\hat\mu_1(x)-\hat\mu_0(x)$ is the estimated CATE
+from the fitted outcome models.  The true policy values
+$V(\pi_e)=\E[\sum_a\pi_e(a\mid X)\mu_a(X)]$, computed by a
+$2\times 10^6$-unit Monte Carlo evaluation of the g-formula, are
+\[
+V(d_0)=0.001,\quad V(d_1)=0.501,\quad V(d_2)=0.647,\quad
+V(d^*)=0.697,
+\]
+where $d^*(x)=I(x>-0.5)$ is the oracle optimal policy to which $d_3$
+converges as $n\to\infty$ under correct specification.
+
+\subsection{Results}
+\label{w13:subsec:lab-results}
+
+Table~\ref{w13:tab:sim-s1} reports bias and RMSE (both multiplied by
+$10^3$) for all four policies in Scenario~S1.
+Table~\ref{w13:tab:sim-scenarios} reports the same quantities for
+policy $d_2$ across all four scenarios.
+
+\begin{table}[ht]
+\centering
+\caption{Policy value estimation under correct specification and good
+overlap (S1). $n=2{,}000$, $B=2{,}000$ replications.
+Entries are bias and RMSE, each multiplied by $10^3$.
+True values: $V(d_0)=0.001$, $V(d_1)=0.501$, $V(d_2)=0.647$,
+$V(d_3)\to V(d^*)=0.697$.}
+\label{w13:tab:sim-s1}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{llrrr}
+\hline
+Policy & & $\hat V_{\mathrm{OR}}$ & $\hat V_{\mathrm{IPW}}$ &
+           $\hat V_{\mathrm{DR}}$ \\
+\hline
+\multirow{2}{*}{$d_0$: treat none}
+  & Bias$\times 10^3$ & $-1$ & $-1$ & $-1$ \\
+  & RMSE$\times 10^3$ & $42$ & $50$ & $42$ \\[4pt]
+\multirow{2}{*}{$d_1$: treat all}
+  & Bias$\times 10^3$ & $-2$ & $-3$ & $-2$ \\
+  & RMSE$\times 10^3$ & $58$ & $76$ & $59$ \\[4pt]
+\multirow{2}{*}{$d_2$: treat if $X>0$}
+  & Bias$\times 10^3$ & $1$ & $1$ & $1$ \\
+  & RMSE$\times 10^3$ & $47$ & $49$ & $48$ \\[4pt]
+\multirow{2}{*}{$d_3$: treat if $\hat\tau(x)>0$}
+  & Bias$\times 10^3$ & $1$ & $0$ & $1$ \\
+  & RMSE$\times 10^3$ & $47$ & $50$ & $49$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Bias and RMSE of $\hat V(d_2)$ across four scenarios.
+$n=2{,}000$, $B=2{,}000$ replications.  True value $V(d_2)=0.647$.
+Entries multiplied by $10^3$.}
+\label{w13:tab:sim-scenarios}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{llrrr}
+\hline
+Scenario & & $\hat V_{\mathrm{OR}}$ & $\hat V_{\mathrm{IPW}}$ &
+             $\hat V_{\mathrm{DR}}$ \\
+\hline
+\multirow{2}{*}{S1: baseline}
+  & Bias$\times 10^3$ & $1$    & $1$   & $1$  \\
+  & RMSE$\times 10^3$ & $47$   & $49$  & $48$ \\[4pt]
+\multirow{2}{*}{S2: poor overlap}
+  & Bias$\times 10^3$ & $2$    & $3$   & $3$  \\
+  & RMSE$\times 10^3$ & $45$   & $47$  & $47$ \\[4pt]
+\multirow{2}{*}{S3: misspecified OR model}
+  & Bias$\times 10^3$ & $-190$ & $2$   & $2$  \\
+  & RMSE$\times 10^3$ & $195$  & $50$  & $49$ \\[4pt]
+\multirow{2}{*}{S4: misspecified PS model}
+  & Bias$\times 10^3$ & $2$    & $297$ & $2$  \\
+  & RMSE$\times 10^3$ & $46$   & $303$ & $48$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent The results address each of the five questions raised above.
+
+\begin{itemize}
+
+  \item \textbf{Policy ranking (S1).}  All three estimators agree on
+    the ranking $d_3 \succ d_2 \succ d_1 \succ d_0$, with estimated
+    values of approximately $0.697$, $0.648$, $0.499$, and $0.000$.
+    Under correct specification, bias is negligible for every
+    policy--estimator combination.  The IPW estimator has slightly
+    higher RMSE than OR and DR for the static policies $d_0$ and $d_1$
+    (RMSE $50$ and $76$ vs.\ $42$ and $58$--$59$, all $\times 10^3$),
+    reflecting the additional variance introduced by propensity score
+    weighting even when overlap is adequate.
+
+  \item \textbf{Optimal vs.\ empirically best policy (S1).}  The
+    adaptive policy $d_3$ achieves an estimated value of $0.697$, which
+    essentially matches the oracle optimum $V(d^*)=0.697$.  The
+    threshold policy $d_2$ recovers $0.648$ of the $0.696$ gain
+    available above $d_0$, missing the profitable region
+    $(-0.5,\,0)$ where the CATE is positive but $d_2$ does not treat.
+
+  \item \textbf{Poor overlap (S2).}  For the covariate-adaptive
+    policies $d_2$ and $d_3$, the treatment assignment implied by the
+    policy is well-aligned with the propensity score, so weights stay
+    bounded (maximum observed weight $\leq 2.0$) and all three
+    estimators perform similarly to S1.  For the static policies $d_0$
+    and $d_1$, however, the strong dependence of treatment on $X$
+    ($\alpha_1=3$) creates extreme weights for units whose observed
+    treatment contradicts the target rule: the IPW RMSE for $d_0$ and
+    $d_1$ inflates to $653$ and $575$ ($\times 10^3$), roughly
+    $13$--$14$ times the OR RMSE, while the DR RMSE is $143$ and $168$
+    ($\times 10^3$), an intermediate but substantially elevated value.
+    This confirms that poor overlap affects IPW-type estimators
+    primarily when the target policy differs from the behavior
+    mechanism.
+
+  \item \textbf{Outcome model misspecification (S3).}  When the
+    $A_i X_i$ interaction is omitted, the OR estimator incurs a bias of
+    $-190\times 10^{-3}$ for $d_2$, a relative error of roughly 29\%
+    of the true value.  The IPW and DR estimators remain nearly
+    unbiased (bias $2\times 10^{-3}$), confirming double robustness
+    when the propensity score model is correct.
+
+    A secondary consequence of outcome model misspecification is policy
+    degradation of $d_3$.  Because the pooled linear model estimates
+    the CATE as a positive constant (the coefficient on $A_i$ in the
+    pooled regression), the policy $d_3$ collapses to the treat-all
+    rule $d_1$ in every replication.  The DR estimator of $V(d_3)$
+    in S3 is approximately $0.501$, which is unbiased for $V(d_1)$,
+    not $V(d^*)$: the estimator is functioning correctly, but it is
+    evaluating the wrong policy.
+
+  \item \textbf{Propensity model misspecification (S4).}  When the
+    propensity model ignores $X_i$, the IPW estimator incurs a bias of
+    $297\times 10^{-3}$ for $d_2$, a relative error of 46\%.  The OR
+    and DR estimators remain essentially unbiased (bias
+    $2\times 10^{-3}$), again confirming double robustness when the
+    outcome regression model is correct.
+
+\end{itemize}
+
+\section{Chapter Summary}
+\label{w13:sec:summary}
+
+This chapter developed policy evaluation as a causal decision problem, extending the estimand and estimation framework of earlier chapters from fixed contrasts to general treatment rules. The organizing principle is the same as in the identification chapters: pose a causal target, state sufficient assumptions, and then construct sample-analog estimators that inherit the identification result. The key results are:
+
+\begin{enumerate}
+
+  \item \textbf{General stochastic policies and policy value.}
+    An \textbf{evaluation policy} $\pi_e(a\mid x)$ is a conditional distribution
+    over actions; deterministic rules are the special case
+    $\pi_e(a\mid x)=I(a=d(x))$.  The \textbf{policy value}
+    $V(\pi_e)=\E[\sum_a\pi_e(a\mid X)Y(a)]$ is the expected outcome if each
+    unit's treatment were drawn from $\pi_e(\cdot\mid X)$ rather than from the
+    behavior policy $\pi_b$ under which data were collected.  The average
+    treatment effect is recovered as the policy contrast
+    $V(\pi_e^1)-V(\pi_e^0)$ between the treat-all and treat-none policies.
+
+  \item \textbf{Identification under support positivity.}
+    Under consistency, ignorability, and the \textbf{support condition}
+    $\pi_e(a\mid x)>0\Rightarrow\pi_b(a\mid x)>0$, the g-formula gives
+    $V(\pi_e)=\E[\sum_a\pi_e(a\mid X)\mu_a(X)]$
+    (Theorem~\ref{w13:thm:id}).  The support condition is strictly weaker
+    than full positivity: a deterministic target policy requires only that
+    the behavior policy assign positive probability to each prescribed action,
+    not to every action at every covariate value.
+
+  \item \textbf{Three estimators of policy value.}
+    The \textbf{outcome-regression estimator} $\hat V_{\mathrm{OR}}(\pi_e)$
+    averages $\sum_a\pi_e(a\mid X_i)\hat\mu_a(X_i)$ over the sample and is
+    consistent when the outcome model is correctly specified.  The
+    \textbf{IPW estimator} $\hat V_{\mathrm{IPW}}(\pi_e)$ reweights observed
+    outcomes by the importance ratio $\pi_e(A_i\mid X_i)/\hat\pi_b(A_i\mid X_i)$
+    and is consistent when the behavior model is correctly specified.  The
+    \textbf{doubly robust estimator} $\hat V_{\mathrm{DR}}(\pi_e)$ augments the
+    IPW score with a regression correction term and is consistent if either
+    nuisance model is correctly specified.
+
+  \item \textbf{Efficient influence function and semiparametric efficiency.}
+    The efficient influence function for $V(\pi_e)$ is
+    $\phi_{\pi_e}(O)=\sum_a\pi_e(a\mid X)\mu_a(X)+
+    \{\pi_e(A\mid X)/\pi_b(A\mid X)\}\{Y-\mu_A(X)\}-V(\pi_e)$
+    (Theorem~\ref{w13:thm:eif}).  The doubly robust estimator is the
+    empirical mean of the efficient influence function with nuisance functions
+    replaced by estimates, mirroring the AIPW construction for the ATE
+    developed in Chapter~10.  When both nuisance models converge, the estimator
+    achieves the semiparametric efficiency bound.
+
+  \item \textbf{Off-policy evaluation and weight instability.}
+    \textbf{Off-policy evaluation} is the task of estimating $V(\pi_e)$ when
+    data are generated under a different behavior policy $\pi_b\neq\pi_e$.
+    IPW-type estimators become unstable when $\pi_b(A\mid X)$ is close to zero
+    for actions prescribed by $\pi_e$; the resulting variance inflation is
+    governed by the divergence between $\pi_e$ and $\pi_b$.  Trimming,
+    truncation, and self-normalization are standard practical remedies.
+
+\end{enumerate}
+
+\section*{Problems}
+
+\begin{enumerate}
+
+\item \textbf{Policy value as a functional.}
+\begin{enumerate}
+  \item Let $\pi_e^1(a\mid x)=I(a=1)$ (treat all) and
+    $\pi_e^0(a\mid x)=I(a=0)$ (treat none).  Show that
+    $V(\pi_e^1)-V(\pi_e^0)=\E\{Y(1)-Y(0)\}$ and explain why the
+    average treatment effect is a special case of a policy contrast.
+  \item Let $\pi_e^\alpha$ be the uniform stochastic policy
+    $\pi_e^\alpha(1\mid x)=\alpha$ for a constant $\alpha\in[0,1]$.
+    Show that $V(\pi_e^\alpha)=\alpha V(\pi_e^1)+(1-\alpha)V(\pi_e^0)$.
+    Conclude that policy value is linear in $\alpha$ and interpret
+    this linearity in terms of the structure of the potential outcomes.
+  \item Let $\pi_e=\pi_b$ (the behavior policy itself).  Show
+    $V(\pi_b)=\E[Y]$ without invoking ignorability.  Why does this
+    case require no untestable causal assumptions?
+\end{enumerate}
+
+\item \textbf{Identification.}
+\begin{enumerate}
+  \item Prove Theorem~\ref{w13:thm:id} by iterated expectations.  At
+    each step, state explicitly which of the three assumptions ---
+    consistency, ignorability, or positivity --- is being used.
+  \item The g-formula $V(\pi_e)=\E[\sum_a\pi_e(a\mid X)\mu_a(X)]$
+    does not mention $\pi_b$.  Does this mean $V(\pi_e)$ can be
+    identified even when $\pi_b$ is unknown?  Identify precisely
+    where $\pi_b$ enters the identification argument despite not
+    appearing in the final formula.
+  \item Show that the support condition $\pi_e(a\mid x)>0\Rightarrow
+    \pi_b(a\mid x)>0$ is strictly weaker than full positivity
+    $0<\pi_b(a\mid x)<1$ for all $a$.  Give a deterministic policy
+    for which the support condition holds but full positivity fails,
+    and explain what is gained by working with the weaker condition.
+\end{enumerate}
+
+\item \textbf{Inverse probability weighting and weight instability.}
+\begin{enumerate}
+  \item Prove the IPW representation in Theorem~\ref{w13:thm:ipw-rep}
+    by conditioning on $X$, factoring the conditional expectation, and
+    applying the g-formula result.
+  \item Show that $\E[\pi_e(A\mid X)/\pi_b(A\mid X)]=1$ under
+    positivity.  Use this to argue that $\hat V_{\mathrm{IPW}}(\pi_e)$
+    is unbiased when $\hat\pi_b=\pi_b$ exactly, but need not be
+    unbiased when $\hat\pi_b$ is estimated from data.
+  \item Suppose $\pi_b(1\mid x)=p$ for all $x$ (balanced
+    randomization) and $\pi_e(1\mid x)=I(x>0)$ (a threshold rule),
+    with $X$ symmetric around zero.  Compute $\E[w^2]$ where
+    $w=\pi_e(A\mid X)/\pi_b(A\mid X)$, and show it equals
+    $[2p(1-p)]^{-1}\geq 2$.  Compare with $\E[w^2]=1$ when
+    $\pi_e=\pi_b$, and interpret the excess as a measure of the cost
+    of evaluating a policy different from the behavior policy.
+\end{enumerate}
+
+\item \textbf{Double robustness.}
+\begin{enumerate}
+  \item Verify Case~1 of Theorem~\ref{w13:thm:dr}: if
+    $\hat\mu_a(x)=\mu_a(x)$ for $a=0,1$, show that the augmentation
+    term of $\hat V_{\mathrm{DR}}(\pi_e)$ has conditional mean zero
+    given $X$, so the estimator targets $V(\pi_e)$ regardless of
+    whether $\hat\pi_b$ is consistent.
+  \item Verify Case~2: if $\hat\pi_b(a\mid x)=\pi_b(a\mid x)$ for
+    $a=0,1$, show that the expectation of each summand in
+    $\hat V_{\mathrm{DR}}(\pi_e)$ equals $\sum_a\pi_e(a\mid X)\mu_a(X)$
+    regardless of whether $\hat\mu_a$ is consistent.
+  \item Construct a simple numerical counterexample (binary $X$,
+    binary $A$, binary $Y$) in which both nuisance models are
+    misspecified and $\hat V_{\mathrm{DR}}(\pi_e)$ is inconsistent.
+    Use your example to argue that double robustness does not imply
+    triple robustness.
+\end{enumerate}
+
+\item \textbf{Efficient influence function.}
+\begin{enumerate}
+  \item Show that $\phi_{\pi_e}(O)$ in Theorem~\ref{w13:thm:eif} is
+    centered, i.e., $\E[\phi_{\pi_e}(O)]=0$, by verifying that each
+    of its two terms has the same expectation as $V(\pi_e)$.
+  \item Let $\psi_{\mathrm{IPW}}(O)=\pi_e(A\mid X)Y/\pi_b(A\mid X)-V(\pi_e)$
+    be the IPW influence function.  Show that
+    $\psi_{\mathrm{IPW}}(O)=\phi_{\pi_e}(O)+r(O)$ where
+    $r(O)=\pi_e(A\mid X)\mu_A(X)/\pi_b(A\mid X)
+    -\sum_a\pi_e(a\mid X)\mu_a(X)$, and verify that $\E[r(O)\mid X]=0$.
+    Conclude that $\mathrm{Var}(\psi_{\mathrm{IPW}})\geq\mathrm{Var}(\phi_{\pi_e})$.
+  \item Interpret the efficiency gap
+    $\mathrm{Var}(\psi_{\mathrm{IPW}})-\mathrm{Var}(\phi_{\pi_e})$
+    in terms of the conditional variance of the weighted outcome
+    regression, and explain why the DR estimator closes this gap
+    by incorporating the outcome model.
+\end{enumerate}
+
+\item \textbf{Stochastic policies and cost-adjusted value.}
+\begin{enumerate}
+  \item For $\lambda\in[0,1]$, define the mixture policy
+    $\pi_e^\lambda(a\mid x)
+    =(1-\lambda)\,I(a=d(x))+\lambda\,\pi_b(a\mid x)$,
+    which interpolates between a deterministic rule $d$ ($\lambda=0$)
+    and the behavior policy ($\lambda=1$).  Compute the importance
+    weight $\pi_e^\lambda(A\mid X)/\pi_b(A\mid X)$ and show it is
+    bounded above by $1/\min_a\pi_b(a\mid X)$ uniformly in $\lambda$.
+    Explain why taking $\lambda>0$ improves the overlap of the
+    evaluation policy with the behavior policy.
+  \item Define the cost-adjusted value
+    $V_c(\pi_e)=V(\pi_e)-c\cdot\E[\pi_e(1\mid X)]$ for treatment
+    cost $c>0$.  Derive a doubly robust estimator $\hat V_c(\pi_e)$
+    and verify that it inherits the double-robustness property of
+    $\hat V_{\mathrm{DR}}(\pi_e)$.
+  \item Consider the problem of maximizing $V_c(\pi_e)$ over all
+    deterministic policies $\pi_e(a\mid x)=I(a=d(x))$.  Show that
+    the optimal deterministic policy is $d^*(x)=I(\mu_1(x)-\mu_0(x)>c)$.
+    Explain why the threshold is the CATE minus cost rather than the
+    CATE alone, and identify the estimands that must be learned to
+    implement $d^*$ in practice.
+\end{enumerate}
+
+\end{enumerate}
+
+\ifSubfilesClassLoaded{%
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}

@@ -1,0 +1,1091 @@
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+% ======================== TITLE ================================
+\ifSubfilesClassLoaded{%
+  % Standalone title block
+  \begin{center}
+    {\LARGE\bfseries\color{isublue} Chapter 2: DAGs and d-Separation}\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  % Master book: chapter heading
+  \chapter{DAGs and d-Separation}
+}
+% ======================== LEARNING OBJECTIVES ==================
+\begin{tcolorbox}[defstyle, title={Learning Objectives}]
+By the end of this chapter, students should be able to:
+\begin{enumerate}
+  \item Construct a DAG from a verbal description of a causal model and identify
+        parents, descendants, ancestors, and non-descendants of any node.
+  \item Classify every intermediate node on a path as a chain, fork, or collider,
+        and apply the blocking rule for each.
+  \item Apply the d-separation criterion to determine all conditional independence
+        relationships implied by a DAG.
+  \item Recognize and avoid collider bias, including the case where a descendant
+        of a collider is conditioned upon.
+  \item State the Markov factorization and use it to write the joint density of a
+        DAG in terms of local conditional densities.
+  \item Interpret d-separation results as conditional independence assumptions
+        on observed variables, and recognize their role as the graphical
+        expression of causal assumptions.
+\end{enumerate}
+\end{tcolorbox}
+
+% ---------------------------------------------------------------
+% Styles and macros specific to this chapter (not yet in master).
+% Placed here (after the LO box, before §1) so the definition block
+% does not inject blank-line spacing between \chapter{} and the box.
+% The only \begin{remark} in this chapter is in §4, well below.
+% (remarkstyle and remark environment are defined in causal_inference_master.tex)
+
+% ==============================================================
+\section{Directed Acyclic Graphs}
+% ==============================================================
+
+DAGs allow us to translate qualitative causal assumptions into quantitative
+statistical restrictions.  This single idea underlies everything in this
+chapter: once we draw a graph encoding what we believe about the causal
+structure of a problem, the graph tells us exactly which variables are
+independent, which are confounded, and what we need to condition on to
+identify a causal effect.
+
+\subsection{Basic Definition}
+
+\begin{defn}{Directed Acyclic Graph}
+A \emph{directed acyclic graph} (DAG) $\Gcal = (V, E)$ consists of a finite
+set of nodes $V$ and a set of directed edges $E \subseteq V \times V$ such that there
+is no directed cycle: no node $V_i$ has a directed path to itself.
+\end{defn}
+
+In a causal DAG each node represents a variable and each directed edge $A \to B$
+encodes ``$A$ is a direct cause of $B$, given all other variables in the model.''
+The acyclicity condition is not merely a technical convenience: it is necessary for
+the Markov factorization $p(v_1,\dots,v_k) = \prod_i p(v_i \mid \Pa(v_i))$ to be
+well-defined.  If the graph contained a cycle, say $A \to B \to A$, then
+$p(a \mid \Pa(A)) = p(a \mid b)$ and $p(b \mid \Pa(B)) = p(b \mid a)$
+would be mutually dependent with no consistent joint distribution to anchor them.
+
+\subsection{Structural Relationships}
+
+\begin{defn}{Structural relationships in a DAG}
+For a node $v \in \mathcal{V}$ in $\Gcal = (\mathcal{V}, E)$:
+\begin{itemize}
+  \item $\Pa(v) = \{w \in \mathcal{V} : w \to v \in E\}$ are the \emph{parents} of $v$.
+  \item $\De(v)$ = all nodes reachable from $v$ by directed paths
+        are the \emph{descendants} of $v$.
+  \item $\An(v)$ = all nodes with a directed path to $v$ are the
+        \emph{ancestors} of $v$.
+  \item $\Nd(v) = \mathcal{V} \setminus (\De(v) \cup \{v\})$ are the
+        \emph{non-descendants} of $v$.
+\end{itemize}
+\end{defn}
+
+\begin{example}{Education, Earnings, and Family Background}
+Consider the causal story: education ($E$) affects earnings ($Y$); family
+background ($B$) is a common cause of both; and neighborhood ($N$) affects
+education but has no direct effect on earnings.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node] (N) {$N$};
+  \node[node, right of=N] (E) {$E$};
+  \node[node, right of=E] (Y) {$Y$};
+  \node[node, below=1.0cm of E] (B) {$B$};
+  \draw[edge] (N) -- (E);
+  \draw[edge] (E) -- (Y);
+  \draw[edge] (B) -- (E);
+  \draw[edge] (B) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+The Markov factorization is $p(n,b,e,y) = p(n)\,p(b)\,p(e\mid n,b)\,p(y\mid e,b)$.
+Reading off structural relationships: $\Pa(E) = \{N,B\}$,
+$\Pa(Y) = \{E,B\}$, $\Pa(N)=\Pa(B)=\varnothing$.
+The descendants of $N$ are $\{E,Y\}$; $B$ and $N$ are non-descendants of each other.
+\end{example}
+
+\begin{example}{The IV DAG}
+The canonical instrumental variable model involves four nodes: $Z$ (instrument),
+$T$ (treatment), $Y$ (outcome), and $U$ (unobserved confounder).
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node] (Z) {$Z$};
+  \node[node, right of=Z] (T) {$T$};
+  \node[node, right of=T] (Y) {$Y$};
+  \node[unode, below=1.0cm of T] (U) {$U$};
+  \draw[edge] (Z) -- (T);
+  \draw[edge] (T) -- (Y);
+  \draw[dedge] (U) -- (T);
+  \draw[dedge] (U) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+$\Pa(T) = \{Z,U\}$, $\Pa(Y) = \{T,U\}$,
+$\Pa(Z) = \Pa(U) = \varnothing$.
+The descendants of $Z$ are $\{T, Y\}$; $U$ and $Z$ are non-descendants of each other.
+\end{example}
+
+\begin{example}{The Mediation DAG}
+In a mediation model, treatment $T$ affects outcome $Y$ both directly and
+through an intermediate variable $M$ (the mediator).  An unobserved confounder
+$U$ creates a back-door path $T \leftarrow U \rightarrow Y$, making $T$
+endogenous.  The mediator $M$ is itself unconfounded.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node] (T) {$T$};
+  \node[node, right of=T] (M) {$M$};
+  \node[node, right of=M] (Y) {$Y$};
+  \node[unode, below=1.0cm of T] (U) {$U$};
+  \draw[edge] (T) -- (M);
+  \draw[edge] (M) -- (Y);
+  \draw[edge] (T) to[bend left=30] (Y);
+  \draw[dedge] (U) -- (T);
+  \draw[dedge] (U) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+$\Pa(T) = \{U\}$, $\Pa(M) = \{T\}$,
+$\Pa(Y) = \{M, T, U\}$, $\Pa(U) = \varnothing$.
+The total effect of $T$ on $Y$ travels along two paths: the \emph{direct}
+path $T \to Y$ and the \emph{indirect} path $T \to M \to Y$.
+Because $M$ is unconfounded, this structure satisfies the front-door criterion
+(Chapter~3): the causal effect of $T$ on $Y$ is identifiable despite the
+unmeasured confounder $U$.
+\end{example}
+
+% ==============================================================
+\section{Paths, Blocking, and d-Separation}
+% ==============================================================
+
+A DAG encodes direct causal relationships through its edges, but variables
+can also be statistically related through longer routes that mix directed
+and reversed edges.  The concept of a \emph{path} formalises these routes,
+and the question of whether a path transmits or blocks statistical
+dependence --- depending on which variables are conditioned upon --- is
+precisely what d-separation answers.  The key insight is that conditioning
+can both \emph{close} channels that were open (by blocking a chain or fork)
+and \emph{open} channels that were closed (by activating a collider).
+Figure~\ref{w2:fig:chain-fork-collider} illustrates all three cases.
+
+\subsection{Path Structures}
+
+\begin{defn}{Path}
+A \emph{path} between nodes $X$ and $Y$ in $\Gcal$ is any sequence of
+distinct nodes $X = V_0, V_1, \dots, V_k = Y$ such that each consecutive pair
+is connected by an edge in either direction.
+\end{defn}
+
+Every intermediate node $V_m$ on a path plays one of three structural roles.
+In a \textbf{chain} ($V_{m-1} \to V_m \to V_{m+1}$), $V_m$ is a causal
+intermediary through which influence is transmitted.  In a \textbf{fork}
+($V_{m-1} \leftarrow V_m \to V_{m+1}$), $V_m$ is a common cause that
+creates confounding between the two endpoints.  In a \textbf{collider}
+($V_{m-1} \to V_m \leftarrow V_{m+1}$), both arrows point \emph{into}
+$V_m$; this is the crucial asymmetric case whose behavior under
+conditioning is the opposite of the other two, as
+Figure~\ref{w2:fig:chain-fork-collider} shows.
+
+\begin{figure}[t]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[>=stealth, node distance=1.6cm and 1.8cm]
+  %% -------- Chain --------
+  \node[node] (A1) at (0,0)   {$A$};
+  \node[node] (M1) at (1.8,0) {$M$};
+  \node[node] (B1) at (3.6,0) {$B$};
+  \draw[edge] (A1) -- (M1);
+  \draw[edge] (M1) -- (B1);
+  \node[font=\small\bfseries\color{isublue}] at (1.8, 0.9) {Chain};
+  \node[font=\small\color{darkgrey}] at (1.8,-0.9)
+    {$A \nindep B$
+     \quad but \quad
+     $A \indep B \mid M$};
+  %% -------- Fork --------
+  \node[node] (A2) at (6.2,0) {$A$};
+  \node[node] (M2) at (8.0,0) {$M$};
+  \node[node] (B2) at (9.8,0) {$B$};
+  \draw[edge] (M2) -- (A2);
+  \draw[edge] (M2) -- (B2);
+  \node[font=\small\bfseries\color{isublue}] at (8.0, 0.9) {Fork};
+  \node[font=\small\color{darkgrey}] at (8.0,-0.9)
+    {$A \nindep B$
+     \quad but \quad
+     $A \indep B \mid M$};
+  %% -------- Collider --------
+  \node[node] (A3) at (12.4,0) {$A$};
+  \node[node] (M3) at (14.2,0) {$M$};
+  \node[node] (B3) at (16.0,0) {$B$};
+  \draw[edge] (A3) -- (M3);
+  \draw[edge] (B3) -- (M3);
+  \node[font=\small\bfseries\color{isublue}] at (14.2, 0.9) {Collider};
+  \node[font=\small\color{darkgrey}] at (14.2,-0.9)
+    {$A \indep B$
+     \quad but \quad
+     $A \nindep B \mid M$};
+  %% -------- Vertical dividers --------
+  \draw[dotted, color=accent!40, thin] (5.0, 1.4) -- (5.0,-1.4);
+  \draw[dotted, color=accent!40, thin] (11.0, 1.4) -- (11.0,-1.4);
+\end{tikzpicture}%
+}
+\caption{The three fundamental path structures in a DAG, with their default
+independence status and the effect of conditioning on the middle node $M$.
+Chains and forks are \emph{open by default} and are blocked by conditioning
+on $M$.  Colliders are \emph{closed by default} and are opened by
+conditioning on $M$ (or any descendant of $M$).}
+\label{w2:fig:chain-fork-collider}
+\end{figure}
+
+\subsection{Blocking Rules}
+
+Conditioning on a node affects the paths it lies on differently depending on
+its structural role:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}lllp{5.2cm}@{}}
+\toprule
+\textbf{Structure} & \textbf{Pattern} & \textbf{Effect of conditioning} & \textbf{Key intuition} \\
+\midrule
+Chain    & $A \to M \to B$    & Blocks the path & Causal transmission \\
+Fork     & $A \leftarrow M \to B$ & Blocks the path & Common cause \\
+Collider & $A \to M \leftarrow B$ & \textbf{Opens} the path & Common effect \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+The critical asymmetry --- colliders are \emph{closed by default} and
+\emph{opened} by conditioning, while chains and forks are \emph{open by
+default} and \emph{closed} by conditioning --- is what makes collider bias
+so easy to overlook in practice.  The following three examples anchor each
+rule to a concrete story.
+
+\medskip
+\noindent\textbf{Chain: Smoking $\to$ Tar $\to$ Cancer.}
+Let $A$ = smoking, $M$ = tar deposits in the lungs, $B$ = lung cancer.
+The path $A \to M \to B$ is a chain: smoking causes tar accumulation, which
+in turn causes cancer.
+Marginally, heavy smokers have elevated cancer rates --- the path is open.
+But if we condition on tar level (e.g., restrict to patients with the same
+measured tar burden), smoking no longer predicts cancer within that stratum:
+once the tar level is fixed, the causal channel is fully accounted for.
+Conditioning on the intermediary $M$ \emph{blocks} the path.
+
+\medskip
+\noindent\textbf{Fork: Poverty $\to$ Poor Diet; Poverty $\to$ Lack of Exercise.}
+Let $M$ = poverty, $A$ = poor diet, $B$ = lack of exercise.
+The path $A \leftarrow M \to B$ is a fork: poverty is a common cause of
+both outcomes.
+Unconditionally, diet quality and exercise are correlated --- not
+because one causes the other, but because both are driven by poverty.
+Conditioning on income level removes this spurious association: among people
+at the same income, the diet--exercise correlation disappears.
+Conditioning on the common cause $M$ \emph{blocks} the path.
+
+\medskip
+\noindent\textbf{Collider: Accident $\to$ hospitalization $\leftarrow$ Cancer.}
+Let $A$ = traffic accident, $B$ = cancer, $M$ = hospitalization.
+Both accidents and cancer independently cause hospitalization, so the path
+$A \to M \leftarrow B$ is a collider at $M$.
+In the general population, having a traffic accident tells you nothing about
+your cancer risk: $A \indep B$.
+But among hospitalised patients --- conditioning on $M$ --- the two become
+negatively associated.
+If we learn that a hospitalised patient was \emph{not} in a traffic accident,
+cancer or another serious illness becomes more likely as an explanation for
+the admission.
+Conditioning on the common effect $M$ \emph{opens} the path.
+This is Berkson's bias \citep{berkson1946limitations}.
+
+\subsection{The d-Separation Criterion}
+
+\begin{defn}{d-Blocking and d-Separation}
+\label{w2:def:dsep}
+A path $\pi$ is \emph{d-blocked} by a set $\mathbf{S}$ if:
+\begin{enumerate}
+  \item $\pi$ contains a chain $A \to M \to B$ or fork $A \leftarrow M \to B$
+        with $M \in \mathbf{S}$; or
+  \item $\pi$ contains a collider $A \to C \leftarrow B$ with $C \notin
+        \mathbf{S}$ and no descendant of $C$ is in $\mathbf{S}$.
+\end{enumerate}
+Nodes $X$ and $Y$ are \emph{d-separated} by $\mathbf{S}$, written
+$(X \indep Y \mid \mathbf{S})_{\Gcal}$, if every path between
+$X$ and $Y$ in $\Gcal$ is d-blocked by $\mathbf{S}$.
+\end{defn}
+
+\begin{example}{Applying Definition~\ref{w2:def:dsep} to the Three Toy Settings}
+\label{w2:ex:threesettings}
+We revisit the three examples from Section~2.2 and verify each blocking
+claim directly using Definition~\ref{w2:def:dsep}.
+
+\medskip
+\noindent\textbf{(i) Chain --- Smoking $\to$ Tar $\to$ Cancer.}
+Let $A$ = smoking, $M$ = tar, $B$ = cancer.
+The only path between $A$ and $B$ is the chain $A \to M \to B$.
+
+\begin{itemize}
+  \item $\mathbf{S} = \varnothing$: the path contains no conditioned-on
+        non-collider, so clause~(1) does not apply.
+        The collider clause~(2) is also irrelevant (there is no collider).
+        The path is \emph{not} d-blocked.
+        $\Rightarrow A \nindep B$ (smokers have higher cancer rates).
+  \item $\mathbf{S} = \{M\}$: the chain node $M \in \mathbf{S}$,
+        so clause~(1) applies and the path is d-blocked.
+        $\Rightarrow A \indep B \mid M$ (at fixed tar level,
+        smoking no longer predicts cancer).
+\end{itemize}
+
+\medskip
+\noindent\textbf{(ii) Fork --- Poverty $\to$ Poor Diet; Poverty $\to$ Lack of Exercise.}
+Let $M$ = poverty, $A$ = poor diet, $B$ = lack of exercise.
+The only path is the fork $A \leftarrow M \to B$.
+
+\begin{itemize}
+  \item $\mathbf{S} = \varnothing$: no non-collider on the path is in
+        $\mathbf{S}$, so the path is not d-blocked.
+        $\Rightarrow A \nindep B$ (poor diet and lack of
+        exercise are correlated through shared poverty).
+  \item $\mathbf{S} = \{M\}$: the fork node $M \in \mathbf{S}$, so
+        clause~(1) applies and the path is d-blocked.
+        $\Rightarrow A \indep B \mid M$ (at fixed income level,
+        the diet--exercise association disappears).
+\end{itemize}
+
+\medskip
+\noindent\textbf{(iii) Collider --- Accident $\to$ hospitalization $\leftarrow$ Cancer.}
+Let $A$ = accident, $M$ = hospitalization, $B$ = cancer.
+The only path is the collider $A \to M \leftarrow B$.
+
+\begin{itemize}
+  \item $\mathbf{S} = \varnothing$: the path contains collider $M$
+        with $M \notin \mathbf{S}$ and no descendant of $M$ in
+        $\mathbf{S}$, so clause~(2) applies and the path is d-blocked.
+        $\Rightarrow A \indep B$ (accidents and cancer are
+        independent in the general population).
+  \item $\mathbf{S} = \{M\}$: now $M \in \mathbf{S}$, so clause~(2) no
+        longer blocks the path.  No other clause applies, so the path is
+        \emph{open}.
+        $\Rightarrow A \nindep B \mid M$ (among hospitalised
+        patients, ruling out an accident raises the probability of cancer ---
+        Berkson's bias).
+\end{itemize}
+\end{example}
+
+Example~\ref{w2:ex:threesettings} showed that d-separation is a purely graphical
+calculation.  The following theorem is what gives it statistical force: it
+guarantees that every d-separation statement in the graph corresponds to a
+genuine conditional independence in the joint distribution.
+
+\begin{thm}{Verma \& Pearl, 1988; \citep{pearl2009causality}, Theorem~1.2.4}
+\label{w2:thm:dsep}
+If $(X \indep Y \mid \mathbf{S})_{\Gcal}$, then
+$X \indep Y \mid \mathbf{S}$ in every distribution that is Markov
+with respect to $\Gcal$.
+\end{thm}
+
+In other words, if we can show from the graph alone that every path
+between $X$ and $Y$ is d-blocked by $\mathbf{S}$, we are entitled to
+conclude that $X$ and $Y$ are conditionally independent in the data ---
+without any calculation involving the actual distribution.
+This is the theorem's practical value: it turns a visual inspection of
+the graph into a licence to drop terms from the joint density, to omit
+variables from a regression, or to assert that a treatment assignment is
+unconfounded given a set of covariates.
+Example~\ref{w2:ex:threesettings}(iii) illustrates the contrapositive: when the
+path is \emph{open} (conditioning on the collider $M$), the theorem gives
+no independence guarantee, and indeed the dependence
+$A \nindep B \mid M$ materialises in the data as Berkson's bias.
+
+Table~\ref{w2:tab:markov-implications} summarizes the Markov factorization and
+its independence implication for each of the three path structures.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Structure} & \textbf{Markov factorization} $p(a,m,b)$
+  & \textbf{d-separation} \\
+\midrule
+Chain $A\!\to\!M\!\to\!B$
+  & $p(a)\,p(m\mid a)\,p(b\mid m)$
+  & $(A\indep B\mid M)_{\Gcal}$ \\[4pt]
+Fork $A\!\leftarrow\!M\!\to\!B$
+  & $p(m)\,p(a\mid m)\,p(b\mid m)$
+  & $(A\indep B\mid M)_{\Gcal}$ \\[4pt]
+Collider $A\!\to\!M\!\leftarrow\!B$
+  & $p(a)\,p(b)\,p(m\mid a,b)$
+  & $(A\indep B)_{\Gcal}$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{Markov factorization and d-separation result for each path
+structure.  In the chain and fork, the factor $p(b\mid m)$ depends on
+$b$ only through $m$, making $A\indep B\mid M$ immediate.
+In the collider, the factors $p(a)$ and $p(b)$ are free of each other,
+so marginalising over $M$ yields $p(a,b)=p(a)\,p(b)$.}
+\label{w2:tab:markov-implications}
+\end{center}
+
+\begin{example}{Theorem~\ref{w2:thm:dsep} via the Markov factorization --- the Chain}
+We verify Theorem~\ref{w2:thm:dsep} for the chain $A \to M \to B$ with
+$\mathbf{S} = \{M\}$.
+The Markov factorization gives
+\[
+  p(a, m, b) \;=\; p(a)\,p(m \mid a)\,p(b \mid m).
+\]
+Conditioning on $M = m$:
+\[
+  p(a, b \mid m)
+  \;=\; \frac{p(a, m, b)}{p(m)}
+  \;=\; \frac{p(a)\,p(m \mid a)\,p(b \mid m)}{p(m)}
+  \;=\; p(a \mid m)\,p(b \mid m).
+\]
+The joint conditional density factorises into a product of the two
+marginal conditionals, which is exactly $A \indep B \mid M$ in
+the distribution.  This confirms Theorem~\ref{w2:thm:dsep} for the chain: the
+d-separation statement $(A \indep B \mid M)_{\Gcal}$
+from Example~\ref{w2:ex:threesettings}(i) implies the distributional independence.
+
+The fork $A \leftarrow M \to B$ with $\mathbf{S} = \{M\}$ follows by an
+identical calculation using $p(a, m, b) = p(m)\,p(a \mid m)\,p(b \mid m)$.
+The collider case requires a different argument and is left as Problem~5.
+\end{example}
+
+\subsection{Practical Ways to Check d-Separation}
+
+The formal definition of d-separation can appear abstract when applied to
+larger graphs.  Two complementary algorithmic viewpoints are useful in
+practice, both equivalent to the definition.
+
+\paragraph{1. Bayes-Ball Intuition.}
+Imagine releasing a ball from $X$ and asking whether it can reach $Y$,
+given that nodes in $\mathbf{S}$ are observed (shaded).
+The ball follows four local rules:
+\begin{itemize}
+  \item At a chain or fork node \emph{not} in $\mathbf{S}$: ball passes
+        through.
+  \item At a chain or fork node in $\mathbf{S}$: ball stops.
+  \item At a collider not in $\mathbf{S}$ (and no descendant in
+        $\mathbf{S}$): ball stops.
+  \item At a collider in $\mathbf{S}$ (or with a descendant in
+        $\mathbf{S}$): ball passes through.
+\end{itemize}
+If the ball can reach $Y$ from $X$, then $X \nindep Y \mid
+\mathbf{S}$.  If every path is stopped, then $X \indep Y \mid
+\mathbf{S}$.  The algorithm is formalised in \citet{shachter1998bayesball}.
+
+\paragraph{2. Moral Graph Transformation.}
+There is also a graph-transformation approach, which connects DAG models
+to undirected graphical models (Markov random fields).
+\begin{enumerate}
+  \item Restrict the DAG to the \emph{ancestral set}
+        $\An(X \cup Y \cup \mathbf{S})$: discard all nodes that
+        are not ancestors of $X$, $Y$, or any element of $\mathbf{S}$.
+  \item \emph{Moralise} the graph: for every collider $A \to C \leftarrow
+        B$ in the ancestral subgraph, add an undirected edge $A - B$
+        (``marry the parents'').
+  \item Remove all edge directions to obtain an undirected graph.
+  \item Delete all nodes in $\mathbf{S}$ (and their incident edges).
+\end{enumerate}
+If $X$ and $Y$ are disconnected in the resulting graph, then
+$(X \indep Y \mid \mathbf{S})_{\Gcal}$.
+The moralization step is what makes the collider rule visible in the
+undirected representation: without adding the $A$--$B$ edge, the path
+through $C$ would appear disconnected even when $C$ is conditioned upon,
+which would give the wrong answer.  A full treatment is in
+\citet[][Ch.~3]{lauritzen1996graphical}.
+
+\medskip
+These two viewpoints --- Bayes-ball propagation and moral graph separation
+--- are equivalent algorithmic ways of evaluating the d-separation criterion.
+Students are encouraged to use whichever they find most natural, and to
+cross-check with the other when in doubt.
+
+\begin{example}{Checking d-Separation in a Four-Node DAG}
+\label{w2:ex:fournode}
+Consider the DAG with edges $Z \to T$, $U \to T$, $T \to Y$, $U \to Y$.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node] (Z) {$Z$};
+  \node[node, right of=Z] (T) {$T$};
+  \node[node, right of=T] (Y) {$Y$};
+  \node[node, below=1.0cm of T] (U) {$U$};
+  \draw[edge] (Z) -- (T);
+  \draw[edge] (T) -- (Y);
+  \draw[edge] (U) -- (T);
+  \draw[edge] (U) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+We apply both methods to two queries.
+
+\medskip
+\noindent\textbf{Query 1.} Is $(Z \indep U)_{\Gcal}$,
+i.e.\ $\mathbf{S} = \varnothing$?
+
+\medskip
+\noindent\emph{Bayes-ball.}
+The only path from $Z$ to $U$ is $Z \to T \leftarrow U$.
+Node $T$ is a collider with $T \notin \mathbf{S}$ and no descendant of $T$
+in $\mathbf{S}$, so the ball is stopped at $T$.
+No ball can reach $U$, hence $(Z \indep U)_{\Gcal}$.
+
+\medskip
+\noindent\emph{Moral graph.}
+\begin{enumerate}
+  \item \emph{Ancestral set} of $\{Z, U\} \cup \mathbf{S} = \{Z, U\}$:
+        neither $Z$ nor $U$ has any parents, so
+        $\An(\{Z,U\}) = \{Z, U\}$.
+        Nodes $T$ and $Y$ are discarded.
+  \item \emph{Moralise} the subgraph $\{Z, U\}$: it has no edges and no
+        colliders, so nothing is added.
+  \item \emph{Undirected graph}: isolated nodes $Z$ and $U$.
+  \item \emph{Delete} $\mathbf{S} = \varnothing$: nothing changes.
+\end{enumerate}
+$Z$ and $U$ are disconnected $\Rightarrow$ $(Z \indep U)_{\Gcal}$.
+Note that the key step is restricting to the ancestral set: this removes $T$
+from the graph before moralization, so the collider $T$ never has a chance
+to create a moral edge between $Z$ and $U$.
+
+\medskip
+\noindent\textbf{Query 2.} Is $(Z \indep U \mid T)_{\Gcal}$,
+i.e.\ $\mathbf{S} = \{T\}$?
+
+\medskip
+\noindent\emph{Bayes-ball.}
+Same path $Z \to T \leftarrow U$.
+Now $T \in \mathbf{S}$: the collider is observed, so the ball passes through $T$.
+The path is open, hence $Z \nindep U \mid T$.
+
+\medskip
+\noindent\emph{Moral graph.}
+\begin{enumerate}
+  \item \emph{Ancestral set} of $\{Z, U\} \cup \mathbf{S} = \{Z, U, T\}$:
+        parents of $T$ are $Z$ and $U$, both already in the set.
+        $\An(\{Z,U,T\}) = \{Z, U, T\}$; node $Y$ is discarded.
+  \item \emph{Moralise}: the subgraph contains the collider $Z \to T
+        \leftarrow U$, so add the moral edge $Z - U$.
+  \item \emph{Undirected graph}: edges $Z - T$, $U - T$, $Z - U$.
+  \item \emph{Delete} $\mathbf{S} = \{T\}$ (and its incident edges $Z-T$, $U-T$).
+        Remaining graph: single edge $Z - U$.
+\end{enumerate}
+$Z$ and $U$ are connected $\Rightarrow$ $Z \nindep U \mid T$.
+The moralization step is decisive: it adds the edge $Z - U$ \emph{before}
+$T$ is deleted, ensuring the dependence induced by conditioning on the
+collider is visible in the undirected graph.
+
+\medskip
+Comparing the two queries: $Z$ and $U$ are marginally independent (the
+instrument is exogenous) but become dependent once we condition on $T$.
+This is Berkson's bias, treated in full in Section~\ref{w2:sec:ivdag}.
+\end{example}
+
+% ==============================================================
+\section{Collider Bias and the IV DAG}
+\label{w2:sec:ivdag}
+% ==============================================================
+
+\subsection{Berkson's Bias}
+
+\begin{warn}{Warning: Collider Bias \citep{berkson1946limitations}}
+Conditioning on a collider variable induces a spurious association between
+its parents, \emph{even when they are marginally independent}. The same effect
+occurs when conditioning on any descendant of a collider.
+\end{warn}
+
+\begin{example}{Collider Bias in the IV DAG}
+In the IV DAG, $T$ is a collider on the path $Z \to T \leftarrow U$.
+Marginally, $Z \indep U$ (the instrument is exogenous). However,
+\[
+  Z \indep U \qquad \text{but} \qquad
+  Z \nindep U \mid T
+\]
+(established graphically in Example~\ref{w2:ex:fournode}).
+Conditioning on $T$ --- restricting to the treated subpopulation --- makes
+the instrument $Z$ appear associated with $U$,
+invalidating the IV argument within that stratum.
+\end{example}
+
+\subsection{Full d-Separation Analysis of the IV DAG}
+
+We work through the IV DAG with edges $Z \to T$, $T \to Y$, $U \to T$,
+$U \to Y$.  This is the same graph as in Example~\ref{w2:ex:fournode}, but now
+$U$ is treated as \emph{unobserved}.  That assumption is precisely what earns
+the name ``IV DAG'': because $U$ cannot be conditioned on, the back-door path
+$T \leftarrow U \to Y$ cannot be blocked by adjustment, and the instrument
+$Z$ becomes the only route to identification.
+
+Before listing the paths, it is worth classifying them by \emph{type},
+since students often conflate causal and associational dependence.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Endpoints} & \textbf{Path} & \textbf{Type} & \textbf{Why} \\
+\midrule
+$Z \leftrightarrow Y$ & $Z \to T \to Y$ & \emph{Causal} & Directed from $Z$ to $Y$; carries the IV signal \\
+$Z \leftrightarrow Y$ & $Z \to T \leftarrow U \to Y$ & \emph{Associational} & Collider at $T$; activates back-door via $U$ \\
+$Z \leftrightarrow U$ & $Z \to T \leftarrow U$ & \emph{Associational} & Collider at $T$; dormant unless $T$ conditioned on \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent The key distinction: a \emph{causal path} follows all edges in
+their directed orientation from source to target.
+An \emph{associational path} travels against at least one arrow, or passes
+through a collider, and therefore does not represent a mechanism by which
+$Z$ produces $Y$ --- it can nevertheless generate a statistical association
+if the collider is conditioned upon.
+With this in mind, the four questions become much easier to diagnose.
+
+\medskip
+\noindent\textbf{Question 1.} Is $Z \indep Y \mid \varnothing$?
+
+\noindent\emph{Causal path} $Z \to T \to Y$: open (chain, nothing conditioned on).
+\emph{Associational path} $Z \to T \leftarrow U \to Y$: collider at $T$,
+$T \notin \varnothing$ --- blocked.
+One open path suffices for dependence.
+$\Rightarrow Z \nindep Y$.
+The association is entirely \emph{causal} here; the back-door path is dormant.
+
+\medskip
+\noindent\textbf{Question 2.} Is $Z \indep Y \mid T$?
+
+\begin{itemize}
+  \item \emph{Causal path} $Z \to T \to Y$: chain with $T$ conditioned on
+        --- \emph{blocked}. The causal channel is shut.
+  \item \emph{Associational path} $Z \to T \leftarrow U \to Y$: collider
+        at $T$ with $T \in \{T\}$ --- \emph{opened}. The back-door channel
+        is activated.
+\end{itemize}
+$\Rightarrow Z \nindep Y \mid T$.
+This is the key lesson: conditioning on $T$ simultaneously closes the causal
+path \emph{and} opens the associational path, so the residual association
+between $Z$ and $Y$ given $T$ is entirely spurious --- a collider artefact,
+not a causal effect.
+
+\medskip
+\noindent\textbf{Question 3.} Is $Z \indep Y \mid \{T, U\}$?
+
+\begin{itemize}
+  \item \emph{Causal path} $Z \to T \to Y$: blocked by $T$.
+  \item \emph{Associational path} $Z \to T \leftarrow U \to Y$: collider
+        at $T$ opened (since $T \in \{T,U\}$), but the continuing segment
+        $U \to Y$ is then blocked because $U \in \{T,U\}$.
+\end{itemize}
+$\Rightarrow Z \indep Y \mid \{T, U\}$.
+Both the causal and the associational channel are closed; $Z$ carries no
+information about $Y$ once treatment and the confounder are held fixed.
+
+\medskip
+\noindent\textbf{Question 4.} Is $Z \indep U \mid \varnothing$?
+
+\noindent The only path, $Z \to T \leftarrow U$, is \emph{associational}
+(collider at $T$) and is blocked since $T \notin \varnothing$.
+$\Rightarrow Z \indep U$.
+This is the \emph{exogeneity} assumption: the instrument is marginally
+independent of the confounder precisely because the only path linking them
+is a dormant collider path.
+
+\medskip
+Taken together, the four questions give a complete graphical account of the
+three IV assumptions and one critical warning.
+Question~1 establishes \emph{relevance}: $Z$ has an open causal path to $Y$
+through $T$, so the instrument is not inert.
+Question~4 establishes \emph{exogeneity}: the only path from $Z$ to the
+confounder $U$ is a dormant collider path, so the instrument is
+independent of unmeasured confounding.
+Question~3 establishes the \emph{exclusion restriction}: once both $T$ and
+$U$ are held fixed, $Z$ carries no residual information about $Y$, meaning
+the instrument affects the outcome only through the treatment channel.
+Note, however, that this conditioning requires observing $U$ --- which is
+unavailable by assumption. The IV strategy exploits the exclusion restriction
+indirectly, through the moment condition $\E[\varepsilon \cdot Z] = 0$ derived
+in Chapter~7, without ever observing $U$.
+Finally, Question~2 is the warning: conditioning on $T$ alone --- as a naive
+analyst might do --- simultaneously closes the causal channel and opens the
+confounded channel, producing a spurious association that is worse than no
+adjustment at all.
+
+% ==============================================================
+\section{The Markov Property and factorization}
+\label{w2:sec:markov}
+% ==============================================================
+
+\begin{defn}{Local Markov Property}
+A distribution $P$ satisfies the \emph{local Markov property} with respect
+to $\Gcal$ if, for every node $v_i \in \mathcal{V}$:
+\[
+  v_i \indep \Nd(v_i) \mid \Pa(v_i).
+\]
+That is, each node is conditionally independent of all its non-descendants
+given its parents.
+\end{defn}
+
+\begin{remark}
+The \emph{global Markov property} is the statement that every
+d-separation in $\Gcal$ implies a conditional independence in $P$
+--- precisely the content of Theorem~\ref{w2:thm:dsep}.
+For DAGs, the local and global Markov properties are equivalent
+\citep[][Proposition~3.27]{lauritzen1996graphical}: the local property
+implies the global one via the Markov factorization, which is what is
+actually used in identification arguments.
+\end{remark}
+
+An immediate consequence is the \emph{Markov factorization}:
+\begin{equation}
+  p(v_1, \dots, v_k) \;=\; \prod_{i=1}^{k} p\!\left(v_i \mid \Pa(v_i)\right).
+  \label{w2:eq:markov}
+\end{equation}
+This factorization is the bridge between causal structure and probability:
+knowing the parents of each node is sufficient to write the full joint density.
+
+\begin{example}{Markov factorization in the Education Example}
+For the DAG with edges $N \to E$, $B \to E$, $B \to Y$, $E \to Y$:
+\[
+  p(n, b, e, y) = p(n)\,p(b)\,p(e \mid n, b)\,p(y \mid e, b).
+\]
+A regression of $Y$ on $E$ alone is confounded by $B$. Conditioning on $B$
+blocks the back-door path $E \leftarrow B \to Y$ and identifies the causal
+effect $P(y \mid \doop(E{=}e))$ via the back-door formula (Chapter~3).
+\end{example}
+
+\begin{example}{Markov factorization in the IV DAG}
+Including the latent $U$:
+\[
+  p(z, t, y, u) = p(z)\,p(u)\,p(t \mid z, u)\,p(y \mid t, u).
+\]
+Since $U$ is unobserved, the observable factorization is obtained by
+marginalising:
+\[
+  p(z, t, y) = \int p(z)\,p(u)\,p(t \mid z, u)\,p(y \mid t, u)\,\mathrm{d}u.
+\]
+This cannot be simplified to $p(z)\,p(t\mid z)\,p(y\mid t)$ when $U$ is a
+common cause of $T$ and $Y$: this is precisely the endogeneity problem.
+\end{example}
+
+% ==============================================================
+\section{Worked Example: The Education--Earnings DAG}
+\label{w2:sec:education}
+% ==============================================================
+
+This section traces all four steps of the pipeline --- graph structure,
+Markov factorization, d-separation, and identification --- for the
+Education--Earnings DAG introduced in Section~1.  It is intended as a
+self-contained reference example that consolidates the tools of this chapter.
+
+\medskip
+\noindent\textbf{The causal story.}
+Education ($E$) affects earnings ($Y$); family background ($B$) is a
+common cause of both education and earnings; neighborhood ($N$) affects
+education but has no direct effect on earnings.  All four variables are
+observed; there are no latent confounders.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node] (N) {$N$};
+  \node[node, right of=N] (E) {$E$};
+  \node[node, right of=E] (Y) {$Y$};
+  \node[node, below=1.0cm of E] (B) {$B$};
+  \draw[edge] (N) -- (E);
+  \draw[edge] (E) -- (Y);
+  \draw[edge] (B) -- (E);
+  \draw[edge] (B) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+\medskip
+\noindent\textbf{Step 1 --- Markov factorization.}
+The parents are $\Pa(N) = \Pa(B) = \varnothing$,
+$\Pa(E) = \{N, B\}$, $\Pa(Y) = \{E, B\}$.
+The Markov factorization is therefore
+\[
+  p(n, b, e, y) \;=\; p(n)\,p(b)\,p(e \mid n, b)\,p(y \mid e, b).
+\]
+Every factor on the right-hand side is a conditional density of an
+observed variable given observed parents, so in principle each factor
+is estimable from data.  This is the starting point for all
+identification arguments: the full joint is expressed in terms of
+quantities we can estimate.
+
+\medskip
+\noindent\textbf{Step 2 --- d-Separation.}
+There are two paths between $N$ and $Y$:
+\begin{itemize}
+  \item Path 1: $N \to E \to Y$ (chain through $E$).
+  \item Path 2: $N \to E \leftarrow B \to Y$ (collider at $E$, then fork leg $B\to Y$).
+\end{itemize}
+We examine four queries.
+
+\smallskip
+\emph{Query (i): Is $(N \indep Y)_{\Gcal}$?}
+Path~1 is a chain with nothing conditioned on --- open.
+Path~2 has collider $E$ with $E \notin \varnothing$ --- blocked.
+One open path suffices: $N \nindep Y$.
+
+\smallskip
+\emph{Query (ii): Is $(N \indep Y \mid E)_{\Gcal}$?}
+Path~1: chain with $E \in \{E\}$ --- blocked.
+Path~2: collider $E$ with $E \in \{E\}$ --- \emph{opened}.
+The activated path $N \to E \leftarrow B \to Y$ continues through $B$,
+which is not in $\{E\}$, so the path is open.
+Hence $N \nindep Y \mid E$.
+This is a collider trap: conditioning on $E$ to ``control for education''
+inadvertently opens a spurious association between $N$ and $Y$ through $B$.
+
+\smallskip
+\emph{Query (iii): Is $(N \indep Y \mid \{E, B\})_{\Gcal}$?}
+Path~1: blocked by $E$.
+Path~2: collider $E$ opened (since $E \in \{E,B\}$), but the continuing
+segment $B \to Y$ has $B \in \{E,B\}$ --- blocked.
+Both paths are blocked: $(N \indep Y \mid E, B)_{\Gcal}$.
+
+\smallskip
+\emph{Query (iv): Is $(N \indep B)_{\Gcal}$?}
+The only path is $N \to E \leftarrow B$: collider at $E$ with
+$E \notin \varnothing$ --- blocked.
+Hence $N \indep B$.
+
+\medskip
+\noindent\textbf{Step 3 --- Conditional Independence.}
+By Theorem~\ref{w2:thm:dsep}, the d-separation results translate into
+distributional statements:
+\[
+  N \indep B, \qquad
+  N \indep Y \mid E, B, \qquad
+  N \nindep Y, \qquad
+  N \nindep Y \mid E.
+\]
+The first two are the independence statements; the last two are the
+dependences.  Three of the four are testable from data and could in
+principle be used to validate or falsify the graph.
+The statement $N \nindep Y \mid E$ is especially important
+as a warning to practitioners: a researcher who conditions only on
+education when studying the neighborhood--earnings association will
+\emph{introduce} bias through the activated collider path, not remove it.
+
+\medskip
+\noindent\textbf{Step 4 --- Identification.}
+We wish to identify $P(y \mid \doop(E{=}e))$, earnings under an
+intervention that sets education to $e$.  The back-door criterion
+(Chapter~3) requires a set $\mathbf{S}$ that (i) blocks every back-door
+path from $E$ to $Y$ and (ii) contains no descendant of $E$.
+
+The only back-door path is $E \leftarrow B \to Y$ (a fork at $B$).
+Consider two candidate adjustment sets:
+\begin{itemize}
+  \item $\mathbf{S} = \{B\}$: blocks $E \leftarrow B \to Y$ (fork at
+        $B$); $B$ is not a descendant of $E$. \emph{Valid.}
+  \item $\mathbf{S} = \{N\}$: does not contain $B$, so the back-door
+        path $E \leftarrow B \to Y$ remains open. \emph{Invalid.}
+\end{itemize}
+The second case illustrates why the criterion requires blocking
+\emph{every} back-door path: $N$ is upstream of $E$ and appears
+innocuous, but it does not close the confounding fork through $B$.
+
+With $\mathbf{S} = \{B\}$, the back-door formula gives
+\[
+  P(y \mid \doop(E{=}e))
+  \;=\; \sum_{b} P(y \mid e, b)\,P(b).
+\]
+Every term on the right involves only the observed distribution, so the
+causal effect is identified entirely from observational data --- the
+payoff of the graphical analysis.
+
+% ==============================================================
+\section{The Big Picture}
+% ==============================================================
+
+The concepts developed in this chapter form the graphical foundation for all
+subsequent identification and estimation theory. The chain of reasoning runs
+from a qualitative causal graph all the way to a formula for the
+interventional distribution:
+
+\bigskip
+\begin{center}
+\begin{tikzpicture}[
+    box/.style = {
+      rectangle, rounded corners=6pt,
+      draw=isublue, fill=defbg, thick,
+      text width=7.2cm, align=center,
+      minimum height=1.1cm,
+      font=\bfseries\color{isublue}
+    },
+    tool/.style = {
+      rectangle, rounded corners=3pt,
+      draw=accent, fill=white, thin,
+      text width=4.6cm, align=center,
+      font=\small\itshape\color{accent}
+    },
+    arr/.style  = {-{Stealth[length=7pt,width=5pt]}, line width=1.6pt, color=accent},
+    node distance = 0.55cm
+  ]
+  % Four main boxes
+  \node[box] (G)  {Graph Structure};
+  \node[box, below=1.2cm of G]  (D)  {d-Separation};
+  \node[box, below=1.2cm of D]  (CI) {Conditional Independence};
+  \node[box, below=1.2cm of CI] (ID) {Identification Formula};
+
+  % Arrows
+  \draw[arr] (G)  -- (D);
+  \draw[arr] (D)  -- (CI);
+  \draw[arr] (CI) -- (ID);
+
+  % Side annotations
+  \node[tool, right=1.1cm of G]
+    {DAG encodes direct causal relationships};
+  \node[tool, right=1.1cm of D]
+    {Read off all $\indep$ statements\\ from the graph};
+  \node[tool, right=1.1cm of CI]
+    {Test or exploit independence\\ structure in data};
+  \node[tool, right=1.1cm of ID]
+    {Back-door / front-door /\\ do-calculus (Chapter~3)};
+
+  % Horizontal connectors (dotted)
+  \foreach \n in {G, D, CI, ID}
+    \draw[dotted, color=accent!60, thin] (\n.east) -- ++( 1.1cm, 0);
+\end{tikzpicture}
+\end{center}
+\bigskip
+
+Each arrow is non-trivial. Reading conditional independences off a graph
+requires d-separation. Translating graphical structure into identification
+formulas requires the back-door criterion, front-door criterion, and
+do-calculus --- developed in Chapter~3. Section~5 traces Steps~1--3 in full
+for the Education--Earnings DAG and previews Step~4 with the back-door
+formula, whose derivation is given in Chapter~3.
+
+% ==============================================================
+\section{Summary}
+% ==============================================================
+
+\begin{enumerate}
+  \item A DAG encodes the qualitative causal structure of a data-generating
+        mechanism without committing to functional forms or error distributions.
+
+  \item The three elementary path patterns --- chain, fork, and collider ---
+        determine when conditioning on a middle node blocks or opens a path.
+        Chains and forks are \emph{open by default} and blocked by conditioning;
+        colliders are \emph{closed by default} and opened by conditioning.
+
+  \item The d-separation criterion reads off all conditional independences
+        implied by a DAG: $X$ and $Y$ are d-separated by $\mathbf{S}$
+        if and only if every path between them is blocked by $\mathbf{S}$.
+
+  \item The Markov factorization $p = \prod_i p(x_i \mid \Pa(x_i))$
+        is the formal bridge between the graph and the joint distribution,
+        and is the starting point for all identification derivations.
+
+  \item Collider bias \citep{berkson1946limitations} is one of the most
+        common errors in applied causal inference. Conditioning on a
+        descendant of a collider opens the collider just as conditioning
+        on the collider itself does.
+
+  \item The core value of d-separation is the translation it provides: a
+        qualitative causal hypothesis encoded as a DAG becomes a precise set
+        of conditional independence assumptions on the joint distribution of
+        the observed variables.  The IV DAG analysis in
+        Section~\ref{w2:sec:ivdag} illustrates this directly --- the claim
+        that $Z$ is a valid instrument is equivalent to three d-separation
+        statements that can in principle be tested or exploited in data.
+\end{enumerate}
+
+% ==============================================================
+\newpage
+\section*{Problems}
+\addcontentsline{toc}{section}{Problems}
+% ==============================================================
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*, itemsep=10pt]
+
+  \item \textbf{Warm-up: a single collider.}
+  Consider the DAG $X \to Y \leftarrow Z$, where $X$ and $Z$ have no
+  other connections.
+  \begin{enumerate}[label=(\alph*)]
+    \item Identify the structural role of $Y$ on the path $X \to Y \leftarrow Z$.
+    \item Is $X \indep Z$?  Apply the d-separation criterion to
+          the only path between $X$ and $Z$, and state which blocking rule
+          applies.
+    \item Is $X \indep Z \mid Y$?  Explain what happens to the
+          path when $Y$ is conditioned on, and describe in one sentence the
+          real-world phenomenon this illustrates.
+  \end{enumerate}
+
+  \item \textbf{d-Separation practice.}
+  Consider the DAG: $A \to B \to D$, $A \to C \to D$, $B \to E$, $C \to E$.
+  \begin{enumerate}[label=(\alph*)]
+    \item List all paths between $A$ and $E$.  (\emph{Hint}: there are four
+          paths in total; two pass through $D$.)
+    \item For each path, identify the role (chain, fork, collider) of each
+          intermediate node.
+    \item Does $\{B, C\}$ d-separate $A$ and $E$?
+    \item Does $\{D\}$ d-separate $B$ and $C$? What type of node is $D$
+          on the path $B \to D \leftarrow C$?
+  \end{enumerate}
+
+  \item \textbf{Berkson's bias.}
+  Suppose $X$ and $Y$ are independent standard normal variables, and let
+  $S = \mathbf{1}[X + Y > 0]$ (selected into a sample).
+  \begin{enumerate}[label=(\alph*)]
+    \item Verify analytically that $\mathrm{Cov}(X, Y \mid S{=}1) < 0$.
+    \item Draw the DAG for $(X, Y, S)$ and identify $S$ as a collider.
+    \item Explain in one sentence why restricting the analysis to the
+          subsample with $S=1$ biases estimates of any association between
+          $X$ and $Y$, and name the type of bias this illustrates.
+  \end{enumerate}
+
+  \item \textbf{Markov factorization and collider activation.}
+  Consider the DAG with edges $A \to E$, $A \to W$, $F \to E$, $E \to W$,
+  where $A$ = ability, $F$ = family income, $E$ = education, $W$ = wages.
+  \begin{enumerate}[label=(\alph*)]
+    \item Write down the Markov factorization $p(a, f, e, w)$.
+    \item Is $(F \indep W)_{\Gcal}$?
+          List all paths between $F$ and $W$ and determine which are open.
+    \item Is $(F \indep W \mid E)_{\Gcal}$?
+          Identify the role of $E$ on each path and explain whether
+          conditioning on $E$ opens or closes each one.
+    \item A researcher regresses $W$ on $E$ and $F$, omitting $A$.
+          Is the coefficient on $E$ a causal effect of education on wages?
+          Explain using the graph.
+  \end{enumerate}
+
+  \item \textbf{Theorem~\ref{w2:thm:dsep} for the collider.}
+  Consider the collider $A \to M \leftarrow B$ with Markov factorization
+  $p(a, m, b) = p(a)\,p(b)\,p(m \mid a, b)$.
+  \begin{enumerate}[label=(\alph*)]
+    \item By marginalising over $M$, show that $A \indep B$
+          in the joint distribution (i.e., $p(a,b) = p(a)\,p(b)$).
+          This verifies Theorem~\ref{w2:thm:dsep} for the case
+          $\mathbf{S} = \varnothing$, where
+          Example~\ref{w2:ex:threesettings}(iii) established d-separation
+          graphically.
+    \item Show that conditioning on $M$ breaks this independence: write
+          out $p(a, b \mid m)$ and explain why it does \emph{not} factorise
+          into $p(a \mid m)\,p(b \mid m)$ in general.  What does this imply
+          about $A$ and $B$ among hospitalised patients in the
+          accident--hospitalization--cancer example?
+    \item Explain in one sentence why parts~(a) and~(b) together are
+          consistent with Theorem~\ref{w2:thm:dsep}.  (\emph{Hint}:
+          Theorem~\ref{w2:thm:dsep} is a one-directional statement.)
+  \end{enumerate}
+
+\end{enumerate}
+
+% ==============================================================
+\newpage
+\ifSubfilesClassLoaded{
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}

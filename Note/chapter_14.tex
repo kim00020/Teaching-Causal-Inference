@@ -1,0 +1,1340 @@
+% ============================================================
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+\ifSubfilesClassLoaded{%
+  \begin{center}
+    {\LARGE\bfseries\color{isublue}
+     Chapter 14:
+     Optimal Policy Learning
+     }\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  \chapter{Optimal Policy Learning}
+}
+
+\section{Why Policy Learning?}
+\label{w14:sec:motivation}
+
+Chapter 13 studied the value of a fixed treatment rule. In many applications, however, the rule itself is not given in advance and must be learned from data. This chapter studies \emph{optimal policy learning}: the problem of choosing a deterministic treatment rule that maximizes expected outcome in a target population. In the single-stage setting considered here, the statistical task is to learn a rule \(d\) that maps baseline covariates to treatment decisions. The main difficulty is that the same data are often used both to construct the rule and to assess its performance, so overfitting becomes a central concern.
+
+We study several approaches to single-stage policy learning. The first is \emph{Q-learning}, a regression-based method that models the full conditional mean outcome under each treatment option. The second is \emph{A-learning}, which focuses on the treatment contrast that determines the optimal action. The third is \emph{value search estimation}, which directly optimizes an estimated value over a class of candidate rules. We then discuss G-estimation and orthogonal scores, and doubly robust policy learning, followed by a brief secondary perspective that reformulates policy learning as weighted classification, including outcome weighted learning as a representative example. We conclude with regret, overfitting, and interpretable treatment rules.
+
+\subsection*{Learning Objectives}
+By the end of this chapter, students should be able to:
+\begin{enumerate}
+    \item define policy class, policy value, optimal policy, contrast function, and regret;
+    \item state and prove the value decomposition \(V(d)=E\{Y(0)\}+E[d(X)C(X)]\)
+          and use it to derive the optimal rule in terms of \(Q(x,a)\) and \(C(x)\);
+    \item derive the Q-learning estimator and explain its sensitivity to
+          outcome model misspecification;
+    \item derive the A-learning estimating equation from the semiparametric
+          decomposition \(Q(X,a)=\nu(X)+a\,C(X;\psi)\);
+    \item prove that the G-estimation score satisfies Neyman orthogonality
+          with respect to both nuisance functions;
+    \item state the value search consistency result, verify its conditions
+          for linear threshold rules, and explain the role of VC dimension;
+    \item state and prove the double robustness of the DR value criterion and
+          derive the product-of-errors bias formula; explain the role of
+          cross-fitting in decoupling nuisance estimation from policy search;
+    \item reformulate policy learning as a weighted classification problem,
+          and explain outcome weighted learning as a representative
+          implementation of this perspective;
+    \item state and prove the regret-contrast identity and explain the
+          decoupling of prediction error from decision quality;
+    \item state and prove the in-sample optimism inequality and explain how
+          policy class complexity governs the optimism gap.
+\end{enumerate}
+
+\section{Setup and Optimal Treatment Rules}
+\label{w14:sec:setup}
+
+We observe i.i.d.\ data
+\[
+O_i=(X_i,A_i,Y_i), \qquad i=1,\dots,n,
+\]
+where \(X\in\mathcal X\) is a vector of baseline covariates, \(A\in\{0,1\}\) is a binary treatment, and \(Y\in\mathbb R\) is the observed outcome. Let \(Y(1)\) and \(Y(0)\) denote the potential outcomes under treatment and control.
+
+Throughout the chapter, we write
+\[
+Q(x,a)=E\{Y(a)\mid X=x\}, \qquad a\in\{0,1\}.
+\]
+Under consistency, ignorability, and positivity, this coincides with the observed-data regression function
+\[
+Q(x,a)=E(Y\mid X=x,A=a).
+\]
+This is the same nuisance function denoted $\mu_a(x)$ in Chapter~\ref{w13:sec:policies}; the notation $Q(x,a)$ is standard in the policy-learning and reinforcement-learning literatures and is used throughout this chapter. Thus Chapter~14 uses the same causal identification assumptions as Chapter~13, but shifts the statistical task from evaluating a fixed rule to learning a good rule from data.
+
+\begin{defn}{Policy class}
+\label{w14:defn:policy-class}
+A \emph{policy class} \(\mathcal D\) is a collection of deterministic treatment rules
+\[
+d:\mathcal X\to\{0,1\}.
+\]
+\end{defn}
+
+\begin{defn}{Optimal policy}
+\label{w14:defn:optimal-policy}
+An \emph{optimal policy} in the class \(\mathcal D\) is any rule
+\[
+d^\ast \in \arg\max_{d\in\mathcal D} V(d),
+\]
+where
+\[
+V(d)=E\{Y(d)\}
+\]
+is the value of policy \(d\).
+\end{defn}
+
+There are several ways to approximate \(d^\ast\). One can estimate the full regression surface \(Q(x,a)\) and compare actions (Q-learning), estimate only the treatment contrast \(C(x)=Q(x,1)-Q(x,0)\) (A-learning and G-estimation), optimize an estimated value directly over a policy class (value search), or use robust and classification-based reformulations of the same problem. The rest of this chapter develops each approach in turn.
+
+\subsection{Optimal rule in terms of \(Q(x,a)\)}
+
+\begin{thm}{Optimal rule in the binary-treatment case}
+\label{w14:thm:opt-rule}
+Suppose treatment is binary and the policy class is unrestricted. Then an optimal policy is given by
+\[
+d^\ast(x)=I\{Q(x,1)>Q(x,0)\}.
+\]
+If \(Q(x,1)=Q(x,0)\), either action may be chosen.
+\end{thm}
+
+\begin{proof}
+For any deterministic rule \(d\),
+\[
+V(d)=E\{Y(d)\}=E\big[E\{Y(d)\mid X\}\big].
+\]
+Conditional on \(X=x\), the rule chooses either action \(0\) or \(1\), so
+\[
+E\{Y(d)\mid X=x\}=Q(x,1)I\{d(x)=1\}+Q(x,0)I\{d(x)=0\}.
+\]
+This conditional expectation is maximized pointwise by choosing the action with larger value. Hence
+\[
+d^\ast(x)=I\{Q(x,1)>Q(x,0)\}
+\]
+is optimal.
+\end{proof}
+
+\subsection{Contrast function}
+
+\begin{defn}{Contrast function}
+\label{w14:defn:contrast}
+The \emph{contrast function} is
+\[
+C(x)=Q(x,1)-Q(x,0).
+\]
+\end{defn}
+
+In terms of the contrast, the optimal rule becomes
+\[
+d^\ast(x)=I\{C(x)>0\}.
+\]
+
+\begin{prop}{Decomposition of policy value}
+\label{w14:prop:value-decomp}
+For any deterministic policy \(d\),
+\[
+V(d)=E\{Y(0)\}+E[d(X)C(X)].
+\]
+\end{prop}
+
+\begin{proof}
+Since \(Y(d)=Y(0)+d(X)\{Y(1)-Y(0)\}\), taking conditional expectation given \(X\) yields
+\[
+E\{Y(d)\mid X\}=E\{Y(0)\mid X\}+d(X)\,E\{Y(1)-Y(0)\mid X\}.
+\]
+That is,
+\[
+E\{Y(d)\mid X\}=Q(X,0)+d(X)C(X).
+\]
+Taking expectation gives
+\[
+V(d)=E\{Q(X,0)\}+E[d(X)C(X)]=E\{Y(0)\}+E[d(X)C(X)].
+\]
+\end{proof}
+
+This decomposition is the organizing identity for the rest of the chapter: every policy-learning method can be viewed as an attempt to recover the sign of \(C(x)\), either directly or indirectly.
+
+\subsection{Cost-sensitive version}
+
+In some applications, treatment incurs cost or burden. Define the cost-adjusted value
+\[
+V_c(d)=E\{Y(d)-c\,d(X)\},
+\]
+where \(c>0\) is the treatment cost.
+
+\begin{cor}{Cost-sensitive optimal rule}
+\label{w14:cor:cost-rule}
+If the policy class is unrestricted, the optimal rule for maximizing \(V_c(d)\) is
+\[
+d_c^\ast(x)=I\{C(x)>c\}.
+\]
+\end{cor}
+
+\begin{proof}
+By Proposition~\ref{w14:prop:value-decomp},
+\[
+V_c(d)=E\{Y(0)\}+E[d(X)\{C(X)-c\}].
+\]
+This is maximized pointwise by taking \(d(x)=1\) whenever \(C(x)>c\).
+\end{proof}
+
+In applications, treatment may carry cost, burden, or risk, so the practically optimal rule need not be ``treat whenever \(C(x)>0\)'' but rather ``treat whenever \(C(x)\) exceeds a decision threshold.'' Corollary~\ref{w14:cor:cost-rule} shows that this threshold is exactly the cost \(c\): the higher the cost of treatment, the more evidence of benefit is required before treating. This connects directly to the discussion of practical constraints and interpretability in Section~\ref{w14:sec:constraints}, where budget limits, treatment burden, and fairness requirements all impose analogous thresholds on the optimal rule.
+
+\section{Q-Learning}
+\label{w14:sec:qlearning}
+
+The first classical approach is regression-based estimation. One specifies a working model for the conditional mean outcome \(Q(X,a)\), estimates its parameters, and plugs the fitted model into the optimal decision rule.
+
+\begin{defn}{Q-learning estimator}
+\label{w14:defn:qlearn}
+Suppose a parametric model \(Q(X,a;\beta)\) is specified for
+\(E(Y\mid X,A=a)\), and let \(\hat\beta\) be a consistent estimator of \(\beta\)
+under correct model specification. The corresponding Q-learning policy is
+\[
+\hat d_Q(X)=\arg\max_{a\in\{0,1\}} Q(X,a;\hat\beta).
+\]
+\end{defn}
+
+In the binary-treatment case, this may be written as
+\[
+\hat d_Q(X)=I\{Q(X,1;\hat\beta)>Q(X,0;\hat\beta)\}.
+\]
+
+\begin{remark}
+Q-learning is a plug-in method. It is attractive because it is conceptually straightforward and easy to implement once a regression model is available. Its main limitation is that it requires estimating the full outcome model, even though only the difference between treatment options matters for the decision.
+\end{remark}
+
+\subsection{A simple parametric example}
+
+Suppose
+\[
+Q(X,a;\beta)=\beta_0+\beta_1^\top X+\beta_2 a+\beta_3^\top(aX).
+\]
+Then the fitted contrast is
+\[
+Q(X,1;\hat\beta)-Q(X,0;\hat\beta)=\hat\beta_2+\hat\beta_3^\top X,
+\]
+and the Q-learning rule becomes
+\[
+\hat d_Q(X)=I\{\hat\beta_2+\hat\beta_3^\top X>0\}.
+\]
+
+\section{A-Learning and Contrast Functions}
+\label{w14:sec:alearning}
+
+The second classical approach is \emph{A-learning}, which focuses on the treatment contrast rather than the full regression surface. Since the optimal rule is
+\[
+d^\ast(X)=I\{C(X)>0\},
+\]
+full knowledge of \(Q(X,a)\) is not required to characterize the optimal policy.
+
+\subsection{Why the contrast is enough}
+
+Since only the sign of \(C(X)\) determines the optimal action, the
+baseline function \(\nu(X)=Q(X,0)\) is nuisance: it shifts both conditional
+means equally and does not affect the decision. This motivates a semiparametric
+approach in which \(\nu(X)\) is left unrestricted and only a parametric model
+\(C(X;\psi)\) is specified for the contrast. Consistent estimation of
+\(\psi\) is sufficient to recover the optimal rule; misspecification of
+\(\nu(X)\) does not propagate to the decision.
+
+\subsection{Semiparametric decomposition}
+
+A useful decomposition is
+\[
+Q(X,a)=\nu(X)+a\,C(X),
+\]
+where \(\nu(X)=Q(X,0)\) is a baseline function and \(C(X)\) is the treatment contrast.
+
+\begin{defn}{A-learning working model}
+\label{w14:defn:amodel}
+An A-learning working model is a semiparametric specification of the form
+\[
+Q(X,a;\nu,\psi)=\nu(X)+a\,C(X;\psi),
+\]
+where \(\nu(X)\) is an unrestricted baseline term and \(C(X;\psi)\) is a parametric model for the contrast.
+\end{defn}
+
+The corresponding policy is
+\[
+\hat d_A(X)=I\{C(X;\hat\psi)>0\}.
+\]
+
+\begin{remark}
+A-learning separates the nuisance baseline \(\nu(X)\) from the treatment-relevant contrast \(C(X)\) \citep{murphy2003optimal}. This is often advantageous when the primary scientific goal is treatment decision rather than full outcome prediction.
+\end{remark}
+
+\subsection{Connection to structural mean models and blip functions}
+
+The semiparametric decomposition above is the binary-treatment special case of
+a \emph{structural nested mean model} (SNMM) \citep{robins2004optimal}. An
+SNMM specifies the \emph{blip function}
+\[
+\gamma(X,a;\psi_0)=E\{Y(a)-Y(0)\mid X\}
+\]
+parametrically, while leaving the baseline \(\nu(X)=E\{Y(0)\mid X\}\)
+unrestricted. For binary treatment, only two arms exist and the blip at the
+control level is zero by convention:
+\[
+\gamma(X,0;\psi)=0,\qquad \gamma(X,1;\psi)=C(X;\psi).
+\]
+The decomposition \(Q(X,a)=\nu(X)+a\,C(X;\psi_0)\) follows directly: under
+consistency and ignorability,
+\[
+Q(X,a)
+=E\{Y(a)\mid X\}
+=\underbrace{E\{Y(0)\mid X\}}_{\nu(X)}
+ +\underbrace{E\{Y(a)-Y(0)\mid X\}}_{a\,C(X;\psi_0)}.
+\]
+The structural nested model framework makes explicit that \(\nu(X)\) is
+identification nuisance: consistent estimation of \(\psi_0\) is possible
+without ever specifying \(\nu(X)\). G-estimation in
+Section~\ref{w14:sec:gest} is precisely the method that achieves this,
+using the propensity score to remove the contribution of \(\nu(X)\) from
+the estimating equations.
+
+\section{G-Estimation and Orthogonal Scores}
+\label{w14:sec:gest}
+
+A useful interpretation of A-learning is provided through G-estimation. Under the semiparametric model
+\[
+Q(X,A)=\nu(X)+A\,C(X;\beta_0),
+\]
+one may consider the score
+\[
+\Psi(Y,A\mid X;\beta,\nu,\pi)=\{A-\pi(X)\}\{Y-\nu(X)-A\,C(X;\beta)\},
+\]
+where \(\pi(X)=P(A=1\mid X)\) is the propensity score.
+
+\begin{prop}{Moment condition for G-estimation}
+\label{w14:prop:gest}
+At the true parameter values \((\beta_0,\nu_0,\pi_0)\),
+\[
+E\big[\Psi(Y,A\mid X;\beta_0,\nu_0,\pi_0)\mid X\big]=0.
+\]
+\end{prop}
+
+\begin{proof}
+Under the working model,
+\[
+E(Y\mid X,A)=\nu_0(X)+A\,C(X;\beta_0).
+\]
+Therefore,
+\[
+E\big[Y-\nu_0(X)-A\,C(X;\beta_0)\mid X,A\big]=0.
+\]
+Multiplying by \(A-\pi_0(X)\) and taking conditional expectation yields the result.
+\end{proof}
+
+\begin{prop}{Neyman orthogonality of the G-estimation score}
+\label{w14:prop:neyman-orth}
+At the true parameter values \((\beta_0,\nu_0,\pi_0)\), the score \(\Psi\) satisfies
+\[
+\frac{\partial}{\partial t}
+E\bigl[\Psi(Y,A\mid X;\beta_0,\nu_0+th,\pi_0)\bigr]\big|_{t=0}=0
+\]
+for every square-integrable \(h:\mathcal X\to\mathbb R\), and
+\[
+\frac{\partial}{\partial t}
+E\bigl[\Psi(Y,A\mid X;\beta_0,\nu_0,\pi_0+tg)\bigr]\big|_{t=0}=0
+\]
+for every square-integrable \(g:\mathcal X\to\mathbb R\).
+\end{prop}
+
+\begin{proof}
+Perturbing \(\nu_0\) in direction \(h\), the Gateaux derivative is
+\[
+\frac{\partial}{\partial t}
+E\bigl[\{A-\pi_0(X)\}\{Y-\nu_0(X)-th(X)-A\,C(X;\beta_0)\}\bigr]\big|_{t=0}
+= -E\bigl[h(X)\{A-\pi_0(X)\}\bigr].
+\]
+By the tower property,
+\[
+E\bigl[h(X)\{A-\pi_0(X)\}\bigr]
+=E\bigl[h(X)\,E\{A-\pi_0(X)\mid X\}\bigr]=0,
+\]
+since \(E\{A-\pi_0(X)\mid X\}=0\) by definition of the propensity score.
+
+Perturbing \(\pi_0\) in direction \(g\), the Gateaux derivative is
+\[
+\frac{\partial}{\partial t}
+E\bigl[\{A-\pi_0(X)-tg(X)\}\{Y-\nu_0(X)-A\,C(X;\beta_0)\}\bigr]\big|_{t=0}
+= -E\bigl[g(X)\{Y-\nu_0(X)-A\,C(X;\beta_0)\}\bigr].
+\]
+Under the working model, \(E\{Y-\nu_0(X)-A\,C(X;\beta_0)\mid X\}=0\),
+so the tower property again gives zero.
+\end{proof}
+
+Propositions~\ref{w14:prop:gest} and~\ref{w14:prop:neyman-orth} together show that the G-estimation score satisfies the two conditions that characterize Neyman orthogonality \citep{chernozhukov2018double}: it has mean zero at the truth, and its Gateaux derivatives with respect to both nuisance functions vanish at the truth. This is the same orthogonality property that underpins the double machine learning estimators of Chapter~\ref{w11:sec:dml}.
+
+\begin{remark}
+Classical G-estimation for A-learning can be viewed as an early example of orthogonal-score construction. This makes it a natural bridge between structural nested-model methodology and modern semiparametric learning.
+\end{remark}
+
+\subsection{Estimating equation}
+
+The moment condition of Proposition~\ref{w14:prop:gest} motivates an
+estimating equation for \(\beta\). Let \(\lambda(X_i)\) be a
+\(q\)-vector of functions of \(X_i\), called \emph{instruments}. The general
+A-learning estimating equation is
+\[
+\sum_{i=1}^n \lambda(X_i)\{A_i-\hat\pi(X_i)\}
+\bigl\{Y_i-\hat\nu(X_i)-A_i\,C(X_i;\beta)\bigr\}=0.
+\]
+For identification, \(q=\dim(\beta)\) and the matrix
+\(E\bigl[\lambda(X)(A-\pi(X))A\,\partial C(X;\beta_0)/\partial\beta^\top\bigr]\)
+must have full rank.
+
+\medskip\noindent\textbf{Canonical instrument choice.}
+The natural choice is
+\[
+\lambda(X)=\frac{\partial C(X;\beta)}{\partial\beta},
+\]
+the gradient of the contrast model with respect to \(\beta\). This produces
+a just-identified system. It is analogous to choosing the score as
+instrument in semiparametric efficiency theory, and it yields the lowest
+asymptotic variance among estimators of this form when \(\nu\) and \(\pi\)
+are known \citep{murphy2003optimal}.
+
+\medskip\noindent\textbf{Baseline nuisance estimation.}
+The baseline function \(\hat\nu(X_i)\) is estimated by regressing \(Y_i\) on
+\(X_i\) (ignoring \(A_i\)), for example by ordinary least squares or any
+flexible nonparametric method. The residuals
+\(e_{Y,i}=Y_i-\hat\nu(X_i)\) replace \(Y_i-\hat\nu(X_i)\) throughout.
+By the Neyman orthogonality of Proposition~\ref{w14:prop:neyman-orth},
+the estimating equation is insensitive to first-order errors in
+\(\hat\nu\), so this preliminary regression step does not inflate the
+asymptotic variance of \(\hat\beta\).
+
+\medskip\noindent\textbf{Closed form for the linear contrast model.}
+Suppose \(C(X;\beta)=\beta^\top Z(X)\) for a feature vector
+\(Z:\mathcal X\to\mathbb R^{p+1}\) (e.g., \(Z(x)=(1,x^\top)^\top\) for a
+main-effects-plus-interaction model). With \(\lambda(X)=Z(X)\) and
+\(\tilde A_i=A_i-\hat\pi(X_i)\), the estimating equation is linear in \(\beta\).
+Using \(A_i^2=A_i\) for binary \(A\), it simplifies to
+\[
+\hat\beta
+=\Biggl(\sum_{i=1}^n A_i(1-\hat\pi_i)\,Z(X_i)Z(X_i)^\top\Biggr)^{-1}
+ \sum_{i=1}^n \tilde A_i\,Z(X_i)\,e_{Y,i}.
+\]
+
+\begin{remark}
+The closed-form estimator has the structure of a two-stage-least-squares
+(2SLS) estimator \citep{robins2004optimal}. The centered residual
+\(\tilde A_i=A_i-\hat\pi(X_i)\) acts as an instrument for \(A_i\), and
+\(A_i Z(X_i)\) is the endogenous regressor. This analogy makes explicit
+why A-learning avoids the misspecification sensitivity of Q-learning:
+the instrument \(\tilde A_i\) is uncorrelated with the baseline
+\(\nu(X_i)\) by construction (since \(E[\tilde A_i\mid X_i]=0\)), so
+errors in \(\hat\nu\) do not bias \(\hat\beta\).
+\end{remark}
+
+The A-learning rule is
+\[
+\hat d_A(X)=I\bigl\{C(X;\hat\beta)>0\bigr\}.
+\]
+
+\section{Value Search Estimation}
+\label{w14:sec:valuesearch}
+
+Rather than estimate \(Q(X,a)\) or \(C(X)\) first, one may directly parameterize the treatment rule and then maximize an estimated value over that class.
+
+\begin{defn}{Value-search policy class}
+\label{w14:defn:valueclass}
+Suppose the candidate policies are indexed by a parameter \(\eta\), so that
+\[
+d_\eta:\mathcal X\to\{0,1\}, \qquad \eta\in\mathcal H.
+\]
+\end{defn}
+
+\begin{defn}{Value search estimator}
+\label{w14:defn:valuesearch}
+Let \(\widehat V(d_\eta)\) be an estimator of the value of \(d_\eta\). The value search estimator is obtained by
+\[
+\hat\eta\in\arg\max_{\eta\in\mathcal H}\widehat V(d_\eta),
+\qquad
+\hat d_V(X)=d_{\hat\eta}(X).
+\]
+\end{defn}
+
+The value estimator \(\widehat V(d_\eta)\) may be based on:
+\begin{itemize}
+    \item outcome regression,
+    \item inverse probability weighting,
+    \item or doubly robust estimation.
+\end{itemize}
+
+\begin{remark}
+Value search estimation is particularly natural when one wants to restrict attention to interpretable policy classes, such as linear threshold rules, sparse score rules, or shallow trees \citep{qian2011performance}. Its main challenge is computational: optimization over a rich policy class may be difficult.
+\end{remark}
+
+\begin{prop}{Consistency of the value search estimator}
+\label{w14:prop:valuesearch-consist}
+Suppose the propensity score is correctly specified, the outcome is bounded,
+and the policy class \(\{d_\eta:\eta\in\mathcal H\}\) has finite
+VC dimension \(V_{\mathcal D}<\infty\). Then
+\[
+\sup_{\eta\in\mathcal H}
+\bigl|\widehat V_{\mathrm{IPW}}(d_\eta)-V(d_\eta)\bigr|
+\xrightarrow{p}0.
+\]
+If additionally \(d^\ast\) is the unique maximizer of \(V\) over \(\mathcal D\),
+then \(V(\hat d_V)\xrightarrow{p}V(d^\ast)\).
+\end{prop}
+
+\begin{proof}[Proof sketch]
+Write \(\widehat V_{\mathrm{IPW}}(d_\eta)=n^{-1}\sum_{i=1}^n\phi_i(\eta)\),
+where
+\[
+\phi_i(\eta)
+=\frac{I\{A_i=d_\eta(X_i)\}Y_i}{\hat\pi(X_i)^{A_i}\{1-\hat\pi(X_i)\}^{1-A_i}}.
+\]
+Since \(\hat\pi\xrightarrow{p}\pi\) and outcomes are bounded, it suffices to
+establish uniform convergence with the true propensity score \(\pi\) in place
+of \(\hat\pi\). The function class
+\(\{\phi(\cdot;\eta):\eta\in\mathcal H\}\) is dominated by a fixed integrable
+envelope, and its bracketing or VC structure inherits the finite VC dimension
+of the policy class. By the Vapnik--Chervonenkis uniform law of large numbers,
+the supremum of \(|n^{-1}\sum_i\phi_i(\eta)-E[\phi(\eta)]|\) over
+\(\eta\in\mathcal H\) converges to zero in probability. The second claim
+follows from the argmax continuous mapping theorem: if \(\sup_\eta|\widehat
+V-V|\to 0\) and \(V\) has a unique maximizer \(d^\ast\), then
+\(V(\hat d_V)\to V(d^\ast)\).
+\end{proof}
+
+\begin{remark}
+For linear threshold rules \(d_\eta(x)=I\{\eta_0+\eta_1^\top x>0\}\) in
+\(\mathbb R^p\), the VC dimension of the policy class is \(p+1\), so the
+conditions of Proposition~\ref{w14:prop:valuesearch-consist} are satisfied.
+\end{remark}
+
+\section{Doubly Robust Policy Learning}
+\label{w14:sec:drlearning}
+
+Chapter 13 showed that for any fixed rule \(d\), the value \(V(d)\) may be estimated by a doubly robust estimator. This suggests a natural strategy for policy learning: choose the policy that maximizes a doubly robust estimate of value.
+
+\begin{defn}{Doubly robust value estimator}
+\label{w14:defn:dr-value}
+For a fixed deterministic policy \(d\), the \emph{doubly robust value estimator} is
+\[
+\widehat V_{\mathrm{DR}}(d)
+= \frac{1}{n}\sum_{i=1}^n \hat\Gamma_i(d),
+\]
+where the \emph{augmented IPW pseudo-outcome} is
+\[
+\hat\Gamma_i(d)
+= \hat\mu_{d(X_i)}(X_i)
+  + \frac{I\{A_i=d(X_i)\}}
+         {\hat\pi(X_i)^{A_i}\{1-\hat\pi(X_i)\}^{1-A_i}}
+    \bigl\{Y_i - \hat\mu_{A_i}(X_i)\bigr\},
+\]
+\(\hat\mu_a(x)\) is an estimator of \(E(Y\mid X=x,A=a)\), and \(\hat\pi(x)\) is an estimator of \(P(A=1\mid X=x)\).
+\end{defn}
+
+\begin{defn}{Doubly robust policy learner}
+\label{w14:defn:drlearner}
+Let \(\mathcal D\) be a class of deterministic policies. A \emph{doubly robust policy learner} is any rule
+\[
+\hat d_{\mathrm{DR}} \in \arg\max_{d\in\mathcal D} \widehat V_{\mathrm{DR}}(d).
+\]
+\end{defn}
+
+\begin{remark}
+Doubly robust policy learning can be viewed as an augmented version of value search estimation \citep{dudik2014doubly}. It is attractive because the criterion \(\widehat V_{\mathrm{DR}}(d)\) is less sensitive to nuisance-model misspecification than a value criterion based solely on regression or weighting.
+\end{remark}
+
+\begin{prop}{Double robustness of the value criterion}
+\label{w14:prop:dr-value}
+Under consistency, ignorability, and positivity, for any fixed deterministic
+policy \(d\):
+\begin{enumerate}
+  \item[(i)] If \(\hat\mu_a(x)\to\mu_a(x)\) in probability for each
+    \(a\in\{0,1\}\), then \(\widehat V_{\mathrm{DR}}(d)\xrightarrow{p}V(d)\)
+    regardless of whether \(\hat\pi\) is consistent.
+  \item[(ii)] If \(\hat\pi(x)\to\pi(x)\) in probability, then
+    \(\widehat V_{\mathrm{DR}}(d)\xrightarrow{p}V(d)\) regardless of whether
+    \(\hat\mu_a\) is consistent.
+\end{enumerate}
+\end{prop}
+
+\begin{proof}
+It suffices to show that \(E[\hat\Gamma_i(d)]=V(d)\) in each case. Write
+\(\pi_b(a\mid x)=\pi(x)^a\{1-\pi(x)\}^{1-a}\) for the true propensity.
+
+\textbf{Case (i):} Suppose \(\hat\mu_a=\mu_a\). Since \(E[Y-\mu_{A}(X)\mid X,A]=0\) by definition of \(\mu_a\), the tower property gives
+\[
+E\Bigl[
+  \frac{I\{A_i=d(X_i)\}}{\hat\pi_b(A_i\mid X_i)}
+  \{Y_i-\mu_{A_i}(X_i)\}
+\Bigm| X_i\Bigr]
+= E\Bigl[
+    \frac{I\{A_i=d(X_i)\}}{\hat\pi_b(A_i\mid X_i)}
+    \underbrace{E[Y_i-\mu_{A_i}(X_i)\mid X_i,A_i]}_{=\,0}
+  \Bigm| X_i\Bigr] = 0.
+\]
+Hence \(E[\hat\Gamma_i(d)\mid X_i]=\mu_{d(X_i)}(X_i)\), and \(E[\hat\Gamma_i(d)]=E[\mu_{d(X)}(X)]=V(d)\).
+
+\textbf{Case (ii):} Suppose \(\hat\pi=\pi\). By iterated expectation, at \(X_i=x\),
+\begin{align*}
+E\Bigl[
+  \frac{I\{A_i=d(x)\}}{\pi_b(d(x)\mid x)}
+  \{Y_i-\hat\mu_{A_i}(x)\}
+\Bigm| X_i=x\Bigr]
+&= E\Bigl[
+     \frac{I\{A_i=d(x)\}}{\pi_b(d(x)\mid x)}Y_i
+   \Bigm| X_i=x\Bigr]
+   - E\Bigl[
+     \frac{I\{A_i=d(x)\}}{\pi_b(d(x)\mid x)}\hat\mu_{A_i}(x)
+   \Bigm| X_i=x\Bigr].
+\end{align*}
+By the IPW identity (unconfoundedness and positivity), the first term equals
+\(\mu_{d(x)}(x)\). For the second term, since
+\(E[I\{A=d(x)\}/\pi_b(d(x)\mid x)\mid X=x]=1\),
+\[
+E\Bigl[
+  \frac{I\{A_i=d(x)\}}{\pi_b(d(x)\mid x)}\hat\mu_{A_i}(x)
+\Bigm| X_i=x\Bigr]
+= \hat\mu_{d(x)}(x).
+\]
+Therefore
+\(E[\hat\Gamma_i(d)\mid X_i=x]
+ =\hat\mu_{d(x)}(x)+\mu_{d(x)}(x)-\hat\mu_{d(x)}(x)=\mu_{d(x)}(x)\),
+and taking expectation gives \(E[\hat\Gamma_i(d)]=V(d)\).
+\end{proof}
+
+\begin{remark}
+\label{w14:rem:dr-bias}
+When neither model is correctly specified, the same calculation shows
+\[
+E\bigl[\hat\Gamma_i(d)\bigr] - V(d)
+= E\biggl[
+    \bigl\{\hat\mu_{d(X)}-\mu_{d(X)}\bigr\}
+    \biggl\{1-\frac{\pi_b(d(X)\mid X)}{\hat\pi_b(d(X)\mid X)}\biggr\}
+  \biggr].
+\]
+The bias is a \emph{product} of the outcome-model error
+\(\hat\mu_{d(X)}-\mu_{d(X)}\) and the propensity-model error
+\(1-\pi_b/\hat\pi_b\). Each factor vanishes under correct specification of
+the corresponding model, which is the product structure that gives double
+robustness its name. When both converge at nonparametric rates
+\(\|\hat\mu_a-\mu_a\|=O_p(n^{-\alpha})\) and
+\(\|\hat\pi-\pi\|=O_p(n^{-\beta})\), the bias is of order
+\(O_p(n^{-(\alpha+\beta)})\). This is \(o(n^{-1/2})\) whenever
+\(\alpha+\beta>\tfrac{1}{2}\), making the bias asymptotically negligible
+relative to the \(n^{-1/2}\) estimation uncertainty. The cross-fitting
+discussion below explains why sample splitting is needed to achieve this
+rate for policy search with flexible nuisance estimators.
+\end{remark}
+
+\subsection{Cross-fitting}
+
+When flexible nuisance estimators are used, combining doubly robust policy
+learning with cross-fitting is important for two reasons. First, if the same
+data are used to fit \(\hat\mu_a\) and \(\hat\pi\) and to maximize
+\(\widehat V_{\mathrm{DR}}\), the plug-in nuisance estimates introduce a
+bias term of order \(\|\hat\mu_a-\mu_a\|\cdot\|\hat\pi-\pi\|\) into the
+value criterion \citep{chernozhukov2018double}. For nonparametric nuisance
+estimators this product can be nonnegligible even when each factor converges
+to zero. Second, if the nuisance functions adapt to the same data used for
+policy search, the search can exploit artifacts of the nuisance fit rather
+than genuine outcome differences. Cross-fitting resolves both issues: nuisance
+functions are estimated on held-out folds and evaluated on the training fold,
+ensuring that the policy criterion and the nuisance estimates are asymptotically
+independent.
+
+The methods above learn policies by modeling outcomes, contrasts, or values directly. We now briefly describe an alternative formulation that treats policy learning as weighted classification.
+
+\section{Classification-Based Policy Learning}
+\label{w14:sec:classification}
+
+An alternative way to formulate policy learning is as a weighted classification problem. This does not introduce a new causal estimand. Rather, it provides a different computational lens for learning the same optimal treatment rule. The key observation is that the optimal rule depends only on the sign of the treatment contrast, so decision errors can be viewed as classification mistakes weighted by the magnitude of that contrast.
+
+\subsection{From policy optimization to weighted classification}
+\label{w14:subsec:class-reform}
+
+Since \(d^\ast(x)=I\{C(x)>0\}\), the only information about \(C(x)\) that is needed to make the optimal decision is its sign. A unit for which \(|C(x)|\) is large has a strong treatment effect, and getting the decision wrong is costly; a unit near the decision boundary \(\{C(x)=0\}\) is nearly indifferent between treatments, and a sign error carries little weight. This structure maps directly onto a weighted classification problem: \(d\) is a binary classifier, the sign \(I(C_i>0)\) is the class label, and the magnitude \(|C_i|\) is the observation weight.
+
+More formally, suppose we have estimated contrast pseudo-outcomes \(C_i\), obtained via outcome regression, IPW, or doubly robust methods (Section~\ref{w14:sec:drlearning}). Then maximizing
+\[
+\frac{1}{n}\sum_{i=1}^n d(X_i)C_i
+\]
+over binary decision rules \(d(X_i)\in\{0,1\}\) is equivalent to minimizing the weighted misclassification loss
+\[
+L_c(d)=\frac{1}{n}\sum_{i=1}^n |C_i|\,I\bigl\{I(C_i>0)\neq d(X_i)\bigr\}.
+\]
+Since \(d(X_i)\in\{0,1\}\) and \(I(C_i>0)\in\{0,1\}\), the indicator
+\(I\{I(C_i>0)\neq d(X_i)\}\) equals the squared difference
+\(\{I(C_i>0)-d(X_i)\}^2\), so the loss may equivalently be written with a
+squared term.
+
+\begin{prop}{Classification reformulation}
+\label{w14:prop:classification}
+For fixed coefficients \(C_1,\dots,C_n\) and binary decisions \(d(X_i)\in\{0,1\}\), the following optimization problems are equivalent:
+\begin{enumerate}
+    \item maximize
+    \[
+    \frac{1}{n}\sum_{i=1}^n d(X_i)C_i;
+    \]
+    \item minimize
+    \[
+    \frac{1}{n}\sum_{i=1}^n |C_i|\,I\bigl\{I(C_i>0)\neq d(X_i)\bigr\}.
+    \]
+\end{enumerate}
+\end{prop}
+
+\begin{proof}
+Use the identity
+\[
+d(X_i)C_i
+=
+I(C_i>0)|C_i|
+-
+|C_i|\{I(C_i>0)-d(X_i)\}^2.
+\]
+Summing over \(i\) shows that maximizing the left-hand side is equivalent to minimizing the weighted classification loss on the right-hand side.
+\end{proof}
+
+\begin{remark}
+In this formulation, \(I(C_i>0)\) acts as the class label, \(|C_i|\) acts as
+the observation weight, and \(d(x)\) acts as the classifier. Observations
+with a large contrast magnitude receive high weight, consistent with the
+regret-contrast identity of Proposition~\ref{w14:prop:regret-contrast}.
+\end{remark}
+
+\subsection{Surrogate loss functions}
+
+The weighted \(0\)-\(1\) loss is nonconvex and difficult to optimize directly. A common strategy is to replace it with a convex surrogate, such as the hinge loss
+\[
+\ell_{\mathrm{hinge}}(u)=(1-u)_+.
+\]
+This leads naturally to support-vector-machine-style formulations for policy learning.
+
+The framework above applies to any choice of pseudo-outcomes \(C_i\). Subsection~\ref{w14:sec:owl} describes Outcome Weighted Learning (OWL), a particularly important instantiation in which the pseudo-outcomes are constructed from the IPW representation of policy value.
+
+\subsection{Outcome weighted learning}
+\label{w14:sec:owl}
+
+\emph{Outcome Weighted Learning} (OWL) \citep{zhao2012estimating} is a
+classification-based policy learner that uses the observed treatment
+\(A_i\in\{0,1\}\) as the class label rather than the estimated contrast sign
+\(I(C_i>0)\) used in Subsection~\ref{w14:subsec:class-reform}. The key idea is
+that under the IPW representation of policy value, maximizing value over a
+policy class is equivalent to finding the classifier that best agrees with
+the observed treatments on units with high outcome. Specifically, in the
+binary-treatment case, the IPW estimator of policy value is
+\[
+\widehat V_{\mathrm{IPW}}(d)
+=
+\frac{1}{n}\sum_{i=1}^n
+\frac{I\{A_i=d(X_i)\}Y_i}{\hat\pi(X_i)^{A_i}\{1-\hat\pi(X_i)\}^{1-A_i}}.
+\]
+When the outcome is nonnegative, maximizing this criterion is equivalent to minimizing a weighted misclassification loss of the form
+\[
+L_{\mathrm{OWL}}(d)
+=
+\frac{1}{n}\sum_{i=1}^n
+W_i I\{A_i\neq d(X_i)\},
+\]
+where
+\[
+W_i=
+\frac{Y_i}{A_i\hat\pi(X_i)+(1-A_i)\{1-\hat\pi(X_i)\}}.
+\]
+
+\begin{prop}{OWL equivalence}
+\label{w14:prop:owl-equiv}
+Suppose \(Y_i\geq 0\) for all \(i\). Then
+\[
+\arg\max_{d\in\mathcal D}\,\widehat V_{\mathrm{IPW}}(d)
+=
+\arg\min_{d\in\mathcal D}\,L_{\mathrm{OWL}}(d).
+\]
+\end{prop}
+
+\begin{proof}
+Write \(I\{A_i=d(X_i)\}=1-I\{A_i\neq d(X_i)\}\). Then
+\[
+\widehat V_{\mathrm{IPW}}(d)
+=
+\frac{1}{n}\sum_{i=1}^n W_i\,I\{A_i=d(X_i)\}
+=
+\frac{1}{n}\sum_{i=1}^n W_i
+-
+L_{\mathrm{OWL}}(d).
+\]
+The first sum does not depend on \(d\), so maximizing
+\(\widehat V_{\mathrm{IPW}}(d)\) over \(\mathcal D\) is equivalent to
+minimizing \(L_{\mathrm{OWL}}(d)\) over \(\mathcal D\). The condition
+\(Y_i\geq 0\) ensures \(W_i\geq 0\), which is needed for the weights to
+define a valid classification loss.
+\end{proof}
+
+\begin{remark}
+In OWL, the observed treatment \(A_i\) acts as the class label, while the weight \(W_i\) reflects the observed outcome adjusted by the treatment assignment mechanism. This leads to a flexible classification-based procedure for learning treatment rules.
+\end{remark}
+
+\medskip\noindent\textbf{Regularized objective.}
+
+If one writes the decision rule as
+\[
+d(X;\eta)=\mathrm{sgn}\{f(X;\eta)\},
+\]
+then a regularized surrogate-loss formulation is
+\[
+\frac{1}{n}\sum_{i=1}^n W_i\{1-A_i f(X_i;\eta)\}_+ + \lambda \|f\|^2.
+\]
+This combines weighted classification with regularization to control overfitting.
+
+\subsection{Strengths and limitations of the classification view}
+\label{w14:subsec:class-limits}
+
+The classification reformulation is worth understanding for several reasons.
+
+\textbf{Computational convenience.} Minimizing a weighted \(0\)\nobreakdash--\(1\) loss directly is NP-hard in general. Replacing it with a convex surrogate---hinge, logistic, or exponential---transforms policy learning into a standard convex program that can be solved with SVM solvers, gradient boosting, or any other weighted-classification software without modification.
+
+\textbf{Connection to supervised learning theory.} Margin bounds, Rademacher complexity, and VC-dimension results from supervised learning transfer directly to the policy setting through the weighted-classification lens. The consistency result of Proposition~\ref{w14:prop:valuesearch-consist} is one instance of this transfer: finite VC dimension of the policy class controls uniform convergence of the value criterion, by the same mechanism that controls generalization error in classification.
+
+\textbf{Large-margin geometry.} The weighted hinge loss pushes the learned decision boundary away from training points in proportion to their contrast weight \(|C_i|\). This is precisely the right geometry: units with large \(|C(x)|\) are far from indifference between treatments and should be assigned with high confidence, while units near \(\{C(x)=0\}\) contribute little to either the value or the regret.
+
+\textbf{The classification view is a reformulation, not a new estimand.} The most important caution is also the most conceptual. The classification restatement of policy value maximization (Proposition~\ref{w14:prop:value-decomp}) does not change the underlying identification problem. The assumptions required---consistency, ignorability, and positivity---are exactly those of Chapter~\ref{w13:sec:policies}. Students should resist treating OWL or surrogate-loss minimization as methods with independent identification requirements.
+
+A related caution is that framing the problem as classification can obscure the causal structure. The class labels \(I(C_i>0)\) in Subsection~\ref{w14:subsec:class-reform}, and the observed treatments \(A_i\) in OWL, are not ordinary labels: they encode a causal quantity under specific assumptions, and they carry estimation error from the pseudo-outcome construction or from the propensity model. Treating them as fixed labels---as one would in standard supervised classification---ignores this error and can lead to overconfident policies. Doubly robust policy learning (Section~\ref{w14:sec:drlearning}) addresses this by augmenting the criterion with an outcome-model correction, but the classification wrapper does not make such corrections automatic.
+
+The classification formulation also clarifies the relevant loss for policy learning. This leads naturally to the concept of regret, which measures decision error in value terms rather than prediction error in outcome-model terms.
+
+\section{Regret}
+\label{w14:sec:regret}
+
+To evaluate a learned policy, one needs a criterion that measures decision quality rather than prediction error alone.
+
+\begin{defn}{Regret}
+\label{w14:defn:regret}
+Let \(d^\ast\) be an optimal policy in the class \(\mathcal D\). The regret of a learned policy \(\hat d\) is
+\[
+\mathcal R(\hat d)=V(d^\ast)-V(\hat d).
+\]
+\end{defn}
+
+\begin{prop}{Regret and the contrast function}
+\label{w14:prop:regret-contrast}
+Suppose \(P\{C(X)=0\}=0\). Then for any deterministic rule \(\hat d\),
+\[
+\mathcal R(\hat d)=E\bigl[|C(X)|\,I\{\hat d(X)\neq d^\ast(X)\}\bigr].
+\]
+\end{prop}
+
+\begin{proof}
+By Proposition~\ref{w14:prop:value-decomp},
+\[
+\mathcal R(\hat d)
+=E\bigl[d^\ast(X)C(X)\bigr]-E\bigl[\hat d(X)C(X)\bigr]
+=E\bigl[\{d^\ast(X)-\hat d(X)\}C(X)\bigr].
+\]
+On the event \(\{\hat d(X)=d^\ast(X)\}\) the summand is zero.
+On the event \(\{d^\ast(X)=1,\hat d(X)=0\}\), we have \(C(X)>0\) (since
+\(d^\ast(x)=I\{C(x)>0\}\)) and \(d^\ast(X)-\hat d(X)=1\), so the summand
+equals \(C(X)=|C(X)|\).
+On the event \(\{d^\ast(X)=0,\hat d(X)=1\}\), we have \(C(X)<0\) and
+\(d^\ast(X)-\hat d(X)=-1\), so the summand equals \(-C(X)=|C(X)|\).
+Since \(P\{C(X)=0\}=0\), these three events partition the sample space, giving
+\[
+\mathcal R(\hat d)
+=E\bigl[|C(X)|\,I\{\hat d(X)\neq d^\ast(X)\}\bigr].
+\]
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{w14:prop:regret-contrast} has two important consequences.
+First, regret is zero if and only if \(\hat d(x)=d^\ast(x)\) for almost all \(x\)
+with \(C(x)\neq 0\); getting the sign of the contrast correct everywhere is
+necessary and sufficient. Second, the regret weight \(|C(x)|\) is large far
+from the decision boundary and small near it, so errors near the boundary
+\(\{x:C(x)=0\}\) incur little regret. A method may therefore produce a poor
+pointwise estimate of \(C(x)\) and still achieve low regret, provided it gets
+the sign right on the high-weight region. Conversely, a method that estimates
+\(C(x)\) accurately in mean squared error but makes sign errors where \(|C(x)|\)
+is large may incur substantial regret. This decoupling of prediction error from
+decision quality is the central difficulty of policy learning.
+\end{remark}
+
+\section{Overfitting, Honesty, and Sample Splitting}
+\label{w14:sec:honesty}
+
+Policy learning differs from policy evaluation because the same data are often used both to search over policies and to assess their performance. This can produce substantial optimism.
+
+\subsection{Why policy learning can overfit}
+
+If one computes
+\[
+\hat d\in\arg\max_{d\in\mathcal D}\widehat V(d)
+\]
+and then reports the same in-sample value \(\widehat V(\hat d)\), the
+resulting estimate may exaggerate the true out-of-sample performance of
+\(\hat d\). This is because the maximization step selects the rule that
+happens to score highest on the realized sample, inflating the in-sample
+criterion relative to its expectation.
+
+\begin{prop}{In-sample optimism}
+\label{w14:prop:optimism}
+Let \(\widehat V\) be any estimator of \(V\). Then
+\[
+E\bigl[\widehat V(\hat d)\bigr] \geq E\bigl[V(\hat d)\bigr],
+\]
+with equality only if \(\hat d\) does not depend on the data used to evaluate
+\(\widehat V(\hat d)\).
+\end{prop}
+
+\begin{proof}
+For each \(d\in\mathcal D\), let \(\hat d^\ast(d)\) denote the policy that
+would be selected if \(d\) were forced as the choice. Since
+\(\hat d\in\arg\max_{d\in\mathcal D}\widehat V(d)\),
+\[
+\widehat V(\hat d)\geq \widehat V(d) \quad \text{for all } d\in\mathcal D.
+\]
+In particular, choosing any fixed \(d_0\) and taking expectations,
+\[
+E\bigl[\widehat V(\hat d)\bigr]\geq E\bigl[\widehat V(d_0)\bigr]=E\bigl[V(d_0)\bigr]
++\underbrace{E\bigl[\widehat V(d_0)-V(d_0)\bigr]}_{=\,0},
+\]
+where the last step uses the fact that \(d_0\) is fixed (non-random).
+More precisely, since \(\hat d\) is chosen to maximize
+\(\widehat V\), not \(V\),
+\[
+E\bigl[\widehat V(\hat d)-V(\hat d)\bigr]
+=E\Bigl[\max_{d\in\mathcal D}\widehat V(d)-V(\hat d)\Bigr]\geq 0.
+\]
+Equality holds when \(\hat d\) is independent of the sample used to form
+\(\widehat V(\hat d)\), i.e., when evaluation and learning use separate data.
+\end{proof}
+
+\begin{remark}
+The magnitude of the optimism gap \(E[\widehat V(\hat d)-V(\hat d)]\) grows
+with the richness of \(\mathcal D\). For an IPW-based criterion with a policy
+class of VC dimension \(V_{\mathcal D}\), the gap is of order
+\(\sqrt{V_{\mathcal D}/n}\) up to logarithmic factors. This is analogous to
+the adjustment for model complexity in regression: the in-sample
+\(\hat R^2\) is systematically optimistic, and the degree of optimism
+increases with the number of fitted parameters.
+\end{remark}
+
+\subsection{Honest evaluation}
+
+Several strategies can help:
+\begin{itemize}
+    \item sample splitting,
+    \item validation and test sets,
+    \item cross-fitting,
+    \item restricting the policy class to control complexity.
+\end{itemize}
+
+\begin{remark}
+A highly flexible policy class may contain a very strong policy in principle, but in finite samples it may overfit severely. Restricted policy classes often trade some approximation power for greater stability and interpretability.
+\end{remark}
+
+\section{Practical Constraints and Interpretability}
+\label{w14:sec:constraints}
+
+The unrestricted sign rule \(d^\ast(x)=I\{C(x)>0\}\) is often a useful benchmark, but real treatment decisions may be subject to additional constraints.
+
+Examples include:
+\begin{itemize}
+    \item treatment budget constraints,
+    \item limited treatment capacity,
+    \item treatment burden or side effects,
+    \item fairness across subgroups,
+    \item the need for interpretable decision rules.
+\end{itemize}
+
+A flexible black-box classifier may achieve high value, but it may be difficult to explain or implement in practice. For this reason, interpretable policy classes such as sparse score rules, shallow trees, or decision lists may be preferable in some applications.
+
+\section{Lab: Learning an Optimal Treatment Rule}
+\label{w14:sec:lab}
+
+This lab compares six policy learners: treat nobody, treat everybody,
+Q-learning, A-learning, value search, and outcome weighted learning (OWL).
+Three scenarios vary which nuisance model is correctly specified.
+Full \textsf{R} code is provided in the supplementary file
+\texttt{ch14\_simulation.R}.
+
+\subsection{Simulation setup}
+\label{w14:subsec:lab-setup}
+
+Generate $n=500$ i.i.d.\ observations as follows. Draw $X_i\sim N(0,1)$,
+then $A_i\mid X_i\sim\mathrm{Bernoulli}\{\mathrm{expit}(\alpha_1 X_i)\}$
+with $\alpha_1=1$. The outcome is
+\[
+Y_i = \beta_1 X_i + \beta_2 A_i + \beta_3 A_i X_i + \varepsilon_i,
+\qquad \varepsilon_i\overset{\mathrm{i.i.d.}}{\sim}N(0,1),
+\]
+with $\beta_1=0.5$, $\beta_2=-0.5$, $\beta_3=1.0$. The true contrast is
+$C(x)=\beta_2+\beta_3 x = -0.5+x$, so the optimal rule is
+$d^\ast(x)=I\{x>0.5\}$, with oracle value $V(d^\ast)=0.198$.
+The two static baselines have values $V(\text{nobody})=0.001$ and
+$V(\text{everybody})=-0.498$.
+
+Three scenarios are considered.
+\begin{itemize}
+  \item \textbf{S1 (both models correct):} outcome model includes the
+    $A_i X_i$ interaction; propensity model is logistic regression on $X_i$.
+  \item \textbf{S2 (outcome model misspecified):} outcome model omits the
+    $A_i X_i$ interaction; propensity model correct.
+  \item \textbf{S3 (propensity model misspecified):} outcome model correct;
+    propensity model is intercept-only (ignores $X_i$).
+\end{itemize}
+
+\subsection{Learner construction}
+\label{w14:subsec:lab-learners}
+
+\medskip\noindent
+\textbf{Q-learning.} Fit the working model
+$Q(X,a;\hat\beta)=\hat\beta_0+\hat\beta_1 X+\hat\beta_2 a+\hat\beta_3 aX$
+by OLS. The learned rule is
+$\hat d_Q(X)=I\{\hat\beta_2+\hat\beta_3 X>0\}$.
+
+\medskip\noindent
+\textbf{A-learning.} Partial out the baseline by regressing $Y$ on $X$.
+Solve the two-dimensional G-estimation moment equation
+\[
+\sum_{i=1}^n
+\begin{pmatrix}1\\X_i\end{pmatrix}
+(A_i-\hat\pi(X_i))
+\bigl\{e_{Y,i} - A_i(\hat\psi_0+\hat\psi_1 X_i)\bigr\}=0,
+\]
+where $e_{Y,i}$ is the residual from the baseline regression. The learned
+rule is $\hat d_A(X)=I\{\hat\psi_0+\hat\psi_1 X>0\}$.
+
+\medskip\noindent
+\textbf{Value search.} Over a grid of $31\times31$ values of
+$(\eta_0,\eta_1)\in[-1.5,1.5]\times[-1.5,3.0]$, evaluate the IPW value
+criterion
+$\widehat V_{\mathrm{IPW}}(d_\eta)
+ =n^{-1}\sum_i I\{A_i=d_\eta(X_i)\}Y_i /
+  \hat\pi(X_i)^{A_i}\{1-\hat\pi(X_i)\}^{1-A_i}$
+for the linear threshold rule $d_\eta(X)=I\{\eta_0+\eta_1 X>0\}$. The
+learned rule uses $(\hat\eta_0,\hat\eta_1)=\arg\max\widehat V_{\mathrm{IPW}}$.
+
+\medskip\noindent
+\textbf{OWL.} Set $z_i=2A_i-1\in\{-1,+1\}$, shift $Y$ to be positive, and
+minimize the weighted hinge loss
+\[
+\frac{1}{n}\sum_{i=1}^n W_i\bigl(1-z_i(\eta_0+\eta_1 X_i)\bigr)_+
++\lambda\eta_1^2,
+\]
+with $W_i=Y_i^{\mathrm{shift}}/\hat\pi(X_i)^{A_i}\{1-\hat\pi(X_i)\}^{1-A_i}$
+and $\lambda=0.1$, using Nelder--Mead optimization.
+
+\medskip
+All methods are evaluated on a held-out test set of $n=10{,}000$ using the
+doubly robust value estimator with correctly specified nuisance functions.
+The simulation is repeated $B=500$ times with \texttt{set.seed(2024)}.
+
+\subsection{Results}
+\label{w14:subsec:lab-results}
+
+Table~\ref{w14:tab:sim} reports mean out-of-sample DR value and regret
+for each method and scenario.
+
+\begin{table}[ht]
+\centering
+\caption{Simulation results ($n=500$, $B=500$ replications,
+\texttt{set.seed(2024)}). Mean out-of-sample DR value $\hat V$ and
+regret $\mathcal{R}=V(d^\ast)-\hat V$, both $\times10^3$, are reported.
+Oracle value $V(d^\ast)=0.198$. Standard deviations in parentheses.}
+\label{w14:tab:sim}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{llrrrr}
+\hline
+Scenario & & Q-learning & A-learning & Value search & OWL \\
+\hline
+\multirow{2}{*}{S1: Both correct}
+  & $\hat V\times 10^3$          & $195\;(16)$   & $195\;(16)$  & $184\;(32)$   & $\phantom{0}34\;(65)$  \\
+  & $\mathcal{R}\times 10^3$     & $\phantom{0}3$& $\phantom{0}3$ & $15$        & $164$ \\[4pt]
+\multirow{2}{*}{S2: OR misspecified}
+  & $\hat V\times 10^3$          & $\phantom{0}19\;(509)$ & $195\;(16)$ & $185\;(27)$ & $\phantom{0}40\;(70)$ \\
+  & $\mathcal{R}\times 10^3$     & $180$                  & $\phantom{0}3$ & $14$    & $159$ \\[4pt]
+\multirow{2}{*}{S3: PS misspecified}
+  & $\hat V\times 10^3$          & $196\;(16)$  & $187\;(18)$  & $184\;(73)$   & $163\;(19)$ \\
+  & $\mathcal{R}\times 10^3$     & $\phantom{0}3$ & $12$       & $15$          & $\phantom{0}35$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent The results illustrate several key themes of the chapter.
+
+\begin{itemize}
+
+  \item \textbf{S1: Both models correct.}  Q-learning and A-learning both
+    achieve near-oracle performance (regret $3\times10^{-3}$), confirming
+    that the sign of the fitted contrast correctly recovers $d^\ast$ when
+    the outcome model is right. Value search attains regret $15\times10^{-3}$;
+    it is slightly less efficient because grid search over $(\eta_0,\eta_1)$
+    introduces additional Monte Carlo noise. OWL has substantially higher
+    regret ($164\times10^{-3}$) and standard deviation ($65\times10^{-3}$),
+    reflecting the difficulty of minimizing a nonsmooth hinge loss over a
+    one-dimensional covariate via general-purpose optimization.
+
+  \item \textbf{S2: Outcome model misspecified.}  Q-learning degrades
+    sharply. Its mean value falls to $19\times10^{-3}$ with a standard
+    deviation of $509\times10^{-3}$---comparable to the treat-nobody baseline
+    on average but catastrophically variable across replications. When the
+    $A_i X_i$ interaction is omitted, the fitted contrast collapses to an
+    estimated constant, and the sign of that constant may be wrong, causing
+    the rule to treat the wrong subgroup entirely. A-learning is unaffected
+    (regret $3\times10^{-3}$): the G-estimation moment equation identifies
+    $\psi$ from the residualized scores without requiring a correctly
+    specified baseline. Value search is also robust (regret $14\times10^{-3}$)
+    because its criterion depends on the propensity score rather than the
+    outcome model. OWL likewise degrades only modestly relative to S1.
+
+  \item \textbf{S3: Propensity model misspecified.}  Q-learning is unaffected
+    (regret $3\times10^{-3}$), consistent with the fact that Q-learning
+    does not use the propensity score. A-learning degrades to regret
+    $12\times10^{-3}$: the G-estimation estimating equation depends on
+    $\hat\pi(X_i)$, and using the constant-propensity estimate introduces
+    bias into $\hat\psi$. Value search is similarly stable on average but
+    with inflated variance ($73\times10^{-3}$), reflecting instability of
+    IPW value estimates under propensity misspecification. OWL degrades
+    more (regret $35\times10^{-3}$) for the same reason.
+
+\end{itemize}
+
+\begin{remark}
+  The simulation highlights a structural asymmetry between Q-learning and
+  A-learning: Q-learning is sensitive to outcome model misspecification but
+  not to propensity misspecification, while A-learning and value-search-based
+  methods are robust to outcome model misspecification but degrade under
+  propensity misspecification. Neither method dominates in all scenarios,
+  motivating doubly robust formulations (Section~\ref{w14:sec:drlearning})
+  that protect against misspecification of either nuisance model.
+\end{remark}
+
+\section{Chapter Summary}
+\label{w14:sec:summary}
+
+This chapter studied optimal policy learning in the single-stage binary-treatment setting. The organizing principle is to cast every estimation strategy as an attempt to recover the sign of the treatment contrast $C(x)=Q(x,1)-Q(x,0)$, since the optimal rule assigns treatment precisely where $C(x)>0$. The key results are:
+
+\begin{enumerate}
+
+  \item \textbf{Optimal rule and value decomposition.}
+    The \textbf{value decomposition} $V(d)=E\{Y(0)\}+E[d(X)C(X)]$
+    (Proposition~\ref{w14:prop:value-decomp}) shows that policy value differs
+    from the treat-none baseline exactly by the expected product of the
+    treatment indicator and the contrast.  The unrestricted optimal rule is
+    $d^\ast(x)=I\{C(x)>0\}$ (Theorem~\ref{w14:thm:opt-rule}); with a
+    treatment cost $c>0$ the threshold shifts to $d_c^\ast(x)=I\{C(x)>c\}$
+    (Corollary~\ref{w14:cor:cost-rule}).
+
+  \item \textbf{Q-learning.}
+    \textbf{Q-learning} specifies a parametric model $Q(X,a;\beta)$ for the
+    conditional mean outcome, estimates $\beta$ by regression, and sets
+    $\hat d_Q(X)=I\{Q(X,1;\hat\beta)>Q(X,0;\hat\beta)\}$.  It is a plug-in
+    method: simple to implement, but its decision boundary is sensitive to
+    misspecification of the full outcome surface even though only the sign of
+    $Q(X,1)-Q(X,0)$ determines the optimal action.
+
+  \item \textbf{A-learning, G-estimation, and Neyman orthogonality.}
+    \textbf{A-learning} uses the semiparametric decomposition
+    $Q(X,a)=\nu(X)+a\,C(X;\psi)$, leaving the baseline $\nu(X)$ unrestricted
+    and modeling only the treatment contrast $C(X;\psi)$ parametrically
+    \citep{murphy2003optimal,robins2004optimal}.  The G-estimation moment
+    condition $E[\{A-\pi(X)\}\{Y-\nu(X)-AC(X;\beta_0)\}\mid X]=0$
+    (Proposition~\ref{w14:prop:gest}) yields an estimating equation whose
+    score satisfies Neyman orthogonality with respect to both nuisance
+    functions $\nu$ and $\pi$ (Proposition~\ref{w14:prop:neyman-orth}).
+    This makes A-learning an early instance of the orthogonal-score
+    framework developed in Chapter~\ref{w11:sec:dml}, and explains its
+    robustness to misspecification of $\nu(X)$.
+
+  \item \textbf{Value search estimation.}
+    \textbf{Value search} directly parameterizes the treatment rule as
+    $d_\eta$ and maximizes an estimated value criterion $\widehat V(d_\eta)$
+    over $\eta\in\mathcal H$.  Under bounded outcomes, correct propensity
+    specification, and finite VC dimension of the policy class, the IPW value
+    criterion converges uniformly and the learned policy is consistent for the
+    optimal policy (Proposition~\ref{w14:prop:valuesearch-consist}).  For
+    linear threshold rules in $\mathbb{R}^p$ the VC dimension is $p+1$.
+
+  \item \textbf{Doubly robust policy learning.}
+    A \textbf{doubly robust policy learner} maximizes $\widehat V_{\mathrm{DR}}(d)$
+    over a policy class \citep{dudik2014doubly}.  The DR criterion is
+    consistent for $V(d)$ if either the outcome model or the propensity model
+    is correctly specified (Proposition~\ref{w14:prop:dr-value}).  When both
+    models are wrong, the bias factors as the product of the two nuisance
+    errors (Remark~\ref{w14:rem:dr-bias}), which is $o(n^{-1/2})$ whenever
+    each converges faster than $n^{-1/4}$.  When flexible nuisance estimators
+    are used, cross-fitting is essential: plug-in nuisance estimates introduce
+    a bias term of order $\|\hat\mu-\mu\|\cdot\|\hat\pi-\pi\|$ into the value
+    criterion, and cross-fitting decouples nuisance estimation from policy
+    search to eliminate this bias.
+
+  \item \textbf{Classification-based policy learning and OWL.}
+    Maximizing $n^{-1}\sum_i d(X_i)C_i$ over binary rules is equivalent to
+    minimizing the weighted misclassification loss with label $I(C_i>0)$ and
+    weight $|C_i|$ (Proposition~\ref{w14:prop:classification}).
+    \textbf{Outcome Weighted Learning} (OWL) \citep{zhao2012estimating}
+    instead uses the observed treatment $A_i$ as the label and
+    $Y_i/\hat\pi_b(A_i\mid X_i)$ as the weight; when $Y_i\geq 0$,
+    maximizing the IPW value is exactly equivalent to minimizing the OWL
+    weighted misclassification loss (Proposition~\ref{w14:prop:owl-equiv}).
+    Section~\ref{w14:subsec:class-limits} discusses the limitations of both
+    formulations, including the nonnegativity requirement of OWL, sensitivity
+    to propensity misspecification, and the gap between surrogate calibration
+    and regret minimization.
+
+  \item \textbf{Regret and the contrast function.}
+    The \textbf{regret} of a learned rule is
+    $\mathcal R(\hat d)=E[|C(X)|\,I\{\hat d(X)\neq d^\ast(X)\}]$
+    (Proposition~\ref{w14:prop:regret-contrast}).  This identity shows
+    that policy learning is governed by the sign of the contrast, not its
+    pointwise accuracy: errors near the decision boundary $\{C(x)=0\}$
+    carry little weight, while sign errors where $|C(x)|$ is large are
+    costly.  A method with low MSE for $Y$ can therefore incur large regret.
+
+  \item \textbf{In-sample optimism and honest evaluation.}
+    When a rule $\hat d$ is chosen to maximize an in-sample criterion
+    $\widehat V$, the in-sample value systematically overestimates out-of-sample
+    performance: $E[\widehat V(\hat d)]\geq E[V(\hat d)]$
+    (Proposition~\ref{w14:prop:optimism}).  The gap is of order
+    $\sqrt{V_{\mathcal D}/n}$ in the VC dimension $V_{\mathcal D}$ of the
+    policy class.  Sample splitting, cross-fitting, and restricting the policy
+    class are the main strategies for honest evaluation.
+
+\end{enumerate}
+
+\section*{Problems}
+
+\begin{enumerate}
+
+    \item \textbf{(Value decomposition.)}
+    Show that for any deterministic policy \(d\),
+    \[
+    V(d)=E\{Y(0)\}+E[d(X)C(X)].
+    \]
+    Use this to verify that the unrestricted optimal rule is
+    \(d^\ast(x)=I\{C(x)>0\}\).
+
+    \item \textbf{(Cost-sensitive rule.)}
+    Suppose treatment incurs a cost \(c>0\), and define the cost-adjusted
+    value \(V_c(d)=E\{Y(d)-c\,d(X)\}\). Prove that the optimal rule
+    maximizing \(V_c(d)\) over all deterministic rules is
+    \(d_c^\ast(x)=I\{C(x)>c\}\). What happens as \(c\to\infty\)?
+
+    \item \textbf{(G-estimation moment condition.)}
+    Under the semiparametric model \(Q(X,A)=\nu(X)+A\,C(X;\beta_0)\), verify
+    that
+    \[
+    E\bigl[\{A-\pi(X)\}\{Y-\nu(X)-A\,C(X;\beta_0)\}\mid X\bigr]=0.
+    \]
+    Which step in the proof requires the working model to be correctly
+    specified? Which step requires \(\pi(X)\) to be the true propensity score?
+
+    \item \textbf{(Neyman orthogonality.)}
+    Prove that the G-estimation score
+    \(\Psi(Y,A\mid X;\beta,\nu,\pi)=\{A-\pi(X)\}\{Y-\nu(X)-A\,C(X;\beta)\}\)
+    satisfies
+    \[
+    \frac{\partial}{\partial t}
+    E\bigl[\Psi(Y,A\mid X;\beta_0,\nu_0+th,\pi_0)\bigr]\big|_{t=0}=0
+    \quad\text{and}\quad
+    \frac{\partial}{\partial t}
+    E\bigl[\Psi(Y,A\mid X;\beta_0,\nu_0,\pi_0+tg)\bigr]\big|_{t=0}=0
+    \]
+    for all square-integrable \(h\) and \(g\). State the condition on the
+    semiparametric model used in each part.
+
+    \item \textbf{(Classification reformulation.)}
+    For fixed coefficients \(C_1,\dots,C_n\) and binary decisions
+    \(d(X_i)\in\{0,1\}\), show that maximizing \(\sum_i d(X_i)C_i\) is
+    equivalent to minimizing the weighted misclassification loss
+    \(\sum_i|C_i|\,I\{I(C_i>0)\neq d(X_i)\}\). Why does the equivalence
+    hold for binary but not continuous decisions?
+
+    \item \textbf{(OWL equivalence.)}
+    Let \(\mathcal D\) be a policy class and suppose \(Y_i\geq 0\). Prove
+    that maximizing the IPW value criterion
+    \(\widehat V_{\mathrm{IPW}}(d)\) over \(\mathcal D\) is equivalent to
+    minimizing the OWL weighted misclassification loss \(L_{\mathrm{OWL}}(d)\)
+    over \(\mathcal D\). What assumption on the outcome is needed, and why?
+
+    \item \textbf{(Value search consistency.)}
+    Let \(d_\eta(x)=I\{\eta_0+\eta_1 x>0\}\) for \(x\in\mathbb R\) and
+    \(\eta=(\eta_0,\eta_1)\in\mathcal H\subset\mathbb R^2\) compact.
+    \begin{enumerate}
+        \item[(a)] Compute the VC dimension of the policy class
+            \(\{d_\eta:\eta\in\mathcal H\}\).
+        \item[(b)] Verify that the conditions of
+            Proposition~\ref{w14:prop:valuesearch-consist} are satisfied for
+            bounded outcomes and a correctly specified propensity model.
+        \item[(c)] State what additional condition is needed to conclude that
+            \(V(\hat d_V)\xrightarrow{p}V(d^\ast)\), and give an example of a
+            contrast function for which this condition may fail.
+    \end{enumerate}
+
+    \item \textbf{(Regret-contrast identity.)}
+    \begin{enumerate}
+        \item[(a)] Prove that \(\mathcal R(\hat d)
+            =E\bigl[|C(X)|\,I\{\hat d(X)\neq d^\ast(X)\}\bigr]\)
+            under the assumption \(P\{C(X)=0\}=0\).
+        \item[(b)] A method estimates \(C(X)\) with mean squared error
+            \(\delta^2\). Give an example in which the regret
+            \(\mathcal R(\hat d)\) is large despite \(\delta^2\) being small,
+            and an example in which \(\delta^2\) is large but
+            \(\mathcal R(\hat d)\) is small.
+    \end{enumerate}
+
+    \item \textbf{(Doubly robust policy learning.)}
+    Throughout, write \(\hat\pi_b(a\mid x)=\hat\pi(x)^a\{1-\hat\pi(x)\}^{1-a}\)
+    and \(\pi_b(a\mid x)=\pi(x)^a\{1-\pi(x)\}^{1-a}\) for the estimated and
+    true propensity denominators, and let \(\hat\Gamma_i(d)\) denote the
+    augmented IPW pseudo-outcome of Definition~\ref{w14:defn:dr-value}.
+    \begin{enumerate}
+        \item[(a)] Without assuming either nuisance model is correctly
+            specified, show that
+            \[
+            E\bigl[\hat\Gamma_i(d)\mid X_i=x\bigr]
+            = \mu_{d(x)}(x)
+              + \bigl\{\hat\mu_{d(x)}(x)-\mu_{d(x)}(x)\bigr\}
+                \biggl\{1-\frac{\pi_b(d(x)\mid x)}{\hat\pi_b(d(x)\mid x)}\biggr\}.
+            \]
+            Use this to verify both cases of
+            Proposition~\ref{w14:prop:dr-value}.
+        \item[(b)] Suppose \(\hat\mu_a-\mu_a=O_p(n^{-\alpha})\) and
+            \(\hat\pi-\pi=O_p(n^{-\beta})\) for some \(\alpha,\beta>0\).
+            State the condition on \(\alpha\) and \(\beta\) under which the
+            bias \(E[\hat\Gamma_i(d)]-V(d)\) is \(o(n^{-1/2})\), and explain
+            why \(n^{-1/2}\) is the relevant threshold.
+        \item[(c)] Why does using \(\widehat V_{\mathrm{DR}}\) instead of
+            \(\widehat V_{\mathrm{IPW}}\) as the policy search criterion
+            increase robustness to nuisance-model misspecification? In what
+            scenario does the advantage of \(\widehat V_{\mathrm{DR}}\) over
+            \(\widehat V_{\mathrm{IPW}}\) disappear?
+    \end{enumerate}
+
+    \item \textbf{(In-sample optimism.)}
+    \begin{enumerate}
+        \item[(a)] Prove that \(E[\widehat V(\hat d)]\geq E[V(\hat d)]\)
+            whenever \(\hat d\in\arg\max_{d\in\mathcal D}\widehat V(d)\).
+            When does equality hold?
+        \item[(b)] Suppose \(\mathcal D\) contains only two rules,
+            \(d_1\) and \(d_2\), with \(V(d_1)>V(d_2)\). Show that even
+            in this simple case, the in-sample selector
+            \(\hat d = \arg\max_{j\in\{1,2\}}\widehat V(d_j)\) may choose
+            the inferior rule with positive probability, and compute this
+            probability in terms of the noise variance of \(\widehat V\).
+    \end{enumerate}
+
+\end{enumerate}
+
+\ifSubfilesClassLoaded{%
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}

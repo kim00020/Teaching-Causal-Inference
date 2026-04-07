@@ -1,0 +1,1024 @@
+% ============================================================
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+\ifSubfilesClassLoaded{%
+  \begin{center}
+    {\LARGE\bfseries\color{isublue}
+     Chapter 15:
+     Dynamic Treatment Regimes
+     }\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  \chapter{Dynamic Treatment Regimes}
+}
+
+\section{Why Dynamic Treatment Regimes?}
+\label{w15:sec:motivation}
+
+Chapter 14 studied the problem of learning an optimal treatment rule at a single decision point. In many scientific and medical applications, however, treatment decisions are made sequentially over time, with later decisions depending on earlier treatments and intermediate patient responses. This chapter extends the single-stage framework to \emph{dynamic treatment regimes} (DTRs), where the object of interest is a sequence of adaptive treatment rules indexed by evolving patient history.
+
+Dynamic treatment regimes arise naturally in settings such as chronic disease management, adaptive mental health interventions, cancer therapy with interim response-based modification, and mobile health interventions. In these problems, the goal is not merely to choose a single treatment, but to determine how treatment should be updated over time as new information becomes available \citep{moodie2007}.
+
+This chapter develops the counterfactual framework for dynamic treatment regimes, presents the identification assumptions required in longitudinal settings, introduces the longitudinal g-formula, and studies multistage extensions of Q-learning and A-learning. We also discuss SMART designs and several practical inferential challenges unique to the multistage setting.
+
+\subsection*{Learning Objectives}
+By the end of this chapter, students should be able to:
+\begin{enumerate}
+    \item define a dynamic treatment regime as a sequence of treatment rules indexed by patient history;
+    \item define counterfactual outcomes and regime value in multistage settings;
+    \item state the assumptions required for identification in longitudinal causal inference;
+    \item derive the longitudinal g-formula for a fixed regime;
+    \item explain regression-based, weighting-based, and doubly robust estimation of regime value;
+    \item explain backward induction and dynamic programming in multistage treatment optimization;
+    \item describe multistage Q-learning and A-learning;
+    \item explain value search estimation over parametric regime classes and its backward iterative implementation;
+    \item describe the classification analogy for optimal regime estimation with binary treatment;
+    \item describe the role of SMART designs in developing adaptive interventions;
+    \item recognize the main inferential and practical challenges in dynamic treatment regime analysis.
+\end{enumerate}
+
+\section{Worked Example: Responder/Nonresponder Re-randomization}
+\label{w15:sec:example}
+
+Before introducing the general notation for dynamic treatment regimes, it is helpful to consider a concrete two-stage example.
+
+Suppose a clinician is treating patients with depression. At baseline, each patient has covariates \(X_1\), such as age, symptom severity, and prior treatment history. At the first decision point, the clinician chooses an initial treatment
+\[
+A_1 \in \{0,1\},
+\]
+where \(A_1=0\) denotes standard psychotherapy and \(A_1=1\) denotes medication.
+
+After several weeks, the patient is assessed for response. Let
+\[
+X_2
+\]
+denote the intermediate clinical status, which may include a response indicator, side effects, and updated symptom scores. At the second decision point, treatment may be modified based on this intermediate information. For example,
+\[
+A_2 \in \{0,1\},
+\]
+where \(A_2=0\) denotes continuation of the current treatment and \(A_2=1\) denotes augmentation or switching.
+
+The final outcome \(Y\) might be a depression score measured at the end of follow-up, where larger values indicate better clinical improvement.
+
+A dynamic treatment regime in this setting consists of two decision rules:
+\[
+d=(d_1,d_2),
+\]
+where
+\[
+d_1(X_1)
+\]
+specifies the initial treatment based on baseline covariates, and
+\[
+d_2(X_1,A_1,X_2)
+\]
+specifies the second-stage treatment based on the observed treatment history and intermediate response.
+
+For example, consider the following regime:
+\begin{quote}
+``Start with psychotherapy. If the patient responds well, continue the same treatment; if the patient does not respond, switch to medication.''
+\end{quote}
+This regime may be written as
+\[
+d_1(X_1)=0,
+\]
+and
+\[
+d_2(X_1,A_1,X_2)=
+\begin{cases}
+0, & \text{if the patient responds at stage 2,}\\
+1, & \text{if the patient does not respond.}
+\end{cases}
+\]
+
+This example illustrates the key feature of a dynamic treatment regime: treatment at the second stage depends on the patient’s evolving history, not just on baseline information. The goal of DTR analysis is to compare such adaptive strategies and, when possible, to identify an optimal regime that maximizes the expected final outcome.
+
+In a SMART design, patients may be randomized at the first stage to initial treatment and then re-randomized at the second stage depending on intermediate response, so that data from a single trial can be used to compare several embedded dynamic treatment regimes.
+
+\section{Histories, Actions, and Regimes}
+\label{w15:sec:setup}
+
+The depression-treatment example in Section~\ref{w15:sec:example} illustrates the basic structure of a two-stage dynamic treatment problem. We now introduce general notation for $K$-stage problems.
+
+For subject $i$, the observed data consist of
+\[
+O_i = (X_{1i},A_{1i},X_{2i},A_{2i},\ldots,X_{Ki},A_{Ki},Y_i),
+\]
+where $X_k \in \mathcal{X}_k$ denotes the vector of covariates collected between Decision $k-1$ and Decision $k$, $A_k \in \mathcal{A}_k$ is the treatment assigned at Decision $k$, and $Y$ is the final outcome measured after Decision $K$. In particular, $X_1$ contains baseline covariates available before any treatment is administered.
+
+\subsection{Overbar notation}
+
+Sequences of stage-indexed variables arise throughout the analysis of dynamic treatment regimes. We adopt the following compact notation, standard in the literature \citep{robins1986new}.
+
+For $k = 1,\ldots,K$, define the cumulative sequences and their sample spaces by
+\[
+\bar{x}_k = (x_1,\ldots,x_k), \quad \bar{a}_k = (a_1,\ldots,a_k),
+\qquad
+\bar{\mathcal{X}}_k = \mathcal{X}_1\times\cdots\times\mathcal{X}_k, \quad \bar{\mathcal{A}}_k = \mathcal{A}_1\times\cdots\times\mathcal{A}_k.
+\]
+By convention, $\bar{x} = \bar{x}_K$ and $\bar{a} = \bar{a}_K$ denote the complete histories. For a regime $d = (d_1,\ldots,d_K)$, write $\bar{d}_k = (d_1,\ldots,d_k)$.
+
+\subsection{Histories}
+
+\begin{defn}{Observed history}
+\label{w15:defn:history}
+The observed history available at Decision $k$ is
+\[
+h_1 = x_1 \in \mathcal{H}_1 = \mathcal{X}_1,
+\qquad
+h_k = (\bar{x}_k, \bar{a}_{k-1}) \in \mathcal{H}_k = \bar{\mathcal{X}}_k \times \bar{\mathcal{A}}_{k-1},
+\quad k = 2,\ldots,K.
+\]
+\end{defn}
+
+The history $h_k$ records all covariate and treatment information accrued through Decision $k$. In the two-stage setting, $H_1 = X_1$ and $H_2 = (X_1, A_1, X_2)$.
+
+\subsection{Dynamic treatment regimes}
+
+\begin{defn}{Dynamic treatment regime}
+\label{w15:defn:dtr}
+A $K$-stage dynamic treatment regime is a sequence of decision rules
+\[
+d = (d_1,\ldots,d_K), \qquad d_k : \mathcal{H}_k \to \mathcal{A}_k, \quad k = 1,\ldots,K.
+\]
+That is, $d_k(h_k) = d_k(\bar{x}_k, \bar{a}_{k-1}) \in \mathcal{A}_k$ specifies the treatment to be assigned at Decision $k$ given history $h_k$.
+\end{defn}
+
+A static regime assigns the same treatment sequence to every subject, whereas a dynamic regime allows treatment to depend on evolving patient history.
+
+\begin{remark}
+The recursive structure of histories implies that applying regime $d$ forward in time requires substituting earlier rules into later ones. For instance, with $K = 3$, the treatment selected at Decision 3 is
+\[
+d_3\bigl\{\bar{x}_3,\; d_1(x_1),\; d_2\bigl(\bar{x}_2, d_1(x_1)\bigr)\bigr\},
+\]
+since the treatments at Decisions 1 and 2 become part of the history for Decision 3. This recursive dependence is precisely why multi-stage optimization requires backward induction; see Section~\ref{w15:sec:dp}.
+\end{remark}
+
+\subsection{Feasible sets and the class of regimes}
+
+In many medical applications, not all treatment options in $\mathcal{A}_k$ are clinically available to every patient at Decision $k$. For example, in the depression setting of Section~\ref{w15:sec:example}, augmenting treatment makes sense only for patients who have not yet responded. More generally, the set of options that are medically or ethically permissible may depend on the patient's accrued history.
+
+\begin{defn}{Feasible set}
+\label{w15:defn:feasible}
+For $k = 1,\ldots,K$, the \emph{feasible set} at Decision $k$ given history $h_k \in \mathcal{H}_k$ is a subset
+\[
+\Psi_k(h_k) \subseteq \mathcal{A}_k.
+\]
+The collection $\Psi = (\Psi_1,\ldots,\Psi_K)$ encodes the history-dependent treatment constraints across all stages.
+\end{defn}
+
+A regime $d = (d_1,\ldots,d_K)$ is called \emph{$\Psi$-specific} if $d_k(h_k) \in \Psi_k(h_k)$ for every $h_k$ in the support of the history distribution, and for every $k = 1,\ldots,K$. The relevant class of regimes is then
+\[
+\mathcal{D} = \{d = (d_1,\ldots,d_K) : d_k(h_k) \in \Psi_k(h_k) \text{ for all } k \text{ and all } h_k\}.
+\]
+The optimal regime is defined as $d^{\mathrm{opt}} \in \mathcal{D}$ satisfying $V(d^{\mathrm{opt}}) \geq V(d)$ for all $d \in \mathcal{D}$.
+
+\begin{remark}
+Feasible sets interact with the positivity assumption: the requirement $P\{A_k = a_k \mid H_k = h_k\} > 0$ need only hold for actions $a_k \in \Psi_k(h_k)$, not for the entire action space $\mathcal{A}_k$. When $\Psi_k(h_k) = \mathcal{A}_k$ for all $k$ and $h_k$, the feasibility constraint is vacuous and recovers the setup of Definition~\ref{w15:defn:dtr}.
+\end{remark}
+
+\section{Potential Outcomes under a Regime}
+\label{w15:sec:counterfactuals}
+
+To formalize the causal meaning of a dynamic treatment regime, we use nested potential outcomes.
+
+\subsection{Nested potential outcomes}
+
+For a fixed treatment sequence $\bar{a} = (a_1,\ldots,a_K) \in \bar{\mathcal{A}}$, the potential outcomes at each stage are:
+\begin{itemize}
+  \item $X_k^*(\bar{a}_{k-1})$: the intermediate covariates that would be observed between Decisions $k-1$ and $k$ if treatments $\bar{a}_{k-1} = (a_1,\ldots,a_{k-1})$ had been administered, for $k = 2,\ldots,K$;
+  \item $Y^*(\bar{a})$: the final outcome that would be observed if the complete treatment sequence $\bar{a}$ had been administered.
+\end{itemize}
+In the two-stage setting these reduce to $X_2^*(a_1)$ and $Y^*(a_1,a_2)$.
+
+Collectively, we denote the full set of potential outcomes for all treatment sequences by
+\[
+W^* = \bigl\{X_k^*(\bar{a}_{k-1}),\, Y^*(\bar{a});\; \bar{a}_k \in \bar{\mathcal{A}}_k,\; k = 1,\ldots,K\bigr\}.
+\]
+This notation will be used to state the sequential ignorability assumption compactly in Section~\ref{w15:sec:identification}.
+
+\subsection{Counterfactual outcome under a regime}
+
+\begin{defn}{Counterfactual outcome under a regime}
+\label{w15:defn:yd}
+For a $K$-stage regime $d = (d_1,\ldots,d_K) \in \mathcal{D}$, the counterfactual outcome under regime $d$ is
+\[
+Y^*(d) = Y^*\!\bigl(d_1(H_1),\, d_2(H_2^*(d_1)),\, \ldots,\, d_K(H_K^*(\bar{d}_{K-1}))\bigr),
+\]
+where $H_k^*(\bar{d}_{k-1}) = (\bar{X}_k^*(\bar{d}_{k-1}),\, \bar{d}_{k-1})$ is the stage-$k$ history that would arise if regime $d$ were followed through Decision $k-1$. For the two-stage case this simplifies to $Y^*(d) = Y^*(d_1(H_1), d_2(H_2^*(d_1)))$.
+\end{defn}
+
+\begin{defn}{Regime value}
+\label{w15:defn:regime-value}
+The value of a dynamic treatment regime $d \in \mathcal{D}$ is
+\[
+V(d) = \E\{Y^*(d)\}.
+\]
+The optimal regime $d^{\mathrm{opt}} \in \mathcal{D}$ is any regime satisfying $V(d^{\mathrm{opt}}) \geq V(d)$ for all $d \in \mathcal{D}$.
+\end{defn}
+
+The quantity $V(d)$ is the expected outcome that would result if the entire sequence of treatment rules prescribed by $d$ were implemented in the target population.
+
+\section{Identification in Longitudinal Settings}
+\label{w15:sec:identification}
+
+Identification in dynamic treatment regimes requires three assumptions, one at each stage, that together generalize the standard single-stage conditions of consistency, no unmeasured confounding, and positivity. These assumptions were formalized by \citet{robins1986new} under the name \emph{sequential randomization assumptions} (SRA).
+
+\subsection{Sequential consistency}
+
+\begin{defn}{Sequential consistency}
+\label{w15:defn:seq-consistency}
+The observed intermediate covariates and final outcome coincide with the corresponding potential outcomes under the treatment sequence actually received:
+\[
+X_k = X_k^*(\bar{A}_{k-1}), \quad k = 2,\ldots,K,
+\qquad
+Y = Y^*(\bar{A}).
+\]
+\end{defn}
+
+Sequential consistency requires that there is a single well-defined version of each potential outcome, so that the label $\bar{a}$ fully specifies the intervention. In the two-stage setting this reduces to $X_2 = X_2^*(A_1)$ and $Y = Y^*(A_1,A_2)$.
+
+\subsection{Sequential ignorability}
+
+\begin{defn}{Sequential ignorability}
+\label{w15:defn:seq-ignorability}
+For $k = 1,\ldots,K$,
+\[
+W^* \indep A_k \mid \bar{X}_k, \bar{A}_{k-1},
+\]
+where $W^*$ denotes the full collection of potential outcomes, and $\bar{A}_0$ is vacuous.
+\end{defn}
+
+Sequential ignorability is the longitudinal analogue of no unmeasured confounding: at each Decision $k$, the treatment assigned is conditionally independent of all potential outcomes given the history $H_k = (\bar{X}_k, \bar{A}_{k-1})$ accrued up to that point. The assumption implies that every variable used to inform the treatment decision at stage $k$ is measured and included in $H_k$.
+
+In the two-stage setting, sequential ignorability implies
+\[
+\{Y^*(a_1,a_2), X_2^*(a_1)\} \indep A_1 \mid H_1,
+\qquad
+Y^*(a_1,a_2) \indep A_2 \mid H_2,\; A_1 = a_1,
+\]
+for all $(a_1,a_2) \in \mathcal{A}_1 \times \mathcal{A}_2$. The compact $W^*$ formulation makes clear that the same single assumption governs all potential outcomes simultaneously.
+
+\begin{warn}{Sequential Ignorability Is Untestable}
+Sequential ignorability is not testable from the observed data. In observational studies it must be defended on substantive grounds. The assumption is automatically satisfied in a SMART design (Section~\ref{w15:sec:smart}), because treatment is randomized at each stage conditional on the observed history.
+\end{warn}
+
+\subsection{Sequential positivity}
+
+\begin{defn}{Sequential positivity}
+\label{w15:defn:seq-positivity}
+For $k = 1,\ldots,K$,
+\[
+P\{A_k = a_k \mid H_k = h_k\} > 0
+\]
+for every $(h_k, a_k)$ with $h_k$ in the support of the history distribution and $a_k \in \Psi_k(h_k)$.
+\end{defn}
+
+Sequential positivity requires that every feasible treatment option has a positive probability of being observed at every reachable history. When the feasible sets $\Psi_k(h_k)$ are strict subsets of $\mathcal{A}_k$, the condition applies only to options within $\Psi_k(h_k)$.
+
+\begin{remark}
+Longitudinal causal inference is harder than single-stage causal inference because the observed history $H_k$ includes intermediate variables $X_2,\ldots,X_k$ that are simultaneously consequences of earlier treatments and predictors of future treatment. Naive regression adjustment that conditions on such variables can introduce collider bias; the g-formula and IPW approaches in Section~\ref{w15:sec:value-estimation} are specifically designed to avoid this pitfall.
+\end{remark}
+
+\section{The Longitudinal g-Formula}
+\label{w15:sec:gformula}
+
+Under the assumptions of sequential consistency, sequential ignorability, and sequential positivity, the value of any fixed regime $d \in \mathcal{D}$ can be expressed entirely in terms of observed-data quantities. This identifying functional is called the \emph{longitudinal g-formula} and was first derived by \citet{robins1986new}.
+
+\subsection{Two-stage case}
+
+To build intuition we first state the result for $K=2$.
+
+\begin{thm}{Longitudinal g-formula, $K=2$}
+\label{w15:thm:gformula2}
+For a fixed two-stage regime $d=(d_1,d_2)$, under sequential consistency, sequential ignorability, and sequential positivity,
+\[
+V(d)
+=
+\E\!\left[
+  \E\!\left\{
+    \E[Y\mid H_2,\,A_2=d_2(H_2)]
+  \mid H_1,\,A_1=d_1(H_1)
+  \right\}
+\right].
+\]
+\end{thm}
+
+\begin{proof}[Proof sketch]
+By iterated expectation and sequential consistency, $V(d)=\E\{Y(d)\}=\E\bigl[\E\{Y(d)\mid H_1\}\bigr]$. Conditioning on the stage-2 history that would arise under $d_1$ and applying sequential ignorability at stage 2 identifies the inner conditional mean by the observed-data quantity $\E(Y\mid H_2, A_2 = d_2(H_2))$. A second application of sequential ignorability at stage 1 then identifies the outer conditional expectation, yielding the nested standardization formula.
+\end{proof}
+
+\subsection{General \texorpdfstring{$K$}{K}-stage case}
+
+The two-stage result extends naturally to $K$ stages, where the g-formula takes the form of a product of conditional densities integrated over the covariate paths generated by $d$.
+
+\begin{thm}{Longitudinal g-formula, general $K$}
+\label{w15:thm:gformula}
+For a fixed $K$-stage regime $d \in \mathcal{D}$, under sequential consistency, sequential ignorability, and sequential positivity,
+\[
+V(d)
+=
+\int_{\bar{\mathcal{X}}}
+\E\!\bigl\{Y \mid \bar{X}=\bar{x},\, \bar{A}=\bar{d}(\bar{x})\bigr\}
+\prod_{k=2}^{K}
+p_{X_k\mid\bar{X}_{k-1},\bar{A}_{k-1}}\!\bigl\{x_k \mid \bar{x}_{k-1},\, \bar{d}_{k-1}(\bar{x}_{k-1})\bigr\}
+\, p_{X_1}(x_1)\,d\mu(\bar{x}),
+\]
+where $\mu$ is a dominating measure on $\bar{\mathcal{X}}$ and $\bar{d}(\bar{x}) = \bigl(d_1(x_1), d_2(\bar{x}_2, d_1(x_1)), \ldots\bigr)$ denotes the treatment sequence prescribed by $d$ along the covariate path $\bar{x}$.
+\end{thm}
+
+\begin{proof}[Proof sketch]
+Under sequential ignorability at stage $k$, the conditional density of $X_k^*(\bar{a}_{k-1})$ given past potential outcomes equals the observed-data conditional density of $X_k$ given $(\bar{X}_{k-1}, \bar{A}_{k-1}) = (\bar{x}_{k-1}, \bar{a}_{k-1})$; see \citet{robins1986new}. Applying this substitution at each stage and integrating over covariate paths yields the product formula above. The two-stage formula of Theorem~\ref{w15:thm:gformula2} is the special case $K=2$.
+\end{proof}
+
+\begin{remark}
+The longitudinal g-formula is the sequential analogue of standardization. Each factor $p_{X_k|\bar{X}_{k-1},\bar{A}_{k-1}}\{x_k \mid \bar{x}_{k-1}, \bar{d}_{k-1}(\bar{x}_{k-1})\}$ describes how intermediate covariates would evolve if the treatments prescribed by $d$ were administered, and the outer expectation integrates over the resulting covariate paths.
+\end{remark}
+
+\section{Estimation of Regime Value}
+\label{w15:sec:value-estimation}
+
+Once $V(d)$ is identified by the g-formula, it may be estimated in several ways. We describe three principal approaches and state the key properties of each.
+
+\subsection{Outcome regression and g-computation}
+\label{w15:subsec:gcomp}
+
+The first approach, known as \emph{g-computation} \citep{robins1986new}, estimates each conditional density in the product g-formula by a parametric model and then evaluates the integral by Monte Carlo simulation.
+
+Specifically, specify parametric models
+\[
+p_{X_k|\bar{X}_{k-1},\bar{A}_{k-1}}(x_k \mid \bar{x}_{k-1}, \bar{a}_{k-1};\, \xi_k), \quad k = 2,\ldots,K,
+\qquad
+\E\{Y \mid \bar{X}=\bar{x}, \bar{A}=\bar{a};\, \xi_{K+1}\}.
+\]
+Estimate each $\xi_k$ by maximizing the corresponding partial likelihood from the observed data. Then, for a given regime $d$, approximate $V(d)$ by the following Monte Carlo algorithm:
+
+\begin{enumerate}
+  \item Draw $x_{1r}$ from the empirical distribution of $X_1$ (or from a fitted model $p_{X_1}(x_1;\hat\xi_1)$).
+  \item Draw $x_{2r}$ from $p_{X_2|X_1,A_1}\{x_2 \mid x_{1r},\, d_1(x_{1r});\, \hat\xi_2\}$.
+  \item For $k = 3,\ldots,K$, draw $x_{kr}$ from $p_{X_k|\bar{X}_{k-1},\bar{A}_{k-1}}\{x_k \mid \bar{x}_{k-1,r},\, \bar{d}_{k-1}(\bar{x}_{k-1,r});\, \hat\xi_k\}$.
+  \item Compute $\hat{y}_r = \E\{Y \mid \bar{X}=\bar{x}_r, \bar{A}=\bar{d}(\bar{x}_r);\,\hat\xi_{K+1}\}$.
+  \item Repeat steps 1--4 for $r = 1,\ldots,M$ and set $\widehat{V}_{\mathrm{g}}(d) = M^{-1}\sum_{r=1}^M \hat{y}_r$.
+\end{enumerate}
+
+G-computation is consistent when all component models are correctly specified, but it can be computationally intensive and is sensitive to model misspecification in any one of the $K+1$ component models.
+
+\subsection{Inverse probability weighting}
+\label{w15:subsec:ipw}
+
+The second approach uses inverse probability weights to account for treatment assignment at each stage. Define the \emph{regime consistency indicator}
+\[
+\delta_i(d)
+= \prod_{k=1}^K \mathbb{I}\{A_{ki} = d_k(H_{ki})\},
+\]
+which equals 1 if and only if subject $i$ received the complete treatment sequence prescribed by $d$. The corresponding product propensity is
+\[
+\pi_d(\bar{X})
+= \prod_{k=1}^K \pi_{d,k}(H_k),
+\qquad
+\pi_{d,k}(H_k) = P\{A_k = d_k(H_k) \mid H_k\}.
+\]
+Under sequential consistency, sequential ignorability, and sequential positivity, the IPW estimator
+\[
+\widehat{V}_{\mathrm{IPW}}(d)
+= \frac{1}{n}\sum_{i=1}^n
+\frac{\delta_i(d)}{\hat\pi_d(\bar{X}_i)}\,Y_i
+= \frac{1}{n}\sum_{i=1}^n
+\frac{\delta_i(d)}{\prod_{k=1}^K \hat\pi_{d,k}(H_{ki})}\,Y_i
+\]
+is consistent when each stage-$k$ propensity model $\hat\pi_{d,k}$ is correctly specified.
+
+\begin{warn}{Variance Inflation from Product Weights}
+Product weights grow increasingly variable as $K$ increases. As the number of stages grows, few subjects will have $\delta_i(d) = 1$, and the weights for those subjects can be extreme. This variance inflation is a principal practical limitation of the IPW approach in multistage settings; see Section~\ref{w15:sec:challenges}.
+\end{warn}
+
+\subsection{Augmented inverse probability weighting}
+\label{w15:subsec:aipw}
+
+A subject who followed the regime through Decision $k-1$ but then deviated at Decision $k$ has revealed their potential intermediate covariates $X_2^*(d_1),\ldots,X_k^*(d_{k-1})$ but not their potential outcome $Y^*(d)$. This is precisely the structure of monotone missing data \citep{robins1994estimation}: subject $i$ ``drops out'' of the regime at the first stage where $A_{ki} \neq d_k(H_{ki})$.
+
+This missing-data framing motivates the \emph{augmented IPW} (AIPW) estimator, which incorporates partial information from all subjects. For general $K$, the AIPW estimator takes the form
+\[
+\widehat{V}_{\mathrm{AIPW}}(d)
+= \widehat{V}_{\mathrm{IPW}}(d)
++ \frac{1}{n}\sum_{i=1}^n \sum_{k=1}^K
+\left(1 - \frac{\delta_{ki}}{\hat\pi_{d,k}(H_{ki})}\right)
+\frac{\prod_{j=1}^{k-1}\delta_{ji}}{\prod_{j=1}^{k-1}\hat\pi_{d,j}(H_{ji})}
+L_k(H_{ki}),
+\]
+where $\delta_{ki} = \mathbb{I}\{A_{ki} = d_k(H_{ki})\}$ and $L_k(H_k)$ is an arbitrary function at stage $k$. The choice $L_k \equiv 0$ recovers the plain IPW estimator.
+
+The efficient choice of augmentation function is
+\[
+L_k(H_k) = \E\{Y^*(d) \mid H_k^*(\bar{d}_{k-1}) = h_k\},
+\]
+the expected counterfactual outcome under $d$ given the history through stage $k$. In the two-stage case this simplifies to
+\begin{align*}
+\widehat{V}_{\mathrm{AIPW}}(d)
+&= \frac{1}{n}\sum_{i=1}^n \widehat{Q}_{d,1}(H_{1i})\\
+&\quad + \frac{1}{n}\sum_{i=1}^n
+\frac{\delta_{1i}}{\hat\pi_{d,1}(H_{1i})}
+\Bigl\{\widehat{Q}_{d,2}(H_{2i}) - \widehat{Q}_{d,1}(H_{1i})\Bigr\}\\
+&\quad + \frac{1}{n}\sum_{i=1}^n
+\frac{\delta_{1i}\delta_{2i}}{\hat\pi_{d,1}(H_{1i})\hat\pi_{d,2}(H_{2i})}
+\Bigl\{Y_i - \widehat{Q}_{d,2}(H_{2i})\Bigr\},
+\end{align*}
+where $\widehat{Q}_{d,k}(h_k)$ is a fitted model for $\E\{Y^*(d) \mid H_k^*(\bar{d}_{k-1})=h_k\}$.
+
+\begin{thm}{Double robustness of the AIPW estimator}
+\label{w15:thm:dr}
+$\widehat{V}_{\mathrm{AIPW}}(d)$ is consistent for $V(d)$ if, at each stage $k$, either the propensity model $\hat\pi_{d,k}$ or the outcome model $\widehat{Q}_{d,k}$ is correctly specified. It is consistent and semiparametrically efficient when both sets of models are correctly specified.
+\end{thm}
+
+\begin{remark}
+The three-term structure of the two-stage AIPW estimator has a transparent interpretation. The first term is a g-computation estimator anchored at stage 1. The second term corrects for covariate imbalance between the regime-consistent and regime-inconsistent subgroups at stage 2. The third term corrects for any remaining discrepancy between the observed outcome and the stage-2 outcome model for subjects who followed the regime through both stages.
+\end{remark}
+
+\subsection{Marginal structural models}
+
+Marginal structural models provide another way to summarize causal effects under longitudinal treatment regimens, often using stabilized inverse probability weights. They are especially useful when the scientific goal is to model population-level regime effects rather than fully individualized decision rules.
+
+\section{Dynamic Programming and Backward Induction}
+\label{w15:sec:dp}
+
+The central insight of dynamic treatment regime learning is that optimality is recursive.
+
+\subsection{Second-stage decision}
+
+Define the second-stage Q-function
+\[
+Q_2(H_2,A_2)=\E\{Y\mid H_2,A_2\}.
+\]
+Under the identification assumptions of Section~\ref{w15:sec:identification}, this observed-data conditional expectation equals the causal quantity $\E\{Y^*(A_1,A_2)\mid H_2, A_2\}$, so optimizing over $A_2$ in $Q_2$ yields the optimal causal action.
+Then the optimal second-stage action is
+\[
+d_2^\ast(H_2)=\arg\max_{a_2\in\mathcal A_2} Q_2(H_2,a_2).
+\]
+
+Define the optimal continuation value
+\[
+V_2(H_2)=\max_{a_2\in\mathcal A_2} Q_2(H_2,a_2).
+\]
+
+\subsection{First-stage decision}
+
+Now define the first-stage Q-function by
+\[
+Q_1(H_1,A_1)=\E\{V_2(H_2)\mid H_1,A_1\}.
+\]
+Then the optimal first-stage action is
+\[
+d_1^\ast(H_1)=\arg\max_{a_1\in\mathcal A_1} Q_1(H_1,a_1).
+\]
+
+\begin{remark}
+This recursive structure is the dynamic-programming principle. The best current action is defined in terms of the value of optimal future actions.
+\end{remark}
+
+\section{Q-Learning for Multistage Regimes}
+\label{w15:sec:qlearning}
+
+Multistage Q-learning extends the single-stage regression-based method of Chapter 14 by working backward from the final treatment stage. The Q-functions $Q_1$ and $Q_2$ defined in Section~\ref{w15:sec:dp} are the targets; Q-learning fits parametric working models for them and substitutes the estimated models into the backward-induction recursion.
+
+\subsection{Stage 2}
+
+Specify a working model
+\[
+Q_2(H_2,A_2;\beta_2)\approx \E\{Y\mid H_2,A_2\},
+\]
+estimate \(\beta_2\), and define the estimated optimal second-stage rule
+\[
+\hat d_2(H_2)=\arg\max_{a_2\in\mathcal A_2} Q_2(H_2,a_2;\hat\beta_2).
+\]
+
+Then construct the stage-2 predicted optimal value
+\[
+\widehat V_2(H_2)=\max_{a_2\in\mathcal A_2} Q_2(H_2,a_2;\hat\beta_2).
+\]
+
+\subsection{Stage 1}
+
+Now treat \(\widehat V_2(H_2)\) as a pseudo-outcome and model
+\[
+Q_1(H_1,A_1;\beta_1)\approx \E\{\widehat V_2(H_2)\mid H_1,A_1\}.
+\]
+Then define
+\[
+\hat d_1(H_1)=\arg\max_{a_1\in\mathcal A_1} Q_1(H_1,a_1;\hat\beta_1).
+\]
+
+\begin{defn}{Two-stage Q-learning regime}
+\label{w15:defn:qlearn-regime}
+The two-stage Q-learning regime is
+\[
+\hat d_Q=(\hat d_1,\hat d_2),
+\]
+where \(\hat d_2\) is estimated first and \(\hat d_1\) is estimated using the stage-2 optimal-value pseudo-outcome.
+\end{defn}
+
+\section{Value Search and the Classification Analogy}
+\label{w15:sec:valuesearch}
+
+Q-learning is one approach to finding the optimal regime; it selects the maximizer of a fitted Q-function at each stage.  A more general approach, called \emph{value search}, directly optimizes the estimated value over a parametric class of regimes.
+
+\subsection{Parametric regime classes}
+
+Restrict attention to a class of regimes indexed by a finite-dimensional parameter $\eta = (\eta_1,\ldots,\eta_K)$:
+\[
+\mathcal{D}_\eta = \bigl\{d_\eta = (d_1(\cdot\,;\eta_1),\ldots,d_K(\cdot\,;\eta_K))\bigr\}.
+\]
+For example, with binary treatment one might take $d_k(h_k;\eta_k) = \mathbf{1}(\eta_k^\top h_k > 0)$, a linear decision boundary indexed by $\eta_k$.  Value search estimates the optimal parameter by
+\[
+\hat\eta^{\mathrm{opt}} = \arg\max_{\eta}\; \widehat{V}(d_\eta),
+\]
+where $\widehat{V}(d_\eta)$ is any consistent estimator of $V(d_\eta)$ --- for instance, the IPW or AIPW estimator of Section~\ref{w15:sec:value-estimation} evaluated at $d = d_\eta$.  The estimated optimal regime is then $\hat{d}^{\mathrm{opt}}_\eta = d_{\hat\eta^{\mathrm{opt}}}$.
+
+\subsection{Backward iterative implementation}
+
+Direct joint maximization over all $(\eta_1,\ldots,\eta_K)$ simultaneously is generally computationally infeasible.  The key practical insight is that the global optimization can be reduced to a backward sequence of lower-dimensional stage-wise problems.
+
+\paragraph{Stage $K$.}  Define the stage-$K$ value estimator
+\[
+\widehat{V}^{(K)}(d_{\eta,K})
+= \frac{1}{n}\sum_{i=1}^n
+\frac{\mathbb{I}\{A_{Ki} = d_K(H_{Ki};\eta_K)\}}{\hat\pi_{d,K}(H_{Ki})}\,Y_i,
+\]
+which has the form of a single-stage IPW estimator with history $H_K$.  Maximize over $\eta_K$ to obtain $\hat\eta_K^{\mathrm{opt}}$ and the estimated stage-$K$ rule $\hat{d}^{\mathrm{opt}}_{\eta,K}$.
+
+\paragraph{Stage $k < K$ (general step).}  With $\hat{d}^{\mathrm{opt}}_{\eta,k+1},\ldots,\hat{d}^{\mathrm{opt}}_{\eta,K}$ already fixed, define a stage-$k$ value estimator that plugs in the estimated downstream rules and maximize over $\eta_k$ alone.  This produces $\hat\eta_k^{\mathrm{opt}}$ and $\hat{d}^{\mathrm{opt}}_{\eta,k}$.
+
+The full estimated optimal regime is $\hat{d}^{\mathrm{opt}}_\eta = (\hat{d}^{\mathrm{opt}}_{\eta,1},\ldots,\hat{d}^{\mathrm{opt}}_{\eta,K})$.
+
+\begin{remark}
+Q-learning is the special case of backward iterative value search in which the stage-$k$ value estimator is the regression-based pseudo-outcome estimator.  Specifically, $\hat{V}^{(k)}(d_{\eta,k}) = n^{-1}\sum_i \hat{Q}_k(H_{ki}, d_k(H_{ki};\eta_k))$, and maximizing over $\eta_k$ recovers the Q-learning rule $\hat{d}_k(H_k) = \arg\max_{a_k} \hat{Q}_k(H_k, a_k)$.  The three main backward iterative approaches correspond to different stage-$k$ objectives: \citet{zhao2015b} developed the IPW-based approach, \citet{zhang2018} developed the AIPW-based approach, and \citet{zhang2018b} developed the regression-based approach with a focus on interpretable linear decision rules.
+\end{remark}
+
+\subsection{The classification analogy for binary treatment}
+\label{w15:subsec:classification}
+
+When $\mathcal{A}_k = \{0,1\}$, the stage-$k$ optimization over $\eta_k$ reduces to a weighted classification problem.  Define the \emph{estimated treatment contrast} at stage $k$ for unit $i$:
+\[
+\hat{C}_{ki} = \widehat{G}_{ki}(1) - \widehat{G}_{ki}(0),
+\]
+where $\widehat{G}_{ki}(a_k)$ is the estimated contribution to the stage-$k$ value from unit $i$ under action $a_k$.  For example, under a Q-learning-based estimator, $\hat{C}_{ki} = \hat{Q}_k(H_{ki}, 1) - \hat{Q}_k(H_{ki}, 0)$, the estimated advantage of treatment $A_k = 1$.  Under an IPW-based estimator,
+\[
+\hat{C}_{ki}
+= \frac{\mathbb{I}\{A_{ki}=1\}}{\hat\pi_k(H_{ki},1)}\,\tilde Y_{ki}
+- \frac{\mathbb{I}\{A_{ki}=0\}}{\hat\pi_k(H_{ki},0)}\,\tilde Y_{ki},
+\]
+where $\tilde Y_{ki}$ is the observed or pseudo-outcome at stage $k$.
+
+Writing $d_k(H_{ki};\eta_k) \in \{0,1\}$, the stage-$k$ value estimator equals
+\[
+\widehat{V}^{(k)}(d_{\eta,k})
+= \frac{1}{n}\sum_{i=1}^n \hat{C}_{ki}\,d_k(H_{ki};\eta_k) + \mathrm{const.}
+\]
+Maximizing over $\eta_k$ is therefore equivalent to maximizing $\sum_i \hat{C}_{ki}\,d_k(H_{ki};\eta_k)$, which is in turn equivalent to minimizing the weighted misclassification rate
+\[
+\frac{1}{n}\sum_{i=1}^n
+|\hat{C}_{ki}|\,
+\mathbb{I}\bigl\{\mathbb{I}\{\hat{C}_{ki}>0\} \neq d_k(H_{ki};\eta_k)\bigr\}.
+\]
+This is a weighted classification problem with pseudo-label $\mathbb{I}\{\hat{C}_{ki}>0\}$ and sample weight $|\hat{C}_{ki}|$.  Any classifier --- including support vector machines, random forests, or penalized logistic regression --- can therefore be used to estimate the optimal stage-$k$ rule within the parametric class $\mathcal{D}_{\eta,k}$.  This observation, developed by \citet{zhao2015b} for IPW-based contrasts and extended to doubly robust contrasts by \citet{zhang2018}, is the foundation of the outcome-weighted learning literature.
+
+\begin{remark}
+The key advantage of the classification framing is flexibility: nonparametric classifiers can estimate the optimal regime even when the decision boundary is not linear or smooth.  The key statistical challenge is that the pseudo-labels $\mathbb{I}\{\hat{C}_{ki}>0\}$ and weights $|\hat{C}_{ki}|$ are themselves estimated, so standard classification theory does not directly apply and bespoke analyses of the excess risk are needed.
+\end{remark}
+
+\section{A-Learning and Blip Functions}
+\label{w15:sec:alearning}
+
+As in the single-stage setting, A-learning in multistage problems focuses on treatment contrasts rather than full Q-functions.
+
+\subsection{Stage-2 blip function}
+
+Suppose the stage-2 Q-function admits a decomposition
+\[
+Q_2(H_2,A_2)=\nu_2(H_2)+\gamma_2(H_2,A_2;\psi_2),
+\]
+where \(\gamma_2\) is the stage-2 blip function.
+
+Then the optimal second-stage rule is determined by the sign or maximizer of the blip function.
+
+\subsection{Stage-1 blip function}
+
+After estimating $\hat\psi_2$, one constructs a stage-1 pseudo-outcome
+by removing the estimated stage-2 treatment effect from the observed
+outcome---a step called \emph{de-blipping}:
+\[
+\tilde Y_i
+= Y_i - \bigl(A_{2i} - \hat d_2(H_{2i})\bigr)\,
+  \hat\gamma_2\bigl(H_{2i}, 1;\hat\psi_2\bigr),
+\]
+where $\hat\gamma_2(H_2,1;\hat\psi_2)$ is the estimated blip evaluated at
+$A_2=1$.  For binary $A_2$, this adjusts each unit's outcome to reflect
+what would have been observed under $\hat d_2(H_{2i})$: nothing changes
+for units who already received the optimal action; the blip is subtracted
+for units who received $A_2=1$ when $\hat d_2(H_{2i})=0$; and the blip
+is added back for units who received $A_2=0$ when $\hat d_2(H_{2i})=1$.
+The pseudo-outcome $\tilde Y_i$ represents, under the estimated stage-2
+rule, what the outcome would have been had every patient received
+$\hat d_2(H_{2i})$ at stage 2.
+
+One then decomposes the stage-1 Q-function similarly:
+\[
+Q_1(H_1,A_1)=\nu_1(H_1)+\gamma_1(H_1,A_1;\psi_1),
+\]
+and estimates $\psi_1$ from the pseudo-outcomes $\tilde Y_i$ using the
+same propensity-centered estimating equations applied at stage 2.
+
+\begin{remark}
+Multistage A-learning parallels multistage Q-learning, but focuses on modeling the treatment-relevant contrast at each stage rather than the full conditional mean outcome.
+\end{remark}
+
+\section{SMART Designs}
+\label{w15:sec:smart}
+
+Dynamic treatment regimes are closely connected to \emph{Sequential Multiple Assignment Randomized Trials} (SMARTs).
+
+\begin{defn}{SMART}
+\label{w15:defn:smart}
+A SMART is a multistage randomized design in which treatment is randomized at more than one stage, with later randomizations often stratified by intermediate response status.
+\end{defn}
+
+The SMART design was developed specifically to generate the data needed to construct and compare dynamic treatment regimes, rather than to evaluate a single fixed treatment. In a conventional randomized trial, participants are randomized once at enrollment, and the analysis compares fixed arms. In a SMART, participants are randomized at each of several pre-specified decision points, with the randomization probabilities and option sets at later stages potentially depending on intermediate outcomes. This structure ensures that every subgroup defined by treatment history and response has sufficient data to estimate the Q-functions needed for backward induction.
+
+\subsection{Responder/nonresponder re-randomization}
+
+The most common SMART structure uses a responder/nonresponder criterion to determine the option set at the second decision point. At the first stage, all participants are randomized among the available initial treatments. After an interim assessment, each participant is classified as a \emph{responder} (the initial treatment is working) or a \emph{nonresponder} (the initial treatment is not working). At the second stage, responders may be randomized between continuing the current treatment and augmenting it, while nonresponders are randomized between switching to a new treatment and augmenting the initial one. The option sets at stage 2 therefore depend on the intermediate response status.
+
+As a motivating example, consider a SMART for attention-deficit/hyperactivity disorder (ADHD) in children. At the first stage, participants are randomized between medication and behavioral therapy. After eight weeks, each child is classified as a responder or nonresponder. Responders are re-randomized between continuing the current treatment or adding the other modality. Nonresponders are re-randomized between intensifying the current treatment or switching to the other modality. The trial thus generates data on several embedded regimes simultaneously --- for example, ``begin with medication; if nonresponding, switch to behavioral therapy'' --- and allows investigators to compare them using the longitudinal g-formula or IPW methods.
+
+\subsection{Embedded regimes}
+
+A single SMART design supports inference on multiple \emph{embedded dynamic treatment regimes}, each of which is a complete sequence of decision rules consistent with the trial protocol. Specifically, a regime $d = (d_1, d_2)$ is embedded in a SMART if, for every history $h_k$ that can arise under the trial protocol, the treatment prescribed by $d_k(h_k)$ is among the options randomized at that node. By varying the mapping from histories to treatments within the set of feasible options, a single SMART may embed several candidate regimes.
+
+For instance, in the ADHD example above, one embedded regime is: ``give medication at stage 1; if responding, continue medication; if not responding, switch to behavioral therapy.'' A second is: ``give behavioral therapy at stage 1; if responding, continue; if not responding, intensify.'' The same trial data are used to estimate the value of each embedded regime, and the estimated values may be compared across all embedded regimes to identify the best-supported adaptive strategy.
+
+\subsection{Design and analysis}
+
+SMART designs are planned with sample-size requirements that target comparisons among embedded regimes rather than comparisons of individual treatment arms. Because the second-stage randomization is typically stratified by response status, the effective sample size for second-stage comparisons is determined by the prevalence of response at the interim assessment, which must be accounted for in the power calculation.
+
+The analysis of SMART data can proceed by any of the estimation strategies described in Section~\ref{w15:sec:value-estimation}. Under the SMART protocol, sequential ignorability holds by design at every node, so the identifying assumptions of Section~\ref{w15:sec:identification} are automatically satisfied. The sequential randomization probabilities $\pi_{d,k}(H_k)$ are known from the design, so the IPW estimator of Section~\ref{w15:subsec:ipw} can be used with known rather than estimated propensity scores. This eliminates one source of model uncertainty and makes the AIPW estimator of Section~\ref{w15:subsec:aipw} doubly robust in a particularly strong sense: the outcome model can be misspecified without any propensity estimation error.
+
+The SMART framework also directly supports Q-learning (Section~\ref{w15:sec:qlearning}) and A-learning (Section~\ref{w15:sec:alearning}). Because treatment is randomized at each stage, the centered-treatment estimating equations of A-learning are unbiased without any propensity model, and Q-learning regressions are not confounded by unmeasured covariates. SMART data therefore provide the cleanest possible setting for learning dynamic treatment regimes from a finite sample.
+
+\section{Practical and Inferential Challenges}
+\label{w15:sec:challenges}
+
+Several complications arise in dynamic treatment regime analysis.
+
+\subsection{Time-varying confounding}
+
+Intermediate variables may both affect future treatment decisions and be affected by past treatment, making naive adjustment invalid.
+
+\subsection{Positivity deterioration}
+
+As the number of stages increases, some treatment histories may be observed rarely, leading to support problems and unstable estimation.
+
+\subsection{Variance inflation}
+
+Product weights in longitudinal IPW estimation can become highly variable, especially in multistage settings.
+
+\subsection{Model misspecification}
+
+Recursive procedures such as multistage Q-learning may propagate misspecification backward across stages.
+
+\subsection{Nonregularity}
+
+When the optimal treatment boundary is close to zero, inference for estimated regimes may be nonregular and nonstandard.
+
+\begin{remark}
+Although dynamic treatment regimes are related to reinforcement learning, the present chapter remains within the statistical causal inference framework: counterfactuals, identification assumptions, and semiparametric estimation remain central.
+\end{remark}
+
+\section{Lab: A Two-Stage Dynamic Treatment Regime}
+\label{w15:sec:lab}
+
+This lab uses a two-stage simulation to illustrate the identification,
+estimation, and practical challenges introduced in this chapter.
+Complete R code is provided in the accompanying file
+\texttt{lab\_chapter15.R}.
+
+\subsection{Data-generating process}
+\label{w15:sec:lab:dgp}
+
+The data are generated as follows for each of $n$ independent units:
+\begin{align*}
+  X_1     &\sim N(0,1), \\
+  A_1     &\sim \operatorname{Bernoulli}(0.5), \\
+  X_2\mid A_1 &\sim N(-A_1,\, 1), \\
+  A_2     &\sim \operatorname{Bernoulli}(0.5), \\
+  Y       &= 2A_1 X_1 + 2A_2 X_2 + \varepsilon, \quad \varepsilon\sim N(0,1).
+\end{align*}
+Both treatment stages are randomized ($A_1, A_2$ each balanced at 0.5),
+so sequential ignorability holds by design.
+The key structural feature is that $A_1 = 1$ \emph{lowers} $X_2$ by one
+unit on average, creating a negative indirect effect of stage-1 treatment
+on the final outcome through the intermediate covariate.
+
+\paragraph{True optimal regime.}
+The stage-2 Q-function is $Q_2(H_2, A_2) = 2A_1 X_1 + 2A_2 X_2$, so the
+stage-2 blip is $\gamma_2(H_2, A_2) = 2A_2 X_2$.  The optimal stage-2 rule
+is
+\[
+  d_2^*(H_2) = \mathbf{1}(X_2 > 0).
+\]
+The pseudo-outcome under optimal stage-2 treatment is $V_2^*(H_2)
+= 2A_1 X_1 + 2\max(0, X_2)$.  Taking its conditional expectation over
+$X_2\mid A_1 \sim N(-A_1, 1)$, the total stage-1 blip is
+\[
+  Q_1(H_1,1) - Q_1(H_1,0) = 2X_1
+    + 2\bigl[\mathbb{E}[\max(0,X_2)\mid A_1=1]
+             - \mathbb{E}[\max(0,X_2)\mid A_1=0]\bigr]
+    = 2X_1 - 0.632,
+\]
+where the constant $-0.632$ is the indirect cost of $A_1 = 1$ through
+the reduced distribution of $X_2$.  The optimal stage-1 rule is therefore
+\[
+  d_1^*(X_1) = \mathbf{1}(X_1 > 0.316).
+\]
+
+\paragraph{Reference values.}
+\begin{align*}
+  V(d^*)        &= 1.32, \\
+  V(\text{never treat}) &= 0, \\
+  V(\text{always treat}) &= -2.00.
+\end{align*}
+The large regret of ``always treat'' reflects the fact that $A_1 = 1$
+depresses $X_2$, making stage-2 treatment ineffective or harmful for most
+patients.
+
+\subsection{Candidate methods}
+\label{w15:sec:lab:methods}
+
+We compare five strategies evaluated by oracle value on a fresh
+Monte Carlo sample:
+
+\begin{enumerate}
+  \item \textbf{Optimal oracle}: the true optimal regime
+        $(d_1^*, d_2^*)$ evaluated on the true model; this is an
+        upper bound, attainable only with full knowledge of the DGP.
+  \item \textbf{Always treat} / \textbf{never treat}: two static regimes
+        that assign $A_k \equiv 1$ or $A_k \equiv 0$ at every stage.
+  \item \textbf{Q-learning}: two-stage backward induction as described in
+        Section~\ref{w15:sec:qlearning}, with working linear models that
+        include the $A_k \times X_k$ interaction term at each stage.
+  \item \textbf{A-learning}: two-stage blip estimation as described in
+        Section~\ref{w15:sec:alearning}, with blip models
+        $\gamma_k(H_k, A_k;\psi_k) = A_k(\psi_{k0} + \psi_{k1}X_k)$
+        and propensity-centered estimating equations.
+\end{enumerate}
+
+\subsection{Simulation results}
+\label{w15:sec:lab:results}
+
+Table~\ref{w15:tab:sim} reports the mean oracle value, its Monte Carlo
+standard deviation, and the regret $V(d^*) - V(\hat d)$ across 400
+replications with $n = 500$.
+
+\begin{table}[h]
+\centering
+\caption{Mean oracle value, standard deviation, and regret for each
+method ($n = 500$, 400 Monte Carlo replications). Regret is defined as
+$V(d^*) - V(\hat d)$ where $V(d^*)=1.32$ is the true optimal value.}
+\label{w15:tab:sim}
+\begin{tabular}{lccc}
+\toprule
+Method & Mean value & SD & Regret \\
+\midrule
+Optimal (oracle)   & $1.3197$ & $0.009$ & $0.001$ \\
+Never treat        & $0.0000$ & $0.000$ & $1.320$ \\
+Always treat       & $-2.001$ & $0.021$ & $3.321$ \\
+Q-learning         & $1.3169$ & $0.010$ & $0.004$ \\
+A-learning         & $1.3149$ & $0.011$ & $0.006$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both Q-learning and A-learning recover nearly all of the optimal value,
+with regrets of $0.004$ and $0.006$ respectively.
+The two static regimes are substantially suboptimal.
+``Always treat'' performs worst because $A_1 = 1$ systematically
+reduces $X_2$, lowering the stage-2 payoff regardless of patient
+characteristics.
+
+\subsection{Questions for exploration}
+\label{w15:sec:lab:questions}
+
+\paragraph{Q1. Why is backward induction necessary?}
+The naive alternative to backward induction regresses $Y$ directly on
+$(H_1, A_1)$ at stage 1, without first forming the pseudo-outcome
+$\widehat{V}_2(H_2)$.  This naive regression reflects the \emph{average}
+future payoff under a balanced random $A_2$, not the \emph{optimal}
+future payoff.  As a result, it \emph{overstates} the indirect cost of
+$A_1 = 1$ through $X_2$.  In this DGP, with $A_2 \sim \operatorname{Bernoulli}(0.5)$
+independent of $(X_1, A_1, X_2)$, the naive stage-1 blip is
+\begin{align*}
+  \E[Y \mid H_1, A_1=1] - \E[Y \mid H_1, A_1=0]
+  &= 2X_1 + 2\,\mathbb{E}[A_2 X_2 \mid A_1=1]
+     - 2\,\mathbb{E}[A_2 X_2 \mid A_1=0] \\
+  &= 2X_1 + 2 \cdot 0.5 \cdot (-1) - 2 \cdot 0.5 \cdot 0
+   = 2X_1 - 1,
+\end{align*}
+giving a decision threshold of $X_1 > 0.5$.
+Backward induction instead uses the pseudo-outcome
+$\widehat{V}_2(H_2) = \max(Q_2(H_2,0),Q_2(H_2,1))$, which captures the
+value of \emph{optimally} adapting $A_2$ to the observed $X_2$.
+Under the optimal rule $d_2^*(H_2) = \mathbf{1}(X_2 > 0)$, the stage-2
+treatment partially compensates for the reduction in $X_2$ caused by
+$A_1 = 1$, so the indirect cost is correctly estimated as $-0.632$
+rather than $-1$, and the threshold is lowered to $0.316$.
+A simulation with $n = 5{,}000$ confirms this: the BI threshold is $0.30$
+and the naive threshold is $0.48$, close to the theoretical values.
+Naive is too conservative---it under-treats patients with $X_1 \in
+(0.316,\, 0.5)$ who should be treated---because it does not account for
+the fact that optimal stage-2 treatment will adapt to the observed $X_2$.
+Across 400 replications with $n = 500$, BI achieves a mean value of
+$1.317$ versus $1.303$ for the naive approach, a gain of $0.014$.
+
+\paragraph{Q2. How does the stage-2 decision affect the stage-1 optimal choice?}
+The stage-2 pseudo-outcome $\widehat{V}_2(H_2) = \max(Q_2(H_2, 0),
+Q_2(H_2, 1))$ encodes the value of optimal future treatment.  When
+$A_1 = 1$, $X_2$ is lower on average, so $\widehat{V}_2$ is also lower.
+In the simulation ($n = 5{,}000$), the mean $\widehat{V}_2$ is $0.80$ when
+$A_1 = 0$ and only $0.13$ when $A_1 = 1$---a drop of $0.67$.  This cost
+is directly absorbed by the stage-1 regression, which learns that the
+direct gain $2X_1$ must exceed $0.632$ to justify treating at stage 1.
+Without backward induction the indirect cost is invisible to the stage-1
+model, and the threshold is set too low.
+
+\paragraph{Q3. How sensitive are the methods to model misspecification?}
+We refit Q-learning with the $A_2 \times X_2$ interaction omitted from
+the stage-2 working model.  The misspecified model estimates the stage-2
+blip as approximately constant and negative---reflecting the average
+$\mathbb{E}[Y \mid A_2 = 1] - \mathbb{E}[Y \mid A_2 = 0] = \mathbb{E}[X_2] \approx -0.5$
+over the data---and consequently sets $\hat{d}_2 \equiv 0$ for every unit.
+Across 400 replications with $n = 500$, the mean value drops from $1.317$
+(correct model) to $0.702$ (misspecified model), a loss of $0.615$.
+This illustrates a key hazard of backward induction: a misspecified
+stage-$k$ model corrupts $\widehat{V}_k$, which in turn corrupts the
+pseudo-outcome fed to stage $k-1$, so misspecification at any stage
+propagates backward through the entire estimation chain.
+
+\paragraph{Q4. How unstable are product weights?}
+With $A_1, A_2 \sim \operatorname{Bernoulli}(0.5)$ and any deterministic
+regime $d$, the effective IPW weight for unit $i$ is
+\[
+  w_i = \frac{\delta_i(d)}{\pi_{d,1}(H_{1i})\,\pi_{d,2}(H_{2i})},
+\]
+where $\delta_i(d) = \mathbf{1}(A_{1i} = d_1(X_{1i}))\,
+\mathbf{1}(A_{2i} = d_2(H_{2i}))$.
+Since $\pi_{d,k} \approx 0.5$, unit $i$ receives weight $w_i \approx 4$
+if it follows $d$ at both stages (probability $0.25$) and $w_i = 0$
+otherwise (probability $0.75$).  The population coefficient of variation
+is $\sqrt{3} \approx 1.73$, independently of $n$.
+The simulation confirms convergence to this theoretical value as $n$
+grows (Table~\ref{w15:tab:cv}), demonstrating that weight instability is
+an intrinsic feature of the product structure rather than a
+finite-sample artifact.  With $K$ stages the product has $K$ propensity
+factors and the CV grows with $K$, making pure IPW estimation increasingly
+unreliable in long-horizon regimes; see Section~\ref{w15:sec:challenges}.
+
+\begin{table}[h]
+\centering
+\caption{Coefficient of variation (CV) of effective product IPW weights
+for the optimal regime $d^*$, across 200 replications at each sample size.
+Theoretical value: $\sqrt{3} \approx 1.732$.}
+\label{w15:tab:cv}
+\begin{tabular}{rcc}
+\toprule
+$n$ & Mean CV & SD of CV \\
+\midrule
+$100$   & $1.819$ & $0.213$ \\
+$250$   & $1.762$ & $0.133$ \\
+$500$   & $1.755$ & $0.099$ \\
+$1000$  & $1.738$ & $0.063$ \\
+$2000$  & $1.736$ & $0.045$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Summary}
+\label{w15:sec:summary}
+
+\begin{enumerate}
+
+  \item \textbf{Dynamic treatment regimes generalize single-stage rules.}
+    A $K$-stage DTR is a sequence of decision rules
+    $d = (d_1,\ldots,d_K)$, each mapping the observed history $H_k$ to a
+    treatment action.  The value $V(d) = \E\{Y^*(d)\}$ is the expected
+    counterfactual outcome if $d$ were administered to the entire
+    population.  The goal is to find the optimal regime
+    $d^{\mathrm{opt}} \in \mathcal{D}$ that maximizes $V(d)$.
+
+  \item \textbf{Identification requires three sequential assumptions.}
+    Sequential consistency ($X_k = X_k^*(\bar{A}_{k-1})$, $Y = Y^*(\bar{A})$),
+    sequential ignorability ($W^* \indep A_k \mid \bar{X}_k, \bar{A}_{k-1}$
+    for all $k$), and sequential positivity together imply the
+    \emph{longitudinal g-formula}:
+    \[
+      V(d) = \int \E\!\bigl\{Y \mid \bar{X}=\bar{x}, \bar{A}=\bar{d}(\bar{x})\bigr\}
+             \prod_{k=2}^K p_{X_k\mid\bar{X}_{k-1},\bar{A}_{k-1}}
+             \{x_k \mid \bar{x}_{k-1}, \bar{d}_{k-1}(\bar{x}_{k-1})\}\,
+             p_{X_1}(x_1)\,d\mu(\bar{x}).
+    \]
+    Sequential ignorability is the longitudinal analogue of no unmeasured
+    confounding; it holds by design in SMART trials.
+
+  \item \textbf{Regime value can be estimated three ways.}
+    G-computation evaluates the g-formula by Monte Carlo simulation under
+    parametric models, but is sensitive to misspecification in any of its
+    $K+1$ component models.  The IPW estimator reweights the outcomes of
+    subjects who followed the regime by the inverse product propensity; it
+    is consistent under a correct propensity model but suffers from
+    variance inflation as $K$ grows.  The AIPW estimator achieves double
+    robustness: it is consistent if, at each stage, either the propensity
+    or the outcome model is correctly specified, and is semiparametrically
+    efficient when both are correct.
+
+  \item \textbf{Backward induction is the key to optimal regime
+    estimation.}  The optimal regime is found by working backward from the
+    final stage: the optimal stage-$K$ action maximizes the Q-function
+    $Q_K(H_K,A_K) = \E\{Y\mid H_K,A_K\}$; the optimal continuation value
+    $V_K(H_K)$ is then used as a pseudo-outcome to define $Q_{K-1}$, and
+    so on.  This dynamic-programming recursion ensures that every
+    stage-$k$ decision accounts for the value of optimal future actions.
+
+  \item \textbf{Q-learning, A-learning, and value search are three
+    approaches to estimation.}  Q-learning fits parametric working models
+    for each Q-function and substitutes estimated values into the
+    backward-induction recursion \citep{zhang2018b}.  A-learning focuses
+    on the treatment contrast (blip function) at each stage and constructs
+    a de-blipped pseudo-outcome to propagate the stage-$k$ blip estimate
+    backward.  Value search maximizes the estimated regime value over a
+    parametric class $\mathcal{D}_\eta$; for binary treatment this
+    optimization reduces to a weighted classification problem, enabling
+    modern machine learning tools \citep{zhao2015b,zhang2018}.
+
+  \item \textbf{SMART designs provide the cleanest experimental framework
+    for DTR learning.}  In a SMART, treatment is randomized at each
+    decision point, often with re-randomization based on intermediate
+    response status.  Sequential ignorability holds by design, propensity
+    scores are known, and each embedded regime is supported by data from
+    the full trial.  Careful power calculations must account for the
+    prevalence of response at the interim assessment.
+
+  \item \textbf{Several inferential challenges are unique to the
+    multistage setting.}  Time-varying confounding requires g-formula or
+    IPW methods rather than naive regression adjustment.  Positivity
+    deteriorates as the number of stages grows, leading to extreme product
+    weights and support problems.  Model misspecification at any stage
+    propagates backward through the recursive estimation chain.  When the
+    optimal treatment boundary passes through a region of near-zero
+    effect, estimators of the optimal regime are nonregular and standard
+    asymptotic theory fails.
+
+\end{enumerate}
+
+\medskip
+\noindent\textit{Dynamic treatment regimes connect the counterfactual
+framework of causal inference to the sequential decision problems of
+control theory and reinforcement learning.  The structural distinction
+between them is that DTR analysis begins from identification conditions
+on observational or experimental data, rather than from a known
+transition model, and draws on semiparametric efficiency theory to
+construct estimators that are both robust and statistically efficient.}
+
+\section*{Problems}
+
+\begin{enumerate}
+    \item Define a two-stage dynamic treatment regime and explain the difference between a static regime and a dynamic regime.
+
+    \item In the two-stage setting, define \(X_2(a_1)\), \(Y(a_1,a_2)\), and \(Y(d)\) for a regime \(d=(d_1,d_2)\).
+
+    \item State the assumptions of sequential consistency, sequential ignorability, and sequential positivity in a two-stage setting.
+
+    \item Derive the nested-expectation form of the longitudinal g-formula for a fixed two-stage regime \(d=(d_1,d_2)\).
+
+    \item Write down the longitudinal IPW estimator of \(V(d)\) for a fixed two-stage regime.
+
+    \item Explain why multistage optimal treatment requires backward induction.
+
+    \item Describe the steps of two-stage Q-learning.
+
+    \item Explain how multistage A-learning differs from multistage Q-learning.
+
+    \item What is a SMART design, and why is it useful for adaptive intervention development?
+
+    \item Design a simple simulation study for comparing two-stage Q-learning and IPW-based regime evaluation.
+\end{enumerate}
+
+\ifSubfilesClassLoaded{%
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}

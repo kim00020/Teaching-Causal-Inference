@@ -1,0 +1,319 @@
+\documentclass[11pt,a4paper]{book}
+
+% ---------------------------------------------------------------
+% Packages
+% ---------------------------------------------------------------
+\usepackage{subfiles}
+\usepackage[round, authoryear]{natbib}
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{caption}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage{parskip}
+\usetikzlibrary{arrows.meta, positioning, calc, shapes.geometric, decorations.pathreplacing}
+\tcbuselibrary{skins, breakable}
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+%\newtheorem{remark}[theorem]{Remark}
+\newtheorem{algorithm}[theorem]{Algorithm}
+
+
+% ---------------------------------------------------------------
+% Colours
+% ---------------------------------------------------------------
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{accent}{RGB}{46,117,182}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{warnbg}{RGB}{253,238,234}
+\definecolor{warnred}{RGB}{192,57,43}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\definecolor{causalgreen}{RGB}{26,122,58}
+\definecolor{backdoorred}{RGB}{192,57,43}
+\definecolor{semcolor}{RGB}{30,56,100}
+\definecolor{dagcolor}{RGB}{26,122,58}
+\definecolor{pocolor}{RGB}{150,50,150}
+
+% ---------------------------------------------------------------
+% Hyperref
+% ---------------------------------------------------------------
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = accent,
+  urlcolor   = accent,
+  citecolor  = accent
+}
+
+% ---------------------------------------------------------------
+% Page style  (book: uses \leftmark = chapter, \rightmark = section)
+% ---------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[LE,RO]{\small\color{darkgrey}\thepage}
+\fancyhead[LO]{\small\color{darkgrey}\rightmark}   % section on odd pages
+\fancyhead[RE]{\small\color{darkgrey}\leftmark}    % chapter on even pages
+
+% Plain style for chapter-opening pages
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyfoot[C]{\small\thepage}
+}
+
+% ---------------------------------------------------------------
+% Chapter / section formatting
+%
+% NOTE: \usepackage{parskip} sets \parskip ~ 6-7 pt globally.
+% In [display] mode titlesec adds \parskip to the sep argument,
+% so sep must be reduced by that amount to keep the visual gap
+% between the "Chapter N" label and the title at ~10 pt.
+% Similarly, \titlespacing after-skip is set to 0 pt so that the
+% space below the titlerule is supplied only by \parskip (~7 pt)
+% plus the tcolorbox before skip (10 pt), giving ~17 pt total —
+% enough breathing room without the large gap that arises when
+% the after-skip, \parskip, and before-skip all stack.
+% ---------------------------------------------------------------
+\titleformat{\chapter}[display]
+  {\LARGE\bfseries\color{isublue}}
+  {\large\color{accent}Chapter \thechapter}{3pt}
+  {\LARGE\bfseries\color{isublue}}
+  [\vspace{4pt}\color{accent}\titlerule]
+
+\titleformat{\section}
+  {\Large\bfseries\color{isublue}}
+  {\thesection}{1em}{}
+  [\color{accent}\titlerule]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{accent}}
+  {\thesubsection}{1em}{}
+
+\titlespacing*{\chapter}{0pt}{0pt}{0pt}
+\titlespacing*{\section}{0pt}{18pt}{8pt}
+\titlespacing*{\subsection}{0pt}{12pt}{4pt}
+
+% ---------------------------------------------------------------
+% Theorem / definition environments
+% ---------------------------------------------------------------
+\tcbset{
+  defstyle/.style={
+    enhanced, breakable,
+    colback=defbg, colframe=accent,
+    boxrule=0.4pt, leftrule=4pt,
+    fonttitle=\bfseries\color{accent},
+    attach boxed title to top left={yshift=-2mm, xshift=6mm},
+    boxed title style={colback=defbg, colframe=accent, boxrule=0.4pt,
+                       width=\linewidth-16mm},
+    top=6pt, bottom=6pt, left=8pt, right=8pt,
+    before skip=10pt, after skip=10pt
+  },
+  warnstyle/.style={
+    enhanced, breakable,
+    colback=warnbg, colframe=warnred,
+    boxrule=0.4pt, leftrule=4pt,
+    fonttitle=\bfseries\color{warnred},
+    attach boxed title to top left={yshift=-2mm, xshift=6mm},
+    boxed title style={colback=warnbg, colframe=warnred, boxrule=0.4pt,
+                       width=\linewidth-16mm},
+    top=6pt, bottom=6pt, left=8pt, right=8pt,
+    before skip=10pt, after skip=10pt
+  },
+  remarkstyle/.style={
+    enhanced, breakable,
+    colback=white, colframe=darkgrey,
+    boxrule=0pt, leftrule=2pt,
+    fonttitle=\bfseries\color{darkgrey},
+    attach boxed title to top left={yshift=-2mm, xshift=6mm},
+    boxed title style={colback=white, colframe=darkgrey, boxrule=0pt,
+                       width=\linewidth-16mm},
+    top=4pt, bottom=4pt, left=10pt, right=6pt,
+    before skip=10pt, after skip=10pt
+  }
+}
+\newcounter{defcounter}[section]
+\renewcommand{\thedefcounter}{\thesection.\arabic{defcounter}}
+\newenvironment{defn}[1]{%
+  \refstepcounter{defcounter}%
+  \begin{tcolorbox}[defstyle, title={Definition \thedefcounter\ (#1)}]
+}{\end{tcolorbox}}
+
+\newcounter{thmcounter}[section]
+\renewcommand{\thethmcounter}{\thesection.\arabic{thmcounter}}
+\newenvironment{thm}[1]{%
+  \refstepcounter{thmcounter}%
+  \begin{tcolorbox}[defstyle, title={Theorem \thethmcounter}]%
+  \ifx\relax#1\relax\else\textit{(#1)}\par\smallskip\fi}{\end{tcolorbox}}
+
+\newcounter{propcounter}[section]
+\renewcommand{\thepropcounter}{\thesection.\arabic{propcounter}}
+\newenvironment{prop}[1]{%
+  \refstepcounter{propcounter}%
+  \begin{tcolorbox}[defstyle, title={Proposition \thepropcounter\ (#1)}]
+}{\end{tcolorbox}}
+
+\newcounter{lemcounter}[section]
+\renewcommand{\thelemcounter}{\thesection.\arabic{lemcounter}}
+\newenvironment{lemma}[1]{%
+  \refstepcounter{lemcounter}%
+  \begin{tcolorbox}[defstyle, title={Lemma \thelemcounter}]%
+  \ifx\relax#1\relax\else\textit{(#1)}\par\smallskip\fi}{\end{tcolorbox}}
+
+\newenvironment{warn}[1]{%
+  \begin{tcolorbox}[warnstyle, title={#1}]
+}{\end{tcolorbox}}
+
+\newenvironment{remark}[1][Remark]{%
+  \begin{tcolorbox}[remarkstyle, title={#1}]
+}{%
+  \end{tcolorbox}
+}
+
+\newcounter{excounter}[section]
+\renewcommand{\theexcounter}{\thesection.\arabic{excounter}}
+\newenvironment{example}[1]{%
+  \refstepcounter{excounter}%
+  \par\smallskip
+  \textbf{Example \theexcounter\ (#1).}\enspace\ignorespaces
+}{\par\smallskip}
+
+% ---------------------------------------------------------------
+% List settings
+% ---------------------------------------------------------------
+\setlist[itemize]{itemsep=2pt, topsep=4pt, leftmargin=1.8em}
+\setlist[enumerate]{itemsep=2pt, topsep=4pt, leftmargin=2em}
+
+% ---------------------------------------------------------------
+% TikZ node / edge styles
+% ---------------------------------------------------------------
+\tikzset{
+  node/.style  = {circle, draw=isublue, fill=defbg, thick,
+                  minimum size=7mm, font=\small\bfseries},
+  unode/.style = {circle, draw=darkgrey, fill=gray!10, dashed, thick,
+                  minimum size=7mm, font=\small\bfseries},
+  fnode/.style = {circle, draw=isublue, fill=defbg, thick,
+                  minimum size=7mm, font=\small\bfseries,
+                  double, double distance=1.2pt},
+  mnode/.style = {rectangle, rounded corners=3pt,
+                  draw=darkgrey, fill=gray!15, thick,
+                  minimum size=7mm, font=\small\bfseries},
+  edge/.style  = {-{Stealth[length=5pt]}, thick, color=isublue},
+  dedge/.style = {-{Stealth[length=5pt]}, thick, color=darkgrey, dashed},
+  cedge/.style = {-{Stealth[length=5pt]}, thick, color=causalgreen},
+  bedge/.style = {-{Stealth[length=5pt]}, thick, color=backdoorred, dashed},
+  xedge/.style = {-{Stealth[length=5pt]}, thick, color=darkgrey, opacity=0.25}
+}
+
+% ---------------------------------------------------------------
+% Shorthand
+% ---------------------------------------------------------------
+\newcommand{\doop}{\mathrm{do}}
+\newcommand{\indep}{\perp\!\!\!\perp}
+\newcommand{\nindep}{\not\!\perp\!\!\!\perp}
+\newcommand{\Gcal}{\mathcal{G}}
+\newcommand{\Pa}{\mathrm{Pa}}
+\newcommand{\De}{\mathrm{De}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Nd}{\mathrm{Nd}}
+\newcommand{\E}{\mathbb{E}}
+
+\newcommand{\pto}{\overset{p}{\to}}
+\newcommand{\expit}{\operatorname{expit}}
+% ---------------------------------------------------------------
+% Document
+% ---------------------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{3cm}
+  {\Huge\bfseries\color{isublue}
+    Theory and Methods in Causal Inference}\\[1.2cm]
+  {\LARGE\color{accent} Lecture Notes}\\[0.8cm]
+  \color{accent}\rule{0.6\textwidth}{1.2pt}\\[0.8cm]
+  {\large Jae Kwang Kim \\[0.3cm]  Department of Statistics\\[0.3cm]
+   Iowa State University}\\[2cm]
+  version 2.0
+  \vfill
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------------------
+% Module 1: Identification Theory
+% ---------------------------------------------------------------
+\part{Foundations}
+
+% Week 1
+\subfile{chapter_1}
+
+% Week 2
+\subfile{chapter_2}
+
+% Week 3
+\subfile{chapter_3}
+
+% Week 4
+\subfile{chapter_4}
+
+% ---------------------------------------------------------------
+% Part II: Identification
+% Chapters 5-8:
+%   5 — Randomization and Back-Door Adjustment
+%   6 — Propensity Score Methods
+%   7 — Instrumental Variables
+%   8 — Mediation and Front-Door Identification
+% ---------------------------------------------------------------
+\part{Identification}
+
+\subfile{chapter_5} 
+\subfile{chapter_6}
+\subfile{chapter_7}
+\subfile{chapter_8}
+
+% ---------------------------------------------------------------
+ \part{Estimation} 
+
+
+ \subfile{chapter_9}
+ \subfile{chapter_10}
+ \subfile{chapter_11}
+ \subfile{chapter_12}
+
+
+\part{Policy Learning and Sequential Decision Making}
+
+ \subfile{chapter_13}
+ 
+ \subfile{chapter_14}
+ 
+ \subfile{chapter_15}
+ 
+ % ---------------------------------------------------------------
+%\part{Estimation}
+%\subfile{week9_causal_inference}
+
+% ---------------------------------------------------------------
+% Bibliography
+% ---------------------------------------------------------------
+\bibliographystyle{plainnat}
+\bibliography{causal_inference}
+
+\end{document}

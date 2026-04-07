@@ -1,0 +1,2215 @@
+% ============================================================
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+% ------------------------------------------------------------
+%  Title block (standalone) / chapter heading (master)
+% ------------------------------------------------------------
+\ifSubfilesClassLoaded{%
+  \begin{center}
+    {\LARGE\bfseries\color{isublue}
+     Chapter 12: Estimation under Instrumental Variables}\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  \chapter{Estimation under Instrumental Variables}
+}
+
+% ------------------------------------------------------------
+%  Learning objectives
+% ------------------------------------------------------------
+\begin{tcolorbox}[defstyle, title={Learning Objectives --- Core Material
+  (\S\S\,\ref{w12:sec:wald}--\ref{w12:sec:asymp},
+   \ref{w12:sec:weak})}]
+By the end of the core sections, students should be able to:
+\begin{enumerate}
+  \item Construct the Wald estimator as the sample analog of the Wald
+    estimand and interpret its numerator and denominator as the
+    reduced form and first stage.  Extend this to the IV regression
+    estimator with covariates as the direct sample analog of
+    $\mathrm{Cov}(Y,Z\mid X)/\mathrm{Cov}(T,Z\mid X)$, and recognize
+    the Wald estimator as a special case.
+  \item Distinguish the structural form of a linear SEM from its
+    reduced form; derive the reduced form by solving out endogenous
+    variables; interpret the reduced-form coefficient $\phi = \beta\pi$
+    as the product of the structural parameter and the first-stage
+    strength; define the reduced form regression estimator as OLS
+    applied to the reduced form equation; and interpret
+    $\hat\phi_{\mathrm{RF}}$ as the intent-to-treat (ITT) effect when
+    the instrument is randomly assigned.
+  \item Derive the 2SLS estimator from first principles via the
+    constrained normal equations argument, and prove its numerical
+    equivalence with the IV regression estimator.
+  \item Interpret 2SLS as a method-of-moments estimator based on the
+    IV orthogonality condition, connect it to the estimating-equation
+    framework of Chapter~9, and extend to GMM for overidentified
+    models.
+  \item State the asymptotic distribution of the GMM estimator,
+    specialize the sandwich variance formula to the exactly identified
+    and efficient GMM cases, and construct cluster-robust standard
+    errors.
+  \item Explain the weak-instrument problem and its consequences for
+    finite-sample bias and inferential reliability.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{tcolorbox}[remarkstyle, title={Learning Objectives --- Advanced
+  Enrichment (\S\S\,\ref{w12:sec:gel}--\ref{w12:sec:cf})}]
+Students who complete the advanced sections should additionally be
+able to:
+\begin{enumerate}
+  \item Describe the GEL framework as a one-step alternative to
+    efficient GMM; state the saddle-point formulation; identify
+    empirical likelihood, exponential tilting, and the continuous
+    updating estimator as special cases; and interpret the
+    Legendre--Fenchel duality as observation re-weighting.
+  \item Describe the control function approach, explain its
+    equivalence to 2SLS in the linear model, and state the conditions
+    under which $V = F_{T \mid Z}(T, Z)$ serves as a control
+    variable in the nonlinear triangular model of \citet{imbens2009}.
+\end{enumerate}
+\end{tcolorbox}
+
+
+% ============================================================
+\section{From Identification to Estimation}
+\label{w12:sec:intro}
+% ============================================================
+
+Chapter~7 established what IV identifies and under what assumptions.
+This chapter shows how to estimate that target from finite data using
+sample analogs of the same orthogonality restrictions.
+
+Chapter~7 showed that when an instrument $Z$ satisfies relevance,
+exogeneity, and exclusion, the Wald ratio
+$\mathrm{Cov}(Y,Z\mid X)/\mathrm{Cov}(T,Z\mid X)$ is a well-defined
+function of observable quantities --- but it does not identify any
+specific causal parameter without a fourth structural assumption
+(Remark~\ref{w7:rem:three-not-enough}).  This chapter works within
+the linear constant-effect model
+\begin{align}
+  Y &= \alpha + \beta T + \gamma^\top X + \varepsilon,
+  \label{w12:eq:structural}\\
+  T &= \pi Z + \delta^\top X + \eta,
+  \label{w12:eq:firststage}
+\end{align}
+in which the constant-effect restriction ($Y_i(t)-Y_i(0) = \beta$
+for all $i$) serves as that fourth assumption.  Under the three core
+assumptions plus this restriction, the structural coefficient $\beta$
+is identified by the Wald formula:
+\[
+  \beta
+  = \frac{\mathrm{Cov}(Y,\,Z \mid X)}{\mathrm{Cov}(T,\,Z \mid X)}.
+\]
+Under heterogeneous treatment effects, the same ratio identifies the
+LATE for the complier population --- provided the additional
+monotonicity assumption ($T_i(1) \geq T_i(0)$ for all $i$) serves
+as the fourth structural assumption instead; that interpretive point
+is developed in Chapter~7.
+In the simplest binary-instrument, no-covariate case, this reduces to
+the Wald estimand:
+\[
+  \beta
+  = \frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}
+         {\E[T \mid Z{=}1] - \E[T \mid Z{=}0]}.
+\]
+
+Identification establishes that $\beta$ is a well-defined functional
+of the observable distribution $P(Y, T, Z, X)$.  This chapter
+addresses the estimation problem: how to recover $\beta$ from a
+finite sample.  The answer is not a single formula but a family of
+estimators---the Wald estimator, two-stage least squares (2SLS), and
+the generalized method of moments (GMM)---each of which is a sample
+analog of the same underlying orthogonality restriction, viewed from
+a different angle.  This chapter develops estimators for the IV
+estimands identified in Chapter~7; it does not weaken or replace the
+substantive assumptions needed for identification.
+
+This chapter assumes that a valid IV design has already been
+justified.  Our goal here is not to discover instruments, but to
+estimate an already-identified IV estimand and quantify its
+uncertainty.
+
+The chapter divides into two tiers.
+
+\medskip\noindent\textbf{Core material
+(\S\S\,\ref{w12:sec:wald}--\ref{w12:sec:asymp},
+ \ref{w12:sec:weak}).}
+Sections~\ref{w12:sec:wald}--\ref{w12:sec:asymp} develop the
+mainstream IV estimators and their asymptotic theory.
+Section~\ref{w12:sec:wald} introduces the Wald estimator and derives
+the IV regression estimator with covariates via the constrained normal
+equations argument.
+Section~\ref{w12:sec:2sls} extends this to two-stage least squares
+for multi-valued and multiple instruments.
+Section~\ref{w12:sec:equiv} proves the equivalence of the IV
+regression estimator and 2SLS.
+Section~\ref{w12:sec:gmm} interprets both as method-of-moments
+estimators and extends to GMM for overidentified models.
+Section~\ref{w12:sec:asymp} develops the asymptotic distribution of
+the GMM estimator, specializes the sandwich variance formula, and
+covers cluster-robust inference.
+Section~\ref{w12:sec:weak} treats the weak-instrument problem.
+
+\medskip\noindent\textbf{Advanced enrichment
+(\S\S\,\ref{w12:sec:gel}--\ref{w12:sec:cf}).}
+Section~\ref{w12:sec:gel} introduces generalized empirical likelihood
+(GEL) as a one-step alternative to efficient GMM, develops the
+convex-conjugate duality with the minimum-discrepancy primal problem,
+and discusses finite-sample advantages.
+Section~\ref{w12:sec:cf} develops the control function approach and
+its nonlinear extension due to \citet{imbens2009}.
+These sections presuppose the core material but can be omitted
+without loss of continuity.
+
+
+% ============================================================
+\section{The Wald Estimator and the IV Regression Estimator}
+\label{w12:sec:wald}
+% ============================================================
+
+The Wald estimator is the canonical just-identified special case.
+It is the cleanest entry point for understanding IV estimation, but
+most empirical applications with covariates or multiple instruments
+are implemented through regression or GMM formulations.  We begin
+with the Wald estimator to establish the sample-analog logic before
+generalizing.
+
+\subsection{The Wald Estimator}
+
+We begin with the simplest setting: a binary instrument
+$Z \in \{0,1\}$, a scalar treatment $T$, a scalar outcome $Y$, and
+no additional covariates $X$.  Chapter~7 established that under
+relevance, exogeneity, exclusion, and the constant-effect assumption
+($\tau_i = \beta$ for all $i$), the parameter $\beta$ is
+identified by the Wald estimand
+\[
+  \beta
+  = \frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}
+         {\E[T \mid Z{=}1] - \E[T \mid Z{=}0]}.
+\]
+Each expectation in this ratio is a population mean conditional on
+instrument status.  Replacing each with its sample analog yields the
+Wald estimator.
+
+\begin{defn}{Wald Estimator}
+\label{w12:defn:wald}
+Let $n_z = \sum_{i=1}^n \mathbf{1}(Z_i = z)$ for $z \in \{0,1\}$,
+and define the within-group sample means
+\[
+  \bar{Y}_z
+  = \frac{1}{n_z}\sum_{i:\,Z_i=z} Y_i,
+  \qquad
+  \bar{T}_z
+  = \frac{1}{n_z}\sum_{i:\,Z_i=z} T_i.
+\]
+The \emph{Wald estimator} is
+\begin{equation}
+  \hat\beta_{\mathrm{Wald}}
+  = \frac{\bar{Y}_1 - \bar{Y}_0}{\bar{T}_1 - \bar{T}_0}.
+  \label{w12:eq:wald-est}
+\end{equation}
+\end{defn}
+
+Under heterogeneous treatment effects, the Wald estimator remains
+statistically valid for the IV estimand, but that estimand is
+generally the LATE rather than the ATE.
+
+The Wald estimator has a transparent structural interpretation.
+The numerator $\bar{Y}_1 - \bar{Y}_0$ estimates the \emph{reduced
+form}: the total effect of the instrument on the outcome.  The
+denominator $\bar{T}_1 - \bar{T}_0$ estimates the \emph{first stage}:
+the effect of the instrument on treatment uptake.  Their ratio
+recovers the effect of treatment on the outcome by attributing all
+of the instrument's effect on $Y$ to the path $Z \to T \to Y$---a
+step that is valid precisely because the exclusion restriction rules
+out any direct path from $Z$ to $Y$.
+
+The three regression objects serve distinct purposes: the first stage
+answers how strongly the instrument moves treatment; the reduced form
+answers how the instrument changes the outcome; and the Wald (or 2SLS)
+ratio converts that intent-to-treat effect into a per-unit-of-treatment
+causal effect under the IV assumptions.  All three should be reported
+in applied work---not because they are redundant, but because each is
+informative about a different aspect of the design.
+
+\begin{remark}[Consistency by the continuous mapping theorem]
+The within-group means $\bar{Y}_z$ and $\bar{T}_z$ are consistent
+estimators of $\E[Y \mid Z{=}z]$ and $\E[T \mid Z{=}z]$ by the law
+of large numbers.  Consistency of $\hat\beta_{\mathrm{Wald}}$ for
+$\beta$ then follows from the continuous mapping theorem, provided
+the denominator $\E[T \mid Z{=}1] - \E[T \mid Z{=}0] \neq 0$
+(the relevance condition).
+\end{remark}
+
+\begin{remark}[What the Wald estimator targets under heterogeneous effects]
+When treatment effects are heterogeneous, Chapter~7 showed that under
+the additional monotonicity assumption ($T_i(1) \geq T_i(0)$ for all
+$i$, ruling out defiers) --- the fourth structural assumption in
+Framework~2 --- the Wald estimand identifies the Local Average
+Treatment Effect (LATE) for the subpopulation of \emph{compliers}:
+units whose treatment status is changed by the instrument.  The Wald
+estimator therefore consistently estimates the LATE, not the population
+average treatment effect.  This interpretive point is separate from,
+and does not affect, the statistical validity of the estimator.
+\end{remark}
+
+\subsection{The IV Regression Estimator with Covariates}
+
+When observed covariates $X \in \mathbb{R}^p$ are present, the Wald
+estimator is no longer applicable: the binary group-mean difference
+does not partial out $X$.  We derive the general IV estimator
+directly from the estimating-equation principle: an exogenous
+variable is valid as an instrument precisely because it satisfies an
+orthogonality condition with the structural error that the endogenous
+treatment does not.
+
+\medskip\noindent\textbf{Notation.}
+Stack observations into matrices $\mathbf{Y}, \mathbf{T}
+\in \mathbb{R}^n$, $\mathbf{X} \in \mathbb{R}^{n \times p}$,
+$\mathbf{Z} \in \mathbb{R}^n$ (scalar instrument).  Define the
+\emph{annihilator matrix}
+\begin{equation}
+  M_X = I_n - \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top,
+  \label{w12:eq:mx}
+\end{equation}
+the orthogonal projection onto the orthogonal complement of
+$\mathrm{col}(\mathbf{X})$.  For any vector $\mathbf{W} \in
+\mathbb{R}^n$, $M_X\mathbf{W}$ is the vector of OLS residuals from
+projecting $\mathbf{W}$ on $\mathbf{X}$; equivalently, the $i$-th
+entry of $M_X\mathbf{W}$ is the within-$X$ residual $\tilde{W}_i$.
+The matrix $M_X$ is symmetric and idempotent: $M_X^\top = M_X$ and
+$M_X^2 = M_X$.
+
+\medskip\noindent\textbf{Derivation via constrained normal equations.}
+Consider the augmented model
+\begin{equation}
+  \mathbf{Y}
+  = \mathbf{T}\beta + \mathbf{X}\gamma + \mathbf{Z}\phi + \mathbf{u},
+  \qquad \E[\mathbf{u} \mid \mathbf{T}, \mathbf{X}, \mathbf{Z}]
+  = \mathbf{0},
+  \label{w12:eq:augmented}
+\end{equation}
+subject to the exclusion restriction $\phi = 0$.  If we were to run
+OLS on~\eqref{w12:eq:augmented}, the normal equations for the three
+blocks of regressors, with residual $\hat{\mathbf{e}} = \mathbf{Y} -
+\mathbf{T}\beta - \mathbf{X}\gamma$, would be:
+\begin{align}
+  \mathbf{T}^\top \hat{\mathbf{e}} &= \mathbf{0}, \tag{NE-T}\\
+  \mathbf{X}^\top \hat{\mathbf{e}} &= \mathbf{0}, \tag{NE-X}\\
+  \mathbf{Z}^\top \hat{\mathbf{e}} &= \mathbf{0}. \tag{NE-Z}
+\end{align}
+At the true $\beta$, the population version of (NE-T) fails:
+$\E[\mathbf{T}^\top\boldsymbol\varepsilon] \neq 0$ because $T$ is
+endogenous.  By contrast, (NE-X) is valid ($\E[\mathbf{X}^\top
+\boldsymbol\varepsilon] = \mathbf{0}$ by exogeneity of $X$) and
+(NE-Z) is valid ($\E[\mathbf{Z}^\top\boldsymbol\varepsilon] =
+\mathbf{0}$ by exogeneity and exclusion of $Z$).
+
+We therefore \emph{drop} the invalid (NE-T) and solve the
+$(p+1)$-dimensional system (NE-X), (NE-Z).  From (NE-X):
+\[
+  \hat\gamma
+  = (\mathbf{X}^\top\mathbf{X})^{-1}
+    (\mathbf{X}^\top\mathbf{Y} - \mathbf{X}^\top\mathbf{T}\beta).
+\]
+Substituting into (NE-Z) and simplifying using $M_X$:
+\[
+  \mathbf{Z}^\top M_X \mathbf{T}\;\beta
+  = \mathbf{Z}^\top M_X \mathbf{Y}.
+\]
+Provided $\mathbf{Z}^\top M_X \mathbf{T} \neq 0$ (the relevance
+condition after partialling out $X$), this has the unique solution
+
+\begin{defn}{IV Regression Estimator}
+\label{w12:defn:iv-reg}
+The \emph{IV regression estimator} in the linear IV model with
+scalar instrument $Z$ and covariates $X$ is
+\begin{equation}
+  \hat\beta_{\mathrm{IV}}
+  = \frac{\mathbf{Z}^\top M_X \mathbf{Y}}
+         {\mathbf{Z}^\top M_X \mathbf{T}}
+  = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}
+         {\widehat{\mathrm{Cov}}(\tilde{Z},\, T)},
+  \label{w12:eq:iv-reg}
+\end{equation}
+where $\tilde{Z}_i$, $\tilde{Y}_i$, $\tilde{T}_i$ are the within-$X$
+residuals (entries of $M_X\mathbf{Z}$, $M_X\mathbf{Y}$,
+$M_X\mathbf{T}$).
+\end{defn}
+
+The estimator forces the residual $\hat{\mathbf{e}} = \mathbf{Y} -
+\mathbf{T}\hat\beta_{\mathrm{IV}} - \mathbf{X}\hat\gamma$ to satisfy
+both (NE-X) and (NE-Z); it is the unique solution obtained by
+substituting the instrument equation for the corrupted treatment
+equation.
+
+\begin{remark}[Wald estimator as a special case]
+When $Z \in \{0,1\}$ is binary and there are no covariates ($X$
+absent), $M_X = I_n - n^{-1}\mathbf{1}\mathbf{1}^\top$ is the
+centering matrix and $M_X\mathbf{W}$ is the mean-centered $\mathbf{W}$.
+One can verify that $\mathbf{Z}^\top M_X\mathbf{Y} \propto
+(\bar{Y}_1 - \bar{Y}_0)$ and $\mathbf{Z}^\top M_X\mathbf{T} \propto
+(\bar{T}_1 - \bar{T}_0)$, so $\hat\beta_{\mathrm{IV}} =
+\hat\beta_{\mathrm{Wald}}$.
+\end{remark}
+
+\subsection{Structural Form, Reduced Form, and the Reduced Form Regression}
+\label{w12:subsec:reduced-form}
+
+The terminology \emph{reduced form} only makes sense in contrast to
+something that has not been reduced.  This subsection introduces that
+contrast, derives the reduced form of the linear SEM, and then
+presents the reduced form regression as the procedure for estimating
+the relevant coefficient.
+
+\medskip\noindent\textbf{The structural form.}
+The system~\eqref{w12:eq:structural}--\eqref{w12:eq:firststage} is
+called the \emph{structural form} of the model.  It represents the
+causal mechanism directly: each equation describes how one variable
+is determined by others, including endogenous variables on the
+right-hand side.  In particular, the outcome equation
+\[
+  Y = \alpha + \beta T + \gamma^\top X + \varepsilon
+\]
+contains the endogenous regressor $T$ on its right-hand side.
+The structural coefficient $\beta$ has a causal interpretation
+(it is the effect of a unit change in $T$ on $Y$, holding $X$ and
+$\varepsilon$ fixed), but $T$ is correlated with $\varepsilon$,
+so OLS applied to the structural form is inconsistent.
+
+\medskip\noindent\textbf{The reduced form.}
+The \emph{reduced form} is obtained by solving the structural system
+so that each endogenous variable is expressed purely as a function
+of the exogenous variables $Z$ and $X$, with no endogenous
+regressors on the right-hand side.  Substituting the first-stage
+equation~\eqref{w12:eq:firststage} into the outcome
+equation~\eqref{w12:eq:structural} gives
+\begin{equation}
+  Y = \underbrace{(\alpha + \beta\delta^\top X)}_{\text{intercept/}X\text{-terms}}
+    + \underbrace{\beta\pi}_{\phi}\, Z
+    + (\beta\delta + \gamma)^\top X
+    + \underbrace{(\beta\eta + \varepsilon)}_{\nu}.
+  \label{w12:eq:reduced-form-pop}
+\end{equation}
+Writing this compactly:
+\begin{equation}
+  Y = \alpha_{\mathrm{rf}} + \phi\, Z
+    + \gamma_{\mathrm{rf}}^\top X + \nu,
+  \label{w12:eq:reduced-form}
+\end{equation}
+where $\phi = \beta\pi$, $\gamma_{\mathrm{rf}} = \beta\delta + \gamma$,
+and $\nu = \beta\eta + \varepsilon$.  The reduced-form equation for
+$T$ is simply the first-stage equation~\eqref{w12:eq:firststage}
+itself, which is already in reduced form because $Z$ and $X$ are
+exogenous.
+
+Two features of the reduced form are immediate from
+\eqref{w12:eq:reduced-form-pop}.  First, both right-hand-side
+variables ($Z$ and $X$) are exogenous, so OLS applied
+to~\eqref{w12:eq:reduced-form} is consistent for $\phi$.  Second,
+$\phi = \beta\pi$ is a product of the structural parameter of
+interest $\beta$ and the first-stage strength $\pi$.  Neither
+$\beta$ nor $\pi$ is separately identified from the reduced form
+alone; identifying $\beta$ requires also using the first-stage
+equation---which is the essence of IV.
+
+Because the exclusion restriction rules out any direct path
+$Z \to Y$, the full effect of the instrument on the outcome flows
+through the treatment channel $Z \to T \to Y$, so $\phi = \beta\pi$
+and not $\phi = \beta\pi + \delta$ for some additional direct
+effect $\delta$.
+
+\medskip\noindent\textbf{The reduced form regression.}
+The reduced form regression is simply OLS applied to the reduced
+form equation~\eqref{w12:eq:reduced-form}.  Its purpose is to
+estimate the reduced-form coefficient $\phi$.
+
+\begin{defn}{Reduced Form Regression Estimator}
+\label{w12:defn:reduced-form}
+The \textbf{reduced form regression estimator} is the OLS estimator
+of $\phi$ in the reduced form equation~\eqref{w12:eq:reduced-form}:
+\begin{equation}
+  \hat\phi_{\mathrm{RF}}
+  = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}
+         {\widehat{\mathrm{Var}}(\tilde{Z})},
+  \label{w12:eq:rf-est}
+\end{equation}
+where $\tilde{Z}$ is the residual from projecting $Z$ on
+$(1, X^\top)^\top$.  It is a consistent estimator of
+$\phi = \beta\pi$ under the IV exogeneity condition
+$\E[\nu \mid Z, X] = 0$, which holds whenever exogeneity and
+exclusion hold for the structural form.
+\end{defn}
+
+\medskip\noindent\textbf{Intent-to-treat interpretation.}
+When $Z$ is randomly assigned (as in a lottery or randomized
+encouragement design), $\hat\phi_{\mathrm{RF}}$ estimates the
+\emph{intent-to-treat} (ITT) effect: the average effect on $Y$ of
+being assigned $Z = 1$ rather than $Z = 0$, regardless of whether
+treatment is actually taken up.  The ITT is a valid causal estimand
+in its own right---it requires only exogeneity of $Z$, not the
+exclusion restriction---and it is often of direct policy interest
+when the instrument corresponds to an implementable intervention.
+
+\medskip\noindent\textbf{Relationship to the first stage and the IV
+estimator.}
+The first-stage regression estimator is
+\[
+  \hat\pi_{\mathrm{FS}}
+  = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, T)}
+         {\widehat{\mathrm{Var}}(\tilde{Z})}.
+\]
+Since $\phi = \beta\pi$, we have $\beta = \phi/\pi$, and the sample
+analog gives
+\begin{equation}
+  \hat\beta_{\mathrm{IV}}
+  = \frac{\hat\phi_{\mathrm{RF}}}{\hat\pi_{\mathrm{FS}}},
+  \label{w12:eq:iv-ratio}
+\end{equation}
+which reproduces the IV regression estimator~\eqref{w12:eq:iv-reg}.
+The reduced form delivers the instrument's total effect on the
+outcome; the first stage scales it by the instrument's effect on
+treatment; the ratio removes the scaling and recovers the structural
+parameter.  Equation~\eqref{w12:eq:iv-ratio} also shows that the IV
+estimator is undefined when $\hat\pi_{\mathrm{FS}} = 0$---the
+sample-level manifestation of the relevance requirement.
+
+The ratio form~\eqref{w12:eq:iv-ratio} is useful because it exposes
+the logic of IV, not because all IV estimation should be carried out
+by separately estimating and then dividing two coefficients.  In
+practice, 2SLS (Section~\ref{w12:sec:2sls}) solves the estimating
+equations jointly and produces valid standard errors automatically;
+forming $\hat\phi_{\mathrm{RF}}/\hat\pi_{\mathrm{FS}}$ by hand and
+dividing their separate standard errors is incorrect.
+
+\begin{remark}[Reporting all three quantities]
+In applied work it is standard practice to report the first stage,
+reduced form, and IV (or 2SLS) estimates side by side, as in
+Table~7.3 of Chapter~7.  The reduced form and first stage each have
+a transparent OLS interpretation and can be assessed independently
+before the ratio is formed.  Reporting all three allows the reader
+to verify instrument strength (first stage), the ITT effect (reduced
+form), and the per-unit-of-treatment causal effect (IV/2SLS)
+simultaneously.  The IV estimate carries no identifying content
+beyond what the reduced form and first stage together contain.
+\end{remark}
+
+
+% ============================================================
+\section{Two-Stage Least Squares}
+\label{w12:sec:2sls}
+% ============================================================
+
+The Wald estimator is limited to binary instruments and no covariates.
+Two-stage least squares (2SLS) extends the identification-to-estimation
+step to settings with continuous or multi-valued instruments, multiple
+instruments, and observed covariates.  The key idea is that 2SLS
+replaces the endogenous regressor by its projection onto the instrument
+space, thereby retaining only the variation in treatment that is
+explained by the exogenous instruments and covariates.  Although it
+is defined through a two-stage procedure below, 2SLS is a single
+estimator with a closed-form expression; the stages are a transparent
+derivation device, not a description of two separate estimation
+problems.
+
+\subsection{Setup}
+
+Return to the structural model~\eqref{w12:eq:structural}--\eqref{w12:eq:firststage},
+where $T$ is a scalar endogenous variable, $X \in \mathbb{R}^p$ is a
+vector of exogenous covariates, and $Z \in \mathbb{R}^q$ is a vector of
+instruments with $q \geq 1$.  The IV assumptions require:
+\begin{enumerate}
+  \item \textbf{Relevance}: the first-stage coefficient $\pi \neq 0$,
+    i.e., $\mathrm{Cov}(Z, T \mid X) \neq 0$.
+  \item \textbf{Exogeneity and exclusion}: $\E[\varepsilon \mid Z, X] = 0$.
+\end{enumerate}
+Endogeneity means $\mathrm{Cov}(T, \varepsilon) \neq 0$, arising
+because $\varepsilon$ and $\eta$ share an unobserved common driver.
+
+\subsection{Stage 1: The First-Stage Regression}
+
+Regress $T$ on $Z$ and $X$ by OLS:
+\[
+  T = \pi^\top Z + \delta^\top X + \eta.
+\]
+Denote the OLS fitted values
+\[
+  \hat{T}_i = \hat\pi^\top Z_i + \hat\delta^\top X_i.
+\]
+The fitted value $\hat{T}_i$ is the linear projection of $T_i$ onto
+the space spanned by $Z_i$ and $X_i$.  Because OLS residuals are
+orthogonal to the regressors, $\hat{T}_i$ is by construction
+uncorrelated (in the sample) with the first-stage residual
+$\hat\eta_i = T_i - \hat{T}_i$.  The fitted values $\hat{T}_i$ are
+not used because they predict treatment well in a generic regression
+sense; they are used because they isolate the component of treatment
+variation spanned by the instruments and covariates---the variation
+that is exogenous under IV validity.
+
+\subsection{Stage 2: The Second-Stage Regression}
+
+Regress $Y$ on $\hat{T}$ and $X$ by OLS:
+\[
+  Y = \alpha + \beta \hat{T} + \gamma^\top X + \text{error}.
+\]
+
+\begin{defn}{2SLS Estimator}
+\label{w12:defn:2sls}
+The \emph{two-stage least squares estimator} $\hat\beta_{\mathrm{2SLS}}$
+is the OLS coefficient on $\hat{T}$ in the second-stage regression.
+\end{defn}
+
+Equivalently, 2SLS projects the endogenous regressors onto the linear
+span of the instruments and exogenous covariates, and then uses only
+that projected component in the structural regression.  The
+endogenous part of $T$---the residual $\hat\eta_i = T_i -
+\hat{T}_i$ that is correlated with $\varepsilon_i$---is discarded
+before the causal coefficient is estimated.
+
+To obtain a closed form, let $\tilde{Y}_i$, $\tilde{T}_i$, and
+$\tilde{Z}_i$ denote the residuals from projecting $Y_i$, $T_i$, and
+$Z_i$, respectively, onto $X_i$ by OLS (i.e., the within-$X$-residuals).
+In the single-instrument case ($q = 1$), the 2SLS estimator simplifies to
+\begin{equation}
+  \hat\beta_{\mathrm{2SLS}}
+  = \frac{\sum_{i=1}^n \tilde{Z}_i\, Y_i}
+         {\sum_{i=1}^n \tilde{Z}_i\, T_i}
+  = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}
+         {\widehat{\mathrm{Cov}}(\tilde{Z},\, T)}.
+  \label{w12:eq:2sls-closed}
+\end{equation}
+This is structurally parallel to the Wald ratio: a ratio of
+the instrument-by-outcome sample covariance to the
+instrument-by-treatment sample covariance, after partialling out the
+observed covariates $X$.
+
+\begin{warn}{Standard Errors from the Second-Stage OLS Are Incorrect}
+A common error is to report the standard errors from the second-stage
+OLS regression directly.  Those standard errors use $\hat{T}$ rather
+than $T$ and residuals that do not equal the structural errors
+$\varepsilon_i$, so the resulting standard errors are invalid.
+Correct inference requires the sandwich variance formula derived in
+Section~\ref{w12:sec:asymp}, or software that implements 2SLS natively.
+\end{warn}
+
+
+% ============================================================
+\section{Equivalence of the IV Regression Estimator and 2SLS}
+\label{w12:sec:equiv}
+% ============================================================
+
+The IV regression estimator~\eqref{w12:eq:iv-reg} and the 2SLS
+estimator look like different procedures: one computes a ratio of
+partialled-out covariances directly, while the other constructs
+first-stage fitted values and runs a second regression.  In the
+single-instrument case they are in fact numerically identical for any
+covariate vector $X$.  This theorem is not just algebraic
+housekeeping: it shows that the ratio-of-covariances view and the
+staged-regression view are two computational faces of the same IV
+estimator.  Knowing both is useful---the ratio form exposes the logic
+of IV estimation while the staged-regression form generalizes to
+multiple instruments and connects naturally to GMM.
+
+\begin{thm}{IV Regression--2SLS Equivalence}
+\label{w12:thm:equiv}
+In the linear IV model with a scalar instrument $Z$ and covariates
+$X \in \mathbb{R}^p$, the IV regression estimator and the 2SLS
+estimator coincide:
+\[
+  \hat\beta_{\mathrm{2SLS}} = \hat\beta_{\mathrm{IV}}.
+\]
+\end{thm}
+
+The intuition is compact.  In §\ref{w12:sec:wald} we derived
+$\hat\beta_{\mathrm{IV}}$ by dropping the invalid (NE-T) and solving
+the valid system (NE-X), (NE-Z), obtaining
+$\hat\beta_{\mathrm{IV}} = (\mathbf{Z}^\top M_X \mathbf{T})^{-1}
+\mathbf{Z}^\top M_X \mathbf{Y}$.
+The 2SLS procedure reaches the same formula by a projection
+argument.
+
+\begin{proof}
+Retain the matrix notation of \S\ref{w12:sec:wald}: $M_X =
+I_n - \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top$,
+scalar instrument $\mathbf{Z} \in \mathbb{R}^n$.
+
+\textbf{First-stage projection.}
+The first-stage fitted value is $\hat{\mathbf{T}} =
+P_{[\mathbf{X},\mathbf{Z}]}\mathbf{T}$, where
+$P_{[\mathbf{X},\mathbf{Z}]}$ projects onto
+$\mathrm{col}(\mathbf{X}, \mathbf{Z})$.  By the
+Frisch--Waugh--Lovell theorem applied to Stage~1:
+\[
+  M_X\hat{\mathbf{T}}
+  = M_X\mathbf{Z}
+    (\mathbf{Z}^\top M_X\mathbf{Z})^{-1}
+    \mathbf{Z}^\top M_X\mathbf{T}.
+\]
+
+\textbf{2SLS second-stage closed form.}
+Applying FWL to the second-stage regression of $\mathbf{Y}$ on
+$(\hat{\mathbf{T}}, \mathbf{X})$:
+\[
+  \hat\beta_{\mathrm{2SLS}}
+  = \frac{\hat{\mathbf{T}}^\top M_X \mathbf{Y}}
+         {\hat{\mathbf{T}}^\top M_X \hat{\mathbf{T}}}
+  = \frac{\mathbf{T}^\top M_X\mathbf{Z}
+          (\mathbf{Z}^\top M_X\mathbf{Z})^{-1}
+          \mathbf{Z}^\top M_X\mathbf{Y}}
+         {\mathbf{T}^\top M_X\mathbf{Z}
+          (\mathbf{Z}^\top M_X\mathbf{Z})^{-1}
+          \mathbf{Z}^\top M_X\mathbf{T}}.
+\]
+Under exact identification ($q = 1$), the scalars
+$\mathbf{T}^\top M_X\mathbf{Z}$ and
+$(\mathbf{Z}^\top M_X\mathbf{Z})^{-1}$ cancel from numerator and
+denominator, leaving
+\[
+  \hat\beta_{\mathrm{2SLS}}
+  = \frac{\mathbf{Z}^\top M_X\mathbf{Y}}
+         {\mathbf{Z}^\top M_X\mathbf{T}}
+  = \hat\beta_{\mathrm{IV}}. \qedhere
+\]
+\end{proof}
+
+In the scalar-instrument linear model, Wald, IV regression, and 2SLS
+are therefore not competing methods; they are different representations
+of the same sample analog of the identification formula.
+
+\begin{remark}[What the proof reveals]
+The proof makes the logic of IV transparent at the level of estimating
+equations.  In OLS, the normal equation for each regressor forces the
+residual to be orthogonal to that regressor.  When $T$ is endogenous,
+its normal equation is corrupted: $\E[\mathbf{T}^\top\boldsymbol\varepsilon]
+\neq 0$, so the OLS condition $\mathbf{T}^\top\hat{\mathbf{e}} = 0$
+holds at the wrong $\theta$.  IV simply replaces this corrupted equation
+with the instrument equation $\mathbf{Z}^\top\hat{\mathbf{e}} = 0$,
+which is valid because $Z$ is exogenous.  The IV estimator is
+therefore OLS on the structural model but with one invalid normal
+equation swapped for a valid one.  The 2SLS derivation reaches the
+same formula by a projection argument, confirming that the two
+approaches are two paths to the same system.
+\end{remark}
+
+\begin{remark}[Wald estimator as a special case]
+\label{w12:rem:wald-special}
+When $Z \in \{0,1\}$ is binary and $X$ is absent, the IV regression
+estimator reduces to the Wald estimator
+(Definition~\ref{w12:defn:wald}), as shown in
+Section~\ref{w12:sec:wald}.  Theorem~\ref{w12:thm:equiv} therefore
+implies $\hat\beta_{\mathrm{2SLS}} = \hat\beta_{\mathrm{Wald}}$ in
+this case as well.
+\end{remark}
+
+\begin{remark}[Generalization to multiple instruments]
+With $q > 1$ instruments, the IV regression formula no longer applies
+directly because the system $\sum_i \tilde{Z}_i Y_i / \sum_i
+\tilde{Z}_i T_i$ is not well defined for vector $\tilde{Z}_i$.  2SLS
+resolves this by using the first-stage projection of $T$ onto the
+full instrument vector, producing a single scalar $\hat{T}_i$.  The
+resulting estimator is efficient in the class of linear IV estimators
+under homoskedasticity and reduces to the IV regression estimator when
+$q = 1$.
+\end{remark}
+
+
+% ============================================================
+\section{The Moment-Condition View and GMM}
+\label{w12:sec:gmm}
+% ============================================================
+
+The proof of Theorem~\ref{w12:thm:equiv} already contains the key
+idea: IV estimation amounts to solving the normal equations of the
+structural model with the invalid $T$-block replaced by the valid
+instrument equation $\mathbf{Z}^\top\hat{\mathbf{e}} = 0$.  This
+replacement is not an algebraic trick but a direct expression of the
+IV assumption $\E[Z\varepsilon \mid X] = 0$, which is a
+\emph{moment condition}.  The advantage of the moment-condition view
+is that it separates the identifying restrictions from the specific
+algebra of 2SLS, making clear which part of the problem is about
+causal assumptions and which part is about estimation efficiency.
+Recognizing 2SLS as a method-of-moments estimator for this condition
+connects it to the general estimating-equation framework of Chapter~9
+and motivates the generalized method of moments for overidentified
+models.
+
+\subsection{2SLS as a Method-of-Moments Estimator}
+
+Write the IV moment condition in terms of the full instrument and
+covariate vector $W = (Z^\top, X^\top)^\top \in \mathbb{R}^{q+p}$:
+\[
+  \E\bigl[W\,\bigl(Y - \alpha - \beta T - \gamma^\top X\bigr)\bigr] = 0.
+\]
+Setting $\theta = (\alpha, \beta, \gamma^\top)^\top$ and defining the
+moment function
+\[
+  U(O;\,\theta) = W\,(Y - \alpha - \beta T - \gamma^\top X),
+\]
+the identifying condition is $\E\{U(O;\,\theta_0)\} = 0$, which is
+exactly an estimating equation in the sense of Chapter~9.  When the
+number of moment conditions equals the number of parameters (exactly
+identified: $q + p = 1 + p$, i.e., $q = 1$), the sample-moment
+equations $\mathbb{P}_n U(O;\,\hat\theta) = 0$ admit a unique solution.
+
+\begin{thm}{2SLS as a Method-of-Moments Estimator}
+\label{w12:thm:mm}
+In the exactly identified linear IV model ($q = 1$), the 2SLS estimator
+$\hat\beta_{\mathrm{2SLS}}$ is the unique solution to the sample
+moment condition
+\[
+  \frac{1}{n}\sum_{i=1}^n
+  Z_i\,\bigl(Y_i - \hat\alpha - \hat\beta_{\mathrm{2SLS}}\,T_i
+             - \hat\gamma^\top X_i\bigr)
+  = 0,
+\]
+solved jointly for $(\hat\alpha, \hat\beta_{\mathrm{2SLS}}, \hat\gamma)$.
+\end{thm}
+
+This moment-condition view clarifies why the first-stage fitted values
+$\hat{T}_i$ are not merely a computational device.  They encode the
+orthogonality structure implied by instrument validity: replacing $T_i$
+with $\hat{T}_i$ ensures the second-stage regression uses only the
+exogenous variation in treatment.  IV is therefore not a separate
+estimation philosophy from the rest of Part~III; it is a special case
+of the general estimating-equation framework of Chapter~9, with moment
+functions induced by instrument validity.
+
+\subsection{Overidentification and GMM}
+
+When $q > 1$ instruments are available, the model is
+\emph{overidentified}: there are more moment conditions than
+parameters.  The system $\mathbb{P}_n U(O;\,\theta) = 0$ is
+generically overdetermined and has no exact solution.
+
+When the model is overidentified, different linear combinations of
+the sample moments contain the same target parameter but with
+different noise levels.  GMM chooses the combination that solves
+the moment equations as well as possible, with a weighting scheme
+that can exploit the heteroskedastic structure of the moment scores
+for greater efficiency.  The weight matrix $\hat{W}_n$ determines
+which combination is used: identity weighting treats all moment
+conditions equally, while efficient weighting down-weights noisier
+moments proportionally to their variance.
+
+The \emph{generalized method of moments} (GMM) formalizes this by
+minimizing a weighted quadratic form in the sample moments:
+\[
+  \hat\theta_{\mathrm{GMM}}
+  = \arg\min_{\theta}\;
+  \bigl[\mathbb{P}_n U(O;\,\theta)\bigr]^\top\,
+  \hat{W}_n\,
+  \bigl[\mathbb{P}_n U(O;\,\theta)\bigr],
+\]
+where $\hat{W}_n$ is a positive-definite weighting matrix.  Different
+choices of $\hat{W}_n$ yield different estimators within the IV class:
+\begin{itemize}
+  \item A particular choice of $\hat{W}_n$ involving the first-stage
+    projection matrix yields the 2SLS estimator.
+  \item The choice $\hat{W}_n = \bigl[\mathbb{P}_n U(O;\,\hat\theta)\,
+    U(O;\,\hat\theta)^\top\bigr]^{-1}$---the inverse of the estimated
+    moment covariance---yields the \emph{efficient GMM estimator},
+    which achieves the semiparametric efficiency bound for the
+    IV moment-condition model.
+\end{itemize}
+Under homoskedasticity, efficient GMM and 2SLS coincide.  Under
+heteroskedasticity, efficient GMM is strictly more efficient.
+
+\begin{remark}[Overidentification as a testable restriction]
+An overidentified model imposes more moment conditions than are
+needed for point identification.  If all instruments are valid, the
+sample moments should be jointly near zero.  The Sargan--Hansen
+$J$-statistic \citep{sargan1958estimation, hansen1982large} tests
+this restriction: under the null that all moment conditions hold,
+$J \xrightarrow{d} \chi^2_{q-1}$.  A rejection indicates that the
+full set of maintained moment conditions is incompatible with the
+data.  This may reflect an exclusion failure, an exogeneity failure,
+or other model misspecification; the test does not identify which
+assumption failed or which instrument is responsible.
+Overidentification therefore allows us to check whether the full set
+of moment restrictions is jointly compatible with the data, but a
+failure to reject is consistent with all instruments being valid, or
+with violations that happen to cancel in the joint test.
+\end{remark}
+
+\begin{example}{GMM with Two Instruments}
+\label{w12:ex:gmm-toy}
+We illustrate the GMM procedure in the simplest overidentified
+setting: one endogenous regressor, two instruments, no additional
+covariates.
+
+\textbf{Setup.}
+Consider the structural model $Y = \beta T + \varepsilon$ (intercept
+suppressed after demeaning).  Two instruments $Z_1$ and $Z_2$ are
+available, giving the moment conditions
+\[
+  \E[Z_1\varepsilon] = 0,
+  \qquad
+  \E[Z_2\varepsilon] = 0.
+\]
+The model is overidentified ($q = 2$, one free parameter), so
+the two moment conditions cannot generally be satisfied
+simultaneously in finite samples.
+
+\textbf{Sample moments.}
+Suppose the following sample covariances are observed:
+\[
+  \widehat{\mathrm{Cov}}(Z_1,\,Y) = 0.40,
+  \quad
+  \widehat{\mathrm{Cov}}(Z_1,\,T) = 0.50,
+  \quad
+  \widehat{\mathrm{Cov}}(Z_2,\,Y) = 0.60,
+  \quad
+  \widehat{\mathrm{Cov}}(Z_2,\,T) = 0.80.
+\]
+The just-identified IV estimate using each instrument alone is
+\[
+  \hat\beta^{(1)} = \frac{0.40}{0.50} = 0.80,
+  \qquad
+  \hat\beta^{(2)} = \frac{0.60}{0.80} = 0.75.
+\]
+The two instruments give different point estimates, reflecting
+sampling variation and possibly differing local estimands.  The
+GMM objective combines both moment conditions.
+
+\textbf{GMM moment function.}
+With $a = (\widehat{\mathrm{Cov}}(Z_1,T),\;
+\widehat{\mathrm{Cov}}(Z_2,T))^\top = (0.50,\;0.80)^\top$ and
+$c = (\widehat{\mathrm{Cov}}(Z_1,Y),\;
+\widehat{\mathrm{Cov}}(Z_2,Y))^\top = (0.40,\;0.60)^\top$,
+the sample moment vector is
+\[
+  \hat{U}(\beta)
+  = c - a\beta
+  = \begin{pmatrix} 0.40 - 0.50\beta \\ 0.60 - 0.80\beta \end{pmatrix}.
+\]
+
+\textbf{GMM with identity weighting ($\Omega = I_2$).}
+The GMM criterion is $Q(\beta) = \hat{U}(\beta)^\top \hat{U}(\beta)$.
+The first-order condition $\partial Q/\partial\beta = 0$ gives
+\[
+  a^\top(c - a\beta) = 0
+  \;\;\Longrightarrow\;\;
+  \hat\beta_{\mathrm{GMM}}
+  = \frac{a^\top c}{a^\top a}
+  = \frac{(0.50)(0.40)+(0.80)(0.60)}{(0.50)^2+(0.80)^2}
+  = \frac{0.68}{0.89}
+  \approx 0.764.
+\]
+This is a precision-weighted average of the two just-identified
+estimates: it lies between $0.75$ and $0.80$, with more weight on
+$Z_2$ because it has the larger first-stage covariance ($0.80 >
+0.50$).
+
+\textbf{Effect of the weighting matrix.}
+With a diagonal weight $\Omega = \mathrm{diag}(w_1, w_2)$, the
+GMM estimator becomes
+\[
+  \hat\beta_{\mathrm{GMM}}(\Omega)
+  = \frac{w_1(0.50)(0.40) + w_2(0.80)(0.60)}
+         {w_1(0.50)^2      + w_2(0.80)^2}.
+\]
+Setting $w_1 = 4$ and $w_2 = 1$ (upweighting $Z_1$) gives
+\[
+  \hat\beta_{\mathrm{GMM}}
+  = \frac{4(0.20)+1(0.48)}{4(0.25)+1(0.64)}
+  = \frac{1.28}{1.64}
+  \approx 0.780,
+\]
+closer to $\hat\beta^{(1)} = 0.80$ as expected.  As
+$w_1/w_2 \to \infty$, the estimate converges to $\hat\beta^{(1)}$;
+as $w_1/w_2 \to 0$, it converges to $\hat\beta^{(2)}$.  The
+efficient weighting $\Omega^\ast = \hat\Sigma^{-1}$ (Section
+\ref{w12:sec:asymp}) selects $w_1$ and $w_2$ to minimize the
+asymptotic variance, typically downweighting the moment condition
+with higher residual variance.
+
+\textbf{Sargan--Hansen $J$-test.}
+At $\hat\beta \approx 0.764$ under identity weighting, the
+residual sample moments are
+\[
+  \hat{U}_1 = 0.40 - (0.50)(0.764) = 0.018,
+  \qquad
+  \hat{U}_2 = 0.60 - (0.80)(0.764) = -0.011.
+\]
+Neither is exactly zero, reflecting the overidentification.  The
+$J$-statistic $J = n\,\hat{U}(\hat\beta)^\top\hat\Sigma^{-1}\hat{U}(\hat\beta)$
+has a $\chi^2_1$ null distribution (one overidentifying restriction).
+A failure to reject is consistent with both instruments satisfying
+the exclusion restriction; a rejection points to at least one
+invalid instrument.
+\end{example}
+
+
+% ============================================================
+\section{Asymptotic Theory of the GMM Estimator}
+\label{w12:sec:asymp}
+% ============================================================
+
+Section~\ref{w12:sec:gmm} placed IV estimation within the GMM
+framework.  This section derives the asymptotic distribution of the
+GMM estimator for the linear IV model and then specializes to 2SLS
+and to the efficient GMM estimator.
+
+\subsection{Setup and Notation}
+
+Stack the structural regressors and instruments into vectors:
+\[
+  D_i = \begin{pmatrix} 1 \\ T_i \\ X_i \end{pmatrix} \in \mathbb{R}^k,
+  \qquad
+  W_i = \begin{pmatrix} 1 \\ X_i \\ Z_i \end{pmatrix} \in \mathbb{R}^m,
+\]
+where $k = p + 2$ and $m = p + 1 + q$.  The structural model is
+$Y_i = D_i^\top\theta_0 + \varepsilon_i$ with
+$\theta_0 = (\alpha_0, \beta_0, \gamma_0^\top)^\top$, and the IV
+moment condition is
+\[
+  \E\bigl[U(O_i;\,\theta_0)\bigr] = 0,
+  \qquad
+  U(O_i;\,\theta) = W_i\,(Y_i - D_i^\top\theta).
+\]
+The order condition requires $m \geq k$ (at least as many instruments
+as parameters), i.e., $q \geq 1$.  For identification, the rank
+condition requires $A = \E[W_i D_i^\top] \in \mathbb{R}^{m \times k}$
+to have full column rank $k$.
+
+Define the moment variance matrix
+\[
+  \Sigma = \E\bigl[U(O_i;\,\theta_0)\,U(O_i;\,\theta_0)^\top\bigr]
+         = \E[\varepsilon_i^2\, W_i W_i^\top]
+         \;\in \mathbb{R}^{m \times m}.
+\]
+Under homoskedasticity $\E[\varepsilon_i^2 \mid W_i] = \sigma^2$,
+this simplifies to $\Sigma = \sigma^2\,\E[W_i W_i^\top]$.
+
+\subsection{Asymptotic Distribution of the GMM Estimator}
+
+The large-sample logic is the same as for any method-of-moments
+estimator: sample orthogonality converges to population orthogonality
+by the law of large numbers, and the estimator fluctuates around the
+truth according to how sensitive the moment equations are to the
+parameter and how noisy the sample moments are.  The sensitivity is
+captured by the matrix $A = -\E[\partial U/\partial\theta^\top]$,
+which measures how sharply the moments respond to a change in
+$\theta$; the noise is captured by $\Sigma = \E[U(O;\theta_0)
+U(O;\theta_0)^\top]$, the variance of the moment scores at the truth.
+The asymptotic variance is a sandwich that combines both.
+
+Recall that the GMM estimator minimizes
+$[\mathbb{P}_n U(O;\theta)]^\top \hat\Omega_n [\mathbb{P}_n U(O;\theta)]$
+for some positive-definite weighting matrix $\hat\Omega_n
+\xrightarrow{p} \Omega$.
+
+\begin{thm}{Asymptotic Distribution of the GMM Estimator}
+\label{w12:thm:asym}
+Suppose the IV moment condition holds, $O_i = (Y_i, T_i, X_i, Z_i)$
+are i.i.d.\ with finite fourth moments, $A$ has full column rank, and
+$\Sigma$ is positive definite.  Then
+\[
+  \sqrt{n}\,\bigl(\hat\theta_{\mathrm{GMM}} - \theta_0\bigr)
+  \;\xrightarrow{d}\;
+  N\bigl(0,\; V_{\mathrm{GMM}}(\Omega)\bigr),
+\]
+where
+\begin{equation}
+  V_{\mathrm{GMM}}(\Omega)
+  = (A^\top\Omega A)^{-1}\,
+    A^\top\Omega\,\Sigma\,\Omega A\,
+    (A^\top\Omega A)^{-1}.
+  \label{w12:eq:gmm-var}
+\end{equation}
+\end{thm}
+
+\begin{tcolorbox}[remarkstyle, title={Intuition: the Sandwich Structure}]
+The asymptotic variance has the same logic as every sandwich formula
+in semiparametric estimation: one part measures how responsive the
+moments are to the parameter ($A$), and another measures how variable
+the moments themselves are ($\Sigma$).  Estimation is more precise
+when the moments react strongly to the parameter (large $A$) and
+fluctuate little across samples (small $\Sigma$).  The weighting
+matrix $\Omega$ scales the two layers but does not alter their
+fundamental roles.
+\end{tcolorbox}
+
+The formula~\eqref{w12:eq:gmm-var} is the \emph{sandwich variance}
+for GMM, and is an instance of the general estimating-equation
+theory from Chapter~9: the sensitivity matrix $A$ plays the role of
+$-\E[\partial U/\partial\theta^\top]$ and the moment variance $\Sigma$
+plays the role of $\E[UU^\top]$.
+
+\subsection{Two Important Special Cases}
+
+\textbf{Exactly identified case ($q = 1$, $m = k$).}
+When there is a single instrument, $A$ is square and invertible by
+the rank condition.  The GMM objective has an exact solution
+$\mathbb{P}_n U(O;\hat\theta) = 0$ regardless of $\Omega$, so all
+weighting matrices yield the same estimator.  The sandwich variance
+simplifies to
+\begin{equation}
+  V_{\mathrm{IV}} = A^{-1}\,\Sigma\,(A^\top)^{-1},
+  \label{w12:eq:iv-var}
+\end{equation}
+matching the general moment-estimator formula from Chapter~9.  In
+the scalar no-covariate case ($p = 0$), $A = \E[ZT]$ and
+$\Sigma = \E[\varepsilon^2 Z^2]$, so
+\[
+  V_{\mathrm{IV}}
+  = \frac{\E[\varepsilon^2 Z^2]}{\bigl(\E[ZT]\bigr)^2}.
+\]
+Under homoskedasticity $\E[\varepsilon^2 \mid Z] = \sigma^2$, this
+further reduces to $\sigma^2\,\mathrm{Var}(Z)^{-1}/\pi^2 =
+\sigma^2/(\pi^2\,\mathrm{Var}(Z))$.
+
+\textbf{Efficient GMM.}
+Among all choices of $\Omega$, the asymptotic variance
+$V_{\mathrm{GMM}}(\Omega)$ is minimized (in the positive
+semidefinite sense) by $\Omega^\ast = \Sigma^{-1}$.  Substituting
+into~\eqref{w12:eq:gmm-var}:
+\begin{equation}
+  V_{\mathrm{eff}}
+  = \bigl(A^\top\Sigma^{-1}A\bigr)^{-1}.
+  \label{w12:eq:eff-var}
+\end{equation}
+This is the \emph{efficient GMM variance} and is the semiparametric
+efficiency lower bound for IV estimation within the linear
+IV moment-restriction model defined by $\E[W\varepsilon] = 0$;
+it is the best achievable variance among all estimators that use only
+these moment conditions, but it does not in general coincide with
+efficiency bounds from richer semiparametric models that exploit
+additional structure.  For any other weighting matrix $\Omega$,
+$V_{\mathrm{GMM}}(\Omega) - V_{\mathrm{eff}} \succeq 0$.
+
+\begin{remark}[When 2SLS is efficient]
+The 2SLS estimator corresponds to the weighting matrix
+$\Omega_{\mathrm{2SLS}} = \E[W_i W_i^\top]^{-1}$.  Under
+homoskedasticity, $\Sigma = \sigma^2\E[WW^\top]$, so
+$\Sigma^{-1} = \sigma^{-2}\E[WW^\top]^{-1} \propto \Omega_{\mathrm{2SLS}}$.
+Since scalar multiples of $\Omega$ do not change the minimizer,
+2SLS achieves $V_{\mathrm{eff}}$ under homoskedasticity.  Under
+heteroskedasticity, $\Sigma \neq \sigma^2\E[WW^\top]$ and 2SLS is
+strictly less efficient than the optimal weighting
+$\hat\Omega_n = (\mathbb{P}_n \hat\varepsilon_i^2 W_i W_i^\top)^{-1}$.
+Efficient GMM improves over 2SLS only when the conditional variance
+structure makes non-identity weighting informative; under
+homoskedasticity, the optimal weighting collapses to the 2SLS case
+and no efficiency gain is available.  This tells students when they
+can stop at 2SLS without sacrificing asymptotic efficiency: whenever
+homoskedasticity is plausible, efficient GMM brings no gain over 2SLS.
+\end{remark}
+
+\subsection{Consistent Variance Estimation}
+
+Let $\hat\varepsilon_i = Y_i - D_i^\top\hat\theta$ denote the
+structural residuals evaluated at the GMM estimates.  Consistent
+estimators of $A$ and $\Sigma$ are
+\[
+  \hat{A} = \frac{1}{n}\sum_{i=1}^n W_i D_i^\top,
+  \qquad
+  \hat\Sigma = \frac{1}{n}\sum_{i=1}^n \hat\varepsilon_i^2\, W_i W_i^\top.
+\]
+Substituting into~\eqref{w12:eq:gmm-var} gives the heteroskedasticity-robust
+sandwich variance estimator:
+\begin{equation}
+  \hat{V}_{\mathrm{GMM}}
+  = (\hat{A}^\top\hat\Omega_n\hat{A})^{-1}\,
+    \hat{A}^\top\hat\Omega_n\,\hat\Sigma\,\hat\Omega_n\hat{A}\,
+    (\hat{A}^\top\hat\Omega_n\hat{A})^{-1}.
+  \label{w12:eq:sandwich-est}
+\end{equation}
+In the exactly identified case, $\hat{A}$ is square and
+\eqref{w12:eq:sandwich-est} reduces to
+$\hat{A}^{-1}\hat\Sigma(\hat{A}^\top)^{-1}$, independent of
+$\hat\Omega_n$.  For the efficient GMM estimator, the optimal
+weighting is $\hat\Omega_n = \hat\Sigma^{-1}$, and the variance
+estimator simplifies to $(\hat{A}^\top\hat\Sigma^{-1}\hat{A})^{-1}$.
+
+In applications, the default variance estimator should rarely be
+the i.i.d.\ formula.  Heteroskedasticity-robust, and when appropriate
+cluster-robust, standard errors are the practical baseline for IV
+work.  The cluster-robust version replaces $\hat\varepsilon_i^2
+W_i W_i^\top$ in $\hat\Sigma$ with $(\sum_{i \in c}\hat\varepsilon_i
+W_i)(\sum_{i \in c}\hat\varepsilon_i W_i)^\top$ summed over clusters
+$c$, and is required whenever observations within a group share
+unmodeled common shocks---as in the KIPP application of Chapter~7,
+where test scores for students within the same lottery cohort may be
+correlated.
+
+\begin{remark}[Two-step efficient GMM]
+Because the optimal weighting $\hat\Omega_n = \hat\Sigma^{-1}$
+requires preliminary residuals $\hat\varepsilon_i$, efficient GMM
+is typically implemented in two steps: obtain a consistent first-step
+estimator (e.g., 2SLS) to form $\hat\varepsilon_i$, construct
+$\hat\Sigma$, and then re-minimize the GMM criterion with
+$\hat\Omega_n = \hat\Sigma^{-1}$.  The resulting estimator achieves
+$V_{\mathrm{eff}}$ asymptotically.
+\end{remark}
+
+
+% ============================================================
+%  Advanced enrichment begins here
+% ============================================================
+\begin{tcolorbox}[warnstyle, title={Advanced Enrichment:
+  Sections~\ref{w12:sec:gel}--\ref{w12:sec:cf}}]
+The remaining sections develop two extensions beyond the core
+material.  They presuppose familiarity with
+\S\S\,\ref{w12:sec:wald}--\ref{w12:sec:weak} but can be omitted
+without loss of continuity.  Section~\ref{w12:sec:gel} introduces
+generalized empirical likelihood (GEL) as a one-step alternative to
+efficient GMM with better finite-sample properties.
+Section~\ref{w12:sec:cf} develops the control function approach and
+its extension to nonlinear triangular models.
+\end{tcolorbox}
+
+% ============================================================
+\section{Generalized Empirical Likelihood}
+\label{w12:sec:gel}
+% ============================================================
+
+\begin{remark}[Advanced topic]
+This section introduces generalized empirical likelihood (GEL), an
+alternative to GMM for estimating IV models from moment restrictions.
+The main takeaway for this course is that every GEL estimator shares
+the same first-order asymptotic efficiency as efficient GMM
+(Theorem~\ref{w12:thm:gel-asymp}), while GEL can have better
+higher-order finite-sample properties---in particular, smaller bias
+in overidentified models with many instruments.  The detailed
+duality formulation, the two-loop profile algorithm, and the
+special-cases table are supplementary material and may be treated
+as optional reading.
+\end{remark}
+
+Generalized empirical likelihood is a one-step alternative to
+two-step efficient GMM.  It uses the same IV moment restrictions
+but incorporates them through an implied reweighting of the sample
+rather than through a separately estimated covariance weight matrix.
+Its main attraction is that it attains the same first-order
+efficiency as efficient GMM while sometimes improving finite-sample
+behavior and avoiding the preliminary weighting step.
+
+Section~\ref{w12:sec:asymp} showed that efficient GMM achieves the
+semiparametric efficiency bound $(A^\top\Sigma^{-1}A)^{-1}$ but
+requires a two-step procedure: a preliminary consistent estimator
+is used to form $\hat\Sigma$, which is then plugged in as the
+weighting matrix for the second-step optimization.  This two-step
+structure introduces a practical question of how many iterations to
+run and contributes a source of finite-sample bias
+\citep{neweysmith2004}.  \emph{Generalized empirical likelihood} (GEL)
+provides a one-step alternative: it jointly optimizes over the
+structural parameter $\theta$ and an auxiliary dual variable,
+implicitly constructing an optimal weighting without a separate
+preliminary step.  All GEL estimators share the same first-order
+asymptotic distribution as efficient GMM, making them
+asymptotically equivalent alternatives that can offer better
+finite-sample behavior.
+
+\subsection{The GEL Estimator}
+\label{w12:sec:gel:def}
+
+Retain the notation of Section~\ref{w12:sec:asymp}: let
+$U_i(\theta) = U(O_i;\theta) = W_i(Y_i - D_i^\top\theta)$ denote
+the $m$-dimensional moment function, and write
+$\bar{U}(\theta) = n^{-1}\sum_{i=1}^n U_i(\theta)$.
+
+GEL introduces a strictly convex function
+$G\colon \mathcal{V} \to \mathbb{R}$, where $\mathcal{V}$ is an
+open interval containing zero.  The GEL estimator solves the
+saddle-point problem
+\begin{equation}
+  \hat\theta_{\mathrm{GEL}}
+  = \arg\min_{\theta}\;
+    \sup_{\lambda \in \Lambda_n(\theta)}\;
+    \frac{1}{n}\sum_{i=1}^n \bigl[-G\!\left(\lambda^\top U_i(\theta)\right)\bigr],
+  \label{w12:eq:gel}
+\end{equation}
+where $\lambda \in \mathbb{R}^m$ is an auxiliary dual variable and
+$\Lambda_n(\theta) = \{\lambda : \lambda^\top U_i(\theta) \in
+\mathcal{V},\;i = 1,\ldots,n\}$ is the feasible set for $\lambda$
+given $\theta$.  No preliminary weighting matrix is required: the
+inner supremum over $\lambda$ performs the role of weighting
+implicitly.
+
+We normalize $G$ to satisfy three conditions:
+\begin{equation}
+  G(0) = 0,
+  \qquad
+  g(0) = 1,
+  \qquad
+  g'(0) = 1.
+  \label{w12:eq:gel-norm}
+\end{equation}
+The conditions $g(0) = g'(0) = 1$ can always be imposed by a
+linear rescaling of $G$ and $\lambda$ without changing the
+estimator of $\theta$, and they ensure that the GEL first-order
+conditions reduce to the efficient GMM conditions at the population
+level.  The additional condition $G(0) = 0$ is a normalization of
+the additive constant of $G$; it likewise has no effect on the
+estimator, but it plays an essential role in the duality developed in
+Section~\ref{w12:sec:gel:dual} by pinning down the correspondence
+between $G$ and the primal divergence function.
+
+The three most important special cases correspond to different
+choices of $G$.
+
+\begin{defn}{Special Cases of GEL}
+\label{w12:defn:gel-cases}
+\begin{enumerate}
+  \item \textbf{Empirical likelihood (EL):}
+    $G(v) = -\log(1 - v)$, $\mathcal{V} = (-\infty, 1)$.
+  \item \textbf{Exponential tilting (ET):}
+    $G(v) = e^v - 1$, $\mathcal{V} = \mathbb{R}$.
+  \item \textbf{Continuous updating estimator (CUE):}
+    $G(v) = v + v^2/2$, $\mathcal{V} = \mathbb{R}$.
+    The function $G$ is quadratic, and for this choice the
+    GEL saddle-point problem reduces to simultaneous minimization
+    of the GMM criterion with the weighting matrix
+    $\hat\Omega(\theta) = [n^{-1}\sum_i U_i(\theta) U_i(\theta)^\top]^{-1}$
+    evaluated continuously at the current $\theta$.
+\end{enumerate}
+Each satisfies the normalization~\eqref{w12:eq:gel-norm}.
+\end{defn}
+
+\begin{thm}{CUE as a GEL Estimator \citep{neweysmith2004}}
+\label{w12:thm:cue-gel}
+If $G(v)$ is quadratic (i.e.\ $G(v) = v + v^2/2$ up to rescaling), then $\hat\theta_{\mathrm{GEL}} =
+\hat\theta_{\mathrm{CUE}}$, where the continuous updating estimator
+solves
+\[
+  \hat\theta_{\mathrm{CUE}}
+  = \arg\min_\theta\;
+    \bar{U}(\theta)^\top
+    \Bigl[n^{-1}{\textstyle\sum_i} U_i(\theta)U_i(\theta)^\top\Bigr]^{-1}
+    \bar{U}(\theta).
+\]
+\end{thm}
+
+Unlike the two-step efficient GMM estimator, CUE uses a weighting
+matrix that is continuously updated as $\theta$ changes, so no
+preliminary estimator is needed.  It has the same first-order
+asymptotics as efficient GMM but in practice requires a global
+nonlinear optimizer because the criterion is no longer quadratic in
+$\theta$.
+
+\begin{tcolorbox}[remarkstyle, title={Optional Enrichment:
+  Convex-Conjugate Duality (\S\ref{w12:sec:gel:dual})}]
+The subsection below derives the GEL saddle-point problem as the
+Lagrangian dual of a minimum-discrepancy primal problem.  This
+duality is mathematically elegant and connects GEL to information
+geometry, but it is not required for using GEL estimators in
+practice.  Students who have covered the core GEL material above
+may skip this subsection on a first pass.
+\end{tcolorbox}
+
+\subsection{The Convex-Conjugate Duality with Minimum Discrepancy}
+\label{w12:sec:gel:dual}
+
+The GEL saddle-point problem~\eqref{w12:eq:gel} is the Lagrangian
+dual of a natural primal problem that re-weights observations rather
+than moments.  The bridge between the two is the
+Legendre--Fenchel conjugate of $G$.
+
+\subsubsection*{The primal: minimum-discrepancy estimation}
+
+The \emph{minimum-discrepancy} (MD) estimator minimizes a convex
+divergence between a vector of observation weights
+$\boldsymbol\omega = (\omega_1, \ldots, \omega_n)$ and the
+reference weight $\omega_i = 1$ (one unit of mass per observation),
+subject to the sample moment condition being exactly satisfied:
+\begin{equation}
+  \hat\theta_{\mathrm{MD}}
+  = \arg\min_{\theta,\,\omega_1,\ldots,\omega_n}\;
+    \sum_{i=1}^n F(\omega_i)
+  \quad
+  \text{subject to}
+  \quad
+  \sum_{i=1}^n \omega_i U_i(\theta) = 0,
+  \label{w12:eq:md}
+\end{equation}
+where $F\colon(0,\infty)\to\mathbb{R}$ is a strictly convex function
+with minimum at $\omega = 1$.  The problem asks: what is the
+re-weighting of observations, closest to the uniform reference
+$\omega_i = 1$ in the $F$-divergence sense, that exactly satisfies
+the moment restriction?
+
+\subsubsection*{The conjugate relationship}
+
+The key structural fact is that the MD divergence $F$ and the
+GEL strictly convex function $G$ are related through the Legendre--Fenchel
+conjugate.  Define
+\begin{equation}
+  F(\omega)
+  = \sup_{v \in \mathcal{V}}\,\bigl[\,\omega v - G(v)\bigr],
+  \label{w12:eq:gel-conjugate}
+\end{equation}
+the Legendre--Fenchel conjugate of $G$.  Because $G$ is strictly
+convex, the conjugate $F$ is itself strictly convex.  The normalization~\eqref{w12:eq:gel-norm} determines the
+behavior of $F$ at the reference point $\omega = 1$: the supremum
+in~\eqref{w12:eq:gel-conjugate} is attained at $v^* = 0$
+(since the first-order condition gives $\omega = g(v^*)$, so
+$\omega = 1 \Rightarrow v^* = 0$), yielding
+\begin{equation}
+  F(1) = 1 \cdot 0 - G(0) = 0,
+  \qquad
+  f(1) = v^*(1) = 0,
+  \label{w12:eq:gel-F-norm}
+\end{equation}
+where the second equality uses the envelope theorem.  The location of
+the minimizer follows entirely from $g(0) = 1$: the first-order
+condition $\omega = g(v^*)$ gives $v^* = 0$ at $\omega = 1$,
+and hence $f(1) = 0$, regardless of the value of $G(0)$.  The
+condition $G(0) = 0$ has no bearing on which $\omega$ minimizes
+$F$; it normalizes the \emph{level} of $F$ so that $F(1) = 0$,
+making the divergence interpretable as a non-negative cost with zero
+cost at the reference weight $\omega_i = 1$.
+
+\subsubsection*{The duality theorem}
+
+\begin{thm}{GEL--MD Duality \citep{neweysmith2004,ragusa2011}}
+\label{w12:thm:gel-md}
+Let $G$ satisfy the normalization~\eqref{w12:eq:gel-norm} and
+let $F$ be defined by~\eqref{w12:eq:gel-conjugate}.  Then the GEL
+problem~\eqref{w12:eq:gel} is the Lagrangian dual of the MD
+problem~\eqref{w12:eq:md}: their first-order conditions coincide, so
+$\hat\theta_{\mathrm{GEL}} = \hat\theta_{\mathrm{MD}}$.  The dual
+variable $\hat\lambda$ and the primal weights $\hat\omega_i$ are
+related by
+\[
+  \hat\omega_i = g\!\bigl(\hat\lambda^\top U_i(\hat\theta)\bigr),
+\]
+which satisfies $f(\hat\omega_i) = \hat\lambda^\top U_i(\hat\theta)$
+by the conjugate relationship $f^{-1} = g$.
+\end{thm}
+
+\citet{neweysmith2004} established this duality for the
+\emph{Cressie--Read family} (Cressie and Read, 1984), in which
+$G(v) = (1+\gamma v)^{(\gamma+1)/\gamma}/(\gamma+1) -
+1/(\gamma+1)$ and $F(\omega) = [(\omega)^{\gamma+1} - 1 - (\gamma+1)
+(\omega-1)]/[\gamma(\gamma+1)]$.  EL, ET, and CUE correspond to
+$\gamma = -1$, $\gamma = 0$, and $\gamma = 1$.  \citet{ragusa2011}
+showed that the duality holds in full generality for any $G$
+satisfying~\eqref{w12:eq:gel-norm}: the Cressie--Read parametrization
+is not needed for the structural result; the convex conjugate is the
+correct unifying framework.
+
+\subsubsection*{Solving the MD Problem: Two-Loop Profile Optimization}
+
+Although the MD problem~\eqref{w12:eq:md} jointly optimizes over
+$(\theta, \omega_1,\ldots,\omega_n)$, it can be solved by a
+two-loop profile procedure that exploits the convexity of $F$ in
+the weights.
+
+\textbf{Inner loop: profile weights at fixed $\theta$.}  For a
+given $\theta$, the minimization over $(\omega_1,\ldots,\omega_n)$
+subject to $\sum_i \omega_i U_i(\theta) = 0$ is a convex program.
+Its Lagrangian is
+\[
+  L(\omega, \lambda)
+  = \sum_{i=1}^n F(\omega_i)
+    - \lambda^\top \sum_{i=1}^n \omega_i U_i(\theta),
+\]
+and the first-order condition $f(\omega_i) = \lambda^\top
+U_i(\theta)$ gives the profile weight
+\[
+  \hat\omega_i(\theta) = f^{-1}\!\bigl(\lambda^\top
+  U_i(\theta)\bigr) = g\!\bigl(\lambda^\top U_i(\theta)\bigr),
+\]
+where the last equality uses the conjugate identity $f^{-1} = g$.
+Substituting into the moment constraint $\sum_i \hat\omega_i(\theta)
+U_i(\theta) = 0$ determines the Lagrange multiplier
+$\hat\lambda(\theta)$ as the solution to
+\begin{equation}
+  \hat\lambda(\theta)
+  = \arg\min_{\lambda \in \Lambda_n(\theta)}\;
+    \frac{1}{n}\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr).
+  \label{w12:eq:gel-inner}
+\end{equation}
+This inner minimization is a convex optimization in $\lambda$ alone
+and can be solved efficiently by Newton's method for each fixed
+$\theta$.
+
+\textbf{Profile divergence.}  Once $\hat\omega_i(\theta) =
+g(\hat\lambda(\theta)^\top U_i(\theta))$ is substituted back into the
+MD objective, the Fenchel--Young equality $F(\omega) = \omega
+f(\omega) - G(f(\omega))$ and the moment constraint
+$\sum_i \hat\omega_i(\theta) U_i(\theta) = 0$ together give
+\begin{equation}
+  Q_{\mathrm{MD}}(\theta)
+  \;\equiv\;
+  \sum_{i=1}^n F\!\bigl(\hat\omega_i(\theta)\bigr)
+  = -\sum_{i=1}^n G\!\bigl(\hat\lambda(\theta)^\top U_i(\theta)\bigr).
+  \label{w12:eq:md-profile}
+\end{equation}
+The profiled divergence therefore reduces to a function of $\theta$
+alone, evaluated at the inner-loop solution.
+
+\textbf{Outer loop: minimize over $\theta$.}  The MD estimator is
+\[
+  \hat\theta_{\mathrm{MD}}
+  = \arg\min_{\theta}\; Q_{\mathrm{MD}}(\theta)
+  = \arg\max_{\theta}\;
+    \min_{\lambda \in \Lambda_n(\theta)}\;
+    \frac{1}{n}\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr),
+\]
+where the second equality follows from~\eqref{w12:eq:md-profile}.
+This is exactly the GEL saddle-point problem~\eqref{w12:eq:gel}
+written as a max--min, confirming at the algorithmic level that the
+two procedures find the same estimator.  In practice the outer loop
+iterates over $\theta$, calling the inner loop at each step to
+evaluate $\hat\lambda(\theta)$ and the gradient of
+$Q_{\mathrm{MD}}(\theta)$.
+
+\begin{remark}[Connection to the GEL saddle-point]
+The two-loop MD procedure and the GEL saddle-point are two
+computational routes to the same estimator.  The GEL formulation
+jointly optimizes $(\theta, \lambda)$ in the saddle-point
+problem~\eqref{w12:eq:gel}, while the MD two-loop approach decouples
+the problem: the inner loop solves a convex minimization in $\lambda$
+for fixed $\theta$, and the outer loop minimizes the profiled
+divergence in $\theta$.  The inner-loop solution $\hat\lambda(\theta)$
+from~\eqref{w12:eq:gel-inner} is precisely the dual variable that
+appears in the GEL first-order conditions, and the profile
+divergence~\eqref{w12:eq:md-profile} is the GEL profile objective.
+\end{remark}
+
+\subsubsection*{Empirical probabilities}
+
+The primal weights $\hat\omega_i$ need not sum to one.  Normalizing
+gives the \emph{empirical probabilities}
+\begin{equation}
+  \hat\pi_i
+  = \frac{\hat\omega_i}{\sum_{j=1}^n \hat\omega_j}
+  = \frac{g\!\left(\hat\lambda^\top U_i(\hat\theta)\right)}
+         {\displaystyle\sum_{j=1}^n
+          g\!\left(\hat\lambda^\top U_j(\hat\theta)\right)},
+  \qquad i = 1,\ldots,n,
+  \label{w12:eq:gel-probs}
+\end{equation}
+where $\hat\lambda =
+\arg\inf_{\lambda \in \Lambda_n(\hat\theta)}
+n^{-1}\sum_i G(\lambda^\top U_i(\hat\theta))$.
+These satisfy $\sum_i \hat\pi_i = 1$ and $\sum_i \hat\pi_i
+U_i(\hat\theta) = 0$ at the GEL first-order conditions.  For CUE,
+the primal weights are generally non-uniform and are induced by the
+quadratic function $G$.
+
+\subsubsection*{Special cases and divergence functions}
+
+The conjugate relationship~\eqref{w12:eq:gel-conjugate} determines
+the MD divergence $F$ from $G$.  Table~\ref{w12:tab:gel-cases}
+summarizes the three main special cases; the derivations follow by
+solving the first-order condition $\omega - g(v^*) = 0$ for $v^*$
+and substituting back into~\eqref{w12:eq:gel-conjugate}.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Estimator & $G(v)$ & $g(v) = G'(v)$ & $F(\omega)$ & Divergence \\
+\midrule
+EL  & $-\log(1-v)$ & $\displaystyle\frac{1}{1-v}$
+    & $\omega - 1 - \log\omega$
+    & KL: $\sum_i \hat\pi_i \log\frac{\hat\pi_i}{1/n}$ \\[8pt]
+ET  & $e^v - 1$ & $e^{v}$
+    & $\omega\log\omega - \omega + 1$
+    & Reverse KL: $\sum_i \frac{1}{n}\log\frac{1/n}{\hat\pi_i}$ \\[6pt]
+Hellinger & $\displaystyle\frac{2v}{2-v}$ & $\displaystyle\frac{4}{(2-v)^2}$
+    & $2(\sqrt{\omega}-1)^2$
+    & $2n\sum_i\!\bigl(\sqrt{\hat\pi_i}-\tfrac{1}{\sqrt{n}}\bigr)^{\!2}$ \\[8pt]
+CUE & $v + \tfrac{1}{2}v^2$ & $1 + v$
+    & $\tfrac{1}{2}(\omega - 1)^2$
+    & $\chi^2$: $\tfrac{n}{2}\sum_i (\hat\pi_i - \tfrac{1}{n})^2$ \\
+\bottomrule
+\end{tabular}
+\caption{The four main GEL special cases.  $G$ is the strictly
+  convex function defining the GEL estimator~\eqref{w12:eq:gel};
+  $g = G'$ appears in the empirical probability
+  formula~\eqref{w12:eq:gel-probs} via $\hat\omega_i = g(\hat\lambda^\top
+  U_i(\hat\theta))$; $F(\omega) = \sup_{v}\,[\omega v - G(v)]$ is
+  the Legendre--Fenchel conjugate of $G$ and defines the MD
+  primal~\eqref{w12:eq:md}.  All four satisfy $G(0)=0$,
+  $g(0)=1$, $F(1)=0$, $f(1)=0$.  The divergence column shows
+  $\sum_i F(\hat\omega_i)$ expressed in terms of the normalized
+  probabilities $\hat\pi_i = \hat\omega_i/\sum_j\hat\omega_j$.
+  EL, Hellinger, ET, and CUE correspond to $\gamma=-1$,
+  $\gamma=-\tfrac{1}{2}$, $\gamma=0$, and $\gamma=1$ in the
+  Cressie--Read family, respectively.  The domain of $G$ is
+  $\mathcal{V}=(-\infty,1)$ for EL, $\mathcal{V}=(-\infty,2)$ for
+  Hellinger, and $\mathcal{V}=\mathbb{R}$ for ET and CUE.}
+\label{w12:tab:gel-cases}
+\end{table}
+
+For EL, $F(\omega) = \omega - 1 - \log\omega$ is the
+Kullback--Leibler divergence from $\hat\pi$ to the uniform $1/n$,
+so the EL weights are the nonparametric maximum likelihood estimate
+of the observation probabilities subject to the moment constraint.
+For ET, the roles of the two distributions in the KL divergence are
+reversed.  For CUE, the divergence is the squared Euclidean
+distance from the reference weight.
+
+\begin{remark}[Re-weighting observations vs.\ re-weighting moments]
+The convex-conjugate duality highlights a structural contrast between
+GMM and GEL.  GMM re-weights the \emph{moment conditions} via the
+matrix $\hat\Omega$, assigning more importance to moment conditions
+that are precisely estimated.  MD---and its GEL dual---instead
+re-weights the \emph{observations}, finding the empirical
+distribution closest to uniform in the $F$-divergence sense that is
+consistent with the moment restrictions.  The two approaches use the
+overidentification to improve efficiency through structurally
+different mechanisms, yet they are asymptotically equivalent to
+first order.
+\end{remark}
+
+\subsection{Asymptotic Properties and Comparison with GMM}
+\label{w12:sec:gel:asymp}
+
+Under the same regularity conditions as Theorem~\ref{w12:thm:asym},
+every GEL estimator achieves the efficient GMM variance.
+
+\begin{thm}{First-Order Asymptotic Equivalence \citep{neweysmith2004}}
+\label{w12:thm:gel-asymp}
+Suppose the moment condition $\E[U(O;\theta_0)] = 0$ holds, $O_i$
+are i.i.d.\ with sufficient moments, the rank condition holds, and
+$G$ satisfies the regularity conditions of
+\citet{neweysmith2004}.  Then for any GEL estimator,
+\[
+  \sqrt{n}\,\bigl(\hat\theta_{\mathrm{GEL}} - \theta_0\bigr)
+  \;\xrightarrow{d}\;
+  N\!\left(0,\; (A^\top\Sigma^{-1}A)^{-1}\right),
+\]
+the same limiting distribution as the efficient GMM estimator.
+\end{thm}
+
+The first-order equivalence means that the choice among GEL variants,
+or between GEL and efficient GMM, does not matter in large samples.
+Differences emerge at higher order.
+
+\begin{thm}{GEL Overidentification Test (Wilks' Theorem for GEL)
+  \citep{neweysmith2004}}
+\label{w12:thm:gel-wilks}
+Under the same conditions as Theorem~\ref{w12:thm:gel-asymp}, the
+GEL profile divergence evaluated at the estimator satisfies
+\begin{equation}
+  T_{\mathrm{GEL}}
+  \;\equiv\;
+  2\sum_{i=1}^n F\!\bigl(\hat\omega_i\bigr)
+  \;=\;
+  -2\sum_{i=1}^n G\!\bigl(\hat\lambda^\top U_i(\hat\theta_{\mathrm{GEL}})\bigr)
+  \;\xrightarrow{d}\;
+  \chi^2_{m-k},
+  \label{w12:eq:gel-wilks}
+\end{equation}
+where $m$ is the number of moment conditions, $k$ is the number of
+parameters, and $m - k$ is the number of overidentifying
+restrictions.
+\end{thm}
+
+The two expressions in~\eqref{w12:eq:gel-wilks} are equal by the
+profile divergence identity~\eqref{w12:eq:md-profile}: the total
+primal divergence from the reference weights equals minus the
+profiled GEL objective at the solution.  The $\chi^2_{m-k}$ limit
+parallels Wilks' theorem for parametric likelihood ratio tests: the
+degrees of freedom count the overidentifying restrictions, and the
+statistic is zero under exact identification ($m = k$).  This is the
+GEL counterpart of the Sargan--Hansen $J$-statistic from
+Section~\ref{w12:sec:gmm}.
+
+For EL specifically, $F(\omega) = \omega - 1 - \log\omega$, so
+\[
+  T_{\mathrm{EL}}
+  = 2\sum_{i=1}^n \hat\omega_i \log\!\left(\frac{\hat\omega_i}{1}\right)
+  \;=\; 2n\sum_{i=1}^n \hat\pi_i \log(n\hat\pi_i),
+\]
+the empirical likelihood ratio statistic of Qin and Lawless (1994),
+which coincides with $-2$ times the log empirical likelihood ratio
+under the moment constraint relative to the unconstrained maximum.
+
+\begin{remark}[Comparison with the Sargan--Hansen $J$-statistic]
+The $J$-statistic of Section~\ref{w12:sec:gmm} equals
+$n\,\bar{U}(\hat\theta)^\top \hat\Sigma^{-1} \bar{U}(\hat\theta)$
+and also converges to $\chi^2_{m-k}$ under the null.  The two
+statistics test the same null hypothesis---all $m$ moment conditions
+hold simultaneously---but differ in construction.  The $J$-statistic
+uses the sample mean $\bar{U}(\hat\theta)$ and a separate estimate
+$\hat\Sigma$, while $T_{\mathrm{GEL}}$ uses the profile divergence
+at the re-weighted distribution.  For the CUE, $F(\omega) =
+(\omega-1)^2/2$, so $T_{\mathrm{CUE}} = \sum_i (\hat\omega_i - 1)^2$,
+a quadratic form that is closely related to the $J$-statistic evaluated
+at the continuously updated weighting matrix.  Under the null all GEL
+statistics share the same $\chi^2_{m-k}$ limit; they differ in local
+power and higher-order properties.
+\end{remark}
+
+\begin{remark}[Finite-sample advantages of GEL over two-step GMM]
+\citet{neweysmith2004} show that, to higher asymptotic order, GEL
+estimators have smaller bias than standard two-step GMM in two
+important respects.  First, GEL eliminates the bias component arising
+from estimation of the Jacobian
+$\E[\partial U_i(\theta_0)/\partial\theta^\top]$.  This is an
+important source of finite-sample bias in overidentified IV models,
+and it appears in GMM because the gradient term in the first-order
+conditions is estimated by a sample average rather than by an
+efficient weighted average.  The inner saddle-point over $\lambda$ in
+GEL implicitly uses an efficient estimator of the Jacobian, so this
+bias component vanishes.  Second, EL additionally eliminates the bias
+from estimating the weighting matrix $\Sigma$, because EL uses the
+re-weighted probabilities $\hat\pi_i$ as an efficient estimate of the
+second moment.  Under symmetric disturbances---a condition satisfied
+in many IV settings---these bias reductions extend to the full GEL
+family.  In practice, these properties make GEL estimators attractive
+in overidentified IV settings with moderate sample sizes or many
+instruments, where finite-sample bias is a genuine concern.
+\end{remark}
+
+\begin{remark}[Computational considerations]
+The GEL saddle-point problem~\eqref{w12:eq:gel} is a joint nonlinear
+optimization in $(\theta, \lambda)$.  For the linear IV model, the
+inner maximization over $\lambda$ can often be solved efficiently by
+iterative algorithms, and standard software provides reliable GEL
+implementations.  Among the three named special cases, CUE is the
+most transparent computationally---the inner supremum has a closed
+form for fixed $\theta$---but its objective is non-convex in $\theta$
+and requires a global optimizer.  EL is often preferred in practice
+for its minimum-bias properties; it additionally supports empirical
+likelihood confidence regions that have favorable coverage properties
+without requiring symmetry assumptions on the moment conditions.
+\end{remark}
+
+
+% ============================================================
+\section{Weak Instruments and Inferential Fragility}
+\label{w12:sec:weak}
+% ============================================================
+
+The GMM and 2SLS estimators are well-behaved when the instrument
+strongly predicts treatment.  When this first-stage relationship is
+weak, IV estimation becomes severely fragile.  A weak instrument is
+not merely an efficiency problem: it makes the finite-sample
+distribution of IV estimators highly non-normal, magnifies bias
+toward OLS, and undermines conventional confidence intervals.  These
+are not asymptotic curiosities but practical hazards that arise
+routinely in empirical work, and they are among the most important
+practical concerns in IV design.
+
+\subsection{The Weak-Instrument Problem}
+
+The 2SLS closed form~\eqref{w12:eq:2sls-closed} divides by the
+sample covariance $\widehat{\mathrm{Cov}}(\tilde{Z}, T)$.  When the
+population first-stage coefficient $\pi$ is near zero, this denominator
+is near zero in the population and highly variable in finite samples.
+The consequences are well-documented
+\citep{bound1995problems}:
+\begin{itemize}
+  \item \textbf{Finite-sample bias toward OLS.}  The 2SLS estimator is
+    biased in finite samples even under valid identification.  As
+    $\pi \to 0$, the bias approaches that of OLS rather than zero.
+  \item \textbf{Non-Gaussian finite-sample distribution.}  The
+    distribution of $\hat\beta_{\mathrm{2SLS}}$ can be highly skewed
+    or heavy-tailed, even in large samples, rendering the
+    $N(0,\,V_{\mathrm{2SLS}})$ approximation unreliable.
+  \item \textbf{Size distortion.}  Wald-type confidence intervals
+    derived from the asymptotic normal approximation can severely
+    undercover the true parameter.
+\end{itemize}
+
+\subsection{Diagnostic: The First-Stage $F$-Statistic}
+
+The most widely used diagnostic for weak instruments is the
+$F$-statistic from the first-stage regression, testing the joint
+significance of $Z$ after partialling out $X$.  Staiger and Stock
+(1997) argued informally for the rule of thumb $F \geq 10$ as an
+indication of adequate instrument strength.  Stock and Yogo (2005)
+provided formal critical values, tabulating thresholds at which
+the 2SLS bias relative to OLS bias exceeds a specified tolerance.
+The textbook first-stage $F$-statistic is most directly
+interpretable in the single-endogenous-regressor setting; with
+heteroskedasticity, clustering, multiple endogenous regressors, or
+many instruments, more specialized diagnostics are preferable.
+In all cases, a large first-stage $F$ supports relevance, but says
+nothing directly about exogeneity or exclusion: a strong but invalid
+instrument passes the first-stage test with no difficulty.  The
+first-stage $F$-statistic is a relevance diagnostic, not a
+certificate of instrument validity.
+
+\begin{warn}{The $F > 10$ Rule of Thumb}
+The threshold $F_{\text{first stage}} > 10$ is a widely cited but
+coarse diagnostic.  It targets finite-sample bias relative to OLS,
+not validity of the exclusion restriction.  It may also be too lenient
+when there are multiple endogenous regressors or many instruments.
+A more reliable diagnostic is the effective $F$-statistic of Olea and
+Pflueger (2013), which remains valid under heteroskedasticity and
+within-cluster correlation.
+\end{warn}
+
+\subsection{Weak-Instrument-Robust Inference}
+
+When first-stage strength is uncertain, the standard normal
+approximation for $\hat\beta_{\mathrm{2SLS}}$ may be unreliable, and
+alternative inferential procedures with size guarantees are needed.
+
+The \textbf{Anderson--Rubin (AR) test} (Anderson and Rubin, 1949)
+inverts the question: rather than asking whether the data are
+consistent with a specific estimate, it tests whether a hypothesized
+value $\beta_0$ is consistent with the IV moment condition.
+Substituting $\beta_0$ into the structural model gives
+$Y - \beta_0 T = \alpha + \gamma^\top X + (\varepsilon + (\beta - \beta_0) T)$.
+If $\beta_0 = \beta$, the composite error $\varepsilon + (\beta - \beta_0) T$
+is uncorrelated with $Z$ by instrument validity.
+The AR test regresses $Y - \beta_0 T$ on $Z$ and $X$, and tests the
+null that the coefficient on $Z$ is zero.  Under homoskedasticity,
+the resulting $F$-statistic has an exact $F$-distribution regardless
+of instrument strength.  Inverting this test over a grid of $\beta_0$
+values yields a confidence set that is valid whether or not the
+instrument is weak.
+
+The \textbf{conditional likelihood ratio (CLR) test} of Moreira
+(2003) extends the AR idea more efficiently to the multiple-instrument
+case.  In the single-endogenous-regressor, single-instrument benchmark,
+the practical distinction between AR and CLR is much smaller; with
+multiple instruments, CLR can be substantially more powerful.
+
+\begin{remark}[Two distinct IV concerns]
+The weak-instrument problem is a \emph{statistical} concern: it
+questions the quality of estimation and inference given a valid
+identification strategy.  It is distinct from the \emph{interpretive}
+concern raised in Chapter~7---that even a perfectly strong instrument
+identifies only the LATE for compliers, not the population ATE.
+Any complete IV analysis must address both.
+\end{remark}
+
+
+% ============================================================
+\section{The Control Function Approach}
+\label{w12:sec:cf}
+% ============================================================
+
+The control-function approach offers another route to handling
+endogeneity: instead of projecting treatment onto instruments and
+imposing orthogonality in moment form, it augments the outcome model
+with a control variable that absorbs the endogenous component of
+treatment selection.  The endogenous part of treatment is captured
+by the first-stage residual; including it in the outcome regression
+controls away the correlation between treatment and the structural
+error, restoring consistency.
+
+Two-stage least squares achieves identification by replacing the endogenous
+regressor $T$ with its exogenous projection $\hat{T}$.  The \emph{control
+function} approach achieves the same goal by a different route: it adds the
+first-stage residual to the outcome regression as an explicit control for
+the endogenous variation, rather than removing it from the treatment variable.
+In the linear model the two approaches are numerically equivalent;
+Section~\ref{w12:sec:cf:linear} develops this equivalence and the associated
+endogeneity test.  Section~\ref{w12:sec:cf:nonlinear} closes with a brief
+note on what changes in nonlinear outcome models.
+
+\subsection{Linear Model and Equivalence to 2SLS}
+\label{w12:sec:cf:linear}
+
+Return to the structural model
+\begin{align*}
+  Y &= \alpha + \beta T + \gamma^\top X + \varepsilon, \\
+  T &= \pi^\top Z + \delta^\top X + \eta,
+\end{align*}
+where $\mathrm{Cov}(\varepsilon, \eta) \neq 0$ is the source of
+endogeneity.  Write the structural error as
+\[
+  \varepsilon = \rho\,\eta + \xi,
+  \qquad
+  \E[\xi \mid \eta, Z, X] = 0,
+\]
+where $\rho = \mathrm{Cov}(\varepsilon, \eta)/\mathrm{Var}(\eta)$ is the
+linear projection coefficient and $\xi$ is the orthogonal component of
+$\varepsilon$ with respect to $\eta$.  Substituting into the outcome
+equation:
+\[
+  Y = \alpha + \beta T + \gamma^\top X + \rho\,\eta + \xi.
+\]
+Because $\E[\xi \mid T, X, \eta] = 0$, conditioning on $\eta$ (or any
+sufficient statistic for it) renders $T$ exogenous in the augmented
+regression.  This motivates the following two-step procedure.
+
+\begin{tcolorbox}[defstyle, title={Control Function Estimator (Linear Case)}]
+\label{w12:box:cf-linear}
+\begin{enumerate}
+  \item \textbf{First stage.}  Regress $T$ on $Z$ and $X$ by OLS; obtain
+    residuals $\hat\eta_i = T_i - \hat\pi^\top Z_i - \hat\delta^\top X_i$.
+  \item \textbf{Second stage.}  Regress $Y$ on $T$, $X$, and $\hat\eta$
+    by OLS; the coefficient on $T$ is the control function estimator
+    $\hat\beta_{\mathrm{CF}}$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{thm}{Equivalence of 2SLS and the Control Function Estimator}
+\label{w12:thm:cf-equiv}
+In the linear IV model with instruments $Z$ and covariates $X$, the
+control function estimator $\hat\beta_{\mathrm{CF}}$ from the augmented
+OLS regression of $Y$ on $(T, X, \hat\eta)$ is numerically identical to
+the 2SLS estimator $\hat\beta_{\mathrm{2SLS}}$.
+\end{thm}
+
+\begin{proof}
+The Frisch--Waugh--Lovell theorem states that the coefficient on $T$ in
+the OLS regression of $Y$ on $(T, X, \hat\eta)$ equals the coefficient
+on $\tilde{T}$ in the regression of $\tilde{Y}$ on $\tilde{T}$, where
+tildes denote residuals after projecting out $(X, \hat\eta)$.  Since
+$\hat\eta = T - \hat{T}$, projecting out $\hat\eta$ and $X$ from $T$
+is equivalent to projecting out $X$ and $T - \hat{T}$ from $T$, which
+leaves $\hat{T}$ after partialling out $X$.  Thus $\tilde{T}$ is the
+residual from projecting $\hat{T}$ on $X$, which is the same residual
+used in the 2SLS second stage.  The coefficient is therefore identical
+to $\hat\beta_{\mathrm{2SLS}}$.
+\end{proof}
+
+\begin{remark}[Standard errors in the second stage]
+Although the coefficient on $T$ is identical to 2SLS, the OLS standard
+errors from the augmented regression are not.  They ignore the sampling
+variation in the estimated residuals $\hat\eta_i$ and are therefore
+incorrect.  Correct inference requires either the 2SLS sandwich formula
+from Section~\ref{w12:sec:asymp}, or a bootstrap that resamples both
+stages jointly.
+\end{remark}
+
+\subsection{Testing Endogeneity via Residual Inclusion}
+
+The control function representation yields a natural test of the null
+hypothesis $H_0\colon \rho = 0$, which is the hypothesis that $T$ is
+exogenous.  Under $H_0$, the structural error $\varepsilon$ is
+uncorrelated with $\eta$, so $\hat\eta$ should have no predictive power
+for $Y$ after controlling for $T$ and $X$.  The $t$-statistic on
+$\hat\eta$ in the augmented regression is therefore a test of
+endogeneity.  A rejection suggests endogeneity under the maintained
+instrument assumptions; it is not a stand-alone validation of the
+instrument itself, since the test takes instrument validity as given.
+
+\begin{remark}[Hausman test connection]
+This $t$-test on the first-stage residual is the regression-based
+form of the Hausman (1978) endogeneity test.  The test compares the
+OLS and 2SLS estimates of $\beta$: a large discrepancy indicates
+that the OLS bias from $\mathrm{Cov}(T, \varepsilon) \neq 0$ is
+substantial.  The control function formulation makes the mechanics
+of this comparison explicit.
+\end{remark}
+
+\subsection{Brief Note on Nonlinear Extensions}
+\label{w12:sec:cf:nonlinear}
+
+The equivalence of §\ref{w12:sec:cf:linear} is a theorem about the
+\emph{linear additive} IV model.  Once the outcome equation is nonlinear,
+the situation changes substantially.
+
+\textbf{2SLS does not carry over.}  In a probit or Poisson outcome
+model, for instance, 2SLS is generally inconsistent: plugging in
+$\hat T$ breaks the nonlinear link function, and the moment condition
+$\E[Z\varepsilon] = 0$ does not translate into the likelihood.
+
+\textbf{Related control-variable methods exist.}  For certain
+nonlinear triangular models, a control-variable strategy can recover
+conditional exogeneity, but the control variable is not the first-stage
+OLS residual $\hat\eta$.  \citet{imbens2009} showed that under two
+additional conditions---\emph{independence}, $(\varepsilon, \eta) \indep Z$,
+and \emph{scalar monotonicity}, $T = h(Z, \eta)$ strictly monotonic in a
+scalar $\eta$---the conditional CDF
+\begin{equation}
+  V \;=\; F_{T \mid Z, X}(T \mid Z, X)
+  \label{w12:eq:cf-control-var}
+\end{equation}
+is a valid control variable: $T \indep \varepsilon \mid V$.
+Conditioning on $V$ recovers structural variation in $T$, allowing
+identification of the average structural function and related estimands
+by a two-step nonparametric procedure.
+
+\textbf{Substantially more structure is required.}  The independence
+and scalar-monotonicity conditions are much stronger than the linear-model
+IV assumptions, and they rule out many simultaneous-equation settings
+with multiple disturbances.  Estimation requires nonparametric
+first- and second-stage regressions, and convergence rates are slower
+than in the linear case.  These methods are beyond the scope of this
+chapter; \citet{imbens2009} is the primary reference.
+
+\begin{remark}[Control function vs.\ 2SLS: when they differ]
+In the linear additive model, the control function estimator and 2SLS
+are identical (Theorem~\ref{w12:thm:cf-equiv}).  They diverge as soon as
+the outcome equation is nonlinear: 2SLS is generally inconsistent there,
+while the Imbens--Newey control-variable approach may remain valid under
+the stronger assumptions above.  The added flexibility of control-function
+methods comes at the price of stronger modeling structure, especially in
+nonlinear settings.
+\end{remark}
+
+
+
+% ============================================================
+\section{Chapter Summary}
+\label{w12:sec:summary}
+% ============================================================
+This chapter developed the main estimation tools for the linear
+instrumental-variable model.  The organizing principle is the same as
+in Chapter~9: identification provides a target, and the estimator is
+a sample analog of the identification formula.  The key results are:
+
+\begin{enumerate}
+  \item \textbf{Wald estimator, reduced form, and first stage.}
+    The \textbf{Wald estimator} is the direct sample analog of the
+    Wald estimand for a binary instrument with no covariates: the
+    ratio of the reduced-form difference-in-means to the first-stage
+    difference-in-means.  The first stage answers how strongly the
+    instrument moves treatment; the reduced form answers how the
+    instrument changes the outcome; the ratio converts the
+    intent-to-treat effect into a per-unit-of-treatment causal effect
+    under the IV assumptions.
+
+  \item \textbf{IV regression estimator and 2SLS.}
+    The \textbf{IV regression estimator} extends the Wald estimator
+    to the general single-instrument setting with covariates $X$, as
+    the ratio of within-$X$ instrument-outcome to
+    instrument-treatment sample covariances, derived via the
+    constrained normal equations.  \textbf{Two-stage least squares}
+    extends this further to multiple instruments: the first stage
+    projects $T$ onto $(Z, X)$ and the second stage regresses $Y$
+    on the fitted values and $X$.
+
+  \item \textbf{Equivalence and moment conditions.}
+    The IV regression estimator and 2SLS are \textbf{numerically
+    identical} in the single-instrument case for any $X$
+    (Theorem~\ref{w12:thm:equiv}), with the Wald estimator as the
+    further special case $Z \in \{0,1\}$, $X$ absent.  Both are
+    \textbf{method-of-moments estimators} based on the IV
+    orthogonality condition $\E[W\varepsilon] = 0$, an instance of
+    the general estimating-equation framework of Chapter~9.
+
+  \item \textbf{GMM and efficient weighting.}
+    In overidentified models, \textbf{efficient GMM} generalizes
+    2SLS and achieves the semiparametric efficiency bound within the
+    maintained IV moment-restriction model.  2SLS achieves that bound
+    only under homoskedasticity; under heteroskedasticity, efficient
+    GMM strictly dominates.
+
+  \item \textbf{Robust variance estimation.}
+    The \textbf{asymptotic distribution} of the GMM estimator is
+    normal with sandwich variance
+    $V_{\mathrm{GMM}} = (A^\top\Omega A)^{-1} A^\top\Omega\Sigma\Omega A
+    (A^\top\Omega A)^{-1}$, where $A$ is the sensitivity matrix and
+    $\Sigma$ is the moment variance.  In applications, the default
+    should be heteroskedasticity-robust standard errors; cluster-robust
+    standard errors are required when observations within groups share
+    common shocks.
+
+  \item \textbf{Weak instruments and inferential fragility.}
+    \textbf{Weak instruments} cause finite-sample bias toward OLS,
+    non-Gaussian distributions, and size distortion in conventional
+    Wald confidence intervals.  The first-stage $F$-statistic is a
+    relevance diagnostic, not a certificate of instrument validity.
+    Anderson--Rubin confidence sets provide inference robust to
+    weak instruments regardless of instrument strength.
+
+  \item \textbf{GEL as an advanced extension.}
+    \textbf{Generalized empirical likelihood} is a family of one-step
+    estimators that achieve the efficient GMM variance without a
+    preliminary weighting step (Theorem~\ref{w12:thm:gel-asymp}).
+    Key special cases are empirical likelihood (EL), exponential
+    tilting (ET), and the continuous updating estimator (CUE).  The
+    GEL saddle-point problem is the Lagrangian dual of a
+    minimum-discrepancy primal problem that re-weights observations
+    rather than moments.  To higher asymptotic order, GEL eliminates
+    the Jacobian-estimation bias of two-step GMM.
+
+  \item \textbf{Control function as an alternative modeling route.}
+    In the linear model, the \textbf{control-function approach} is
+    numerically equivalent to 2SLS
+    (Theorem~\ref{w12:thm:cf-equiv}); it augments the outcome
+    regression with the first-stage residual rather than replacing
+    the endogenous regressor.  Beyond the linear model, related
+    control-variable methods exist for nonlinear triangular models
+    under the stronger independence and scalar-monotonicity
+    conditions of \citet{imbens2009}.  The added flexibility of
+    control-function methods in nonlinear settings comes at the price
+    of stronger modeling structure.
+\end{enumerate}
+
+% ============================================================
+\section*{Exercises}
+\label{w12:sec:exercises}
+% ============================================================
+
+\begin{enumerate}
+
+% ------------------------------------------------------------------
+\item \textbf{The Wald estimator as a ratio-of-moments estimator.}
+  Consider the binary-instrument, no-covariate setting of
+  Section~\ref{w12:sec:wald}.  Let $\mu_Y(z) = \E[Y \mid Z = z]$
+  and $\mu_T(z) = \E[T \mid Z = z]$ for $z \in \{0,1\}$, and write
+  $\Delta_Y = \mu_Y(1) - \mu_Y(0)$, $\Delta_T = \mu_T(1) - \mu_T(0)$.
+  \begin{enumerate}
+    \item Express the Wald estimand $\beta = \Delta_Y / \Delta_T$ as
+      the solution to a pair of moment conditions of the form
+      $\E[U(O;\beta)] = 0$, where $U \in \mathbb{R}^2$.  Identify $U$
+      explicitly and verify that the system is exactly identified.
+    \item Using the fact that $\bar{Y}_z \xrightarrow{p} \mu_Y(z)$ and
+      $\bar{T}_z \xrightarrow{p} \mu_T(z)$, prove that
+      $\hat\beta_{\mathrm{Wald}} \xrightarrow{p} \beta$ via the
+      continuous mapping theorem.  State the condition on $\Delta_T$
+      that is required.
+    \item Apply the delta method to the vector
+      $(\hat\Delta_Y, \hat\Delta_T)^\top$ to show that
+      \[
+        \sqrt{n}\,(\hat\beta_{\mathrm{Wald}} - \beta)
+        \;\xrightarrow{d}\;
+        N\!\left(0,\;
+          \frac{\mathrm{Var}(Y_i - \beta T_i \mid Z_i = z)\,p_z^{-1}}
+               {\Delta_T^2}
+        \right)
+      \]
+      summed appropriately over $z \in \{0,1\}$, where
+      $p_z = \Pr(Z = z)$.  Confirm that this matches the IV
+      variance formula~\eqref{w12:eq:iv-var} in the scalar
+      no-covariate case $p = 0$.
+  \end{enumerate}
+
+% ------------------------------------------------------------------
+\item \textbf{Matrix form of 2SLS and why the second-stage standard
+  errors are wrong.}
+  Stack observations into matrices: let $\mathbf{Y} \in \mathbb{R}^n$,
+  $\mathbf{D} \in \mathbb{R}^{n \times k}$ be the full regressor
+  matrix (including the intercept, $T$, and $X$), and
+  $\mathbf{W} \in \mathbb{R}^{n \times m}$ be the full instrument
+  matrix (including the intercept, $X$, and $Z$).  Let
+  $P_{\mathbf{W}} = \mathbf{W}(\mathbf{W}^\top\mathbf{W})^{-1}\mathbf{W}^\top$
+  be the orthogonal projection onto the column space of $\mathbf{W}$.
+  \begin{enumerate}
+    \item Show that the 2SLS estimator can be written as
+      \[
+        \hat\theta_{\mathrm{2SLS}}
+        = \bigl(\mathbf{D}^\top P_{\mathbf{W}}\mathbf{D}\bigr)^{-1}
+          \mathbf{D}^\top P_{\mathbf{W}}\mathbf{Y}.
+      \]
+      (\emph{Hint:} the first stage replaces $\mathbf{D}$ by its
+      projection $\hat{\mathbf{D}} = P_{\mathbf{W}}\mathbf{D}$; then
+      apply OLS to the second-stage regression of $\mathbf{Y}$ on
+      $\hat{\mathbf{D}}$, using idempotency of $P_{\mathbf{W}}$.)
+    \item In the single-instrument, no-covariate case ($k = m = 2$,
+      intercept plus $T$ or $Z$), verify from the matrix formula
+      above that $\hat\beta_{\mathrm{2SLS}} = \hat\beta_{\mathrm{IV}}$,
+      reproducing Theorem~\ref{w12:thm:equiv} without the
+      Frisch--Waugh--Lovell argument.
+    \item The second-stage OLS regression uses the fitted regressor
+      matrix $\hat{\mathbf{D}}$ in place of $\mathbf{D}$.  Let
+      $\hat{\boldsymbol{\varepsilon}}_{\mathrm{2nd}}
+      = \mathbf{Y} - \hat{\mathbf{D}}\hat\theta_{\mathrm{2SLS}}$
+      denote the second-stage residuals actually used by OLS.  Show
+      that $\hat{\boldsymbol{\varepsilon}}_{\mathrm{2nd}}
+      \neq \mathbf{Y} - \mathbf{D}\hat\theta_{\mathrm{2SLS}}$
+      in general.  Explain why this discrepancy makes the
+      second-stage OLS standard errors invalid, and identify the
+      correct residuals that should enter the sandwich variance
+      estimator~\eqref{w12:eq:sandwich-est}.
+  \end{enumerate}
+
+% ------------------------------------------------------------------
+\item \textbf{Efficiency of GMM and the Sargan--Hansen $J$-statistic.}
+  \begin{enumerate}
+    \item Prove that $V_{\mathrm{GMM}}(\Omega) \succeq V_{\mathrm{eff}}$
+      for every positive-definite $\Omega$, where
+      $V_{\mathrm{eff}} = (A^\top\Sigma^{-1}A)^{-1}$ is the efficient
+      GMM variance~\eqref{w12:eq:eff-var}.  (\emph{Hint:} factor
+      $V_{\mathrm{GMM}}(\Omega) - V_{\mathrm{eff}}$ as a product of the
+      form $C^\top \Sigma^{-1} C$ for a suitable matrix $C$ by
+      completing the square; recall that $B^\top\Sigma^{-1}B \succeq 0$
+      for any matrix $B$ and positive-definite $\Sigma$.)
+    \item Under homoskedasticity, show that 2SLS is the efficient
+      GMM estimator by verifying that the 2SLS weighting matrix
+      $\Omega_{\mathrm{2SLS}} = \E[W_i W_i^\top]^{-1}$ is a scalar
+      multiple of $\Sigma^{-1}$.  Conclude that no efficiency gain
+      over 2SLS is possible in the homoskedastic linear IV model.
+    \item Return to Example~\ref{w12:ex:gmm-toy} with two instruments
+      and no covariates.  The GMM estimator under identity weighting
+      gives $\hat\beta \approx 0.764$ and residual sample moments
+      $\hat{U}_1 = 0.018$, $\hat{U}_2 = -0.011$.  Treating
+      $\hat\Sigma = I_2$ and $n = 200$, compute the Sargan--Hansen
+      $J$-statistic $J = n\,\hat{U}(\hat\beta)^\top\hat\Sigma^{-1}
+      \hat{U}(\hat\beta)$ and determine, using the $\chi^2_1$ critical
+      value at the 5\% level, whether the overidentifying restriction
+      is rejected.  Interpret the result in terms of instrument
+      validity.
+  \end{enumerate}
+
+% ------------------------------------------------------------------
+\item \textbf{GEL first-order conditions and the minimum-discrepancy
+  dual.}
+  \begin{enumerate}
+    \item For empirical likelihood (EL), $G(v) = \log(1 - v)$.
+      At fixed $\theta$, write the first-order condition
+      $\partial/\partial\lambda[\,n^{-1}\sum_i G(\lambda^\top
+      U_i(\theta))] = 0$ for the inner supremum in~\eqref{w12:eq:gel}.
+      Show that it implies $\sum_{i=1}^n \hat\pi_i U_i(\theta) = 0$,
+      where $\hat\pi_i \propto (1 - \hat\lambda^\top U_i(\theta))^{-1}$.
+      Verify that the normalization in~\eqref{w12:eq:gel-probs} is
+      consistent with $g(v) = (1-v)^{-1}$.
+    \item For the continuous updating estimator (CUE), $G(v) =
+      v + v^2/2$.  Solve the inner supremum over $\lambda$
+      explicitly at fixed $\theta$: show that
+      \[
+        \hat\lambda
+        = -\Bigl[n^{-1}{\textstyle\sum_i}
+          U_i(\theta)U_i(\theta)^\top\Bigr]^{-1}\bar{U}(\theta),
+      \]
+      and substitute back to confirm that the profile objective
+      equals $\tfrac{1}{2}\bar{U}(\theta)^\top
+      [n^{-1}\sum_i U_i(\theta)U_i(\theta)^\top]^{-1}\bar{U}(\theta)$,
+      establishing Theorem~\ref{w12:thm:cue-gel}.
+    \item In the exactly identified case ($m = k$), show that
+      $\hat\lambda = 0$ at any GEL solution $\hat\theta$.  Conclude
+      that every GEL estimator coincides with the just-identified GMM
+      estimator in this case, and that the empirical
+      probabilities~\eqref{w12:eq:gel-probs} all equal $1/n$.
+      (\emph{Hint:} in the exactly identified case
+      $\bar{U}(\hat\theta) = 0$ exactly; use this to argue that
+      $\lambda = 0$ is the unique optimizer in the inner supremum,
+      and verify that the corresponding primal weights from the
+      conjugate relationship~\eqref{w12:eq:gel-conjugate} all equal
+      the reference value $\hat\omega_i = g(0) = 1$.)
+  \end{enumerate}
+
+% ------------------------------------------------------------------
+\item \textbf{Control function, endogeneity testing, and the limits of
+  instrument diagnostics.}
+  Consider the structural model $Y = \alpha + \beta T + \varepsilon$
+  and first stage $T = \pi Z + \eta$, with
+  $\mathrm{Cov}(\varepsilon, \eta) \neq 0$.
+  Write $\varepsilon = \rho\eta + \xi$ with
+  $\rho = \mathrm{Cov}(\varepsilon,\eta)/\mathrm{Var}(\eta)$.
+  \begin{enumerate}
+    \item Show that $\E[\xi \mid \eta] = 0$ by construction, and
+      then show that $\E[\xi \mid Z] = 0$ follows from the IV
+      exogeneity assumption $\E[\varepsilon \mid Z] = 0$ together
+      with $\E[\eta \mid Z] = 0$.  Conclude that conditioning on
+      $\eta$---or on any sufficient statistic for it---renders $T$
+      exogenous in the augmented regression of $Y$ on $(T, \eta)$.
+    \item Show that the coefficient on $\hat\eta$ in the augmented
+      OLS regression of $Y$ on $(T, \hat\eta)$ is a consistent
+      estimator of $\rho$.  Under $H_0\colon\rho = 0$ (exogeneity
+      of $T$), argue that the $t$-statistic on $\hat\eta$ provides a
+      valid asymptotic test of endogeneity, and connect this to the
+      Hausman (1978) test.
+    \item Suppose an instrument $Z$ affects wages both through
+      education (the intended channel $Z \to T \to Y$) and through
+      a direct network effect ($Z \to Y$), but the model is exactly
+      identified ($q = 1$).  Explain why neither the first-stage
+      $F$-test nor the control function endogeneity test can detect
+      this exclusion-restriction violation.  What additional
+      information or design feature would be needed to test for
+      it?
+  \end{enumerate}
+
+\end{enumerate}
+
+% Bibliography (standalone only)
+\ifSubfilesClassLoaded{%
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}

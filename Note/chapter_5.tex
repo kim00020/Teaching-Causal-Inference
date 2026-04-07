@@ -1,0 +1,1674 @@
+% ============================================================
+%  Week 5 — Randomization and Back-Door Adjustment
+%  Compile standalone:  pdflatex chapter5_new.tex
+%  Compile via master:  pdflatex causal_inference_master.tex
+% ============================================================
+\documentclass[master.tex]{subfiles}
+
+\begin{document}
+
+% ------------------------------------------------------------
+%  Title block (standalone) / chapter heading (master)
+% ------------------------------------------------------------
+\ifSubfilesClassLoaded{%
+  \begin{center}
+    {\LARGE\bfseries\color{isublue}
+     Chapter 5: Randomization and Back-Door Adjustment}\\[6pt]
+    {\large Theory and Methods in Causal Inference}\\[4pt]
+    {\normalsize Department of Statistics, Iowa State University}
+  \end{center}
+  \bigskip
+  \hrule height 1.2pt \relax
+  \smallskip
+}{%
+  \chapter{Randomization and Back-Door Adjustment}
+}
+
+% ------------------------------------------------------------
+%  Learning objectives
+% ------------------------------------------------------------
+\begin{tcolorbox}[defstyle, title={Learning Objectives}]
+By the end of this lecture, students should be able to:
+\begin{enumerate}
+  \item Explain in do-calculus terms why a randomized experiment makes
+    $f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)$, and identify the
+    graphical feature that produces this equality.
+  \item State the ignorability (unconfoundedness) assumption in both
+    potential-outcomes and graphical language, and distinguish weak from
+    strong ignorability.
+  \item Apply the regression-adjusted estimator to reduce variance in a
+    randomized experiment, and explain why consistency holds even under
+    model misspecification.
+  \item Derive and compute the standardization (g-formula) estimator
+    of the ATE from a contingency table or regression output.
+  \item Explain the method of stratification (subclassification) and
+    describe when and why it removes confounding bias.
+  \item Identify Simpson's paradox in a numerical example and resolve
+    it using the back-door criterion.
+  \item Articulate why propensity score methods are needed when $X$ is
+    high-dimensional, motivating Chapter~6.
+\end{enumerate}
+\end{tcolorbox}
+
+
+% ============================================================
+\section{Randomized Experiments}
+\label{w5:sec:rct}
+% ============================================================
+
+\subsection{The Do-Calculus of Randomization}
+
+The defining feature of a randomized experiment is that the analyst
+\emph{sets} the treatment for each unit, independently of all background
+variables.  In do-calculus terms, the observed data come from the
+mutilated distribution $f(y \mid \doop(T{=}t))$ rather than the
+observational distribution $f(y \mid T{=}t)$.
+
+\begin{tcolorbox}[defstyle, title={The Fundamental Equality of Randomized Experiments}]
+In a completely randomized experiment, $T$ is assigned independently of
+all pre-treatment variables.  In the DAG, this means there are
+\emph{no arrows into $T$}: the treatment node has no parents.
+By the do-calculus (Rule~2 applied to the trivial graph
+$G_{\overline{T}}$):
+\begin{equation}
+  f\!\bigl(y \mid \doop(T{=}t)\bigr) = f(y \mid T{=}t).
+  \label{w5:eq:fund-eq}
+\end{equation}
+In a randomized experiment, observing $T = t$ is the same as intervening
+to set $T = t$.
+\end{tcolorbox}
+
+\noindent\textbf{Graphical argument.}  In the observational DAG, there
+are arrows into $T$ from observed covariates $X$ and unobserved
+confounders $U$, creating back-door paths from $T$ to $Y$.
+Randomization \emph{physically} severs these arrows: assignment is
+determined by a coin flip, not by $X$ or $U$.  The mutilated graph
+$G_{\overline{T}}$ is, in a randomized experiment, the \emph{actual}
+data-generating graph.  There are no back-door paths to block, because
+none exist.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance = 12mm and 18mm,
+  obsnode/.style  = {circle, draw=accent, line width=1pt,
+                     minimum size=9mm, font=\small, fill=defbg},
+  unobsnode/.style= {circle, draw=backdoorred, line width=1pt, dashed,
+                     minimum size=9mm, font=\small, fill=warnbg},
+  coinnode/.style = {rectangle, rounded corners=3pt,
+                     draw=causalgreen, line width=1pt,
+                     minimum width=16mm, minimum height=8mm,
+                     font=\scriptsize, fill=green!8,
+                     align=center},
+  obsarr/.style   = {-{Stealth[length=4pt]}, line width=0.9pt,
+                     color=accent},
+  redarr/.style   = {-{Stealth[length=4pt]}, line width=0.9pt,
+                     color=backdoorred, dashed},
+  sevarr/.style   = {-{Stealth[length=4pt]}, line width=0.9pt,
+                     color=causalgreen},
+  lbl/.style      = {font=\footnotesize\color{isublue}}
+]
+%% ── Left panel: Observational DAG ───────────────────────────────────
+\begin{scope}[xshift=0cm]
+  \node[obsnode]                          (T1) {$T$};
+  \node[obsnode,  right=18mm of T1]       (Y1) {$Y$};
+  \node[unobsnode,above=12mm of T1, xshift=9mm] (U1) {$U$};
+  \node[obsnode,  below=12mm of T1, xshift=9mm] (X1) {$X$};
+
+  \draw[redarr]  (U1) -- (T1);
+  \draw[redarr]  (U1) -- (Y1);
+  \draw[obsarr]  (X1) -- (T1);
+  \draw[obsarr]  (X1) -- (Y1);
+  \draw[obsarr]  (T1) -- (Y1);
+
+  \node[lbl, below=22mm of T1, xshift=9mm, align=center]
+    {\textbf{Observational DAG}\\[2pt]
+     Arrows into $T$ from $X$ and $U$\\
+     create back-door paths
+     $T \leftarrow U \rightarrow Y$};
+\end{scope}
+
+%% ── Arrow between panels ────────────────────────────────────────────
+\node at (6.0cm, 0.3cm)
+  {\Large$\xrightarrow{\text{randomize}}$};
+
+%% ── Right panel: Randomized DAG ─────────────────────────────────────
+\begin{scope}[xshift=8.0cm]
+  \node[obsnode]                          (T2) {$T$};
+  \node[obsnode,  right=18mm of T2]       (Y2) {$Y$};
+  \node[unobsnode,above=12mm of T2, xshift=9mm] (U2) {$U$};
+  \node[obsnode,  below=12mm of T2, xshift=9mm] (X2) {$X$};
+  \node[coinnode, left=14mm of T2]        (C2) {coin\\[-1pt]flip};
+
+  %% Severed arrows drawn as light grey stubs with a cross
+  \draw[color=lightgray, line width=0.9pt, dashed]  (U2) -- (T2);
+  \draw[color=lightgray, line width=0.9pt, dashed]  (X2) -- (T2);
+  %% Mark the severance with a small X at the midpoint
+  \node[font=\small\bfseries, color=backdoorred]
+    at ($(U2)!0.52!(T2)$) {$\times$};
+  \node[font=\small\bfseries, color=backdoorred]
+    at ($(X2)!0.52!(T2)$) {$\times$};
+
+  %% Remaining active arrows
+  \draw[redarr]  (U2) -- (Y2);
+  \draw[obsarr]  (X2) -- (Y2);
+  \draw[obsarr]  (T2) -- (Y2);
+  \draw[sevarr]  (C2) -- (T2);
+
+  \node[lbl, below=22mm of T2, xshift=9mm, align=center]
+    {\textbf{Randomized DAG}\ ($G_{\overline{T}}$)\\[2pt]
+     Arrows into $T$ severed ($\times$)\\
+     $T$ determined by coin flip only};
+\end{scope}
+\end{tikzpicture}
+\caption{Randomization as graph surgery.  \textbf{Left}: in the
+observational DAG, the unobserved confounder $U$ and observed
+covariate $X$ both have arrows into $T$, creating back-door paths
+$T \leftarrow U \rightarrow Y$ and $T \leftarrow X \rightarrow Y$.
+\textbf{Right}: randomization physically severs all arrows into $T$
+(marked $\times$) and replaces them with an exogenous coin flip.  The
+resulting graph is the mutilated graph $G_{\overline{T}}$, in which no
+back-door paths from $T$ to $Y$ exist.}
+\label{w5:fig:randomization-dag}
+\end{figure}
+
+\medskip\noindent\textbf{Potential outcomes statement.}  In the potential
+outcomes language, randomization implies:
+\[
+  \bigl(Y(0),\, Y(1)\bigr) \;\indep\; T.
+\]
+The potential outcomes are independent of assignment
+\emph{unconditionally} --- no covariate adjustment is needed.  This is
+the strongest possible version of ignorability
+(Definition~\ref{w5:defn:ignorability}).
+
+\subsection{Estimation of the ATE in a Randomized Experiment}
+
+\begin{lemma}{Identification under Complete Randomization}
+\label{w5:prop:rct-id}
+Under complete randomization,
+\begin{equation}
+  \E\bigl[Y(t)\bigr] \;=\; \E\bigl[Y \mid T{=}t\bigr],
+  \qquad t \in \{0,1\}.
+  \label{w5:eq:rct-id}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+By Theorem~\ref{w4:prop:po-do}, $Y(t)$ has the same distribution as
+$Y$ under the interventional distribution $f(y \mid \doop(T{=}t))$, so
+$\E[Y(t)] = \E[Y \mid \doop(T{=}t)]$.  In a completely randomized
+experiment, the treatment node has no parents in the DAG, so
+equation~\eqref{w5:eq:fund-eq} gives
+$f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)$.
+Therefore $\E[Y(t)] = \E[Y \mid T{=}t]$.
+\end{proof}
+
+\noindent Under complete randomization, the ATE is estimated by the
+\emph{difference-in-means} estimator:
+\[
+  \hat\tau_{\mathrm{DIM}}
+  = \bar Y_1 - \bar Y_0
+  = \frac{1}{n_1}\sum_{i:\, T_i=1} Y_i
+  - \frac{1}{n_0}\sum_{i:\, T_i=0} Y_i,
+\]
+where $n_1$ and $n_0$ are the numbers of treated and control units.
+
+\begin{thm}{Unbiasedness and Variance of $\hat\tau_{\mathrm{DIM}}$}
+\label{w5:prop:dim}
+Let $\sigma_t^2 = \mathrm{Var}(Y(t))$ for $t \in \{0,1\}$.
+Under complete randomization:
+\begin{align}
+  \E\bigl[\hat\tau_{\mathrm{DIM}}\bigr]
+  &= \E[Y(1)] - \E[Y(0)] = \tau_{\mathrm{ATE}},
+  \label{w5:eq:dim-mean} \\[4pt]
+  \mathrm{Var}\bigl(\hat\tau_{\mathrm{DIM}}\bigr)
+  &= \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0}.
+  \label{w5:eq:dim-var}
+\end{align}
+Equation~\eqref{w5:eq:dim-var} is the \emph{Neyman variance}
+\citep{neyman1923application}.
+\end{thm}
+
+\begin{proof}
+\textit{(Unbiasedness.)}
+By the consistency assumption, $Y_i = Y_i(T_i)$, so
+$\E[Y_i \mid T_i{=}t] = \E[Y_i(t) \mid T_i{=}t]$.
+By Lemma~\ref{w5:prop:rct-id},
+$\E[Y_i(t) \mid T_i{=}t] = \E[Y \mid T{=}t] = \E[Y(t)]$.
+Hence $\E[\bar Y_t] = \E[Y(t)]$ for each arm, and
+\[
+  \E\bigl[\hat\tau_{\mathrm{DIM}}\bigr]
+  = \E[\bar Y_1] - \E[\bar Y_0]
+  = \E[Y(1)] - \E[Y(0)] = \tau_{\mathrm{ATE}}.
+\]
+
+\smallskip\noindent\textit{(Variance.)}
+Under complete randomization, treatment assignments are independent
+across units, so $\bar Y_1$ and $\bar Y_0$ are independent.
+Within arm $t$, the $n_t$ observed outcomes are i.i.d.\ draws from the
+distribution of $Y(t)$ (by Lemma~\ref{w5:prop:rct-id} and
+consistency), giving $\mathrm{Var}(\bar Y_t) = \sigma_t^2 / n_t$.
+Independence of the two arms then yields
+\[
+  \mathrm{Var}\bigl(\hat\tau_{\mathrm{DIM}}\bigr)
+  = \mathrm{Var}(\bar Y_1) + \mathrm{Var}(\bar Y_0)
+  = \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0}. \qedhere
+\]
+\end{proof}
+
+\subsection{Fisher's Randomization Inference vs.\ Neyman's Repeated Sampling}
+
+Two distinct inferential frameworks apply to randomized experiments.
+
+\medskip
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{2.8cm} p{5.5cm} p{5.5cm}}
+\toprule
+& \textbf{Fisher} & \textbf{Neyman} \\
+\midrule
+Target
+  & Sharp null: $Y_i(1) = Y_i(0)$ for all $i$
+  & $\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)]$ \\
+Randomness
+  & From the randomization alone;
+    potential outcomes are \emph{fixed}
+  & From sampling; potential outcomes are random variables \\
+Inference
+  & Exact $p$-values via permutation distribution
+  & Point estimates and confidence intervals \\
+Estimand
+  & No estimation; only testing
+  & $\tau_{\mathrm{ATE}}$ \\
+\bottomrule
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\medskip
+
+In this course we follow the Neyman framework: potential outcomes are
+treated as random variables on a super-population, and the goal is
+estimation of $\tau_{\mathrm{ATE}}$ (or $\tau_{\mathrm{ATT}}$) with
+valid standard errors.
+
+\begin{remark}[Randomization Licenses Inference Without Population Assumptions]
+\label{w5:rem:finite-pop}
+A fundamental advantage of randomization that deserves explicit emphasis
+is that it licenses causal inference \emph{without any assumption about
+a population model}.  In Fisher's design-based framework, the
+potential outcomes $\{Y_i(0), Y_i(1)\}$ are treated as fixed numbers
+attached to the $n$ units in front of the researcher.  The only source
+of randomness is the assignment vector $\mathbf{T} = (T_1,\ldots,T_n)$,
+which is drawn uniformly at random from the set of all
+$\binom{n}{n_1}$ possible assignments.  This is a finite, enumerable
+set, and probability statements refer to this mechanism --- not to
+repeated draws from a population.
+
+The practical consequence is striking: the i.i.d.\ assumption, which
+is the standard foundation of almost every statistical procedure, is
+not required.  Units need not be a random sample from any population;
+they can be a convenience sample, a census, or a small targeted group.
+The randomization itself --- the physical act of assigning treatment by
+coin flip or lottery --- is what justifies inference.  Observational
+methods, by contrast, must invoke either an i.i.d.\ sampling assumption
+or a model-based superpopulation framework, because there is no
+analogous physical mechanism to anchor probability statements.  This is
+one of the deepest reasons why a well-conducted randomized experiment
+is considered more credible than observational analysis: its inferential
+validity rests on design, not on assumptions about the world.
+\end{remark}
+
+\begin{remark}[Fisher's Sharp Null: Unidentifiable Effects, Exactly Testable Hypothesis]
+\label{w5:rem:sharp-null}
+A seemingly paradoxical feature of the Fisher framework is that
+individual causal effects $\tau_i = Y_i(1) - Y_i(0)$ are
+\emph{fundamentally unidentifiable} for any unit --- only one of the
+two potential outcomes is ever observed, a constraint known as the
+fundamental problem of causal inference --- yet the sharp null
+hypothesis
+\[
+  H_0:\; Y_i(1) = Y_i(0) \;\text{ for all } i = 1,\ldots,n
+\]
+is \emph{exactly testable} via randomization.
+
+The resolution of the paradox is that the sharp null completely
+specifies the joint potential outcome table.  Under $H_0$, every unit's
+two potential outcomes are equal, so the observed outcome $Y_i =
+Y_i(T_i)$ equals $Y_i(1) = Y_i(0)$ regardless of the assignment.  The
+full vector $(Y_1(0), Y_1(1), \ldots, Y_n(0), Y_n(1))$ is therefore
+known from the observed data under $H_0$, even though only $n$ of the
+$2n$ entries are observed.  The permutation distribution of
+$\hat\tau_{\mathrm{DIM}}$ under all $\binom{n}{n_1}$ possible
+assignments is then completely determined, and the $p$-value is the
+fraction of assignments giving a statistic as extreme as the observed
+one --- no estimation step required.
+
+Individual effects are untestable because any specific value of
+$\tau_i$ would be a statement about one unobserved potential outcome
+of one unit --- a claim no amount of data can verify.  The sharp null
+is testable because it is a \emph{joint} restriction on all $n$ units
+that, when true, makes the entire data vector fully observed under any
+assignment.  This illustrates a broader principle: untestability of
+individual-level quantities does not imply untestability of
+population-level or joint hypotheses derived from them.
+\end{remark}
+
+
+\begin{remark}[Further Reading on the Randomization Approach]
+\label{w5:rem:randomization-reading}
+The finite-population, design-based perspective on causal inference
+developed in this section has a rich modern literature.
+\citet{ding2023first} provides a comprehensive graduate-level treatment
+of the randomization framework, covering CRE, stratified experiments,
+regression adjustment, and beyond.
+The asymptotic theory underlying large-sample confidence intervals for
+$\hat\tau_{\mathrm{DIM}}$ --- specifically, a finite-population central
+limit theorem that requires neither i.i.d.\ observations nor a
+superpopulation model --- is worked out rigorously by
+\citet{li2017general}.
+For inference about \emph{heterogeneity} of treatment effects across
+units (rather than merely the average), \citet{ding2016randomization}
+develop randomization-based tests and confidence intervals under the
+Neyman--Rubin model; their approach makes no parametric assumptions and
+is directly applicable to completely randomized experiments of the type
+studied here.
+\end{remark}
+
+% ============================================================
+\section{Ignorability}
+\label{w5:sec:ignorability}
+% ============================================================
+
+\subsection{Two Routes to the Same Estimand}
+
+Section~\ref{w5:sec:rct} established that a randomized experiment achieves the
+fundamental equality $f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)$ and
+that the difference-in-means estimator is unbiased for the ATE.  The
+mechanism is graphical: randomization physically severs every arrow into
+$T$, so no back-door path from $T$ to $Y$ exists, and treating $T$ as
+observed is the same as treating it as intervened upon.
+
+In observational studies, no such physical severance occurs.  The
+treatment was not assigned by the researcher; it was selected --- by
+patients, firms, governments, or individuals --- based on their
+characteristics.  Those characteristics may include unmeasured variables
+$U$ that also affect the outcome, opening back-door paths that
+observational data alone cannot close.
+
+The key insight of this chapter is that \emph{both settings target the
+same estimand} --- the ATE $\E[Y(1) - Y(0)]$ --- but reach it by
+fundamentally different routes:
+
+\begin{tcolorbox}[defstyle, title={Two Routes to Ignorability}]
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{p{3.0cm} p{4.6cm} p{4.6cm}}
+\toprule
+  & \textbf{Randomized experiment}
+  & \textbf{Observational study} \\
+\midrule
+How ignorability arises
+  & By design: the researcher severs all arrows into $T$
+  & By assumption: the analyst asserts no unmeasured confounders \\
+Status of $(Y(0),Y(1)) \indep T \mid X$
+  & \emph{Guaranteed} --- holds unconditionally ($X$ not needed)
+  & \emph{Assumed} --- requires $X$ to capture every confounder \\
+Credibility
+  & As strong as the randomization protocol
+  & As strong as substantive knowledge of the data-generating process \\
+Testability
+  & Can audit the assignment mechanism
+  & Cannot be verified from the data alone \\
+Failure mode
+  & Protocol violations, non-compliance
+  & Any unmeasured variable that affects both $T$ and $Y$ \\
+\bottomrule
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\end{tcolorbox}
+
+\medskip\noindent\textbf{The central pedagogical point.}  When
+statisticians speak of ``controlling for confounders'' or ``adjusting
+for $X$,'' they are invoking the observational route.  Statistical
+adjustment can \emph{implement} ignorability once it is assumed, but it
+cannot \emph{create} it.  No amount of covariate adjustment --- however
+flexible the model --- can close a back-door path through an unmeasured
+variable.  This is why a well-conducted randomized experiment is
+considered more credible than even the most carefully adjusted
+observational study: the former makes ignorability a consequence of the
+design; the latter asks us to take it on faith.
+
+\medskip\noindent The three methods developed in §§\ref{w5:sec:regression}--\ref{w5:sec:stratification}
+(regression adjustment, standardization, stratification) all
+\emph{implement} the observational route --- they assume ignorability
+and then estimate the identified quantity.  Chapter~6 extends this with
+the propensity score.  Chapter~7 abandons the ignorability route
+entirely when unobserved confounders are present and turns instead to
+instrumental variables.
+
+\subsection{Definition}
+
+With this contrast in mind, the formal definition captures the
+observational case: what must hold about the treatment assignment
+mechanism for causal identification to succeed without randomization?
+
+\begin{defn}{Ignorability (Unconfoundedness)}
+\label{w5:defn:ignorability}
+Let $X$ denote a vector of pre-treatment covariates.  We say that
+treatment assignment is \textbf{weakly ignorable} given $X$ if:
+\[
+  Y(t) \;\indep\; T \;\Big|\; X, \qquad t \in \{0,1\}.
+\]
+We say assignment is \textbf{strongly ignorable} given $X$
+(Rosenbaum \& Rubin, 1983) if, in addition, the overlap condition holds:
+\[
+  0 < P(T{=}1 \mid X) < 1 \quad \text{almost surely.}
+\]
+\end{defn}
+
+\noindent Ignorability is also called \emph{unconfoundedness},
+\emph{selection on observables}, \emph{no unmeasured confounders}, or
+\emph{conditional exchangeability}.  All of these phrases refer to the
+same condition: conditional on $X$, the assignment mechanism is
+ignorable for the purpose of causal inference.  In a randomized
+experiment, weak ignorability holds \emph{unconditionally} ---
+$X$ is not needed, and the condition reduces to $(Y(0), Y(1)) \indep T$,
+the strongest possible form.
+
+\subsection{Graphical Interpretation}
+
+In the DAG language, ignorability corresponds exactly to the
+\emph{back-door criterion} (Definition~\ref{w3:def:backdoor},
+Theorem~\ref{w3:thm:backdoor}).  A set $X$ satisfies the back-door
+criterion for the effect of $T$ on $Y$ if:
+\begin{enumerate}
+  \item $X$ blocks every back-door path from $T$ to $Y$ (every path
+    that begins with an arrow \emph{into} $T$), and
+  \item $X$ contains no descendant of $T$.
+\end{enumerate}
+When $X$ satisfies the back-door criterion,
+$Y(t) \indep T \mid X$ holds and the back-door adjustment formula
+identifies the causal effect (Theorem~\ref{w3:thm:backdoor}).
+
+Chapter~1 introduced the \emph{causal trinity}: SEM, DAGs, and
+potential outcomes as three languages for expressing the same causal
+content (Figure~\ref{w1:fig:trinity}).  Ignorability has a precise
+translation in all three.
+
+\begin{tcolorbox}[defstyle, title={Three Languages for Ignorability}]
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{3.2cm} p{9.2cm}}
+\toprule
+\textbf{Language} & \textbf{Statement of ignorability} \\
+\midrule
+SEM
+  & The structural error $\varepsilon_Y$ in the outcome equation
+    $Y = f_Y(T, X, \varepsilon_Y)$ is independent of $T$ given $X$:
+    no unobserved variable enters both the equation that determines $T$
+    and the equation that determines $Y$.
+    Formally: $\varepsilon_Y \indep T \mid X$
+    (cf.\ Chapter~1, Definition of SEM). \\
+DAG / do-calculus
+  & $X$ satisfies the back-door criterion for the effect of $T$ on $Y$:
+    $X$ blocks all back-door paths from $T$ to $Y$ and contains no
+    descendant of $T$
+    (Definition~\ref{w3:def:backdoor}, Theorem~\ref{w3:thm:backdoor}). \\
+Potential outcomes
+  & $Y(t) \indep T \mid X$ for $t \in \{0,1\}$
+    (weak ignorability; Definition~\ref{w5:defn:ignorability}). \\
+\bottomrule
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\end{tcolorbox}
+
+\noindent The three statements are equivalent under the standard
+bridge assumptions between frameworks (consistency + no interference;
+see Chapter~1, Theorem~\ref{w1:prop:bridge}).  In practice, which
+language is most useful depends on the task: the SEM formulation is
+natural when writing down a structural model and asking whether any
+omitted variable enters both equations; the DAG formulation is natural
+for reading off the criterion from a graph; the potential outcomes
+formulation is natural for writing down estimators and proofs.
+
+\subsection{What Ignorability Requires}
+
+Ignorability is a \emph{substantive}, not a statistical, assumption.
+It requires that the analyst has measured every variable that jointly
+influences treatment receipt and the outcome.  This is often called
+``no unmeasured confounders.''
+
+\begin{warn}{Ignorability is Untestable from Observational Data}
+No statistical test can confirm or refute unconfoundedness using
+observed data alone.  If an unobserved variable $U$ affects both $T$
+and $Y$, the back-door path $T \leftarrow U \rightarrow Y$ is open, and
+conditioning on any set of observed variables cannot close it.
+Sensitivity analysis (Rosenbaum, 2002) can quantify how large such an
+unobserved confounder would have to be to overturn a conclusion, but
+cannot confirm the assumption itself.
+\end{warn}
+
+\subsection{From Ignorability to Identification}
+\label{w5:subsec:identification}
+
+Chapter~4 stated the back-door adjustment formula as
+equation~\eqref{w4:eq:ate-id},
+deferring the proof because it requires the law of iterated expectations
+together with consistency, which were introduced only informally there.
+We now supply the complete argument.  It is not merely asserted: it
+follows from the three components of strong ignorability --- weak
+ignorability, overlap, and the consistency assumption --- in a way that
+makes explicit which step invokes which assumption and how each can
+fail.  We state the key step as a separate proposition so the logical
+structure is transparent.
+
+\begin{tcolorbox}[defstyle, title={Consistency Assumption}]
+\label{w5:assump:sutva}
+The \textbf{consistency assumption} (part of SUTVA) states that the
+observed outcome equals the potential outcome corresponding to the
+treatment actually received:
+\[
+  Y_i = Y_i(T_i), \qquad \text{i.e.,}\quad
+  T_i = t \;\Rightarrow\; Y_i = Y_i(t).
+\]
+It rules out interference between units and hidden versions of
+treatment, and is required whenever we move between the potential
+outcomes world and the observed data world.
+\end{tcolorbox}
+
+\begin{lemma}{Identification of $\E[Y(t)]$}
+\label{w5:prop:ident-pot}
+Suppose:
+\begin{enumerate}
+  \item[(i)] \emph{Weak ignorability}: $Y(t) \indep T \mid X$;
+  \item[(ii)] \emph{Overlap}: $P(T{=}t \mid X{=}x) > 0$
+    for $p$-almost every $x$;
+  \item[(iii)] \emph{Consistency}: $Y = Y(T)$.
+\end{enumerate}
+Then:
+\begin{equation}
+  \E\bigl[Y(t)\bigr]
+  = \E\Bigl[\E\bigl[Y \mid T{=}t,\, X\bigr]\Bigr]
+  = \int \E\bigl[Y \mid T{=}t,\, X{=}x\bigr]\, p(x)\, dx.
+  \label{w5:eq:ident-pot}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Apply the law of iterated expectations, then use each assumption in
+turn:
+\begin{align}
+  \E\bigl[Y(t)\bigr]
+  &= \E\Bigl[\E\bigl[Y(t) \mid X\bigr]\Bigr]
+  \tag{LIE} \\[4pt]
+  &= \E\Bigl[\E\bigl[Y(t) \mid T{=}t,\, X\bigr]\Bigr]
+  \tag{weak ignorability (i)} \\[4pt]
+  &= \E\Bigl[\E\bigl[Y \mid T{=}t,\, X\bigr]\Bigr].
+  \tag{consistency (iii)}
+\end{align}
+The step labelled ``weak ignorability'' uses $Y(t) \indep T \mid X$,
+which gives $\E[Y(t) \mid X] = \E[Y(t) \mid T{=}t, X]$ for any value
+of $T$ that has positive probability given $X$ --- and overlap
+assumption~(ii) guarantees that $P(T{=}t \mid X{=}x) > 0$ almost
+surely, so the conditional expectation $\E[Y \mid T{=}t, X{=}x]$ is
+well-defined everywhere in the support of $X$.  The step labelled
+``consistency'' uses $Y = Y(t)$ on the event $\{T = t\}$ to replace
+$\E[Y(t) \mid T{=}t, X]$ by $\E[Y \mid T{=}t, X]$.
+\end{proof}
+
+\begin{remark}[Two Languages, One Formula]
+\label{w5:rem:two-languages}
+Lemma~\ref{w5:prop:ident-pot} and Theorem~\ref{w3:thm:backdoor}
+are two proofs of the same identification formula, written in different
+languages.
+
+\smallskip
+\noindent\textit{Theorem~\ref{w3:thm:backdoor} (Chapter~3)} works in
+the graphical language.  The assumption is that the adjustment set
+$\mathbf{S}$ satisfies the back-door criterion in the DAG $\Gcal$:
+every back-door path from $T$ to $Y$ is blocked.  The conclusion is
+$P(y \mid \doop(T{=}t)) = \int P(y \mid T{=}t, \mathbf{S}{=}\mathbf{s})
+\, dP(\mathbf{s})$, proved by applying Rules~2 and~3 of the
+do-calculus in the mutilated graph $\Gcal_{\overline{T}}$.
+
+\smallskip
+\noindent\textit{Lemma~\ref{w5:prop:ident-pot} (this section)}
+works in the potential-outcomes language.  The assumption is strong
+ignorability: $Y(t) \indep T \mid X$ (weak ignorability), $P(T{=}t
+\mid X) > 0$ almost surely (overlap), and $Y = Y(T)$ (consistency).
+The conclusion is $\E[Y(t)] = \E[\E[Y \mid T{=}t, X]]$, proved via the
+law of iterated expectations.
+
+\smallskip
+\noindent\textit{Why they agree.}  The bridge is the consistency
+assumption: $Y_i = Y_i(T_i)$ implies $\E[Y(t)] = \E[Y \mid
+\doop(T{=}t)]$, so the potential-outcomes target and the
+interventional target are the same quantity.  On the graphical side,
+when $\mathbf{S} = X$ satisfies the back-door criterion, it can be
+shown that $Y(t) \indep T \mid X$ holds in the corresponding
+non-parametric structural equation model --- this is the formal
+equivalence between graphical and potential-outcomes conditions
+established by \citet{pearl2009causality}.  Chapter~3 proves the formula
+from the graph; this chapter proves it from the potential outcomes.
+Practitioners trained in one tradition will recognize the same result
+stated in the other.
+\end{remark}
+
+\noindent The ATE and ATT follow immediately as corollaries.
+
+\begin{thm}{Identification of the ATE and ATT}
+\label{w5:prop:ident-ate}
+Under the same three assumptions:
+\begin{align}
+  \tau_{\mathrm{ATE}}
+  &= \E\bigl[Y(1) - Y(0)\bigr]
+  = \int \bigl[\E(Y \mid T{=}1, X{=}x)
+             - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x)\, dx,
+  \label{w5:eq:backdoor} \\[6pt]
+  \tau_{\mathrm{ATT}}
+  &= \E\bigl[Y(1) - Y(0) \mid T{=}1\bigr]
+  = \int \bigl[\E(Y \mid T{=}1, X{=}x)
+             - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x \mid T{=}1)\, dx.
+  \label{w5:eq:backdoor-att}
+\end{align}
+\end{thm}
+
+\begin{proof}
+Apply Lemma~\ref{w5:prop:ident-pot} separately to $t = 1$ and
+$t = 0$ and subtract.  For the ATT, restrict to the subpopulation
+$T = 1$: replace $p(x)$ by the conditional density $p(x \mid T{=}1)$
+in the same argument, noting that overlap for $t = 0$ still requires
+$P(T{=}0 \mid X{=}x) > 0$ on the support of $X \mid T{=}1$.
+\end{proof}
+
+\medskip\noindent\textbf{What the proof uses and where it can fail.}
+Table~\ref{w5:tab:ident-steps} traces each step in the proof back to
+the assumption it invokes, and gives the failure mode if the assumption
+is violated.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{p{3.5cm} p{4.0cm} p{4.8cm}}
+\toprule
+\textbf{Proof step} & \textbf{Assumption invoked} & \textbf{Failure mode} \\
+\midrule
+$\E[Y(t) \mid X] = \E[Y(t) \mid T{=}t, X]$
+  & Weak ignorability (i)
+  & Unmeasured confounder $U$: $Y(t)$ depends on $T$ even within $X$-strata \\
+$\E[Y \mid T{=}t, X{=}x]$ is well-defined
+  & Overlap (ii)
+  & Empty stratum: no units with $T{=}t$ at covariate value $x$; estimator extrapolates \\
+$\E[Y(t) \mid T{=}t, X] = \E[Y \mid T{=}t, X]$
+  & Consistency (iii)
+  & Interference or hidden treatment versions: $Y_i$ depends on $T_j$ for $j \ne i$ \\
+\bottomrule
+\end{tabular}
+\caption{The three assumptions underlying identification of $\E[Y(t)]$,
+and what goes wrong when each is violated.}
+\label{w5:tab:ident-steps}
+\end{table}
+
+\begin{remark}
+Overlap is \emph{testable} from data: for any candidate $X$, one can
+check whether the distributions of $X \mid T{=}1$ and $X \mid T{=}0$
+have common support.  Weak ignorability and consistency are not
+testable from data alone --- they are substantive assumptions about the
+data-generating process.  This asymmetry is important: overlap
+violations can be diagnosed and addressed (e.g.\ by restricting the
+estimand to the region of common support); ignorability violations
+cannot be detected and must be justified by the study design and domain
+knowledge.  A full treatment of overlap diagnostics using the
+propensity score is given in Chapter~6.
+\end{remark}
+
+\noindent Equations \eqref{w5:eq:backdoor}--\eqref{w5:eq:backdoor-att}
+are the \emph{identification results}.  The next three sections present
+methods for \emph{estimating} the identified quantities from data.
+
+\subsection{Which Variables to Condition On: The Pre-Treatment Requirement}
+\label{w5:subsec:pretreatment}
+
+The back-door formula conditions on $X$.  Before estimating anything,
+there is a prior question that is purely graphical: \emph{which
+variables should be in $X$?}  The answer is not ``all available
+variables.''  Conditioning on the wrong variable can introduce bias
+rather than remove it.  The back-door criterion gives the correct
+answer, and it imposes one requirement that is easy to state but easy
+to forget in practice.
+
+\begin{warn}{Never Condition on a Post-Treatment Variable}
+\label{w5:warn:posttreatment}
+A variable $L$ is \emph{post-treatment} if it is caused by $T$, i.e.\
+$T \to L$ in the DAG.  Conditioning on $L$ in the outcome regression
+--- including $L$ in $X$ --- can bias the estimated treatment effect,
+even if $L$ would otherwise be a strong predictor of $Y$.  There are
+two distinct mechanisms:
+
+\begin{enumerate}
+  \item \textbf{Blocking a causal pathway.}  If $L$ lies on a directed
+    path from $T$ to $Y$ (i.e.\ $L$ is a mediator: $T \to L \to Y$),
+    conditioning on $L$ blocks part of the causal effect of $T$.  The
+    back-door formula applied to $(T, Y)$ with $L$ in $X$ estimates a
+    \emph{direct} effect, not the total effect.  Whether this is the
+    right estimand depends on the research question; mistaking a direct
+    effect for a total effect is a common error.
+
+  \item \textbf{Opening a collider path.}  If $L$ has two parents ---
+    $T \to L \leftarrow U$ --- then $L$ is a \emph{collider} on the
+    path $T \to L \leftarrow U \to Y$.  This path is blocked when $L$
+    is not conditioned on.  Conditioning on $L$ \emph{opens} the path,
+    creating a spurious association between $T$ and $Y$ through $U$
+    that did not exist before adjustment.
+\end{enumerate}
+
+In both cases, including $L$ in $X$ violates condition (i) of the
+back-door criterion: \emph{$X$ must contain no descendant of $T$.}
+The back-door criterion is therefore not just a sufficiency condition
+for identification --- it is also the correct filter for deciding
+which variables to include.
+\end{warn}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=14mm and 20mm,
+  nd/.style={circle, draw=accent, line width=0.9pt,
+             minimum size=9mm, font=\small, fill=defbg},
+  un/.style={circle, draw=backdoorred, line width=0.9pt, dashed,
+             minimum size=9mm, font=\small, fill=warnbg},
+  ar/.style={-{Stealth[length=4pt]}, line width=0.9pt, color=accent},
+  ra/.style={-{Stealth[length=4pt]}, line width=0.9pt, color=backdoorred, dashed},
+  lbl/.style={font=\footnotesize\itshape\color{darkgrey}}
+]
+%% ── Left: Mediator ────────────────────────────────────────────────
+\begin{scope}[xshift=0cm]
+  \node[nd] (T1) {$T$};
+  \node[nd, right=20mm of T1] (L1) {$L$};
+  \node[nd, right=20mm of L1] (Y1) {$Y$};
+  \draw[ar] (T1) -- (L1);
+  \draw[ar] (L1) -- (Y1);
+  \draw[ar] (T1) to[bend right=30] (Y1);
+  \node[lbl, below=5mm of L1] {mediator};
+  \node[lbl, below=14mm of T1, xshift=22mm, align=center]
+    {\textbf{Mediator}: $T \to L \to Y$\\
+     conditioning on $L$ blocks\\
+     the indirect pathway};
+\end{scope}
+%% ── Right: Collider ───────────────────────────────────────────────
+\begin{scope}[xshift=7.5cm]
+  \node[nd] (T2) {$T$};
+  \node[nd, right=20mm of T2] (L2) {$L$};
+  \node[nd, right=20mm of L2] (Y2) {$Y$};
+  \node[un, above=14mm of L2] (U2) {$U$};
+  \draw[ar] (T2) -- (L2);
+  \draw[ra] (U2) -- (L2);
+  \draw[ra] (U2) -- (Y2);
+  \node[lbl, below=5mm of L2] {collider};
+  \node[lbl, below=14mm of T2, xshift=22mm, align=center]
+    {\textbf{Collider}: $T \to L \leftarrow U \to Y$\\
+     conditioning on $L$ opens\\
+     a spurious $T$--$Y$ path};
+\end{scope}
+\end{tikzpicture}
+\caption{Two ways post-treatment conditioning introduces bias.
+\textbf{Left}: $L$ is a mediator ($T \to L \to Y$); conditioning on
+$L$ blocks the indirect pathway and yields a direct effect rather than
+the total effect.  \textbf{Right}: $L$ is a collider on the path
+$T \to L \leftarrow U \to Y$; conditioning on $L$ opens a previously
+blocked path and creates spurious $T$--$Y$ association through the
+unobserved $U$.  In both cases $L$ is a descendant of $T$, violating
+the back-door criterion.}
+\label{w5:fig:posttreatment}
+\end{figure}
+
+\medskip\noindent\textbf{The practical rule.}  Before running any
+regression or computing any cell means, classify every candidate
+covariate as pre-treatment or post-treatment using the causal graph.
+Only pre-treatment variables that satisfy the back-door criterion
+belong in $X$.  Post-treatment variables should be left out unless the
+research question is specifically about a direct or mediated effect ---
+in which case Chapter~8 provides the appropriate framework.
+
+% ============================================================
+\section{Regression Adjustment and Standardization}
+\label{w5:sec:regression}
+% ============================================================
+
+\subsection{The Common Three-Step Logic}
+
+Both regression adjustment and standardization are implementations of
+the same back-door formula~\eqref{w5:eq:backdoor}.  They differ only in
+\emph{how} they estimate the conditional mean
+$\mu(t, x) = \E[Y \mid T{=}t, X{=}x]$, not in the underlying procedure.
+Understanding them as two variants of the same recipe is the key to
+using either one fluently.  Throughout this section $X$ denotes a set
+of \emph{pre-treatment} covariates satisfying the back-door criterion;
+the preceding section explains why post-treatment variables must be
+excluded.
+
+\begin{tcolorbox}[defstyle, title={The Three-Step Recipe: Outcome Regression / G-Formula}]
+\begin{enumerate}
+  \item \textbf{Estimate the outcome model.}
+    Fit a model for $\mu(t,x) = \E[Y \mid T{=}t, X{=}x]$ using the
+    observed data $\{(Y_i, T_i, X_i)\}_{i=1}^n$.  Any regression
+    method may be used: OLS, logistic regression, a flexible
+    nonparametric estimator, or cell means (see §\ref{w5:subsec:std}).
+
+  \item \textbf{Predict both potential outcomes for every unit.}
+    For each unit $i$ in the sample --- \emph{regardless of the treatment
+    that unit actually received} --- compute:
+    \[
+      \hat{Y}_i(1) = \hat\mu(1, X_i),
+      \qquad
+      \hat{Y}_i(0) = \hat\mu(0, X_i).
+    \]
+    This is the counterfactual imputation step: for a treated unit,
+    $\hat{Y}_i(0)$ is the predicted outcome had that unit been assigned
+    to control; for a control unit, $\hat{Y}_i(1)$ is the predicted
+    outcome had that unit been assigned to treatment.
+
+  \item \textbf{Average the individual treatment effect estimates.}
+    The ATE estimator is the sample average of the imputed individual
+    differences:
+    \begin{equation}
+      \hat\tau_{\mathrm{OR}}
+      = \frac{1}{n}\sum_{i=1}^n
+        \bigl[\hat{Y}_i(1) - \hat{Y}_i(0)\bigr]
+      = \frac{1}{n}\sum_{i=1}^n
+        \bigl[\hat\mu(1, X_i) - \hat\mu(0, X_i)\bigr].
+      \label{w5:eq:or}
+    \end{equation}
+    To estimate the ATT instead, average only over the $n_1$ treated
+    units: $\hat\tau_{\mathrm{ATT}} = \frac{1}{n_1}\sum_{i:\,T_i=1}
+    [\hat\mu(1,X_i) - \hat\mu(0,X_i)]$.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent This estimator is called the \emph{outcome regression} (OR)
+estimator or the \emph{G-computation} estimator (Robins, 1986).  The
+G-formula name emphasizes that step~3 \emph{averages out} the
+covariates $X$ by plugging in the empirical distribution of $X$,
+exactly as the back-door formula~\eqref{w5:eq:backdoor} requires.
+
+\medskip\noindent\textbf{Why the three steps correspond to the
+identifying formula.}  The back-door formula says:
+\[
+  \tau_{\mathrm{ATE}}
+  = \int \bigl[\mu(1,x) - \mu(0,x)\bigr]\, p(x)\, dx.
+\]
+Step~1 estimates $\mu$; step~2 evaluates $\mu(1,X_i) - \mu(0,X_i)$
+at the observed covariate value of each unit; step~3 approximates the
+integral by the sample average, using the empirical distribution of
+$X$ as a nonparametric estimate of $p(x)$.  The estimator is
+\emph{plug-in}: replace every population quantity in the identification
+formula with its sample counterpart.
+
+\subsection{A Worked Example}
+
+Consider a binary covariate $X \in \{0,1\}$ (e.g.\ sex) and a
+continuous outcome $Y$ (e.g.\ earnings in thousands of dollars).  An
+OLS model fit separately within each treatment arm gives:
+
+\medskip
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{Treated arm} ($T=1$)}
+& \multicolumn{2}{c}{\textbf{Control arm} ($T=0$)} \\
+$X$ & $n$ & $\bar{Y}$ & $n$ & $\bar{Y}$ \\
+\midrule
+$0$ & 30 & 42 & 70 & 35 \\
+$1$ & 70 & 58 & 30 & 50 \\
+\midrule
+\textbf{All} & 100 & 53.2 & 100 & 38.5 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+\noindent The unadjusted difference in means is
+$53.2 - 38.5 = 14.7$.  But $X{=}1$ units (with higher baseline
+earnings) are overrepresented in the treated arm: 70\% treated vs.\
+30\% control.  $X$ confounds the comparison.
+
+\medskip\noindent\textbf{Step 1.}  The estimated conditional means are
+$\hat\mu(1, 0) = 42$, $\hat\mu(1, 1) = 58$, $\hat\mu(0, 0) = 35$,
+$\hat\mu(0, 1) = 50$.
+
+\medskip\noindent\textbf{Step 2.}  The imputed within-stratum effects
+are: $\hat\mu(1,0) - \hat\mu(0,0) = 42 - 35 = 7$ (for $X{=}0$ units)
+and $\hat\mu(1,1) - \hat\mu(0,1) = 58 - 50 = 8$ (for $X{=}1$ units).
+
+\medskip\noindent\textbf{Step 3.}  Averaging over the \emph{marginal}
+distribution of $X$: 50\% of the full sample has $X{=}0$, 50\% has
+$X{=}1$ (equal mix in the combined sample of 200), giving:
+\[
+  \hat\tau_{\mathrm{ATE}}
+  = 7 \times 0.5 + 8 \times 0.5 = 7.5.
+\]
+After adjusting for $X$, the estimated treatment effect is 7.5, not
+14.7.  The difference arises because the unadjusted comparison
+conflates the treatment effect with the higher baseline earnings of
+$X{=}1$ units who happen to be treated more often.
+
+\subsection{Standardization as a Special Case}
+\label{w5:subsec:std}
+
+Standardization is the name traditionally used in epidemiology and
+biostatistics for the special case of regression adjustment in which
+$X$ is categorical with finite support $\mathcal{X}$.  When $X$ is
+categorical, no parametric model for $\mu(t,x)$ is needed: the
+conditional mean $\hat\mu(t,x)$ is simply the sample mean of $Y$
+within each cell $(T{=}t, X{=}x)$.  This is equivalent to fitting a
+fully saturated outcome model.
+
+The resulting estimator is:
+\begin{equation}
+  \hat\tau_{\mathrm{STD}}
+  = \sum_{x \in \mathcal{X}}
+    \bigl[\hat\mu(1,x) - \hat\mu(0,x)\bigr]\,\hat{p}(x),
+  \label{w5:eq:std}
+\end{equation}
+where $\hat\mu(t,x) = \bar{Y}_{t,x}$ is the sample mean of $Y$ among
+units with $T{=}t$ and $X{=}x$, and $\hat{p}(x) = n_x/n$ is the
+empirical marginal proportion.  Equation~\eqref{w5:eq:std} is
+\emph{algebraically identical} to the plug-in form of
+\eqref{w5:eq:or}: both compute $\frac{1}{n}\sum_i [\hat\mu(1,X_i) -
+\hat\mu(0,X_i)]$.  Standardization is therefore regression adjustment
+with a saturated outcome model, and the two estimators coincide
+whenever $X$ is categorical.
+
+The worked example above \emph{is} a standardization: the cell means
+$\hat\mu(t,x)$ were computed directly from the data without any
+parametric model.  The formula is also known as the \emph{G-formula}
+(Robins, 1986) and as \emph{direct standardization} in epidemiology.
+
+\begin{tcolorbox}[defstyle, title={Regression Adjustment vs.\ Standardization: Same Procedure, Different Estimator of $\hat\mu$}]
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{3.5cm} p{4.5cm} p{4.5cm}}
+\toprule
+& \textbf{Regression adjustment}
+& \textbf{Standardization} \\
+\midrule
+How $\hat\mu(t,x)$ is estimated
+  & Parametric model: OLS, logistic, or flexible learner
+  & Cell means: $\bar Y$ within $(T{=}t, X{=}x)$ \\
+Works when $X$ is
+  & Continuous or high-dimensional
+  & Discrete and low-dimensional \\
+Bias if wrong
+  & Model misspecification
+  & Sparse cells (some $(t,x)$ strata empty) \\
+Steps 2--3
+  & Identical: predict both potential outcomes, average
+  & Identical: predict both potential outcomes, average \\
+\bottomrule
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\end{tcolorbox}
+
+\noindent When $X$ is continuous, cell means are unavailable.
+$\hat\mu(t,x)$ is then estimated by a regression model --- OLS,
+logistic, or a nonparametric learner --- and the three-step recipe
+applies with no other change.
+
+\subsection{Model Specification and What Can Go Wrong}
+
+The OR estimator is consistent if and only if $\hat\mu(t,x) \to
+\mu(t,x)$ as $n \to \infty$ --- that is, if the outcome model is
+correctly specified.  This is the main vulnerability.
+
+\medskip\noindent\textbf{Misspecification bias.}  If the true
+$\mu(t,x)$ is nonlinear but a linear model is used, the estimated
+treatment effect absorbs part of the functional form error.  The bias
+can be in either direction.  Flexible machine learning estimators for
+$\hat\mu$ reduce this risk, at the cost of requiring cross-fitting
+(sample splitting) to avoid overfitting bias in the second step; this
+is taken up in Chapter~11.
+
+\medskip\noindent\textbf{Extrapolation.}  Step~2 predicts
+$\hat{Y}_i(0)$ for treated units with covariate values $X_i$ that may
+lie outside the support of the control group.  In regions with no
+control data, $\hat\mu(0, X_i)$ is extrapolated from the model rather
+than estimated from comparable units.  The propensity score overlap
+condition (Chapter~6) formalises when extrapolation is unavoidable.
+
+\subsection{Regression Adjustment in Randomized Experiments: Lin (2013)}
+
+In a \emph{randomized} experiment, outcome regression can be used to
+reduce variance even though covariate adjustment is not needed for
+unbiasedness.  The \emph{regression-adjusted estimator} of
+\citet{lin2013agnostic} fits the fully interacted OLS model:
+\[
+  Y_i = \alpha + \beta T_i + \gamma^\top \tilde{X}_i
+        + \delta^\top (T_i \cdot \tilde{X}_i) + \varepsilon_i,
+\]
+where $\tilde{X}_i = X_i - \bar{X}$ are mean-centered covariates.  The
+OLS coefficient $\hat\beta$ is read off as the ATE estimator.
+
+\begin{thm}{Design-Consistency of the Regression-Adjusted Estimator \citep{lin2013agnostic}}
+\label{w5:prop:lin}
+Under complete randomization, $\hat\beta$ from the interacted
+regression is consistent for $\tau_{\mathrm{ATE}}$ regardless of
+whether the linear model is correctly specified.
+\end{thm}
+
+\noindent\textit{Sketch.}  Because $T \indep X$ under randomization,
+the projection of $Y$ on $(T, X, T \cdot \tilde{X})$ recovers the
+treatment coefficient without confounding bias even if the true $\mu$
+is not linear.  The interaction terms ensure that the estimated
+treatment effect is the sample analog of the semiparametric efficient
+estimator.  For the full proof see \citet{lin2013agnostic} or
+\citet{freedman2008regression}.
+
+Importantly, $\hat\beta$ from the Lin estimator is numerically
+equal to the three-step OR estimator~\eqref{w5:eq:or} applied with a
+linear model fit separately within each treatment arm.  The Lin
+estimator is therefore not a separate method: it is regression
+adjustment, presented in a single-regression form that makes inference
+straightforward.
+
+\begin{remark}[The Role of the Regression Model in a Randomized Experiment]
+\label{w5:rem:reg-role}
+In a randomized experiment the regression model serves one purpose
+only: \emph{variance reduction}.  It does not contribute to
+unbiasedness.
+
+Unbiasedness (or, in large samples, design-consistency) is guaranteed
+by the randomization alone, regardless of whether the outcome model is
+correctly specified --- this is precisely what Theorem~\ref{w5:prop:lin}
+states.  The plain difference-in-means estimator $\hat\tau_{\mathrm{DIM}}$
+is already design-consistent; the only reason to add covariates is to
+reduce $\mathrm{Var}(\hat\tau)$ by absorbing residual variation in $Y$
+that is unrelated to $T$.  If the regression model fits well, the
+residual variance shrinks and the estimator becomes more precise.  If
+the model is misspecified or the covariates are weakly predictive, the
+variance reduction is small or zero, but no bias is introduced.
+
+This stands in sharp contrast to the observational setting
+(Section~\ref{w5:sec:ignorability}), where the regression model
+carries a \emph{double} burden: it must both adjust for confounding
+(unbiasedness) and fit the outcome surface well (efficiency).
+Misspecification in an observational study therefore threatens
+\emph{both} properties simultaneously.  In a randomized experiment, it
+threatens only efficiency.
+\end{remark}
+
+\begin{remark}[Precedence in Survey Sampling]
+\label{w5:rem:lin-survey}
+The design-consistency result in Theorem~\ref{w5:prop:lin} --- that the
+regression-adjusted estimator converges in probability to
+$\tau_{\mathrm{ATE}}$ under the randomization distribution regardless
+of whether the working linear model is correctly specified --- was
+established in the survey sampling literature decades before
+\citet{lin2013agnostic}.
+
+\citet{isaki1982survey} introduced the \emph{generalized regression
+(GREG) estimator} for finite-population means under general probability
+sampling designs, including simple random sampling, and proved that it
+is design-consistent under the randomization distribution even when the
+assisting regression model is misspecified.  Because a completely
+randomized experiment is structurally equivalent to simple random
+sampling from the finite population $\mathcal{F}_N$ of potential
+outcomes (see Section~\ref{w5:sec:rct}), their result directly implies
+Theorem~\ref{w5:prop:lin}.
+
+\citet{deville1992calibration} extended this class further to
+\emph{calibration estimators}, which adjust the sampling weights so
+that weighted sample totals match known population totals for the
+auxiliary variables $X$.  The regression estimator is the special case
+of a calibration estimator using linear distance; all calibration
+estimators share the design-consistency property of Isaki and Fuller.
+
+\citet{lin2013agnostic}'s contribution was to restate and prove this
+result within the Neyman--Rubin potential-outcomes framework, connect
+it to semiparametric efficiency theory, and show that the
+Huber--White sandwich variance estimator yields asymptotically valid
+confidence intervals under the randomization distribution --- a
+presentation tailored to the experimental causal inference audience
+where these earlier survey sampling results were not widely known.
+\end{remark}
+
+\begin{remark}
+Lin's consistency result is specific to randomized experiments.  In an
+observational study, $\hat\tau_{\mathrm{OR}}$ is consistent only if
+$\hat\mu$ converges to the true $\mu$.  The doubly-robust (AIPW)
+estimator of Chapter~10 achieves consistency if \emph{either} the
+outcome model or the propensity score model is correctly specified,
+providing a robustness guarantee the plain OR estimator lacks.
+\end{remark}
+
+% ============================================================
+\section{Stratification}
+\label{w5:sec:stratification}
+% ============================================================
+
+\subsection{The Idea}
+
+Stratification (subclassification) is a non-parametric implementation
+of the back-door formula.  Rather than modeling $\E[Y \mid T, X]$, the
+analyst divides the sample into \emph{strata} --- subgroups of units
+with the same or similar values of $X$ --- and estimates the treatment
+effect within each stratum.
+
+Within a stratum $\mathcal{S}_k = \{i : X_i \in B_k\}$, the treated and
+control units have similar covariate distributions.  If the stratum is
+narrow enough (i.e.\ $B_k$ is small), ignorability holds approximately
+within the stratum, and the within-stratum difference in means:
+\[
+  \hat\tau_k
+  = \bar Y_{1,k} - \bar Y_{0,k}
+  = \frac{\sum_{i \in \mathcal{S}_k} T_i Y_i}{\sum_{i \in \mathcal{S}_k} T_i}
+  - \frac{\sum_{i \in \mathcal{S}_k} (1-T_i) Y_i}{\sum_{i \in \mathcal{S}_k} (1-T_i)}
+\]
+is an approximately unbiased estimate of the stratum-specific ATE.
+
+\subsection{The Stratified Estimator}
+
+The overall ATE is estimated as a weighted average of within-stratum
+estimates:
+\begin{equation}
+  \hat\tau_{\mathrm{STRAT}}
+  = \sum_{k=1}^K \hat\tau_k \cdot \frac{n_k}{n},
+  \label{w5:eq:strat}
+\end{equation}
+where $K$ is the number of strata, $n_k$ is the number of units in
+stratum $k$, and $n = \sum_k n_k$.  Cochran (1968) showed that with
+$K = 5$ strata of equal size, roughly 90\% of the bias from a single
+continuous confounder is removed; with $K = 10$ strata, over 95\%.
+
+\begin{remark}[Stratification, Standardization, and Survey Sampling Terminology]
+\label{w5:rem:strat-poststrat}
+When $X$ is categorical, the stratified estimator~\eqref{w5:eq:strat}
+and the standardization estimator~\eqref{w5:eq:std} are algebraically
+identical: both compute within-cell treatment effect estimates and
+aggregate them with marginal weights $n_k/n$.  The two names reflect
+disciplinary tradition rather than a methodological distinction.
+
+When $X$ is continuous, stratification estimates $\hat\mu(t,x)$ by a
+piecewise-constant step function (one constant per stratum), while
+regression adjustment fits a smooth parametric or nonparametric model.
+As the number of strata grows and stratum widths shrink, the stratified
+estimator converges to the regression-adjusted estimator.
+
+In the survey sampling literature, \emph{stratification} and
+\emph{post-stratification} are distinct operations.
+\emph{Stratification} is a \emph{design-stage} decision: the
+population is divided into strata before sampling, and units are
+sampled independently within each stratum to control the allocation.
+\emph{Post-stratification} is an \emph{analysis-stage} adjustment:
+stratum membership is recorded after a non-stratified sample has been
+drawn, and the estimator is reweighted by marginal stratum counts ---
+exactly what equation~\eqref{w5:eq:std} does.  Standardization in
+causal inference corresponds to post-stratification, not to
+stratified sampling design.
+\end{remark}
+
+\subsection{Limitations}
+
+Stratification faces the \emph{curse of dimensionality}: with $p$
+binary covariates there are $2^p$ cells, many of which will be empty in
+practice.  This motivates two solutions studied in this course:
+\begin{itemize}
+  \item \textbf{Regression adjustment / standardization} (§\ref{w5:sec:regression}) imposes
+    parametric structure on $\hat\mu(t,x)$, allowing interpolation
+    across cells.
+  \item \textbf{Propensity score stratification} (Chapter~6) collapses
+    the multivariate $X$ to a scalar $\pi(X) = P(T{=}1 \mid X)$ and
+    stratifies on the scalar.  Theorem~\ref{w6:thm:ps} (Chapter~6)
+    guarantees that strata defined by $\pi(X)$ balance the full
+    multivariate $X$.
+\end{itemize}
+
+% ============================================================
+\section{Simpson's Paradox}
+\label{w5:sec:simpson}
+% ============================================================
+
+Simpson's paradox --- the reversal of an association when conditioning
+on a third variable --- was introduced in Chapter~1
+(Section~\ref{w1:sec:two-step}, in particular
+Section~\ref{w1:subsec:simpson}).  There, a flu-vaccination example
+showed that the vaccine appeared harmful in the aggregate yet beneficial
+within every age stratum, because elderly individuals were
+disproportionately vaccinated.  Conditioning on age via the back-door
+formula recovered the correct causal effect.
+
+Chapter~5's development gives that example a second layer of
+interpretation.  The back-door formula used in Chapter~1 is precisely
+the standardization estimator~\eqref{w5:eq:std}: within-stratum
+conditional means averaged over the \emph{marginal} distribution of the
+confounder rather than its treatment-conditional distribution.  The
+weighted average corrects the confounding; the pooled association does
+not, because it weights strata by $P(X \mid T)$ instead of $P(X)$.
+
+\subsection{When Should You \emph{Not} Condition on $X$?}
+\label{w5:subsec:simpson-collider}
+
+Simpson's paradox also has a mirror image: conditioning on a variable
+can \emph{create} a spurious association or make a true causal effect
+disappear.  This occurs when $X$ is a \emph{mediator} (a descendant of
+$T$ on the causal path to $Y$) or a \emph{collider}.  The back-door
+criterion gives the correct prescription: include $X$ in the adjustment
+set only if it blocks back-door paths \emph{without} opening collider
+paths.
+
+\begin{warn}{Conditioning on a Mediator or Collider}
+Adjusting for a post-treatment variable $X$ that lies on a causal
+pathway $T \to X \to Y$ blocks part of the causal effect of $T$,
+producing a downward-biased estimate of the total effect.  Adjusting
+for a collider $X$ with $T \to X \leftarrow Y$ opens a spurious
+association between $T$ and $Y$ that does not exist in the
+population.  Neither mistake is detectable from the data alone; the
+DAG is essential.
+\end{warn}
+
+\noindent We will revisit the mediator case in detail when we study
+mediation analysis (Chapter~8).  The collider case was covered in
+Chapter~2 and is the subject of ongoing work in sensitivity analysis.
+
+% ============================================================
+\section{Lab: Simulation Study of the Outcome Regression Estimator}
+\label{w5:sec:lab}
+% ============================================================
+
+The identification results in Section~\ref{w5:sec:ignorability} and the
+estimation recipes in Section~\ref{w5:sec:regression} rest on two
+assumptions that pull in opposite directions: the outcome model
+$\hat\mu(t,x)$ must be correctly specified for the linear outcome
+regression (OR) estimator to be consistent in an observational study,
+yet a more flexible nonparametric estimator pays a variance penalty for
+that flexibility.  Under a completely randomized design (CRD),
+Theorem~\ref{w5:prop:lin} guarantees that the linear OR estimator is
+consistent regardless of model specification; the guarantee disappears
+as soon as treatment is confounded.
+
+This simulation study puts those claims side by side across two
+experimental designs and two estimators, with a nonlinear
+data-generating process that makes the tradeoff clearly visible.
+
+% ----------------------------------------
+\subsection*{Data-Generating Process}
+\addcontentsline{toc}{subsection}{Data-Generating Process}
+
+\begin{tcolorbox}[defstyle, title={DGP for Lab~5}]
+\label{w5:lab:dgp}
+Let $X \sim \mathrm{Uniform}(0,1)$ be a single pre-treatment covariate
+and $\varepsilon \sim \mathcal{N}(0,1)$ independent of $X$.  The
+potential outcome surfaces are:
+\begin{equation}
+  Y(t) \;=\; t \;+\; 3(1+t)X^2 \;+\; \varepsilon,
+  \qquad t \in \{0,1\}.
+  \label{w5:lab:dgp-eq}
+\end{equation}
+The conditional average treatment effect is $\tau(x) = 1 + 3x^2$, so
+\begin{equation}
+  \tau_{\mathrm{ATE}}
+  = \E[1 + 3X^2]
+  = 1 + 1 = 2.
+  \label{w5:lab:tau}
+\end{equation}
+Two assignment mechanisms are studied:
+\begin{itemize}
+  \item \textbf{CRD:}  $T \sim \mathrm{Bern}(0.5)$, independent of $X$.
+  \item \textbf{Observational:}  $T \mid X \sim
+    \mathrm{Bern}\!\left(\mathrm{expit}(-2 + 5X)\right)$,
+    giving $\pi(0) \approx 0.12$, $\pi(0.5) \approx 0.62$,
+    $\pi(1) \approx 0.95$.  Strong confounding: high-$X$ units are
+    nearly always treated.
+\end{itemize}
+The observed outcome is $Y = Y(T)$ in both cases.  Strong ignorability
+holds in both: in the CRD because $T \indep X$; in the observational
+study because treatment is a deterministic function of $X$ alone
+(no unmeasured confounder).
+\end{tcolorbox}
+
+% ----------------------------------------
+\subsection*{Estimators}
+\addcontentsline{toc}{subsection}{Estimators}
+
+Two outcome regression estimators of the form~\eqref{w5:eq:or} are
+compared.  Both follow the three-step recipe: estimate
+$\hat\mu(t,x)$, impute both potential outcomes for every unit on a
+fine grid over $[0,1]$, and average.  They differ only in how
+$\hat\mu(t,x)$ is estimated.
+
+\medskip
+\noindent\textbf{Linear OR.}  Within each arm $t \in \{0,1\}$, fit the
+simple linear regression $Y \sim X$ by OLS and use the fitted line to
+predict at all grid points.  This model is \emph{misspecified}: the
+true $\mu(t,x)$ contains a quadratic term $1.5x^2$ and a
+treatment--covariate interaction $tx$, neither of which is included.
+
+\medskip
+\noindent\textbf{Local-linear OR.}  Within each arm, estimate
+$\mu(t,x_0)$ by local linear regression using a Gaussian kernel with
+bandwidth $h = 0.5 \cdot n^{-1/5}$ (moderately undersmoothed relative
+to the Silverman rule).  Local linear regression has the same
+asymptotic bias order as the Nadaraya--Watson estimator but eliminates
+boundary bias, which is important here because the observational
+propensity score places treated and control units in different regions
+of $[0,1]$.  In R, this is implemented via \texttt{KernSmooth::locpoly}.
+
+% ----------------------------------------
+\subsection*{Results}
+\addcontentsline{toc}{subsection}{Results}
+
+Table~\ref{w5:tab:lab} reports the Monte Carlo mean, bias, standard
+deviation, and RMSE across $B = 2{,}000$ replications at $n = 1{,}000$.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\caption{Monte Carlo performance of the linear and local-linear OR
+  estimators under CRD and under an observational design satisfying
+  strong ignorability.  True $\tau_{\mathrm{ATE}} = 2.000$.
+  $n = 1{,}000$, $B = 2{,}000$ replications, seed \texttt{2024}.}
+\label{w5:tab:lab}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Design} & \textbf{Estimator} & \textbf{Mean} & \textbf{Bias}
+  & \textbf{SD} & \textbf{RMSE} \\
+\midrule
+CRD
+  & Linear OR       & 2.0013 &  $+$0.0013 & 0.0679 & 0.0678 \\
+  & Local-linear OR & 2.0333 &  $+$0.0333 & 0.0659 & 0.0738 \\
+\midrule
+Observational
+  & Linear OR       & 1.9602 & $-$0.0398 & 0.0851 & 0.0939 \\
+  & Local-linear OR & 2.0240 & $+$0.0240 & 0.0923 & 0.0953 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\medskip
+Three lessons stand out.
+
+\medskip
+\noindent\textbf{1.\ Under CRD, the linear OR estimator is unbiased 
+regardless of model specification.}   This confirms
+Theorem~\ref{w5:prop:lin}: under complete randomization, the linear
+OR estimator converges in probability to $\tau_{\mathrm{ATE}}$ even
+when the outcome model is wrong.  The randomization distribution,
+not the model, is doing the identification work.
+
+\medskip
+\noindent\textbf{2.\ Under an observational design, the misspecified
+linear OR is biased.}  The linear estimator's bias grows from $+0.0013$
+under CRD to $-0.0398$ under the observational design.  The mechanism is precisely the one described in
+Section~\ref{w5:sec:regression}: the omitted $X^2$ and $TX$ terms
+in the outcome model cause $\hat\mu(t,x)$ to misrepresent the
+outcome surface, and because high-$X$ units are predominantly treated
+(the propensity score ranges from 0.12 to 0.95), the misfit is
+systematically amplified in the direction of the confounding.  In a
+CRD the same misfit is present, but the balanced treatment assignment
+averages it out; in the observational study it does not.
+
+\medskip
+\noindent\textbf{3.\ The local-linear OR nearly eliminates bias at the
+cost of higher variance.}  Under the observational design the
+local-linear OR reduces bias  but
+its standard deviation is 0.0923, compared to 0.0851 for the
+misspecified linear model.  This variance penalty is the price of flexibility: a more expressive model uses data
+less efficiently.  The RMSE comparison (0.0939 vs.\ 0.0953) therefore
+favors the linear estimator in terms of mean squared error, even
+though the linear estimator is biased.  This is the classic
+bias--variance tradeoff, and it illustrates why a well-specified
+parametric model can outperform a nonparametric one even in finite
+samples.
+
+\begin{warn}{Model Misspecification and Confounding Interact}
+Comparing the two ``Linear OR'' rows: the bias is $+0.0013$ under CRD
+and $-0.0398$ under the observational design.  The misspecification is
+identical in both cases --- the same wrong model, the same DGP --- so
+the difference must come entirely from the assignment mechanism.
+
+The DGP makes the cancellation under CRD explicit.  Under CRD,
+$T \indep X$, so $X$ within each arm is still $\mathrm{Uniform}(0,1)$.
+The population OLS line fit to $Y(t) = t + 3(1+t)X^2 + \varepsilon$
+against $X$ over $U(0,1)$ has slope
+$\beta_t = 3(1+t)\,{\mathrm{Cov}(X^2,X)}/{\mathrm{Var}(X)} = 3(1+t)$
+(since both covariance and variance equal $\tfrac{1}{12}$ for
+$X\sim U(0,1)$), giving
+$\hat\mu_{\mathrm{lin}}(0,x) = -\tfrac{1}{2}+3x$ and
+$\hat\mu_{\mathrm{lin}}(1,x) = 6x$.
+The pointwise error in the estimated CATE is therefore
+\[
+  b(x)
+  \;=\;
+  \bigl[\hat\mu_{\mathrm{lin}}(1,x) - \hat\mu_{\mathrm{lin}}(0,x)\bigr]
+  - \tau(x)
+  \;=\;
+  \Bigl(\tfrac{1}{2}+3x\Bigr) - \bigl(1+3x^2\bigr)
+  \;=\;
+  -\tfrac{1}{2}+3x-3x^2.
+\]
+The pointwise bias is nonzero everywhere: the linear model
+misrepresents the curved surface at every $x$.  Yet its average over
+$X\sim U(0,1)$ is exactly zero:
+\[
+  \E\bigl[b(X)\bigr]
+  = \int_0^1\!\bigl(-\tfrac{1}{2}+3x-3x^2\bigr)\,dx
+  = \Bigl[-\tfrac{x}{2}+\tfrac{3x^2}{2}-x^3\Bigr]_0^1
+  = -\tfrac{1}{2}+\tfrac{3}{2}-1 = 0.
+\]
+The cancellation is structural, not accidental.  The population OLS
+line is the linear projection of $\tau(X)$ onto $\{1, X\}$ under the
+fitting distribution.  A linear projection always preserves the mean,
+so $\E[\hat\tau_{\mathrm{lin}}(X)] = \E[\tau(X)] = \tau_{\mathrm{ATE}}$
+whenever the expectation on the left is taken over the \emph{same}
+distribution used for fitting.  Under CRD the fitting distribution
+(the distribution of $X$ within each arm) equals the evaluation
+distribution (the marginal of $X$), so that condition holds and the
+OR estimator is consistent despite misspecification.
+
+Under the observational design, the fitting and evaluation distributions
+diverge.  Because $T = \mathrm{Bern}(\mathrm{expit}(-2+5X))$, high-$X$
+units are almost always treated and low-$X$ units almost never.  The
+model for arm $t=1$ is fit on a sample concentrated at high $X$, and
+the model for arm $t=0$ on a sample concentrated at low $X$.  The
+fitted lines are tuned to different parts of the covariate space, so
+when both are evaluated at the full marginal of $X$, the pointwise
+errors no longer cancel.  Model misspecification is harmless under
+randomization; it becomes a source of bias precisely when confounding
+is present.
+\end{warn}
+
+\begin{remark}[What This Lab Does Not Show]
+\label{w5:rem:lab-limits}
+The simulation fixes the bandwidth $h = 0.5 \cdot n^{-1/5}$ and does
+not perform data-driven bandwidth selection.  In practice, choosing $h$
+by cross-validation changes the bias--variance tradeoff and can
+substantially improve the local-linear estimator's RMSE.  The lab also
+studies only a scalar $X$; with a multivariate covariate, the curse of
+dimensionality would make local linear regression impractical, which
+is one motivation for the propensity score approach of Chapter~6.
+\end{remark}
+
+% ============================================================
+\section{Where the Propensity Score Fits}
+% ============================================================
+
+The three methods developed in §§3--5 --- regression adjustment,
+standardization, and stratification --- all implement the same
+identifying formula~\eqref{w5:eq:backdoor}.  They differ in how they
+deal with the conditioning on the high-dimensional covariate vector $X$:
+
+\medskip
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{3.5cm} p{5cm} p{4.5cm}}
+\toprule
+\textbf{Method} & \textbf{How it handles $X$} & \textbf{Key assumption} \\
+\midrule
+Regression / standardization
+  & Models $\E[Y \mid T,X]$ parametrically
+  & Outcome model correctly specified \\[4pt]
+Stratification
+  & Groups units by $X$; estimates effect in each cell
+  & Strata narrow enough for approximate balance \\[4pt]
+Propensity score (Ch.~6)
+  & Reduces $X$ to scalar $\pi(X) = P(T{=}1 \mid X)$
+  & Propensity model correctly specified \\
+\bottomrule
+\end{tabular}
+\end{center}
+\renewcommand{\arraystretch}{1}
+
+\medskip
+When $X$ is low-dimensional, stratification and regression work well.
+When $X$ has many components, direct stratification suffers from the
+curse of dimensionality.  The \emph{propensity score} solves this by
+proving (Theorem~\ref{w6:thm:ps}, Chapter~6) that adjusting for the
+scalar $\pi(X)$ is \emph{sufficient} for identification, even when $X$ is
+high-dimensional.
+
+\begin{tcolorbox}[defstyle, title={Bridge to Chapter~6}]
+Chapter~6 takes up this idea formally.  It proves the balancing property
+($T \indep X \mid \pi(X)$), derives the Propensity Score Theorem
+(strong ignorability given $X$ implies strong ignorability given $\pi(X)$
+alone), and develops three estimation strategies based on the propensity
+score: inverse probability weighting (IPW), matching, and propensity
+score stratification.  Matching, in particular, need not rely on the
+propensity score: covariate-distance methods such as Mahalanobis-distance
+matching and nearest-neighbor matching on $X$ directly are equally valid,
+and are introduced alongside propensity score matching in Chapter~6.
+\end{tcolorbox}
+
+% ============================================================
+\section{Summary}
+% ============================================================
+
+\begin{enumerate}
+  \item \textbf{Randomization as graph surgery.}  A randomized
+    experiment removes all arrows into $T$, so the fundamental equality
+    $f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)$ holds and the
+    difference-in-means estimator is unbiased for the ATE without
+    covariate adjustment.
+
+  \item \textbf{Ignorability is the key assumption.}  Under
+    unconfoundedness $(Y(0),Y(1)) \indep T \mid X$, the back-door
+    adjustment formula identifies the ATE.  This assumption is
+    substantive, design-determined, and untestable from observational
+    data.
+
+  \item \textbf{Three estimation strategies.}  Regression adjustment
+    (G-formula), standardization, and stratification all implement the
+    same identifying formula via different modeling choices.  All
+    require correct specification of either an outcome model (for
+    regression/standardization) or a stratification scheme fine enough
+    to achieve balance.
+
+  \item \textbf{Simpson's paradox.}  Pooled associations can reverse
+    within subgroups when a confounder determines treatment selection.
+    The correct causal estimate requires standardization over the
+    marginal covariate distribution, guided by the back-door criterion.
+
+  \item \textbf{The propensity score dimension reduction.}  When $X$
+    is high-dimensional, direct stratification or cell-by-cell
+    standardization breaks down.  The propensity score $\pi(X)$ provides
+    a scalar sufficient statistic for adjustment.  Chapter~6 develops
+    the theory and estimation methods.
+\end{enumerate}
+
+% ============================================================
+\section*{Problems}
+\addcontentsline{toc}{section}{Problems}
+% ============================================================
+
+\begin{enumerate}
+
+\item \textbf{Randomization and the do-calculus.}
+  Let the observational DAG be
+  $\{U \to T,\; U \to Y,\; X \to T,\; T \to Y\}$
+  with $U$ unobserved.
+  \begin{enumerate}
+    \item Identify all back-door paths from $T$ to $Y$.
+    \item Does $X$ satisfy the back-door criterion?  Does $U$?  Explain.
+    \item Now suppose treatment is randomized.  Draw the modified DAG
+      and identify all back-door paths.  Show that
+      $f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)$ holds in the
+      randomized DAG using Rule~2 of the do-calculus.
+    \item Under randomization, is covariate adjustment on $X$ necessary
+      for unbiasedness?  Is it ever beneficial?  Explain.
+  \end{enumerate}
+
+\item \textbf{Ignorability and the back-door criterion.}
+  Consider the DAG $\{X \to T,\; X \to Y,\; T \to Y,\; U \to Y\}$
+  with $U$ unobserved.
+  \begin{enumerate}
+    \item Does $\{X\}$ satisfy the back-door criterion?  Write out the
+      identifying formula for $\tau_{\mathrm{ATE}}$.
+    \item Now add the edge $U \to T$ to the DAG.  Does $\{X\}$ still
+      satisfy the back-door criterion?  What does the back-door criterion
+      require when both $X$ and $U$ affect $T$?
+    \item Explain in words what ``unconfoundedness given $X$'' means
+      about the role of $U$ in the data-generating process.
+  \end{enumerate}
+
+\item \textbf{Standardization.}
+  A study of job training ($T$) and earnings ($Y$, in thousands)
+  produces the following cell means, with $P(X{=}0) = 0.4$ and
+  $P(X{=}1) = 0.6$:
+  \begin{center}
+  \begin{tabular}{lccc}
+  \toprule
+  $X$ & $\hat\mu(1,x)$ & $\hat\mu(0,x)$ & $n_x/n$ \\
+  \midrule
+  0 & 28 & 22 & 0.4 \\
+  1 & 35 & 31 & 0.6 \\
+  \bottomrule
+  \end{tabular}
+  \end{center}
+  \begin{enumerate}
+    \item Compute $\hat\tau_{\mathrm{ATE}}$ using the standardization
+      formula.
+    \item Compute $\hat\tau_{\mathrm{ATT}}$, given that all treated
+      units come from $X{=}1$.
+    \item The unadjusted difference in means is $33 - 25 = 8$.  Compare
+      to your answers in (a) and (b) and explain the discrepancy.
+  \end{enumerate}
+
+\item \textbf{Stratification and Cochran's rule.}
+  You have a binary confounder $X \in \{0,1\}$ and form two strata.
+  Within stratum $X{=}0$: $n_0 = 600$, $\bar Y_1 = 10$,
+  $\bar Y_0 = 8$.  Within stratum $X{=}1$: $n_1 = 400$,
+  $\bar Y_1 = 15$, $\bar Y_0 = 12$.
+  \begin{enumerate}
+    \item Compute the stratified ATE estimator $\hat\tau_{\mathrm{STRAT}}$.
+    \item Suppose an unadjusted difference-in-means gives
+      $\hat\tau_{\mathrm{DIM}} = 5.5$.  Explain why the two estimates
+      differ and which one is the appropriate causal estimate.
+    \item Describe one limitation that would arise if $X$ were a
+      continuous variable with 15 dimensions.
+  \end{enumerate}
+
+\item \textbf{Simpson's paradox.}
+  A hospital reports that patients who receive intensive care (ICU
+  admission, $T{=}1$) have a higher mortality rate than those who do
+  not ($T{=}0$): $P(Y{=}1 \mid T{=}1) = 0.30$ vs.\
+  $P(Y{=}1 \mid T{=}0) = 0.10$.
+  \begin{enumerate}
+    \item Construct a numerical example (a $2 \times 2 \times 2$
+      table with disease severity $X \in \{\text{mild}, \text{severe}\}$
+      as the confounder) that is consistent with the above pooled
+      numbers and yet shows ICU admission \emph{reduces} mortality
+      within both severity strata.
+    \item Compute the standardized ATE using the marginal distribution
+      of $X$.
+    \item Draw the DAG for this example.  Identify the back-door path
+      that the pooled comparison fails to block.
+    \item A colleague suggests that since the hospital treats patients
+      with both mild and severe illness, the pooled statistic is the
+      right answer.  Explain, using potential outcomes notation, why
+      this argument is incorrect.
+  \end{enumerate}
+
+\end{enumerate}
+
+% Bibliography (standalone only)
+\ifSubfilesClassLoaded{%
+  \bibliographystyle{plainnat}
+  \bibliography{causal_inference}
+}{}
+
+\end{document}

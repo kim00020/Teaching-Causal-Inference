@@ -1,0 +1,1160 @@
+\documentclass[12pt]{article}
+
+% ── Packages ────────────────────────────────────────────────────────────────
+\usepackage[margin=1.2in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{mdframed}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+% ── Colours ──────────────────────────────────────────────────────────────────
+\definecolor{darkblue}{HTML}{1F3864}
+\definecolor{midblue}{HTML}{2E75B6}
+\definecolor{lightblue}{HTML}{D6E4F0}
+\definecolor{altrow}{HTML}{EBF3FB}
+\definecolor{mod1}{HTML}{EBF3FB}
+\definecolor{mod2}{HTML}{EAF4EA}
+\definecolor{mod3}{HTML}{FEF9E7}
+\definecolor{mod4}{HTML}{FDEDEC}
+\definecolor{midrow}{HTML}{F5F5F5}
+\definecolor{examrow}{HTML}{F9EBEA}
+\definecolor{presentrow}{HTML}{EBF5EB}
+
+% ── Section formatting ───────────────────────────────────────────────────────
+\titleformat{\section}
+  {\Large\bfseries\color{darkblue}}{\thesection.}{0.6em}{}
+  [\vspace{-4pt}\textcolor{midblue}{\rule{\linewidth}{0.8pt}}\vspace{2pt}]
+\titleformat{\subsection}
+  {\large\bfseries\color{midblue}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{darkblue}}{\thesubsubsection}{0.6em}{}
+\titlespacing{\section}{0pt}{18pt}{6pt}
+\titlespacing{\subsection}{0pt}{12pt}{4pt}
+\titlespacing{\subsubsection}{0pt}{8pt}{2pt}
+
+% ── Header / footer ──────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{midblue}\textit{Causal Inference for Graduate Students in Statistics}}
+\fancyhead[R]{\small\color{midblue}\textit{Iowa State University --- 15-Week Syllabus}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{midblue}\leaders\hrule height \headrulewidth\hfill}}
+
+% ── Lists ────────────────────────────────────────────────────────────────────
+\setlist[itemize,1]{leftmargin=1.5em, itemsep=2pt, topsep=4pt,
+                    label={\color{midblue}\textbullet}}
+\setlist[itemize,2]{leftmargin=2.5em, itemsep=1pt, topsep=2pt,
+                    label={\color{midblue}$\circ$}}
+
+% ── Coloured boxes ───────────────────────────────────────────────────────────
+\newmdenv[
+  backgroundcolor=lightblue, linecolor=midblue, linewidth=1.2pt,
+  innerleftmargin=12pt, innerrightmargin=12pt,
+  innertopmargin=8pt, innerbottommargin=8pt,
+  skipabove=6pt, skipbelow=6pt]{keybox}
+
+\newmdenv[
+  backgroundcolor=examrow, linecolor=red!60, linewidth=1.2pt,
+  innerleftmargin=12pt, innerrightmargin=12pt,
+  innertopmargin=8pt, innerbottommargin=8pt,
+  skipabove=6pt, skipbelow=6pt]{exambox}
+
+\newmdenv[
+  backgroundcolor=presentrow, linecolor=green!50!black, linewidth=1.2pt,
+  innerleftmargin=12pt, innerrightmargin=12pt,
+  innertopmargin=8pt, innerbottommargin=8pt,
+  skipabove=6pt, skipbelow=6pt]{presentbox}
+
+% ── Column types ─────────────────────────────────────────────────────────────
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% ── Hyperref ─────────────────────────────────────────────────────────────────
+\hypersetup{colorlinks=true, linkcolor=midblue,
+            urlcolor=midblue, citecolor=midblue}
+
+% ────────────────────────────────────────────────────────────────────────────
+\begin{document}
+% ────────────────────────────────────────────────────────────────────────────
+
+% ── Title page ───────────────────────────────────────────────────────────────
+\thispagestyle{empty}
+\begin{center}
+  \vspace*{1.2cm}
+  {\color{darkblue}\rule{\linewidth}{2pt}}\\[12pt]
+  {\Huge\bfseries\color{darkblue}
+    Causal Inference for\\[6pt] Graduate Students in Statistics}\\[12pt]
+  {\color{midblue}\rule{\linewidth}{1pt}}\\[16pt]
+  {\large Department of Statistics \quad\textbullet\quad Iowa State University}\\[8pt]
+  {\large Instructor: Jae-kwang Kim}\\[8pt]
+  {\normalsize \today}\\[20pt]
+  {\color{darkblue}\rule{\linewidth}{2pt}}
+\end{center}
+
+\vspace{0.8cm}
+
+\begin{mdframed}[
+  backgroundcolor=lightblue, linecolor=midblue, linewidth=1.5pt,
+  innerleftmargin=14pt, innerrightmargin=14pt,
+  innertopmargin=10pt, innerbottommargin=10pt]
+\noindent\textbf{\color{darkblue}Course Overview.}
+This course develops causal inference as a two-step discipline:
+\emph{identification} (translating a causal quantity into an estimable
+functional of the observed data distribution using the do-calculus) and
+\emph{estimation} (constructing efficient, robust estimators from a finite
+sample using semiparametric theory). The do-operator $\mathrm{do}(T{=}t)$
+is the organising principle from week one. A central theme is the distinction
+\[
+  f\!\bigl(y \mid x,\,\mathrm{do}(T{=}t);\theta\bigr)
+  \;\neq\;
+  f\!\bigl(y \mid x,\, T{=}t\bigr),
+\]
+which underlies endogeneity and drives every identification strategy studied
+in the course.
+
+\medskip
+\noindent\textbf{Structure.} The course runs over 15 weeks at Iowa State
+University. Week~8 is a midterm examination; Week~15 is reserved for
+student final presentations. Instructional content spans Weeks~1--7 and
+9--14, organised into four modules.
+\end{mdframed}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Course Philosophy}
+% ════════════════════════════════════════════════════════════════════════════
+
+This course is built around one central message: causal inference requires
+two distinct steps that must never be conflated.
+
+\begin{itemize}
+  \item \textbf{Identification.}  Translating a causal quantity
+    $f(y \mid x, \mathrm{do}(T{=}t); \theta)$ into an estimable function
+    of the observed data distribution $f(y,t,x,z)$.  This is the
+    do-calculus step.
+
+  \item \textbf{Estimation.}  Constructing efficient, robust estimators
+    of the identified functional from a finite sample.  This is the
+    statistical step.
+\end{itemize}
+
+Most existing courses either focus entirely on step~2 (the econometrics
+tradition) or step~1 (the computer-science / Pearl tradition).  This course
+develops both, with the connection made explicit throughout.
+
+\medskip
+A central theme is the distinction between the \emph{interventional}
+conditional density $f(y \mid x, \mathrm{do}(T{=}t); \theta)$ and the
+\emph{observational} conditional density $f(y \mid x, T{=}t)$. In the
+Gaussian linear model:
+
+\begin{keybox}
+\[
+  \underbrace{f\!\bigl(y \mid \mathrm{do}(T{=}t)\bigr)}_{\displaystyle
+    = N(\beta t,\;\sigma^2)}
+  \;\neq\;
+  \underbrace{f\!\bigl(y \mid T{=}t\bigr)}_{\displaystyle
+    = N\!\Bigl(\bigl(\beta + \tfrac{\rho\sigma}{\tau}\bigr)t,\;
+              \sigma^2(1-\rho^2)\Bigr)}.
+\]
+\end{keybox}
+
+The do-operator makes this distinction \emph{syntactically enforced},
+whereas the potential-outcomes framework leaves it implicit.
+
+The 15-week format at Iowa State provides breathing room that a compressed
+12-week version cannot: the dense graphical theory (DAGs and $d$-separation)
+is separated from the do-calculus rules into two distinct weeks, potential
+outcomes receive their own full week after the identification machinery is
+in place, and the estimation theory in Module~3 benefits from a
+dedicated week on regularisation and calibration that connects the classical
+material directly to the instructor's research programme.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Module 1: Foundations (Weeks 1--4)}
+% ════════════════════════════════════════════════════════════════════════════
+
+The first module establishes the conceptual and mathematical infrastructure
+on which the rest of the course rests. Each of its four weeks is genuinely
+self-contained: the first builds physical intuition for the do-operator, the
+second develops the graphical language for reading independence claims, the
+third translates that language into identification formulas via the three
+rules of do-calculus, and the fourth places the potential-outcomes framework
+alongside do-calculus so students see where the two traditions agree and
+where they diverge.
+
+% ── Week 1 ───────────────────────────────────────────────────────────────────
+\subsection{Week 1: The Interventional/Observational Distinction}
+
+This is the conceptual core of the entire course and deserves a full week.
+The central question is: \emph{what does it mean to ask ``what would happen
+if we set $T = t$?''} The answer is developed through three lenses.
+
+\begin{itemize}
+  \item \textbf{Structural equation model.}
+    $Y = f(T, U, \varepsilon)$ and the effect of replacing the equation for
+    $T$ with the constant $T = t$ (do-operator as equation surgery).
+
+  \item \textbf{Graphical model.}
+    The do-operator as graph surgery --- removing all arrows into $T$ in the
+    DAG.
+
+  \item \textbf{Potential outcomes model.}
+    $Y(t)$ as a random variable on an extended probability space.
+\end{itemize}
+
+The key equation motivating the entire course is derived explicitly:
+\begin{keybox}
+\[
+  f\!\bigl(y \mid x,\, T{=}t\bigr)
+  \;=\;
+  \int f\!\bigl(y \mid x,\,\mathrm{do}(T{=}t),\, U{=}u\bigr)\;
+       p(u \mid x, T{=}t)\; du
+  \;\neq\;
+  f\!\bigl(y \mid x,\,\mathrm{do}(T{=}t)\bigr).
+\]
+The gap is exactly the endogeneity bias that causal inference must overcome.
+\end{keybox}
+
+The Gaussian linear IV model is introduced as a running example, with
+explicit calculations showing the bias term $\rho\sigma/\tau$ separating
+the two densities.
+
+\smallskip
+\noindent\textit{Reading:} Pearl, Glymour \& Jewell (2016), Ch.~1--4;
+Hern\'an \& Robins (2020), Ch.~1--3.
+
+% ── Week 2 ───────────────────────────────────────────────────────────────────
+\subsection{Week 2: Directed Acyclic Graphs and \textit{d}-Separation}
+
+In the 15-week format, the graphical theory is given a full week before
+the do-calculus rules are introduced. This separation allows students to
+become fluent in reading conditional independence from DAGs before they
+are asked to manipulate interventional expressions.
+
+\begin{itemize}
+  \item \textbf{Directed acyclic graphs.}
+    Nodes, directed edges, parents, ancestors, descendants. The acyclicity
+    condition and why it is necessary for the Markov factorisation.
+
+  \item \textbf{Global Markov condition.}
+    Every variable is independent of its non-descendants given its parents;
+    the joint density factorises as
+    $p(v_1,\ldots,v_k) = \prod_i p(v_i \mid \mathrm{Pa}(v_i))$.
+
+  \item \textbf{Three path structures.}
+    Chain $A \to M \to B$ (blocked by conditioning on $M$);
+    fork $A \leftarrow M \rightarrow B$ (blocked by conditioning on $M$);
+    collider $A \to C \leftarrow B$ (blocked by default; \emph{opened} by
+    conditioning on $C$ or any descendant).
+
+  \item \textbf{\textit{d}-Separation.}
+    Formal definition and the Verma--Pearl (1988) theorem: $d$-separation
+    implies conditional independence in every distribution Markov with
+    respect to the graph.
+
+  \item \textbf{The collider trap.}
+    Berkson's bias as an instance of conditioning on a collider. Application
+    to the IV DAG: why conditioning on $T$ (the collider in
+    $Z \to T \leftarrow U$) opens a back-door path from $Z$ to $Y$.
+
+  \item \textbf{Extended example.}
+    Full $d$-separation analysis of the IV DAG
+    $\{Z \to T, T \to Y, U \to T, U \to Y\}$ for all interesting
+    conditioning sets.
+\end{itemize}
+
+\noindent\textit{Reading:} Pearl, Glymour \& Jewell (2016), Ch.~2--3;
+Pearl (2000), Ch.~1--2.
+
+% ── Week 3 ───────────────────────────────────────────────────────────────────
+\subsection{Week 3: The Do-Calculus and Identification Criteria}
+
+With $d$-separation in hand, students are now ready for the algebraic
+machinery that translates graph surgery into identification formulas.
+
+\begin{itemize}
+  \item \textbf{Mutilated graphs.}
+    $\mathcal{G}_{\overline{X}}$ (delete arrows into $X$) and
+    $\mathcal{G}_{\underline{X}}$ (delete arrows out of $X$).
+
+  \item \textbf{Three rules of do-calculus (Pearl, 1995).}
+    \begin{itemize}
+      \item Rule~1 (insertion/deletion of observations):
+        $P(y \mid \mathrm{do}(x), z, w) = P(y \mid \mathrm{do}(x), w)$
+        if $(Y \perp\!\!\!\perp Z \mid X,W)_{\mathcal{G}_{\overline{X}}}$.
+      \item Rule~2 (action/observation exchange):
+        $P(y \mid \mathrm{do}(x),\mathrm{do}(z),w)
+         = P(y \mid \mathrm{do}(x),z,w)$
+        if $(Y \perp\!\!\!\perp Z \mid X,W)_{\mathcal{G}_{\overline{X}\underline{Z}}}$.
+      \item Rule~3 (insertion/deletion of actions):
+        $P(y \mid \mathrm{do}(x),\mathrm{do}(z),w)
+         = P(y \mid \mathrm{do}(x),w)$
+        if $(Y \perp\!\!\!\perp Z \mid X,W)_{\mathcal{G}_{\overline{X}\,\overline{Z(W)}}}$.
+    \end{itemize}
+
+  \item \textbf{Back-door criterion.}
+    Definition, derivation via Rules~2--3, and the adjustment formula:
+    \[
+      f\!\bigl(y \mid \mathrm{do}(T{=}t)\bigr)
+      = \int f(y \mid t,x)\, p(x)\, dx.
+    \]
+    Why condition~(1) (no descendant of $T$ in the adjustment set) is
+    essential.
+
+  \item \textbf{Front-door criterion.}
+    Identification through a mediator $M$ when the confounder is
+    unobserved:
+    \[
+      f\!\bigl(y \mid \mathrm{do}(T{=}t)\bigr)
+      = \int P(m \mid t) \int P(y \mid t', m)\, P(t')\, dt'\; dm.
+    \]
+
+  \item \textbf{Completeness (Shpitser \& Pearl, 2006).}
+    The do-calculus is complete: if $P(y \mid \mathrm{do}(t))$ is not
+    identifiable by the three rules, it is genuinely non-identified.
+\end{itemize}
+
+\noindent\textit{Reading:} Pearl (2000), Ch.~3--4.
+
+% ── Week 4 ───────────────────────────────────────────────────────────────────
+\subsection{Week 4: Potential Outcomes and the Connection to Do-Calculus}
+
+With both the do-calculus and its identification criteria fully established,
+Week~4 introduces potential outcomes as a complementary language --- powerful
+for defining estimands but, as students can now appreciate, silent on the
+identification problem the preceding two weeks have solved.
+
+\begin{itemize}
+  \item \textbf{Rubin's potential outcomes.}
+    $Y(t)$, SUTVA, and the consistency assumption $Y(t) = Y$ when $T = t$.
+    Connection to $f(y \mid \mathrm{do}(T{=}t))$ via SUTVA.
+
+  \item \textbf{Ignorability.}
+    $(Y(0), Y(1)) \perp\!\!\!\perp T \mid X$ and its relationship to the
+    back-door criterion: ignorability is exactly the graphical condition
+    that $X$ blocks all back-door paths.
+
+  \item \textbf{Single World Intervention Graphs (SWIGs).}
+    Richardson \& Robins (2014): graphical representation of potential
+    outcomes that bridges the two frameworks and makes
+    cross-world independence assumptions visible.
+
+  \item \textbf{Where the frameworks agree and diverge.}
+    Both define causal estimands clearly. The do-calculus enforces the
+    interventional/observational distinction syntactically; potential
+    outcomes leave it implicit. For likelihood-based inference, the
+    do-calculus is indispensable.
+
+  \item \textbf{Module~1 synthesis.}
+    The running Gaussian linear IV example is revisited: students can
+    now give a complete account of the endogeneity problem in all three
+    languages (SEM, DAG, potential outcomes) and understand why the
+    do-operator language is the most precise for the likelihood
+    construction studied in Week~11.
+\end{itemize}
+
+\noindent\textit{Reading:} Richardson \& Robins (2014);
+Imbens \& Rubin (2015), Ch.~1--2.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Module 2: Identification Theory (Weeks 5--7)}
+% ════════════════════════════════════════════════════════════════════════════
+
+% ── Week 5 ───────────────────────────────────────────────────────────────────
+\subsection{Week 5: Randomization and Its Surrogates}
+
+\begin{itemize}
+  \item \textbf{Randomized experiments.}
+    Under randomization $\mathrm{do}(T{=}t)$ is directly observed, so
+    $f(y \mid \mathrm{do}(T{=}t)) = f(y \mid T{=}t)$.
+    Why this equality holds graphically (no arrows into $T$ in the
+    experimental design).
+
+  \item \textbf{Propensity score.}
+    $e(X) = P(T{=}1 \mid X)$.  Balancing property:
+    $Y(t) \perp\!\!\!\perp T \mid e(X)$.
+    Justifies back-door adjustment on $e(X)$ alone.
+    Estimation via logistic regression and machine learning.
+
+  \item \textbf{Overlap and positivity.}
+    The strict overlap condition $0 < e(X) < 1$; practical consequences
+    of near-violations and trimming strategies.
+
+  \item \textbf{Limitation.}
+    Back-door adjustment requires no unmeasured confounders --- a strong
+    and untestable assumption. This motivates the IV strategy of Week~6.
+\end{itemize}
+
+\noindent\textit{Reading:} Hern\'an \& Robins (2020), Ch.~7--9.
+
+% ── Week 6 ───────────────────────────────────────────────────────────────────
+\subsection{Week 6: Instrumental Variables --- Identification}
+
+The IV assumptions are stated in do-calculus language:
+\begin{itemize}
+  \item \textbf{Relevance.}  $Z \not\!\perp\!\!\!\perp T$.
+  \item \textbf{Exclusion restriction.}
+    $f(y \mid x, \mathrm{do}(T{=}t), z) = f(y \mid x, \mathrm{do}(T{=}t))$.
+    This is Rule~1 of the do-calculus, not an observational statement.
+  \item \textbf{Exogeneity.}  $Z \perp\!\!\!\perp U \mid X$.
+\end{itemize}
+
+\medskip
+\noindent\textbf{Case study: the pseudo-density problem.}
+The paper proposes the marginal density
+\[
+  f_m(y \mid x, z;\theta,\phi)
+  = \int f\!\bigl(y \mid x, \mathrm{do}(T{=}t);\theta\bigr)\,
+         g(t \mid x, z;\phi)\, dt,
+\]
+treating it as the true conditional density of $Y \mid X, Z$.
+The true marginal integrates the \emph{observational} density, and in
+the Gaussian linear model the discrepancy is the cross-term
+$2\beta\rho\sigma\tau$ in the variance.  As a pseudo-MLE, the correct
+asymptotic variance is the sandwich form
+\[
+  \sqrt{n}\,(\hat\theta - \theta_0) \xrightarrow{d}
+  N\!\bigl(0,\; J^{-1}\Sigma(J^{-1})^\top\bigr),
+  \qquad
+  J = E\!\left[\tfrac{\partial^2 \log f_m}{\partial\theta\,\partial\theta^\top}\right],
+  \quad
+  \Sigma = \mathrm{Var}\!\left[\tfrac{\partial \log f_m}{\partial\theta}\right].
+\]
+
+\noindent\textbf{Three fixes compared:}
+\begin{itemize}
+  \item \textbf{Control function.}  Condition on the first-stage residual
+    $\delta = t - E[T \mid x,z;\hat\phi]$.  Corrected density:
+    $f(y \mid x, t, \delta;\theta,\rho)
+     = N\!\left(\beta t + \tfrac{\rho\sigma}{\tau}\delta,\;
+               \sigma^2(1-\rho^2)\right)$.
+
+  \item \textbf{Exponential tilting.}
+    $f_{\mathrm{obs}}(y \mid x,t;\theta,\lambda)
+     \propto f(y \mid x,\mathrm{do}(T{=}t);\theta)
+             \cdot\exp\!\bigl\{\lambda\, s(y,t,x)\bigr\}$.
+    $\lambda = 0$ recovers exogeneity; $\lambda = \rho/(\sigma\tau)$
+    recovers the control function.
+
+  \item \textbf{Explicit $U$ model.}  Specify $h(u \mid x;\lambda)$,
+    integrate out both $T$ and $U$.  Genuine likelihood; variance
+    inflation via the Schur complement
+    $\mathcal{I}_{\theta\theta}
+     - \mathcal{I}_{\theta\lambda}\mathcal{I}_{\lambda\lambda}^{-1}
+       \mathcal{I}_{\lambda\theta}$.
+\end{itemize}
+
+\noindent\textit{Reading:} Pearl (2000), Ch.~5;
+Angrist, Imbens \& Rubin (1996).
+
+% ── Week 7 ───────────────────────────────────────────────────────────────────
+\subsection{Week 7: Beyond IV --- Other Identification Strategies}
+
+\begin{itemize}
+  \item \textbf{Regression discontinuity.}
+    Local randomization interpretation via do-calculus near the cutoff;
+    the sharp and fuzzy RD designs; bandwidth selection.
+
+  \item \textbf{Difference-in-differences.}
+    The parallel trends assumption
+    $E[Y_i(0) \mid D_i{=}1, t{=}1] - E[Y_i(0) \mid D_i{=}1, t{=}0]
+     = E[Y_i(0) \mid D_i{=}0, t{=}1] - E[Y_i(0) \mid D_i{=}0, t{=}0]$
+    stated in graphical terms; staggered adoption and recent developments.
+
+  \item \textbf{Mediation analysis.}
+    Natural direct and indirect effects via
+    $f(y \mid \mathrm{do}(T{=}t, M{=}m))$;
+    the cross-world independence assumption and its graphical encoding.
+
+  \item \textbf{Sensitivity analysis.}
+    Rosenbaum bounds and $E$-values for violations of the identifying
+    assumptions; how to quantify the minimum confounding strength that
+    would overturn a conclusion.
+\end{itemize}
+
+\noindent\textit{Reading:} Imbens \& Rubin (2015), Ch.~23--24.
+
+% ────────────────────────────────────────────────────────────────────────────
+\subsection*{Week 8: Midterm Examination}
+\addcontentsline{toc}{subsection}{Week 8: Midterm Examination}
+% ────────────────────────────────────────────────────────────────────────────
+
+\begin{exambox}
+\noindent\textbf{\color{darkblue}Midterm Examination --- Week 8.}
+The midterm covers Modules~1--2 (Weeks~1--7).  It is a closed-book,
+in-class examination of 80 minutes.  The examination consists of three
+parts:
+
+\begin{enumerate}
+  \item \textbf{Graphical reasoning (35\%).}
+    Given a DAG, determine $d$-separation relationships, identify valid
+    adjustment sets, and classify a proposed estimator as back-door,
+    front-door, or neither.
+
+  \item \textbf{Do-calculus derivations (35\%).}
+    Apply the three rules to derive identification formulas from first
+    principles; prove or disprove specific identification claims.
+
+  \item \textbf{Short-answer conceptual questions (30\%).}
+    Explain the pseudo-density problem, the exclusion restriction as a
+    do-calculus statement, or the distinction between the sandwich
+    variance and the Fisher information inverse.
+\end{enumerate}
+
+\noindent\textbf{No new content is introduced this week.}
+A review session in the lecture period before the examination summarises
+the key results of Modules~1--2.
+\end{exambox}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Module 3: Estimation Theory (Weeks 9--13)}
+% ════════════════════════════════════════════════════════════════════════════
+
+This module is where expertise in survey sampling, calibration, and
+semiparametric theory becomes directly relevant.  The GEC framework,
+Bregman projections, and SREG estimators developed in the instructor's
+research programme provide a thread of novel methodology alongside the
+classical material.  The 15-week format adds a fifth week in this module
+(Week~13) dedicated to regularised estimation and calibration --- material
+that would otherwise have to be compressed or omitted.
+
+% ── Week 9 ───────────────────────────────────────────────────────────────────
+\subsection{Week 9: From Identification to Estimation --- The EIF}
+
+\begin{itemize}
+  \item Once identification is established, the causal effect is a
+    functional of the observed data distribution: $\psi = \Psi(P)$.
+
+  \item \textbf{Efficient influence function (EIF).}
+    For any regular asymptotically linear estimator $\hat\psi$:
+    \[
+      \sqrt{n}(\hat\psi - \psi_0) \xrightarrow{d} N(0, V), \qquad
+      V \geq E_0\bigl[\varphi(O)^2\bigr],
+    \]
+    where $\varphi$ is the EIF and $E_0[\varphi^2]$ is the
+    semiparametric efficiency bound (Bickel et al., 1998).
+
+  \item Derivation of the EIF for the ATE under back-door identification:
+    $\varphi(O) = \mu(1,X) - \mu(0,X) + \frac{T(Y-\mu(1,X))}{e(X)}
+                  - \frac{(1-T)(Y-\mu(0,X))}{1-e(X)} - \psi$.
+
+  \item \textbf{Connection to GEC.}
+    The EIF is the gradient of the functional in the Hilbert space of
+    score functions, analogous to the score in parametric models.
+    The generalised entropy calibration estimator achieves the
+    semiparametric bound by solving a constrained entropy problem
+    whose first-order conditions reproduce the EIF score equation.
+
+  \item Influence function arithmetic: linearity, product rule, and
+    the delta method for smooth functionals.
+\end{itemize}
+
+\noindent\textit{Reading:} Tsiatis (2006); Bickel et al.\ (1998).
+
+% ── Week 10 ──────────────────────────────────────────────────────────────────
+\subsection{Week 10: IPW, Outcome Regression, and Doubly Robust Estimation}
+
+\begin{itemize}
+  \item \textbf{IPW estimator.}
+    \[
+      \hat\tau_{\mathrm{IPW}} = \frac{1}{n}\sum_{i=1}^n \left[
+        \frac{T_i Y_i}{\hat e(X_i)} - \frac{(1-T_i)Y_i}{1-\hat e(X_i)}
+      \right].
+    \]
+    Consistency and $\sqrt{n}$-rate under correct propensity model;
+    efficiency loss relative to EIF.
+
+  \item \textbf{Outcome regression.}
+    \[
+      \hat\tau_{\mathrm{OR}} = \frac{1}{n}\sum_{i=1}^n
+        \bigl[\hat\mu(1, X_i) - \hat\mu(0, X_i)\bigr].
+    \]
+
+  \item \textbf{AIPW / doubly robust estimator.}
+    \[
+      \hat\tau_{\mathrm{DR}} = \hat\tau_{\mathrm{OR}}
+        + \frac{1}{n}\sum_{i=1}^n
+          \frac{T_i - \hat e(X_i)}{\hat e(X_i)(1-\hat e(X_i))}
+          \bigl(Y_i - \hat\mu(T_i, X_i)\bigr).
+    \]
+    Doubly robust consistency, efficiency, and the relation to the EIF.
+
+  \item \textbf{Connection to calibration weighting.}
+    The GEC framework as a generalisation of IPW incorporating
+    covariate balance constraints: the calibration weights solve
+    $\min_w D_\phi(w \| q)$ subject to $\sum_i w_i h(X_i) = \bar h$,
+    reproducing IPW at the entropic divergence.
+\end{itemize}
+
+\noindent\textit{Reading:} Bang \& Robins (2005);
+Hern\'an \& Robins (2020), Ch.~13.
+
+% ── Week 11 ──────────────────────────────────────────────────────────────────
+\subsection{Week 11: Doubly Robust Estimation in the IV Setting}
+
+\begin{itemize}
+  \item \textbf{DR IV estimating equation.}
+    \[
+      U_{\mathrm{DR}}(\theta) = \frac{1}{n}\sum_{i=1}^n
+        \Psi(Y_i, T_i, X_i, Z_i;\theta, \hat\phi, \hat\mu) = 0,
+    \]
+    where $\Psi$ uses the ratio $T/g(X,Z;\hat\phi)$ as the ``IPW
+    weight'' for the instrument.
+
+  \item \textbf{Two distinct robustness mechanisms.}
+    \begin{itemize}
+      \item \emph{Case~(i), correct $f$:} Fisher score identity forces
+        $\mu_0 \equiv 0$; exclusion restriction ensures uniform validity
+        over $Z$.
+      \item \emph{Case~(ii), correct $g$:} Consistency follows from the
+        definition of $\mu_0$ alone, for any $f$.
+    \end{itemize}
+
+  \item \textbf{Neyman orthogonality.}
+    \[
+      E_0\!\left[\frac{\partial \log f_m}{\partial\theta} \cdot
+                \frac{\partial \log g}{\partial\phi^\top}\right] = 0
+      \quad\text{at }(\theta_0,\phi_0).
+    \]
+    First-stage estimation error does not inflate the asymptotic
+    variance of $\hat\theta$ at the $\sqrt{n}$ rate.
+\end{itemize}
+
+\noindent\textit{Reading:} Tchetgen Tchetgen (2017);
+Chernozhukov et al.\ (2018).
+
+% ── Week 12 ──────────────────────────────────────────────────────────────────
+\subsection{Week 12: Double Machine Learning and Cross-Fitting}
+
+\begin{itemize}
+  \item \textbf{Double machine learning (DML).}
+    Use ML to estimate nuisance functions $e_0$ and $\mu_0$ at a
+    potentially slow rate, while retaining $\sqrt{n}$-consistency for
+    $\theta_0$ via Neyman orthogonality.
+
+  \item \textbf{Product bias condition.}
+    \[
+      \|\hat e - e_0\| \cdot \|\hat\mu - \mu_0\| = o_p(n^{-1/2})
+    \]
+    is sufficient for $\sqrt{n}$-estimation even when each factor
+    converges at $o_p(n^{-1/4})$.
+
+  \item \textbf{Cross-fitting in detail.}
+    $K$-fold sample splitting; removing overfitting bias of order
+    $(\hat e - e_0)(\hat\mu - \mu_0)$; the role of cross-fitting in
+    ensuring oracle rates for the causal parameter.
+
+  \item \textbf{SREG estimator} (Kwon, Yang \& Kim, 2026).
+    Sample-split regression for high-dimensional survey data as a
+    DML-type estimator: splitting resolves the ``double-use'' bias
+    from using the same sample for model fitting and estimation.
+\end{itemize}
+
+\noindent\textit{Reading:} Chernozhukov et al.\ (2018);
+Kwon, Yang \& Kim (2026).
+
+% ── Week 13 ──────────────────────────────────────────────────────────────────
+\subsection{Week 13: Regularisation and Calibration in High Dimensions}
+
+\emph{This week is new relative to the 12-week syllabus} and is made
+possible by the additional time available at Iowa State.  It bridges
+the DML theory of Week~12 to the calibration and Bregman projection
+framework developed in the instructor's research programme.
+
+\begin{itemize}
+  \item \textbf{High-dimensional covariate adjustment.}
+    When $\dim(X) \gg n$, standard back-door adjustment via OLS or
+    logistic regression is infeasible.  Regularised estimators
+    (LASSO, ridge, elastic net) introduce bias that must be
+    de-biased before causal inference.
+
+  \item \textbf{Regularised calibration.}
+    The GEC framework extended to high dimensions: the calibration
+    weights solve
+    \[
+      \min_w D_\phi(w \| q)
+      \;\text{ s.t. }\;
+      \|A^\top(w - q)\|_\infty \leq \lambda,
+    \]
+    where $A$ is the covariate matrix and $\lambda$ controls the
+    balance tolerance.  The H\"older-conjugate penalty structure
+    and its connection to the design-optimal estimator.
+
+  \item \textbf{Distributionally robust calibration (DRC).}
+    Extend the GEC budget constraint to a Bregman divergence ball:
+    $D_\phi(Q \| P) \leq \rho$.  The budget parameter $\rho$ controls
+    the robustness-efficiency trade-off; the minimum feasible $\rho$
+    ($\rho_{\min}$) and the three-loop computational algorithm.
+
+  \item \textbf{Connection to DML.}
+    The calibration weights correspond to an IPW estimator whose
+    propensity function satisfies a regularised balance condition.
+    Neyman orthogonality carries over; cross-fitting ensures the
+    $\sqrt{n}$ rate for the causal parameter even under high-dimensional
+    nuisance estimation.
+\end{itemize}
+
+\noindent\textit{Reading:} Kwon \& Kim (2024, GEC Biometrics);
+Kim \& Kwon (2025, Bregman calibration preprint).
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Module 4: Special Topics (Weeks 14--15*)}
+% ════════════════════════════════════════════════════════════════════════════
+
+\emph{Week~15 is reserved for student final presentations;
+see Section~\ref{sec:assessment}.  Instructional content in Module~4
+runs in Weeks~14 only, with Week~15 presentations drawing on all four
+modules.}
+
+% ── Week 14 ──────────────────────────────────────────────────────────────────
+\subsection{Week 14: Likelihood-Based Causal Inference and Frontiers}
+
+This week synthesises the entire course by returning to the question:
+how do we embed causal reasoning in a likelihood framework?  The
+case-study paper is revisited in full, now understood through all the
+machinery developed over the preceding 13 weeks.
+
+\begin{itemize}
+  \item \textbf{The pseudo-density problem, revisited.}
+    \[
+      f_m(y \mid z;\theta,\phi)
+      = \int f\!\bigl(y \mid \mathrm{do}(T{=}t);\theta\bigr)\,
+             g(t \mid z;\phi)\,dt
+      \;\neq\; f_{\mathrm{true}}(y \mid z).
+    \]
+    Full accounting: the information equality $J = \Sigma$ fails; the
+    sandwich variance is correct; the doubly robust IV estimator of
+    Week~11 restores efficiency.
+
+  \item \textbf{When is the EM algorithm legitimate?}
+    The EM weights $w_i^{(k)}(t) \propto g(t \mid x_i, z_i;\hat\phi)
+    \cdot f(y_i \mid x_i, \mathrm{do}(T{=}t);\theta^{(k)})$ are
+    pseudo-posteriors.  Under the explicit-$U$ model they become
+    genuine Bayesian posteriors.
+
+  \item \textbf{Optimal transport and causal inference.}
+    Connections to distributionally robust estimation and the Sinkhorn
+    divergence calibration framework; the collapse theorem for standard
+    entropic OT in calibration contexts and the pivot to Sinkhorn
+    divergence calibration.
+
+  \item \textbf{Causal inference for survey data.}
+    Combining design-based and model-based approaches; the role of
+    survey weights in the do-calculus identification step.
+
+  \item \textbf{Non-parametric identification.}
+    The ID algorithm (Shpitser \& Pearl, 2006): a complete algorithm
+    for deciding whether $P(y \mid \mathrm{do}(t))$ is identifiable.
+
+  \item \textbf{Open problem.}
+    Likelihood-based causal inference without parametric assumptions
+    on $U$, using exponential tilting to bridge the do/observe gap.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────────────────────
+\subsection*{Week 15: Final Presentations}
+\addcontentsline{toc}{subsection}{Week 15: Final Presentations}
+% ────────────────────────────────────────────────────────────────────────────
+
+\begin{presentbox}
+\noindent\textbf{\color{darkblue}Final Presentations --- Week 15.}
+Each student (or team of two) presents their final project in a 15-minute
+talk (12 minutes + 3 minutes for questions).  Presentations are scheduled
+across the Week~15 lecture periods.
+
+\medskip
+\noindent\textbf{Presentation requirements:}
+\begin{itemize}
+  \item Clearly state the causal question and the identification strategy
+    (do-calculus language required).
+  \item Describe the estimation approach and explain why it achieves the
+    semiparametric efficiency bound (or why it does not).
+  \item Present simulation or empirical results, including honest
+    uncertainty quantification.
+  \item Identify one open problem or limitation of your approach.
+\end{itemize}
+
+\noindent\textbf{Evaluation criteria (equally weighted):}
+identification rigour, estimation soundness, clarity of presentation,
+and quality of the written report (submitted one week before
+presentations).
+\end{presentbox}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Weekly Schedule at a Glance}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begingroup
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.35}
+
+\begin{longtable}{C{0.6cm} L{1.5cm} L{5.5cm} L{5.8cm}}
+  \toprule
+  \rowcolor{darkblue}
+  \color{white}\textbf{Wk} &
+  \color{white}\textbf{Module} &
+  \color{white}\textbf{Topic} &
+  \color{white}\textbf{Key Readings} \\
+  \midrule
+  \endfirsthead
+  \toprule
+  \rowcolor{darkblue}
+  \color{white}\textbf{Wk} &
+  \color{white}\textbf{Module} &
+  \color{white}\textbf{Topic} &
+  \color{white}\textbf{Key Readings} \\
+  \midrule
+  \endhead
+  \bottomrule
+  \endfoot
+
+  % Module 1
+  \rowcolor{mod1}
+  1 & Module 1 & The Interventional/Observational Distinction
+    & \textit{Pearl et al.\ (2016) Ch.~1--4;
+              Hern\'an \& Robins (2020) Ch.~1--3} \\
+  \rowcolor{mod1}
+  2 & Module 1 & DAGs and $d$-Separation
+    & \textit{Pearl et al.\ (2016) Ch.~2--3;
+              Pearl (2000) Ch.~1--2} \\
+  \rowcolor{mod1}
+  3 & Module 1 & The Do-Calculus and Identification Criteria
+    & \textit{Pearl (2000) Ch.~3--4} \\
+  \rowcolor{mod1}
+  4 & Module 1 & Potential Outcomes and Connection to Do-Calculus
+    & \textit{Richardson \& Robins (2014);
+              Imbens \& Rubin (2015) Ch.~1--2} \\
+  \midrule
+
+  % Module 2
+  \rowcolor{mod2}
+  5 & Module 2 & Randomization and Its Surrogates
+    & \textit{Hern\'an \& Robins (2020) Ch.~7--9} \\
+  \rowcolor{mod2}
+  6 & Module 2 & Instrumental Variables --- Identification
+    & \textit{Pearl (2000) Ch.~5; Angrist et al.\ (1996)} \\
+  \rowcolor{mod2}
+  7 & Module 2 & Beyond IV: RD, DiD, Mediation, Sensitivity
+    & \textit{Imbens \& Rubin (2015) Ch.~23--24} \\
+  \midrule
+
+  % Midterm
+  \rowcolor{examrow}
+  8 & \textit{Exam} & \textbf{Midterm Examination}
+    & \textit{Covers Modules 1--2 (Weeks 1--7)} \\
+  \midrule
+
+  % Module 3
+  \rowcolor{mod3}
+  9 & Module 3 & From Identification to Estimation --- The EIF
+    & \textit{Tsiatis (2006); Bickel et al.\ (1998)} \\
+  \rowcolor{mod3}
+  10 & Module 3 & IPW, Outcome Regression, Doubly Robust Estimation
+    & \textit{Bang \& Robins (2005);
+              Hern\'an \& Robins (2020) Ch.~13} \\
+  \rowcolor{mod3}
+  11 & Module 3 & Doubly Robust Estimation in the IV Setting
+    & \textit{Tchetgen Tchetgen (2017);
+              Chernozhukov et al.\ (2018)} \\
+  \rowcolor{mod3}
+  12 & Module 3 & Double Machine Learning and Cross-Fitting
+    & \textit{Chernozhukov et al.\ (2018);
+              Kwon, Yang \& Kim (2026)} \\
+  \rowcolor{mod3}
+  13 & Module 3 & Regularisation and Calibration in High Dimensions
+    & \textit{Kwon \& Kim (2024); Kim \& Kwon (2025)} \\
+  \midrule
+
+  % Module 4
+  \rowcolor{mod4}
+  14 & Module 4 & Likelihood-Based Causal Inference and Frontiers
+    & \textit{White (1982); Pearl (2000) Ch.~7;
+              Shpitser \& Pearl (2006)} \\
+  \midrule
+
+  % Presentations
+  \rowcolor{presentrow}
+  15 & \textit{Pres.} & \textbf{Final Student Presentations}
+    & \textit{Written reports due one week prior} \\
+  \bottomrule
+\end{longtable}
+\endgroup
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Assessment}
+\label{sec:assessment}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begingroup
+\small
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.5}
+
+\begin{tabularx}{\linewidth}{L{3.4cm} C{1.2cm} X}
+  \toprule
+  \rowcolor{darkblue}
+  \color{white}\textbf{Component} &
+  \color{white}\textbf{Weight} &
+  \color{white}\textbf{Description} \\
+  \midrule
+  \rowcolor{altrow}
+  Problem Sets (4 total) & 25\% &
+    One per module (due end of Weeks~4, 7, 13, 14);
+    each requires both identification (do-calculus) and
+    estimation components \\
+  Midterm Exam (Week 8) & 25\% &
+    Closed-book, in-class, 80 minutes;
+    covers Modules~1--2 (graphical reasoning,
+    do-calculus derivations, short conceptual questions) \\
+  \rowcolor{altrow}
+  Paper Review & 15\% &
+    Written critique of a published paper assessing
+    whether the do-operator / observational distinction
+    is handled correctly;
+    due Week~11 \\
+  Final Project \& Presentation & 35\% &
+    Written report (25\%) due one week before presentations;
+    in-class presentation in Week~15 (10\%);
+    must develop a new causal inference tool grounded in
+    do-calculus identification and semiparametric estimation \\
+  \bottomrule
+\end{tabularx}
+\endgroup
+
+\medskip
+\noindent\textbf{Grading scale.}  A: 90--100, B: 80--89, C: 70--79,
+D: 60--69, F: below~60. Plus/minus grades are assigned at the discretion
+of the instructor.
+
+\medskip
+\noindent\textbf{Problem set schedule.}
+\begin{itemize}
+  \item Problem Set 1 (Module 1): due end of Week~4.
+    Topics: $d$-separation, do-calculus derivations, back-door and
+    front-door identification.
+  \item Problem Set 2 (Module 2): due end of Week~7.
+    Topics: IV identification, pseudo-density problem, sensitivity
+    analysis.
+  \item Problem Set 3 (Module 3): due end of Week~13.
+    Topics: EIF derivation, doubly robust estimation, DML product
+    bias condition, calibration weighting.
+  \item Problem Set 4 (Module 4): due end of Week~14.
+    Topics: sandwich variance, EM validity, exponential tilting,
+    an applied causal analysis of a real dataset.
+\end{itemize}
+
+\noindent\textbf{Paper review.}  The paper review assignment is modelled
+on the analysis developed in the course research notes: students select a
+published paper and assess whether the paper correctly distinguishes
+$f(y \mid \mathrm{do}(T{=}t))$ from $f(y \mid T{=}t)$, whether the
+asymptotic theory is correctly stated for the model used, and what fixes
+(if any) the paper requires.  The marginal likelihood IV paper is
+available as a model template.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Potential Outcomes vs.\ Do-Operator}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begingroup
+\small
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.4}
+
+\begin{tabularx}{\linewidth}{L{4.5cm} X X}
+  \toprule
+  \rowcolor{darkblue}
+  \color{white}\textbf{Feature} &
+  \color{white}\textbf{Potential Outcomes $Y(t)$} &
+  \color{white}\textbf{Do-Operator $\mathrm{do}(T{=}t)$} \\
+  \midrule
+  \rowcolor{altrow}
+  Defines causal estimands
+    & Clear & Clear \\
+  Distinguishes interventional vs.\ observational density
+    & Implicit only & Syntactically enforced \\
+  \rowcolor{altrow}
+  Connects to likelihood construction
+    & Silent on this & Via back-door / front-door rules \\
+  Graph-based reasoning
+    & Not built in (requires SWIGs) & Native \\
+  \rowcolor{altrow}
+  Standard in econometrics / biostatistics
+    & Dominant tradition & Growing rapidly \\
+  Handles cross-world independence
+    & Implicit (SUTVA) & Explicit via graph structure \\
+  \bottomrule
+\end{tabularx}
+\endgroup
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Recommended Core Texts}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begingroup
+\small
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.4}
+
+\begin{tabularx}{\linewidth}{L{5.2cm} X}
+  \toprule
+  \rowcolor{darkblue}
+  \color{white}\textbf{Text} &
+  \color{white}\textbf{Role in Course} \\
+  \midrule
+  \rowcolor{altrow}
+  \textit{Pearl, Glymour \& Jewell (2016)}
+    & Weeks 1--3: do-calculus foundations; primary entry point \\
+  \textit{Hern\'an \& Robins (2020)}
+    & Weeks 4--10: bridge from identification to statistical
+      estimation; freely available online \\
+  \rowcolor{altrow}
+  \textit{Pearl (2000)}
+    & Weeks 2--3, 6: full identification theory and completeness \\
+  \textit{Imbens \& Rubin (2015)}
+    & Weeks 4--7: potential outcomes perspective on IV and RCTs \\
+  \rowcolor{altrow}
+  \textit{Tsiatis (2006)}
+    & Weeks 9--11: efficient influence functions and semiparametric
+      efficiency bounds \\
+  \textit{Chernozhukov et al.\ (2018)}
+    & Weeks 11--13: double machine learning and Neyman orthogonality \\
+  \bottomrule
+\end{tabularx}
+\endgroup
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{What Makes This Course Distinctive}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{itemize}
+  \item \textbf{Identification first.}
+    The do-operator is the organising principle from week one, so students
+    develop genuine understanding of why identification and estimation are
+    different problems.  The 15-week format reinforces this by giving
+    DAGs, $d$-separation, and the do-calculus rules each their own week
+    rather than compressing them into one.
+
+  \item \textbf{Likelihood-based inference.}
+    The connection to the likelihood framework --- where most statisticians
+    work --- is made explicit through the analysis of the pseudo-density
+    problem.  The key message is that $f_m \neq f_{\mathrm{true}}$ whenever
+    $T$ is endogenous, and that this distinction has concrete consequences
+    for asymptotic variance estimation.  No other graduate course in
+    statistics treats this connection at this level of rigour.
+
+  \item \textbf{Research thread.}
+    The instructor's work on GEC, Bregman projections, distributionally
+    robust calibration, SREG estimation, and optimal transport provides a
+    thread of novel methodology running through Weeks~9--14 that no
+    existing textbook covers.  Week~13 (regularisation and calibration
+    in high dimensions) is entirely original to this course and develops
+    material from the instructor's active research programme.
+
+  \item \textbf{Midterm as diagnostic.}
+    Placing the midterm at Week~8 --- after identification theory is
+    complete but before estimation theory begins --- serves as a genuine
+    diagnostic: students who cannot correctly apply the do-calculus are
+    redirected to the foundational material before the more technically
+    demanding estimation weeks begin.
+\end{itemize}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{References}
+\addcontentsline{toc}{section}{References}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begingroup
+\small
+\begin{description}[leftmargin=1.8em, labelindent=0pt, itemsep=3pt]
+  \item Angrist, J.D., Imbens, G.W.\ \& Rubin, D.B.\ (1996).
+    Identification of causal effects using instrumental variables.
+    \textit{Journal of the American Statistical Association}, 91, 444--455.
+
+  \item Bang, H.\ \& Robins, J.M.\ (2005).
+    Doubly robust estimation in missing data and causal inference models.
+    \textit{Biometrics}, 61, 962--973.
+
+  \item Bickel, P.J., Klaassen, C.A.J., Ritov, Y.\ \& Wellner, J.A.\
+    (1998).
+    \textit{Efficient and Adaptive Estimation for Semiparametric Models}.
+    Springer.
+
+  \item Chernozhukov, V., Chetverikov, D., Demirer, M., et al.\ (2018).
+    Double/debiased machine learning for treatment and structural
+    parameters. \textit{Econometrics Journal}, 21, C1--C68.
+
+  \item Hern\'an, M.A.\ \& Robins, J.M.\ (2020).
+    \textit{Causal Inference: What If}.
+    Chapman \& Hall/CRC.
+    \url{https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/}.
+
+  \item Imbens, G.W.\ \& Rubin, D.B.\ (2015).
+    \textit{Causal Inference for Statistics, Social, and Biomedical
+    Sciences}.
+    Cambridge University Press.
+
+  \item Kim, J.-K.\ \& Kwon, Y.\ (2025).
+    Distributionally robust calibration weighting.
+    \textit{Preprint}.
+
+  \item Kwon, Y.\ \& Kim, J.-K.\ (2024).
+    Generalised entropy calibration.
+    \textit{Biometrics}, 80, ujae007.
+
+  \item Kwon, Y., Yang, S.\ \& Kim, J.-K.\ (2026).
+    Sample-split regression for high-dimensional survey data.
+    \textit{Biometrika} (forthcoming).
+
+  \item Pearl, J.\ (2000).
+    \textit{Causality: Models, Reasoning, and Inference}
+    (2nd ed., 2009). Cambridge University Press.
+
+  \item Pearl, J., Glymour, M.\ \& Jewell, N.P.\ (2016).
+    \textit{Causal Inference in Statistics: A Primer}. Wiley.
+
+  \item Richardson, T.S.\ \& Robins, J.M.\ (2014).
+    ACE bound; single world intervention graphs (SWIGs) and
+    identification of causal effects.
+    \textit{Technical Report}, University of Washington.
+
+  \item Shpitser, I.\ \& Pearl, J.\ (2006).
+    Identification of joint interventional distributions in recursive
+    semi-Markovian causal models.
+    \textit{AAAI}, 21, 1219--1226.
+
+  \item Tchetgen Tchetgen, E.J.\ (2017).
+    A general instrumental variable framework for regression analysis
+    with outcome missing not at random.
+    \textit{Biometrics}, 73, 1123--1131.
+
+  \item Tsiatis, A.A.\ (2006).
+    \textit{Semiparametric Theory and Missing Data}. Springer.
+
+  \item Verma, T.\ \& Pearl, J.\ (1988).
+    Causal networks: semantics and expressiveness.
+    \textit{Proceedings of UAI}, 352--359.
+
+  \item White, H.\ (1982).
+    Maximum likelihood estimation of misspecified models.
+    \textit{Econometrica}, 50, 1--25.
+\end{description}
+\endgroup
+
+\end{document}
