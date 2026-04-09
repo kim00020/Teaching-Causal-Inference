@@ -27,11 +27,11 @@ By the end of this chapter, students should be able to:
         $f(y \mid T{=}t)$, and explain why they differ whenever $T$ is
         endogenous.
   \item Describe the same causal question in all three languages --- SEM,
-        DAG graph surgery, and potential outcomes --- and translate fluently
+        DAG graph surgery, and potential outcomes --- and begin to translate
         between them.
-  \item Derive the two densities explicitly in the Gaussian linear IV model,
-        and identify the endogeneity bias $\rho\sigma/\tau$ as the gap
-        between them.
+  \item Derive the two densities explicitly in the Gaussian linear
+        confounded model, and identify the endogeneity bias
+        $\alpha\gamma\sigma_U^2/\sigma_T^2$ as the gap between them.
   \item State the two-step paradigm (identification then estimation) and
         locate each step in the causal inference pipeline.
   \item Distinguish the IV DAG from the mediation DAG and explain why
@@ -39,6 +39,15 @@ By the end of this chapter, students should be able to:
         failure.
 \end{enumerate}
 \end{tcolorbox}
+
+\medskip\noindent
+This chapter is an orientation, not a complete treatment.  It introduces
+four ideas --- the interventional/observational distinction, the causal
+trinity, the Gaussian confounded model as a running example, and the
+identification-versus-estimation paradigm --- that will be developed
+rigorously in Chapters~2--4 and beyond.  After one reading, students
+should have a map of the territory; the details will become clear as
+the course proceeds.
 
 % ==============================================================
 \section{Motivation: Why Causal Inference Is Hard}
@@ -271,7 +280,7 @@ mutilated graph $\Gcal_T$ has no back-door paths from $T$ to $Y$:
 the causal effect flows only along the direct path $T \to Y$.
 \end{defn}
 
-The observational and mutilated DAGs for the Gaussian IV model are shown
+The observational and mutilated DAGs for the Gaussian confounded model are shown
 side by side in Figure~\ref{w1:fig:surgery} in Section~\ref{w1:sec:iv}, where the structural
 equations are introduced concretely.
 
@@ -322,7 +331,7 @@ do-calculus).  A mistake that is easy to commit silently in
 potential-outcomes notation becomes a type error in do-notation, and is
 therefore caught before it propagates.  The SEM appears as the
 generative backbone wherever closed-form calculations are needed,
-particularly in the Gaussian IV running example.
+particularly in the Gaussian confounded running example.
 
 \medskip
 \noindent\textbf{Part~II --- Identification: bridging DAGs and observed data.}
@@ -535,96 +544,109 @@ The single most important inequality of this course is:
   \qquad \text{whenever } T \text{ is endogenous.}
   \label{w1:eq:core}
 \end{equation}
-The precise relationship between the two is given by the law of total
-probability applied to the unobserved confounder $U$.
+The key assumption that connects the two densities is \emph{conditional
+exchangeability}.
 
+\begin{defn}{Conditional Exchangeability}
+\label{w1:def:exch}
+Given observed covariates $X$ and confounders $U$, the treatment assignment
+is \emph{conditionally exchangeable with the intervention} if
+\[
+  Y(t) \indep T \mid X,\, U,
+\]
+or equivalently,
+\[
+  f(y \mid x,\, T{=}t,\, U{=}u) \;=\; f(y \mid x,\, \doop(T{=}t),\, U{=}u).
+\]
+This says that once we condition on all common causes $(X, U)$ of $T$ and
+$Y$, observing $T{=}t$ and intervening to set $T{=}t$ produce the same
+distribution of $Y$: there is no residual confounding given $(X, U)$.
+\end{defn}
 
-\begin{thm}{Bridge Between the Two Densities}
-\label{w1:thm:bridge}
-Suppose \(U\) is a set of variables such that, conditional on \((X,U)\),
-the treatment is exchangeable with the intervention:
-\[
-Y(t) \indep T \mid X,U.
-\]
-Equivalently,
-\[
-f(y \mid x,T=t,U=u)=f(y \mid x,\doop(T{=}t),U=u).
-\]
-Then
-\[
-f(y \mid x,T=t)
-=
-\int f(y \mid x,\doop(T{=}t),U=u)\,p(u \mid x,T=t)\,du.
-\]
-\end{thm}
+Under conditional exchangeability, the interventional density has a direct
+representation in terms of observable quantities.
+
+\begin{prop}{Back-Door Adjustment Formula}
+\label{w1:prop:backdoor}
+Under conditional exchangeability (Definition~\ref{w1:def:exch}),
+\begin{equation}
+  f(y \mid x,\, \doop(T{=}t))
+  \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.
+  \label{w1:eq:backdoor-formula}
+\end{equation}
+\end{prop}
 
 \begin{proof}
-By the law of total probability,
+\emph{Step~(i): weight under the intervention.}
+Under $\doop(T{=}t)$, the arrow $U \to T$ is severed in the mutilated
+graph $\Gcal_T$, so $U \indep T \mid X$ under the intervention.
+The law of total probability therefore gives:
 \[
-f(y \mid x,T=t)
-=
-\int f(y \mid x,T=t,U=u)\,p(u \mid x,T=t)\,du.
+  f(y \mid x,\, \doop(T{=}t))
+  = \int f(y \mid x,\, \doop(T{=}t),\, U{=}u)\; p(u \mid x)\; du.
 \]
-By the conditional exchangeability assumption,
-\[
-f(y \mid x,T=t,U=u)
-=
-f(y \mid x,\doop(T{=}t),U=u).
-\]
-Substituting gives
-\[
-f(y \mid x,T=t)
-=
-\int f(y \mid x,\doop(T{=}t),U=u)\,p(u \mid x,T=t)\,du.
-\]
+\emph{Step~(ii): replacing the interventional kernel.}
+By conditional exchangeability,
+$f(y \mid x,\, \doop(T{=}t),\, U{=}u) = f(y \mid x,\, T{=}t,\, U{=}u)$.
+Substituting completes the proof.
 \end{proof}
 
-
-\medskip
-The left-hand side is what OLS ``sees''.  The right-hand side mixes the
-causal mechanism $f(y \mid x, \doop(T{=}t), U{=}u)$ with a
-\emph{selection-distorted weight} $p(u \mid x, T{=}t)$, which differs from
-the marginal $p(u \mid x)$ because $U$ and $T$ are dependent through the
-back-door path.
+\begin{remark}[Confounding Discrepancy]
+\label{w1:rem:discrepancy}
+What OLS estimates is the observational density $f(y \mid x, T{=}t)$,
+not the interventional density.  Applying the law of total probability
+to the observational density gives:
+\[
+  f(y \mid x,\, T{=}t)
+  = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.
+\]
+The kernel $f(y \mid x, T{=}t, U{=}u)$ is the same as in
+equation~\eqref{w1:eq:backdoor-formula}, but it is now averaged over
+the \emph{selection-distorted} weight $p(u \mid x, T{=}t)$ rather than
+the marginal $p(u \mid x)$.  Because $U$ and $T$ are dependent through the
+back-door path, $p(u \mid x, T{=}t) \neq p(u \mid x)$, and the gap
+\[
+  f(y \mid x,\, T{=}t) - f(y \mid x,\, \doop(T{=}t))
+  = \int f(y \mid x,\, T{=}t,\, U{=}u)
+    \bigl[\, p(u \mid x,\, T{=}t) - p(u \mid x) \,\bigr]\, du
+\]
+is non-zero whenever $U$ and $T$ are dependent --- the endogeneity
+condition.  This \emph{confounding discrepancy} motivates the two
+scenarios below.
+\end{remark}
 
 \subsection{Two Scenarios: Observed vs.\ Unobserved Confounder}
 
-Theorem~\ref{w1:thm:bridge} contains a single integral whose tractability
-depends entirely on whether the confounder $U$ is observed.  The two
-scenarios lead to fundamentally different identification strategies and
-motivate the organization of this entire course.
+Proposition~\ref{w1:prop:backdoor} expresses $f(y \mid x, \doop(T{=}t))$
+as an integral over the observable kernel $f(y \mid x, T{=}t, U{=}u)$
+weighted by $p(u \mid x)$.  Whether this formula can be \emph{used} from
+data depends entirely on whether $U$ is observed.  The two scenarios lead
+to fundamentally different identification strategies and motivate the
+organization of this entire course.
 
 \medskip
 \noindent\textbf{Scenario 1: $U$ is observed (no unmeasured confounding).}
-If every component of $U$ is recorded in the data, then $p(u \mid x, T{=}t)$
-is an observable quantity.  We can therefore eliminate the
-selection-distorted weight by replacing it with the marginal $p(u \mid x)$,
-which does not depend on $T$.  The replacement is justified by the
-intervention itself: under $\doop(T{=}t)$, the arrow $U \to T$ is severed
-in the mutilated graph, so $U$ and $T$ become independent given $X$, and
-the marginal distribution of $U$ given $X$ reverts to $p(u \mid x)$.
-Concretely:
-\begin{align}
-  f(y \mid x, \doop(T{=}t))
-  &= \int f(y \mid x, \doop(T{=}t), U{=}u)\, p(u \mid x)\, du \notag \\
-  &= \int f(y \mid x, T{=}t, U{=}u)\, p(u \mid x)\, du,
+When every component of $U$ is recorded in the data, both
+$f(y \mid x, T{=}t, U{=}u)$ and $p(u \mid x)$ can be estimated from the
+observed sample $(Y, T, X, U)$.  The right-hand side of
+equation~\eqref{w1:eq:backdoor-formula} is therefore a functional of the
+observable distribution, and we call it the \emph{back-door adjustment
+formula} (or standardization formula):
+\begin{equation}
+  f(y \mid x,\, \doop(T{=}t))
+  = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.
   \label{w1:eq:backdoor-cont}
-\end{align}
-where the second equality uses the conditional exchangeability
-$Y(t) \indep T \mid X, U$ from Theorem~\ref{w1:thm:bridge}.
-Equation~\eqref{w1:eq:backdoor-cont} is the \emph{back-door adjustment
-formula} (or standardization formula): it expresses the interventional
-density entirely in terms of quantities estimable from observed data.
-The weight is now $p(u \mid x)$ rather than $p(u \mid x, T{=}t)$ ---
-the confounder is averaged over its population distribution, not the
-treatment-conditional distribution.
+\end{equation}
+The confounder is averaged over its population distribution $p(u \mid x)$,
+not over the treatment-conditional distribution $p(u \mid x, T{=}t)$:
+this is the adjustment that removes the confounding discrepancy.
 
-A noteworthy special case of Scenario 1 is \emph{unconfoundedness}:
-if $U \indep T \mid X$, then $p(u \mid x, T{=}t) = p(u \mid x)$
-identically, and the back-door formula~\eqref{w1:eq:backdoor-cont} reduces
-to the familiar observational regression $\E[Y \mid X{=}x, T{=}t]$.
-In other words, when conditioning on $X$ alone is sufficient to make the
-remaining variation in $T$ independent of $U$, no further adjustment is
+A noteworthy special case of Scenario~1 is \emph{unconfoundedness}:
+if $U \indep T \mid X$ already holds in the observational distribution,
+then $p(u \mid x, T{=}t) = p(u \mid x)$ identically, and
+formula~\eqref{w1:eq:backdoor-cont} reduces to the familiar observational
+regression $\E[Y \mid X{=}x, T{=}t]$.  In other words, when conditioning
+on $X$ alone suffices to remove confounding, no further adjustment is
 needed: the observational distribution already equals the interventional
 one.  Unconfoundedness holds by design in a randomized experiment, and
 is the key assumption underlying regression adjustment and propensity
@@ -632,39 +654,26 @@ score methods studied in Chapter~6.
 
 \medskip
 \noindent\textbf{Scenario 2: $U$ is unobserved (unmeasured confounding).}
-If $U$ is latent, the weight $p(u \mid x, T{=}t)$ is \emph{never
-observable}: it involves the joint distribution of the hidden variable $U$
-with the observed treatment $T$, which cannot be recovered from data on
-$(Y, T, X)$ alone.  The integral in Theorem~\ref{w1:thm:bridge} therefore
-cannot be evaluated, and the back-door formula~\eqref{w1:eq:backdoor-cont}
-is not available.  This is the hard case, and it is the one that motivates
+When $U$ is latent, neither $f(y \mid x, T{=}t, U{=}u)$ nor $p(u \mid x)$
+can be estimated from data on $(Y, T, X)$ alone, and
+formula~\eqref{w1:eq:backdoor-cont} is not usable.  Moreover, the
+observational density $f(y \mid x, T{=}t)$ itself is a biased proxy for
+the interventional density: as shown in Remark~\ref{w1:rem:discrepancy},
+it averages the same kernel over the selection-distorted weight
+$p(u \mid x, T{=}t)$ rather than $p(u \mid x)$, and the confounding
+discrepancy $p(u \mid x, T{=}t) - p(u \mid x)$ cannot be estimated when
+$U$ is unobserved.  This is the hard case, and it is the one that motivates
 most of the advanced machinery in this course.
 
-To see why, write out the gap between the two densities explicitly.
-From the proof of Theorem~\ref{w1:thm:bridge},
-\[
-  f(y \mid x, T{=}t)
-  - f(y \mid x, \doop(T{=}t))
-  = \int f(y \mid x, \doop(T{=}t), U{=}u)
-    \bigl[\, p(u \mid x, T{=}t) - p(u \mid x) \,\bigr]\, du.
-\]
-The integrand is the product of the causal mechanism and the
-\emph{confounding discrepancy} $p(u \mid x, T{=}t) - p(u \mid x)$.
-When $U$ is unobserved, neither factor on the right can be computed from
-data.  The gap is non-zero whenever $U$ and $T$ are dependent, which is
-precisely the endogeneity condition.
-
-In Scenario 2, the observational distribution $f(y \mid x, T{=}t)$ is
-\emph{not sufficient} to recover the interventional distribution
-$f(y \mid x, \doop(T{=}t))$: additional structure must be imposed.
-The main identification strategies studied in this course are
-\textbf{instrumental variables} (Chapter~7), in which an observed
-variable $Z$ independent of $U$ provides confounding-free variation in $T$;
-the \textbf{front-door criterion} (Chapter~3), applicable when the effect
-of $T$ on $Y$ is fully mediated by an unconfounded observed variable $M$;
-and \textbf{sensitivity analysis}, which bounds conclusions by varying the
-assumed magnitude of the confounding discrepancy
-$p(u \mid x, T{=}t) - p(u \mid x)$.
+In Scenario~2, additional structure beyond $(Y, T, X)$ must be imposed to
+recover $f(y \mid x, \doop(T{=}t))$.  The main identification strategies
+studied in this course are \textbf{instrumental variables} (Chapter~7),
+in which an observed variable $Z$ independent of $U$ provides
+confounding-free variation in $T$; the \textbf{front-door criterion}
+(Chapter~3), applicable when the effect of $T$ on $Y$ is fully mediated
+by an unconfounded observed variable $M$; and \textbf{sensitivity
+analysis}, which bounds conclusions by varying the assumed magnitude of
+the confounding discrepancy $p(u \mid x, T{=}t) - p(u \mid x)$.
 
 \noindent The two scenarios and their consequences are summarized in
 Table~\ref{w1:tab:scenarios}.
@@ -672,8 +681,8 @@ Table~\ref{w1:tab:scenarios}.
 \begin{table}[h]
 \centering
 \renewcommand{\arraystretch}{1.5}
-\caption{Consequences of Theorem~\ref{w1:thm:bridge} under observed
-versus unobserved confounding.}
+\caption{The two scenarios arising from
+Proposition~\ref{w1:prop:backdoor} and Remark~\ref{w1:rem:discrepancy}.}
 \label{w1:tab:scenarios}
 \begin{tabular}{@{}lll@{}}
 \toprule
@@ -682,9 +691,9 @@ versus unobserved confounding.}
 Confounding type
   & No \emph{unmeasured} confounding
   & Unmeasured confounding \\
-Status of $p(u \mid x, T{=}t)$
-  & Observable; can be estimated
-  & Latent; never observable \\
+Back-door formula usable?
+  & Yes: $f(y\mid x,T{=}t,U{=}u)$ and $p(u\mid x)$ estimable
+  & No: $U$ latent; neither quantity estimable \\
 Identification route
   & Back-door adjustment / standardization
   & IV, front-door, \ldots \\
@@ -699,132 +708,130 @@ Chapters in this course
 \end{table}
 
 % ==============================================================
-\section{The Gaussian Linear IV Model}
+\section{The Gaussian Linear Confounded Model}
 \label{w1:sec:iv}
 % ==============================================================
 
 \subsection{Setup}
 
-The Gaussian linear instrumental variable model is our primary running
-example throughout this course.  It is simple enough to permit closed-form
-calculations yet rich enough to illustrate every key concept.
+The Gaussian linear confounded model is our primary running example
+throughout this course.  It is simple enough to permit closed-form
+calculations yet rich enough to illustrate every key concept.  We use it
+here not to develop any particular identification strategy, but to make
+the gap between observational and interventional reasoning mathematically
+explicit; various identification strategies for this model appear in
+later chapters.
 
-\begin{example}{Gaussian Linear IV Model}
+\begin{example}{Gaussian Linear Confounded Model}
 \label{w1:ex:ivmodel}
-In this chapter the model is used only to exhibit the gap between the
-interventional and observational distributions; in Chapter~7 it will be
-used to identify the causal effect $\beta$ via the instrument $Z$.
 The structural equations are
 \begin{equation}
-  Y = \beta T + \varepsilon, \qquad T = \pi Z + \delta,
+  Y = \beta T + \gamma U + \varepsilon, \qquad T = \alpha U + \delta,
   \label{w1:eq:iv}
 \end{equation}
-with jointly normal errors:
+where $U$ is an unobserved confounder and the three primitive variables
+are mutually independent:
 \[
-  \begin{pmatrix}\varepsilon \\ \delta\end{pmatrix}
-  \sim \mathcal{N}\!\left(
-    \mathbf{0},\;
-    \begin{pmatrix}\sigma^2 & \rho\sigma\tau \\ \rho\sigma\tau & \tau^2\end{pmatrix}
-  \right), \qquad \rho \neq 0.
+  U \sim \mathcal{N}(0,\sigma_U^2), \qquad
+  \varepsilon \sim \mathcal{N}(0,\sigma_\varepsilon^2), \qquad
+  \delta \sim \mathcal{N}(0,\sigma_\delta^2).
 \]
-
-Here $\beta$ is the causal effect of $T$ on $Y$, $\pi$ is the first-stage
-effect of instrument $Z$ on $T$, and $\rho$ is the error correlation,
-which encodes confounding.  
-The unobserved confounder 
-$U$ can be represented equivalently by correlation between the disturbances 
-$(\varepsilon, \delta)$.
+Here $\beta$ is the causal effect of $T$ on $Y$, $\gamma$ is the direct
+effect of the confounder $U$ on $Y$, and $\alpha$ is the direct effect
+of $U$ on $T$.  The error independence ($U \indep \varepsilon \indep
+\delta$) is the NPSEM-IE condition of Remark~\ref{w1:rem:npsem-ie}.
 \end{example}
 
-The endogeneity of $T$ is immediate:
+The endogeneity of $T$ is immediate.  From the analyst's perspective, the
+composite error in the $Y$ equation is $\gamma U + \varepsilon$, so:
 \[
-  \mathrm{Cov}(T,\varepsilon) = \mathrm{Cov}(\pi Z + \delta,\,\varepsilon)
-  = \mathrm{Cov}(\delta,\varepsilon) = \rho\sigma\tau \neq 0.
+  \mathrm{Cov}(T,\; \gamma U + \varepsilon)
+  = \gamma\,\mathrm{Cov}(\alpha U + \delta,\; U)
+  = \gamma\alpha\sigma_U^2 \;\neq\; 0
+  \quad (\text{when } \alpha \neq 0 \text{ and } \gamma \neq 0).
 \]
 Consequently, OLS regressing $Y$ on $T$ does not estimate $\beta$.
 
 The causal structure is captured by the DAG pair in Figure~\ref{w1:fig:surgery}.
 In the observational DAG, the back-door path $T \leftarrow U \to Y$ is open:
-unobserved confounder $U$ flows into both $T$ and $Y$, making $T$ and
-$\varepsilon$ correlated.  Under the intervention $\doop(T{=}t)$, all arrows
-into $T$ are deleted (shown dashed), severing the back-door path.
+unobserved confounder $U$ causes both $T$ and $Y$, making $T$ and the
+composite error $\gamma U + \varepsilon$ correlated.  Under the intervention
+$\doop(T{=}t)$, all arrows into $T$ are deleted (shown faded), severing
+the back-door path.
 
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}[node distance=1.8cm]
   %% --- Observational DAG ---
-  \node[node]  (Z1) at (0,0)    {$Z$};
-  \node[node]  (T1) at (1.9,0)  {$T$};
-  \node[node]  (Y1) at (3.8,0)  {$Y$};
-  \node[unode] (U1) at (2.85,-1.3) {$U$};
-  \draw[edge]  (Z1) -- (T1);
+  \node[node]  (T1) at (0.5,0)    {$T$};
+  \node[node]  (Y1) at (2.5,0)    {$Y$};
+  \node[unode] (U1) at (1.5,-1.3) {$U$};
   \draw[edge]  (T1) -- (Y1);
   \draw[dedge] (U1) -- (T1);
   \draw[dedge] (U1) -- (Y1);
-  \node[font=\small\itshape\color{darkgrey}] at (1.9,-2.2)
+  \node[font=\small\itshape\color{darkgrey}] at (1.5,-2.2)
     {Observational DAG};
   %% --- Mutilated DAG ---
-  \node[node]  (Z2) at (6.4,0)   {$Z$};
-  \node[mnode] (T2) at (8.3,0)   {$t$};
-  \node[node]  (Y2) at (10.2,0)  {$Y$};
-  \node[unode] (U2) at (9.25,-1.3) {$U$};
-  \draw[dedge, opacity=0.25] (Z2) -- (T2);   % severed
+  \node[mnode] (T2) at (5.5,0)    {$t$};
+  \node[node]  (Y2) at (7.5,0)    {$Y$};
+  \node[unode] (U2) at (6.5,-1.3) {$U$};
   \draw[edge]  (T2) -- (Y2);
   \draw[dedge, opacity=0.25] (U2) -- (T2);   % severed
   \draw[dedge] (U2) -- (Y2);
-  \node[font=\small\itshape\color{darkgrey}] at (8.3,-2.2)
+  \node[font=\small\itshape\color{darkgrey}] at (6.5,-2.2)
     {Mutilated DAG: $\doop(T{=}t)$};
 \end{tikzpicture}
-\caption{Graph surgery on the Gaussian IV model.  Faded arrows in the
-mutilated DAG have been severed by the intervention $\doop(T{=}t)$.  The
-back-door path $T \leftarrow U \to Y$ is eliminated; only the causal path
-$T \to Y$ remains active.  The treatment node becomes a fixed constant
+\caption{Graph surgery on the Gaussian confounded model.  The faded arrow
+in the mutilated DAG has been severed by the intervention $\doop(T{=}t)$.
+The back-door path $T \leftarrow U \to Y$ is eliminated; only the causal
+path $T \to Y$ remains active.  The treatment node becomes a fixed constant
 (rectangle).}
 \label{w1:fig:surgery}
 \end{figure}
 
 \subsection{Two Explicit Densities}
 
-We now derive both densities in closed form and compare them.
+We now derive both densities in closed form.  Write $\sigma_T^2 =
+\alpha^2\sigma_U^2 + \sigma_\delta^2$ for the marginal variance of $T$.
 
 \medskip
 \noindent\textbf{Interventional density.}
-Set $T = t$ externally.  Then $\varepsilon$ is independent of $T$ by
-construction (the back-door path is severed), so
-$Y \mid \doop(T{=}t) = \beta t + \varepsilon$ with $\varepsilon \sim
-\mathcal{N}(0,\sigma^2)$.  Hence
+Set $T = t$ externally.  The back-door path through $U$ is severed, so
+$U$ is independent of $T$ under the intervention and is drawn from its
+marginal $\mathcal{N}(0,\sigma_U^2)$.  Then
+$Y \mid \doop(T{=}t) = \beta t + \gamma U + \varepsilon$ with
+$U \indep \varepsilon$.  Hence
 \begin{equation}
   f\!\left(y \mid \doop(T{=}t)\right)
-  = \mathcal{N}\!\left(\beta t,\; \sigma^2\right).
+  = \mathcal{N}\!\left(\beta t,\;\;
+    \gamma^2\sigma_U^2 + \sigma_\varepsilon^2\right).
   \label{w1:eq:int}
 \end{equation}
 
 \medskip
 \noindent\textbf{Observational density.}
-Observe $(T, Z) = (t, z)$.  Since $T = \pi Z + \delta$, conditioning on
-$(T{=}t, Z{=}z)$ pins down $\delta = t - \pi z$ exactly.  No distributional
-assumption on $Z$ is needed; the derivation rests solely on the joint
-normality of $(\varepsilon, \delta)$.  The standard conditional normal
-formula gives
+Observe $T = t$.  Since $Y$ and $T$ are both linear combinations of the
+independent normals $(U, \varepsilon, \delta)$, the pair $(Y, T)$ is
+jointly normal.  Their covariance is:
 \[
-  \varepsilon \mid \delta{=}(t - \pi z)
-  \;\sim\;
-  \mathcal{N}\!\left(\frac{\rho\sigma}{\tau}(t - \pi z),\;\;
-  \sigma^2(1-\rho^2)\right).
+  \mathrm{Cov}(Y, T)
+  = \mathrm{Cov}(\beta T + \gamma U + \varepsilon,\; T)
+  = \beta\sigma_T^2 + \gamma\alpha\sigma_U^2.
 \]
-Since $Y = \beta t + \varepsilon$ given $T{=}t$, we obtain:
+Applying the conditional normal formula:
 \begin{equation}
-  f\!\left(y \mid T{=}t,\, Z{=}z\right)
-  = \mathcal{N}\!\left(\left(\beta + \frac{\rho\sigma}{\tau}\right)t
-    - \frac{\rho\sigma\pi}{\tau}\,z,\;\;
-    \sigma^2(1-\rho^2)\right).
+  f\!\left(y \mid T{=}t\right)
+  = \mathcal{N}\!\left(
+      \left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t,\;\;
+      \frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2}
+      + \sigma_\varepsilon^2
+    \right).
   \label{w1:eq:obs}
 \end{equation}
 
 \subsection{The Endogeneity Gap}
 
-Equations~\eqref{w1:eq:int} and~\eqref{w1:eq:obs} differ in both mean and
-variance (the observational density is evaluated at $Z{=}z$):
+Equations~\eqref{w1:eq:int} and~\eqref{w1:eq:obs} differ in both mean and variance:
 
 \begin{center}
 \renewcommand{\arraystretch}{1.4}
@@ -833,54 +840,47 @@ variance (the observational density is evaluated at $Z{=}z$):
                    & \textbf{Interventional} & \textbf{Observational} \\
 \midrule
 Mean               & $\beta t$
-                   & $\left(\beta + \tfrac{\rho\sigma}{\tau}\right)t
-                     - \tfrac{\rho\sigma\pi}{\tau}\,z$ \\
-Variance           & $\sigma^2$
-                   & $\sigma^2(1-\rho^2)$ \\
-Residual           & $\varepsilon \indep T$
-                   & $\varepsilon$ correlated with $T$ \\
-Identified by      & IV / RCT          & OLS \\
+                   & $\displaystyle\left(\beta +
+                     \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t$ \\[6pt]
+Variance           & $\gamma^2\sigma_U^2 + \sigma_\varepsilon^2$
+                   & $\dfrac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2}
+                     + \sigma_\varepsilon^2$ \\[6pt]
+Residual           & $(\gamma U{+}\varepsilon) \indep T$
+                   & $(\gamma U{+}\varepsilon)$ correlated with $T$ \\
+Identified by      & RCT (or IV, Chapter~7) & OLS \\
 \midrule
-\multicolumn{3}{@{}l@{}}{\small Equal when $\rho = 0$ (exogeneity)} \\
+\multicolumn{3}{@{}l@{}}{\small Equal when $\alpha = 0$ or $\gamma = 0$ (no confounding)} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \medskip
-The \emph{endogeneity bias} of OLS is $\rho\sigma/\tau$: the coefficient
-of $T$ in the observational mean is $\beta + \rho\sigma/\tau$ rather than
-$\beta$, regardless of $z$.  Numerically, with $\rho = 0.7$,
-$\sigma = \sqrt{3}$, $\tau = 1$:
-$\text{bias} = 0.7\sqrt{3} \approx 1.21$ per unit of $t$.
-
-\begin{remark}
-The \emph{exclusion restriction} states that $Z$ is absent from the
-interventional density: $f(y \mid \doop(T{=}t), z) = f(y \mid \doop(T{=}t))$.
-This is visible in equation~\eqref{w1:eq:int}: $Z$ does not appear.
-By contrast, $Z$ \emph{does} appear in the observational density
-\eqref{w1:eq:obs} through the term $-(\rho\sigma\pi/\tau)\,z$, because
-conditioning on $(T{=}t, Z{=}z)$ pins down $\delta = t - \pi z$ and
-thereby $\varepsilon$ partly.  The exclusion restriction and the gap
-$\rho\sigma/\tau$ are two separate facts: the former is about $Z$'s
-absence from the causal mechanism; the latter is about $T$'s endogeneity.
-\end{remark}
+The \emph{endogeneity bias} of OLS is $\gamma\alpha\sigma_U^2/\sigma_T^2$:
+the coefficient of $T$ in the observational mean exceeds the causal
+coefficient $\beta$ by this amount.  This is the omitted-variable bias
+formula --- $U$ is omitted from the regression, it affects $Y$ via
+$\gamma$ and $T$ via $\alpha$, and its contribution to the bias is scaled
+by $\sigma_U^2/\sigma_T^2$.  Numerically, with $\alpha = \gamma = 1$ and
+$\sigma_U^2 = \sigma_\delta^2 = 1$:
+\[
+  \text{bias} = \frac{1 \times 1 \times 1}{1^2 \times 1 + 1} = \frac{1}{2} = 0.5.
+\]
 
 \subsection{Lab: Simulating the Two Densities}
 
 The analytical results of this section were verified by simulation using
 $n = 10{,}000$ draws from the structural equations with parameters
-$\beta = 2$, $\pi = 1$, $\sigma = \sqrt{3}$, $\tau = 1$.
+$\beta = 2$, $\alpha = 1$, $\gamma = 1$,
+$\sigma_U = \sigma_\varepsilon = \sigma_\delta = 1$.
 The R code is distributed separately as \texttt{chapter1\_lab.R}.
 
 \medskip
 \noindent\textbf{Experiment 1: OLS bias.}
-Errors $(\varepsilon_i, \delta_i)$ were drawn jointly from the bivariate
-normal with $\rho = 0.7$.  OLS was applied to $(Y_i, T_i, Z_i)$,
-regressing $Y$ on $T$ and $Z$ jointly.  By the Frisch--Waugh--Lovell
-theorem, the partial coefficient on $T$ has probability limit
-$\beta + \rho\sigma/\tau$, the coefficient of $T$ in the observational
-density~\eqref{w1:eq:obs}, independently of $\sigma_Z^2$.  The results
-confirm this prediction:
+Data were generated from the structural equations with $\alpha=\gamma=1$
+and all variances equal to 1.  OLS was applied to the observational pairs
+$(Y_i, T_i)$.  By the omitted-variable bias formula, the OLS probability
+limit is $\beta + \gamma\alpha\sigma_U^2/\sigma_T^2 = 2 + 0.5 = 2.5$.
+The results confirm this:
 
 \begin{center}
 \renewcommand{\arraystretch}{1.3}
@@ -888,24 +888,24 @@ confirm this prediction:
 \toprule
             & \textbf{Simulated} & \textbf{Theory} & \textbf{Formula} \\
 \midrule
-OLS slope   & 3.2141  & 3.2124  & $\beta + \rho\sigma/\tau$ \\
+OLS slope   & 2.5147  & 2.5000  & $\beta + \gamma\alpha\sigma_U^2/\sigma_T^2$ \\
 True $\beta$& ---     & 2.0000  & $\beta$ \\
-Bias        & 1.2141  & 1.2124  & $\rho\sigma/\tau$ \\
+Bias        & 0.5147  & 0.5000  & $\gamma\alpha\sigma_U^2/\sigma_T^2$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent
-OLS overestimates the causal effect by more than 60\%.
+OLS overestimates the causal effect by 25\%.
 
 \medskip
-\noindent\textbf{Experiment 2: Two-sample comparison at $t_0 = 1$, $z_0 = 0$.}
-The observational sample consisted of all units with $|T_i - 1| < 0.15$
-and $|Z_i| < 0.15$; the interventional sample was generated by setting
-$T = 1$ externally and drawing fresh errors $\varepsilon_i^* \sim
-\mathcal{N}(0,\sigma^2)$ independently of everything else.
+\noindent\textbf{Experiment 2: Two-sample comparison at $t_0 = 1$.}
+The observational sample consisted of all units with $|T_i - 1| < 0.15$;
+the interventional sample was generated by setting $T = 1$ externally
+and drawing fresh $U^*_i \sim \mathcal{N}(0,1)$ and
+$\varepsilon^*_i \sim \mathcal{N}(0,1)$ independently.
 Theoretical values are from equations~\eqref{w1:eq:int}
-and~\eqref{w1:eq:obs} at $(t_0, z_0) = (1, 0)$.
+and~\eqref{w1:eq:obs} at $t_0 = 1$.
 
 \begin{center}
 \renewcommand{\arraystretch}{1.3}
@@ -915,26 +915,29 @@ and~\eqref{w1:eq:obs} at $(t_0, z_0) = (1, 0)$.
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 & Simulated & Theory & Simulated & Theory \\
 \midrule
-$\E[Y \mid T{=}1,\, Z{=}0]$  & 3.208 & 3.212
-  & 1.241 & $\sigma\sqrt{1-\rho^2} = 1.237$ \\
-$\E[Y \mid \doop(T{=}1)]$    & 1.993 & 2.000
-  & 1.726 & $\sigma = 1.732$ \\
+$\E[Y \mid T{=}1]$         & 2.567 & 2.500
+  & 1.240 & $\sqrt{1.5} = 1.225$ \\
+$\E[Y \mid \doop(T{=}1)]$  & 1.999 & 2.000
+  & 1.423 & $\sqrt{2} = 1.414$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent
-The variance reduction in the observational distribution reflects the factor
-$\sqrt{1-\rho^2} \approx 0.714$: conditioning on $(T{=}1, Z{=}0)$ pins
-down $\delta = 1$, which through the error correlation restricts the
-range of $\varepsilon$ values and thereby compresses the spread of $Y$.
+The variance reduction in the observational distribution reflects the
+ratio $\sigma_{\mathrm{obs}}^2/\sigma_{\mathrm{int}}^2 = 1.5/2 = 0.75$:
+conditioning on $T{=}1$ pins down the value of $\alpha U + \delta$,
+which through the correlation with $\gamma U$ restricts the spread of $Y$.
 
 \medskip
-\noindent\textbf{Experiment 3: Density overlay for varying $\rho$.}
+\noindent\textbf{Experiment 3: Density overlay for varying $\alpha$.}
 Figure~\ref{w1:fig:density} shows the interventional density
-$\mathcal{N}(\beta t_0, \sigma^2)$ (solid) and the observational density
-$\mathcal{N}((\beta + \rho\sigma/\tau)t_0,\; \sigma^2(1-\rho^2))$ (dashed),
-both evaluated at $t_0 = 1$, $z_0 = 0$, for $\rho \in \{0, 0.3, 0.7, 0.95\}$.
+$\mathcal{N}(\beta t_0,\, \gamma^2\sigma_U^2 + \sigma_\varepsilon^2)$
+(solid) and the observational density \eqref{w1:eq:obs} (dashed),
+both evaluated at $t_0 = 1$, for $\alpha \in \{0, 0.3, 0.7, 1.0\}$.
+The interventional density does not depend on $\alpha$ and remains fixed;
+as $\alpha$ increases, the observational curve shifts rightward
+(growing bias) and narrows (reduced variance).
 
 \begin{figure}[h]
 \centering
@@ -950,45 +953,47 @@ both evaluated at $t_0 = 1$, $z_0 = 0$, for $\rho \in \{0, 0.3, 0.7, 0.95\}$.
   \foreach \y/\lab in {0.5/0.1, 1.0/0.2, 1.5/0.3, 2.0/0.4, 2.5/0.5}
     \draw (0.05,\y) -- (-0.05,\y) node[left, font=\tiny] {\lab};
 
-  % Interventional N(2,3) -- solid black
-  \draw[thick, black, domain=0:7, samples=80]
-    plot (\x, {5*exp(-(\x-2)^2/6)/2.507});
+  % Interventional N(2,2) -- solid black; sqrt(2pi*2)=3.5449
+  \draw[thick, black, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2)^2/4)/3.545});
 
-  % rho=0: same as interventional (grey dashes)
-  \draw[thick, darkgrey, dashed, domain=0:7, samples=80]
-    plot (\x, {5*exp(-(\x-2)^2/6)/2.507});
+  % alpha=0: same as interventional (grey dashes)
+  \draw[thick, darkgrey, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2)^2/4)/3.545});
 
-  % rho=0.3
-  \draw[thick, accent, dashed, domain=0:7, samples=80]
-    plot (\x, {5*exp(-(\x-2.52)^2/5.46)/2.374});
+  % alpha=0.3: mean=2.2752, var=1.9174; sqrt(2pi*var)=3.4710
+  \draw[thick, accent, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2.275)^2/3.835)/3.471});
 
-  % rho=0.7
-  \draw[thick, accent!70!black, dashed, domain=0:7, samples=80]
-    plot (\x, {5*exp(-(\x-3.212)^2/3.06)/1.777});
+  % alpha=0.7: mean=2.4698, var=1.6711; sqrt(2pi*var)=3.2404
+  \draw[thick, accent!70!black, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2.470)^2/3.342)/3.240});
 
-  % rho=0.95
-  \draw[thick, warnred, dashed, domain=1.5:6, samples=80]
-    plot (\x, {5*exp(-(\x-3.645)^2/0.586)/0.777});
+  % alpha=1.0: mean=2.5, var=1.5; sqrt(2pi*var)=3.0700
+  \draw[thick, warnred, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2.5)^2/3.0)/3.070});
 
   % Legend
-  \draw[thick, black]        (4.5,2.6) -- (5.1,2.6)
-    node[right, font=\footnotesize] {Interventional $\mathcal{N}(2,3)$};
-  \draw[thick, darkgrey, dashed]  (4.5,2.3) -- (5.1,2.3)
-    node[right, font=\footnotesize] {Obs.\ $\rho=0$};
-  \draw[thick, accent, dashed]    (4.5,2.0) -- (5.1,2.0)
-    node[right, font=\footnotesize] {Obs.\ $\rho=0.3$};
-  \draw[thick, accent!70!black, dashed] (4.5,1.7) -- (5.1,1.7)
-    node[right, font=\footnotesize] {Obs.\ $\rho=0.7$};
-  \draw[thick, warnred, dashed]   (4.5,1.4) -- (5.1,1.4)
-    node[right, font=\footnotesize] {Obs.\ $\rho=0.95$};
+  \draw[thick, black]        (3.8,2.6) -- (4.4,2.6)
+    node[right, font=\footnotesize] {Interventional $\mathcal{N}(2,2)$};
+  \draw[thick, darkgrey, dashed]  (3.8,2.3) -- (4.4,2.3)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=0$};
+  \draw[thick, accent, dashed]    (3.8,2.0) -- (4.4,2.0)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=0.3$};
+  \draw[thick, accent!70!black, dashed] (3.8,1.7) -- (4.4,1.7)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=0.7$};
+  \draw[thick, warnred, dashed]   (3.8,1.4) -- (4.4,1.4)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=1.0$};
 \end{scope}
 \end{tikzpicture}
-\caption{Interventional density $\mathcal{N}(2,3)$ (solid black) versus
-observational density for $\rho \in \{0, 0.3, 0.7, 0.95\}$ (dashed),
-evaluated at $t_0 = 1$ and $z = 0$.  Parameters: $\beta=2$, $\sigma=\sqrt{3}$, $\tau=1$.
-As $\rho$ increases, the observational curve shifts rightward (positive bias)
-and narrows (reduced variance).  At $\rho = 0$ the two densities coincide.
-The interventional curve (solid) is invariant to both $\rho$ and $z$.}
+\caption{Interventional density $\mathcal{N}(2,2)$ (solid black) versus
+observational density for $\alpha \in \{0, 0.3, 0.7, 1.0\}$ (dashed),
+evaluated at $t_0 = 1$.  Parameters: $\beta=2$, $\gamma=1$,
+$\sigma_U=\sigma_\varepsilon=\sigma_\delta=1$.
+As $\alpha$ increases, the observational curve shifts rightward (growing
+bias) and narrows (reduced variance).  At $\alpha = 0$ there is no
+confounding and the two densities coincide.
+The interventional curve (solid) is invariant to $\alpha$.}
 \label{w1:fig:density}
 \end{figure}
 
@@ -1004,6 +1009,11 @@ chain in which one variable sits between a ``cause'' and an ``effect''.  The
 similarity is superficial; the conceptual difference is fundamental.
 Confusing the two is one of the most common errors in applied causal
 inference, and it is worth addressing head-on before the course proceeds.
+This comparison is included only to prevent a common graphical confusion;
+the full treatment of mediation analysis comes in Chapter~8.
+Note that the instrument $Z$ introduced here for illustrative purposes
+is not part of the running confounded model of this section; it will be
+incorporated as an identification tool in Chapter~7.
 
 Figure~\ref{w1:fig:iv_vs_med} places the two DAGs side by side.
 
@@ -1142,15 +1152,6 @@ effect of $M$ on $Y$.  This is the one case where a mediator also plays an
 identification role.  We will return to this in Chapter~3; for now, the IV
 DAG and the mediation DAG should be understood as distinct structures
 serving distinct purposes.
-\end{remark}
-
-\begin{remark}
-The Gaussian linear IV model in this section is a pedagogical special case.
-In full generality --- nonseparable outcome $Y = g(X, \varepsilon)$ with a
-nonparametric first stage --- identification rests on the control variable
-$V = F_{X \mid Z}(X, Z)$, the conditional rank of $X$ given $Z$, which
-renders $X \indep \varepsilon \mid V$ under independence and monotonicity.
-See \citet{imbens2009} for the nonparametric theory.
 \end{remark}
 
 % ==============================================================
@@ -1350,7 +1351,7 @@ difference conflates the two and draws the wrong conclusion.
         Causal inference answers questions about interventions
         $f(y \mid \doop(T{=}t))$, not about observations $f(y \mid T{=}t)$.
         These two distributions coincide only under exogeneity (i.e.,
-        $\rho = 0$ in the Gaussian IV model); whenever $T$ is endogenous
+        $\alpha = 0$ or $\gamma = 0$ in the Gaussian confounded model); whenever $T$ is endogenous
         they differ, and the difference is endogeneity bias.
 
   \item \textbf{The causal trinity.}
@@ -1361,14 +1362,17 @@ difference conflates the two and draws the wrong conclusion.
         it implicit.  Fluency in all three is essential for modern causal
         reasoning.
 
-  \item \textbf{Endogeneity bias in the Gaussian IV model.}
-        In the Gaussian linear IV model, the coefficient of $T$ in the
-        observational mean $\E[Y \mid T{=}t, Z{=}z]$ exceeds the causal
-        coefficient $\beta$ by $\rho\sigma/\tau$, regardless of $z$.  The
-        observational variance is $\sigma^2(1-\rho^2)$, compressed by a
-        factor of $\sqrt{1-\rho^2}$ relative to the interventional variance
-        $\sigma^2$.  The partial coefficient on $T$ from OLS of $Y$ on
-        $(T, Z)$ estimates $\beta + \rho\sigma/\tau$, not $\beta$.
+  \item \textbf{Endogeneity bias in the Gaussian confounded model.}
+        In the Gaussian linear confounded model, the coefficient of $T$ in
+        the observational mean $\E[Y \mid T{=}t]$ exceeds the causal
+        coefficient $\beta$ by $\gamma\alpha\sigma_U^2/\sigma_T^2$, where
+        $\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2$.  This is the
+        omitted-variable bias: $U$ drives both $T$ (via $\alpha$) and $Y$
+        (via $\gamma$), and its omission from the regression inflates the
+        OLS estimand.  The observational variance
+        $\gamma^2\sigma_U^2\sigma_\delta^2/\sigma_T^2 + \sigma_\varepsilon^2$
+        is smaller than the interventional variance
+        $\gamma^2\sigma_U^2 + \sigma_\varepsilon^2$.
 
   \item \textbf{Two-step paradigm.}
         Causal inference is a two-step discipline: \emph{identification}
@@ -1416,18 +1420,19 @@ answer to that question in a particular setting.
   \end{enumerate}
 
   \item \textbf{Deriving the observational density.}
-  In the Gaussian IV model (Example~\ref{w1:ex:ivmodel}), verify equation~\eqref{w1:eq:obs}
-  by carrying out the following steps.
+  In the Gaussian confounded model (Example~\ref{w1:ex:ivmodel}), verify
+  equation~\eqref{w1:eq:obs} by carrying out the following steps.
+  Let $\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2$.
   \begin{enumerate}[label=(\alph*)]
-    \item Show that $\mathrm{Cov}(\varepsilon, T) = \rho\sigma\tau$ using
-          the bivariate normal structure.
-    \item Use the standard formula for conditional normal distributions to
-          derive $\E[\varepsilon \mid T{=}t]$ and $\mathrm{Var}[\varepsilon
-          \mid T{=}t]$.
-    \item Hence derive $f(y \mid T{=}t)$ from the structural equation
-          $Y = \beta T + \varepsilon$.
-    \item Confirm that the OLS probability limit is $\beta + \rho\sigma/\tau$
-          rather than $\beta$.
+    \item Show that $(Y, T)$ is jointly normal by writing both as linear
+          combinations of the independent normals $(U, \varepsilon, \delta)$.
+    \item Compute $\mathrm{Cov}(Y, T)$ and $\mathrm{Var}(T)$.
+    \item Apply the conditional normal formula to derive
+          $\E[Y \mid T{=}t]$ and $\mathrm{Var}[Y \mid T{=}t]$,
+          and hence verify equation~\eqref{w1:eq:obs}.
+    \item Show that the OLS probability limit is
+          $\beta + \gamma\alpha\sigma_U^2/\sigma_T^2$, and interpret
+          this as an omitted-variable bias formula.
   \end{enumerate}
 
   \item \textbf{The causal trinity.}
