@@ -9,11 +9,17 @@ book:
   chapters:
     - index.qmd
     - chapter_01.qmd
+  downloads: [pdf]
 
 bibliography: references.bib
 
 execute:
   engine: knitr
+
+knitr:
+  opts_chunk:
+    dev: "pdf"
+    fig.process: NULL
 
 format:
   html:
@@ -44,3 +50,19 @@ format:
           }
         };
         </script>
+  pdf:
+    documentclass: book
+    number-sections: true
+    colorlinks: true
+    include-in-header:
+      text: |
+        \newcommand{\doop}{\operatorname{do}}
+        \newcommand{\indep}{\perp\!\!\!\perp}
+        \newcommand{\E}{\mathbb{E}}
+        \newcommand{\Gcal}{\mathcal{G}}
+        \newcommand{\Pa}{\mathrm{Pa}}
+        \newcommand{\De}{\mathrm{De}}
+        \newcommand{\An}{\mathrm{An}}
+        \newcommand{\Nd}{\mathrm{Nd}}
+        \newcommand{\pto}{\overset{p}{\to}}
+        \newcommand{\expit}{\operatorname{expit}}
