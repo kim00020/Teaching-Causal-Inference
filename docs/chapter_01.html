@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>1&nbsp; Introduction – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_01.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation-why-causal-inference-is-hard" id="toc-motivation-why-causal-inference-is-hard" class="nav-link active" data-scroll-target="#motivation-why-causal-inference-is-hard"><span class="header-section-number">1.1</span> Motivation: Why Causal Inference Is Hard</a>
+  <ul class="collapse">
+  <li><a href="#the-central-question" id="toc-the-central-question" class="nav-link" data-scroll-target="#the-central-question"><span class="header-section-number">1.1.1</span> The Central Question</a></li>
+  </ul></li>
+  <li><a href="#the-causal-trinity-three-languages-for-one-idea" id="toc-the-causal-trinity-three-languages-for-one-idea" class="nav-link" data-scroll-target="#the-causal-trinity-three-languages-for-one-idea"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</a>
+  <ul class="collapse">
+  <li><a href="#language-1-structural-equation-models" id="toc-language-1-structural-equation-models" class="nav-link" data-scroll-target="#language-1-structural-equation-models"><span class="header-section-number">1.2.1</span> Language 1: Structural Equation Models</a></li>
+  <li><a href="#language-2-directed-acyclic-graphs" id="toc-language-2-directed-acyclic-graphs" class="nav-link" data-scroll-target="#language-2-directed-acyclic-graphs"><span class="header-section-number">1.2.2</span> Language 2: Directed Acyclic Graphs</a></li>
+  <li><a href="#language-3-potential-outcomes" id="toc-language-3-potential-outcomes" class="nav-link" data-scroll-target="#language-3-potential-outcomes"><span class="header-section-number">1.2.3</span> Language 3: Potential Outcomes</a></li>
+  <li><a href="#roadmap-how-the-trinity-organizes-these-notes" id="toc-roadmap-how-the-trinity-organizes-these-notes" class="nav-link" data-scroll-target="#roadmap-how-the-trinity-organizes-these-notes"><span class="header-section-number">1.2.4</span> Roadmap: How the Trinity Organizes These Notes</a></li>
+  <li><a href="#sec-history" id="toc-sec-history" class="nav-link" data-scroll-target="#sec-history"><span class="header-section-number">1.2.5</span> Historical Roots of the Causal Trinity</a></li>
+  </ul></li>
+  <li><a href="#the-core-distinction" id="toc-the-core-distinction" class="nav-link" data-scroll-target="#the-core-distinction"><span class="header-section-number">1.3</span> The Core Distinction</a>
+  <ul class="collapse">
+  <li><a href="#two-scenarios-observed-vs.-unobserved-confounder" id="toc-two-scenarios-observed-vs.-unobserved-confounder" class="nav-link" data-scroll-target="#two-scenarios-observed-vs.-unobserved-confounder"><span class="header-section-number">1.3.1</span> Two Scenarios: Observed vs.&nbsp;Unobserved Confounder</a></li>
+  </ul></li>
+  <li><a href="#sec-gaussian" id="toc-sec-gaussian" class="nav-link" data-scroll-target="#sec-gaussian"><span class="header-section-number">1.4</span> The Gaussian Linear Confounded Model</a>
+  <ul class="collapse">
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">1.4.1</span> Setup</a></li>
+  <li><a href="#two-explicit-densities" id="toc-two-explicit-densities" class="nav-link" data-scroll-target="#two-explicit-densities"><span class="header-section-number">1.4.2</span> Two Explicit Densities</a></li>
+  <li><a href="#the-endogeneity-gap" id="toc-the-endogeneity-gap" class="nav-link" data-scroll-target="#the-endogeneity-gap"><span class="header-section-number">1.4.3</span> The Endogeneity Gap</a></li>
+  <li><a href="#lab-simulating-the-two-densities" id="toc-lab-simulating-the-two-densities" class="nav-link" data-scroll-target="#lab-simulating-the-two-densities"><span class="header-section-number">1.4.4</span> Lab: Simulating the Two Densities</a></li>
+  <li><a href="#sec-iv-vs-med" id="toc-sec-iv-vs-med" class="nav-link" data-scroll-target="#sec-iv-vs-med"><span class="header-section-number">1.4.5</span> The IV DAG Versus the Mediation DAG</a></li>
+  </ul></li>
+  <li><a href="#sec-two-step" id="toc-sec-two-step" class="nav-link" data-scroll-target="#sec-two-step"><span class="header-section-number">1.5</span> The Two-Step Paradigm</a>
+  <ul class="collapse">
+  <li><a href="#step-1-identification" id="toc-step-1-identification" class="nav-link" data-scroll-target="#step-1-identification"><span class="header-section-number">1.5.1</span> Step 1: Identification</a></li>
+  <li><a href="#step-2-estimation" id="toc-step-2-estimation" class="nav-link" data-scroll-target="#step-2-estimation"><span class="header-section-number">1.5.2</span> Step 2: Estimation</a></li>
+  <li><a href="#sec-simpson" id="toc-sec-simpson" class="nav-link" data-scroll-target="#sec-simpson"><span class="header-section-number">1.5.3</span> A Worked Example: Flu Vaccination and Infection</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">1.6</span> Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">1.7</span> Problems</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Articulate the distinction between an interventional distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> and an observational conditional distribution <span class="math inline">\(f(y \mid T{=}t)\)</span>, and explain why they differ whenever <span class="math inline">\(T\)</span> is endogenous.</li>
+<li>Describe the same causal question in all three languages — SEM, DAG graph surgery, and potential outcomes — and begin to translate between them.</li>
+<li>Derive the two densities explicitly in the Gaussian linear confounded model, and identify the endogeneity bias <span class="math inline">\(\alpha\gamma\sigma_U^2/\sigma_T^2\)</span> as the gap between them.</li>
+<li>State the two-step paradigm (identification then estimation) and locate each step in the causal inference pipeline.</li>
+<li>Distinguish the IV DAG from the mediation DAG and explain why conflating an instrument with a mediator leads to identification failure.</li>
+</ol>
+</div>
+</div>
+<p>This chapter is an orientation, not a complete treatment. It introduces four ideas — the interventional/observational distinction, the causal trinity, the Gaussian confounded model as a running example, and the identification-versus-estimation paradigm — that will be developed rigorously in Chapters 2–4 and beyond. After one reading, students should have a map of the territory; the details will become clear as the course proceeds.</p>
+<section id="motivation-why-causal-inference-is-hard" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="motivation-why-causal-inference-is-hard"><span class="header-section-number">1.1</span> Motivation: Why Causal Inference Is Hard</h2>
+<p>Causal inference studies when and how the observational distribution can be used to recover the distribution that would arise under interventions.</p>
+<section id="the-central-question" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="the-central-question"><span class="header-section-number">1.1.1</span> The Central Question</h3>
+<p>Causal inference is concerned with a deceptively simple question: what would happen to <span class="math inline">\(Y\)</span> if we were to <em>set</em> <span class="math inline">\(T = t\)</span>? This is fundamentally different from the question that standard statistical procedures answer: what is the distribution of <span class="math inline">\(Y\)</span> among units <em>observed</em> to have <span class="math inline">\(T = t\)</span>?</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Interventional vs.&nbsp;Observational Distribution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>The <em>interventional distribution</em> <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> is the distribution of <span class="math inline">\(Y\)</span> in a hypothetical world where <span class="math inline">\(T\)</span> has been <em>externally set</em> to <span class="math inline">\(t\)</span>, regardless of the usual data-generating mechanism for <span class="math inline">\(T\)</span>.</li>
+<li>The <em>observational conditional distribution</em> <span class="math inline">\(f(y \mid T{=}t)\)</span> is the distribution of <span class="math inline">\(Y\)</span> among the subpopulation of units for whom <span class="math inline">\(T = t\)</span> was <em>observed</em> to hold.</li>
+</ul>
+<p>These two distributions coincide only when <span class="math inline">\(T\)</span> is randomized (exogenous). In all other cases they differ, and the difference is <em>endogeneity bias</em>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Exogeneity and Endogeneity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose the outcome is generated by the structural equation <span class="math display">\[Y = f_Y(T, X, U),\]</span> where <span class="math inline">\(T\)</span> is the treatment, <span class="math inline">\(X\)</span> are observed covariates, and <span class="math inline">\(U\)</span> represents unobserved common causes of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> (confounders).</p>
+<ul>
+<li>The treatment <span class="math inline">\(T\)</span> is <em>exogenous given <span class="math inline">\(X\)</span></em> if <span class="math inline">\(T \indep U \mid X\)</span>.</li>
+<li>The treatment <span class="math inline">\(T\)</span> is <em>endogenous given <span class="math inline">\(X\)</span></em> if <span class="math inline">\(T \nindep U \mid X\)</span>, so that some unobserved variable <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>.</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Drug Trial with Unmeasured Severity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Does a new drug (<span class="math inline">\(T=1\)</span>) reduce blood pressure (<span class="math inline">\(Y\)</span>)? Suppose sicker patients are more likely to take the drug, so that unmeasured severity <span class="math inline">\(U\)</span> is a common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>. Then:</p>
+<ul>
+<li><em>Observational study</em>: <span class="math inline">\(\E[Y \mid T{=}1] &gt; \E[Y \mid T{=}0]\)</span>. Drug users have higher blood pressure on average. A naïve analyst concludes the drug is harmful.</li>
+<li><em>Randomized trial</em>: <span class="math inline">\(\E[Y \mid \doop(T{=}1)] &lt; \E[Y \mid \doop(T{=}0)]\)</span>. Forcing everyone to take the drug reduces blood pressure. The drug is beneficial.</li>
+</ul>
+<p>Same data. Different questions. Opposite answers. The entire discrepancy is caused by the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span>, which the observational quantity <span class="math inline">\(\E[Y \mid T{=}1]\)</span> cannot remove.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The Fundamental Problem of Causal Inference
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We observe <span class="math inline">\(f(y \mid T{=}t)\)</span> directly from data. We want <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>. The goal of <em>identification theory</em> is to find conditions under which the former can be used to recover the latter.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="the-causal-trinity-three-languages-for-one-idea" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="the-causal-trinity-three-languages-for-one-idea"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</h2>
+<p>The same causal question — what happens when we set <span class="math inline">\(T = t\)</span>? — can be expressed in three distinct but equivalent languages. Collectively, we call these the <strong>causal trinity</strong>: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. Each member of the trinity illuminates a different facet of the same underlying idea, and fluency in all three is essential for modern causal reasoning. <span class="quarto-unresolved-ref">?fig-trinity</span> depicts their relationships.</p>
+<pre class="{tikz}"><code>#| label: fig-trinity
+#| fig-cap: "The **causal trinity**: three languages that express the same causal question from different vantage points. Potential outcomes define *what* we want to estimate; the DAG with graph surgery specifies *how* to identify it from observed data; the SEM provides the *generative mechanism* for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages. All three converge on the same central question (ellipse)."
+#| echo: false
+#| fig-width: 5
+
+\usetikzlibrary{arrows.meta, calc, positioning, shapes.geometric}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{accent}{RGB}{46,117,182}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{semcolor}{RGB}{30,56,100}
+\definecolor{dagcolor}{RGB}{26,122,58}
+\definecolor{pocolor}{RGB}{150,50,150}
+\definecolor{darkgrey}{RGB}{80,80,80}
+
+\begin{tikzpicture}[
+  lang/.style = {
+    rectangle, rounded corners=6pt, draw, very thick,
+    text width=3.0cm, align=center, minimum height=1.4cm, font=\bfseries\small
+  },
+  sem/.style   = {lang, draw=semcolor, fill=semcolor!10, text=semcolor},
+  dag/.style   = {lang, draw=dagcolor, fill=dagcolor!10, text=dagcolor},
+  po/.style    = {lang, draw=pocolor,  fill=pocolor!10,  text=pocolor},
+  center/.style = {ellipse, draw=accent, fill=defbg, thick,
+                   text width=2.6cm, align=center, font=\small\itshape\color{accent}},
+  trans/.style = {&lt;-&gt;, thick, color=darkgrey, shorten &gt;=4pt, shorten &lt;=4pt},
+  tlabel/.style = {font=\footnotesize\itshape, color=darkgrey, fill=white, inner sep=2pt}
+]
+\node[po]  (PO)  at (90:3.8cm)   {Potential\\Outcomes\\$Y(t)$};
+\node[sem] (SEM) at (210:3.8cm)  {Structural Equation\\Model (SEM)\\$Y = f_Y(T,U,\varepsilon)$};
+\node[dag] (DAG) at (330:3.8cm)  {DAG \&amp;\\Graph Surgery\\$\mathcal{G},\;\mathcal{G}_T$};
+\node[center] (C) at (0,0) {What happens\\when we\\set $T = t$?};
+\draw[-{Stealth[length=5pt]}, thick, color=pocolor!70, shorten &gt;=4pt, shorten &lt;=4pt] (PO)  -- (C);
+\draw[-{Stealth[length=5pt]}, thick, color=semcolor!70, shorten &gt;=4pt, shorten &lt;=4pt] (SEM) -- (C);
+\draw[-{Stealth[length=5pt]}, thick, color=dagcolor!70, shorten &gt;=4pt, shorten &lt;=4pt] (DAG) -- (C);
+\draw[trans] (PO)  -- (SEM)
+  node[tlabel, midway, left=2pt] {\parbox{2.4cm}{\centering consistency\\+ no interference}};
+\draw[trans] (SEM) -- (DAG)
+  node[tlabel, midway, below=4pt] {\parbox{2.4cm}{\centering equation\\$\leftrightarrow$ arrow}};
+\draw[trans] (DAG) -- (PO)
+  node[tlabel, midway, right=2pt] {\parbox{2.4cm}{\centering SUTVA\\+ graph structure}};
+\node[font=\scriptsize\color{pocolor}, text width=2.6cm, align=center]
+  at ($(PO)+(0,1.1)$) {Defines estimands\\(ATE, ATT, LATE)};
+\node[font=\scriptsize\color{semcolor}, text width=2.6cm, align=center]
+  at ($(SEM)+(-1.5,-0.8)$) {Likelihood\\construction};
+\node[font=\scriptsize\color{dagcolor}, text width=2.6cm, align=center]
+  at ($(DAG)+(1.5,-0.8)$) {Identification\\via do-calculus};
+\end{tikzpicture}</code></pre>
+<section id="language-1-structural-equation-models" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="language-1-structural-equation-models"><span class="header-section-number">1.2.1</span> Language 1: Structural Equation Models</h3>
+<p>A structural equation model (SEM) represents the causal data-generating mechanism as a system of equations, one per variable, together with a joint distribution over exogenous errors.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Structural Equation Model (SEM)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A recursive SEM over variables <span class="math inline">\((U, T, Y)\)</span> is a system <span class="math display">\[U \sim p(u), \qquad T = f_T(U, Z, \delta), \qquad Y = f_Y(T, U, \varepsilon),\]</span> where <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are mutually independent exogenous disturbances, <span class="math inline">\(Z\)</span> is an observed instrument, and <span class="math inline">\(U\)</span> is an unobserved confounder.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Error Independence in the NPSEM-IE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The assumption that the disturbances <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are <em>mutually independent</em> is a substantive restriction, not merely a technical convenience. Because <span class="math inline">\(U\)</span> is unobserved and enters both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, error independence does not remove the dependence between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span> induced by <span class="math inline">\(U\)</span>; it restricts only the additional channel of dependence running through the equation-specific errors <span class="math inline">\((\delta, \varepsilon)\)</span>. <span class="citation" data-cites="richardson2014ace">Richardson and Robins (<a href="chapter_01.html#ref-richardson2014ace" role="doc-biblioref">2014</a>)</span> call SEMs with this structure <em>Nonparametric Structural Equation Models with Independent Errors</em> (NPSEM-IEs).</p>
+<p>These notes adopt the NPSEM-IE framework throughout for two practical reasons: error independence ensures the DAG’s Markov condition holds, making the Markov factorization of the joint density immediate; and it integrates cleanly with the graphical identification theory developed in later chapters.</p>
+</div>
+</div>
+<p><strong>Observational regime.</strong> <span class="math inline">\(T\)</span> is determined by <span class="math inline">\(f_T\)</span>. Because <span class="math inline">\(U\)</span> appears in both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, we have <span class="math inline">\(\mathrm{Cov}(T, \varepsilon) \neq 0\)</span> in general: this is endogeneity.</p>
+<p><strong>Interventional regime.</strong> The do-operator replaces the equation for <span class="math inline">\(T\)</span> with a constant <span class="math inline">\(t\)</span>, yielding the <em>mutilated system</em>: <span class="math display">\[U \sim p(u), \qquad T = t \text{ (fixed)}, \qquad Y = f_Y(t, U, \varepsilon).\]</span> Now <span class="math inline">\(T\)</span> and <span class="math inline">\(U\)</span> are independent by construction: the back-door path through <span class="math inline">\(U\)</span> has been severed.</p>
+</section>
+<section id="language-2-directed-acyclic-graphs" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="language-2-directed-acyclic-graphs"><span class="header-section-number">1.2.2</span> Language 2: Directed Acyclic Graphs</h3>
+<p>A DAG makes the same surgery graphically visible.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Graph Surgery
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the observational DAG, arrows into <span class="math inline">\(T\)</span> encode the mechanisms that determine <span class="math inline">\(T\)</span> (including back-door paths through unobserved variables). Under <span class="math inline">\(\doop(T{=}t)\)</span>, all arrows into <span class="math inline">\(T\)</span> are <em>deleted</em>. The resulting mutilated graph <span class="math inline">\(\Gcal_T\)</span> has no back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>: the causal effect flows only along the direct path <span class="math inline">\(T \to Y\)</span>.</p>
+</div>
+</div>
+<p>The observational and mutilated DAGs for the Gaussian confounded model are shown side by side in <span class="quarto-unresolved-ref">?fig-surgery</span> in <a href="#sec-gaussian" class="quarto-xref"><span>Section 1.4</span></a>.</p>
+</section>
+<section id="language-3-potential-outcomes" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="language-3-potential-outcomes"><span class="header-section-number">1.2.3</span> Language 3: Potential Outcomes</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Potential Outcome <span class="citation" data-cites="rubin1974estimating">(<a href="chapter_01.html#ref-rubin1974estimating" role="doc-biblioref">Rubin 1974</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(Y(t)\)</span> is the outcome that <em>would have been observed</em> had <span class="math inline">\(T\)</span> been set to <span class="math inline">\(t\)</span>, possibly contrary to fact.</p>
+<p><strong>SUTVA</strong> (stable unit treatment value assumption): <span class="math inline">\(Y_i = Y_i(T_i)\)</span>, i.e., the observed outcome for unit <span class="math inline">\(i\)</span> equals the potential outcome at the actual treatment received. This rules out interference between units and multiple versions of treatment.</p>
+</div>
+</div>
+<p><strong>Connection to the do-operator.</strong> Under standard structural assumptions (consistency + no interference), the potential outcome <span class="math inline">\(Y(t)\)</span> and the interventional distribution are linked by <span class="math display">\[Y(t) \;\sim\; f(y \mid \doop(T{=}t)).\]</span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Potential outcomes define what we want to estimate (e.g., <span class="math inline">\(\E[Y(1)] - \E[Y(0)]\)</span>), but they do not specify how to write an observed-data likelihood for estimation. The do-operator fills this gap by providing an explicit link between the interventional density and the observational distribution via identification rules (back-door, front-door, do-calculus).</p>
+</div>
+</div>
+</section>
+<section id="roadmap-how-the-trinity-organizes-these-notes" class="level3" data-number="1.2.4">
+<h3 data-number="1.2.4" class="anchored" data-anchor-id="roadmap-how-the-trinity-organizes-these-notes"><span class="header-section-number">1.2.4</span> Roadmap: How the Trinity Organizes These Notes</h3>
+<p>The three languages are not used equally throughout the course.</p>
+<p><strong>Part I — Foundations: the language of DAGs.</strong> The DAG and the do-operator are the primary language here because they make the interventional/observational distinction <em>syntactically explicit</em>: confounding is visible as an open back-door path, and identifying assumptions are visible as graph criteria.</p>
+<p><strong>Part II — Identification: bridging DAGs and observed data.</strong> Ignorability (<span class="math inline">\(Y(t) \indep T \mid X\)</span>) is the potential-outcomes counterpart of the back-door criterion; the propensity score <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span> operationalizes it in observed data.</p>
+<p><strong>Part III — Estimation: semiparametric and machine-learning methods.</strong> The semiparametric efficiency framework — efficient influence functions, doubly robust estimators, double machine learning — is largely language-neutral: it works with whatever moment condition the identification step produces.</p>
+</section>
+<section id="sec-history" class="level3" data-number="1.2.5">
+<h3 data-number="1.2.5" class="anchored" data-anchor-id="sec-history"><span class="header-section-number">1.2.5</span> Historical Roots of the Causal Trinity</h3>
+<p>The three languages grew independently in different disciplines over more than a century, driven by different scientific questions and different communities. Understanding this history explains why the three schools sometimes use incompatible terminology for the same idea.</p>
+<p><strong>Structural Equation Models: genetics and econometrics.</strong> The oldest strand begins with the biologist Sewall Wright (1921), who introduced <em>path analysis</em> to decompose correlations among hereditary traits into direct and indirect causal contributions. The framework was transplanted into economics by Haavelmo (1943), who argued that economic relationships should be modeled as autonomous structural equations robust to policy interventions. The Cowles Commission formalized simultaneous equation systems throughout the 1940s–50s. Lucas’s (1976) critique — that reduced-form equations break down when policy changes the data-generating process — is essentially a statement of the interventional/observational distinction, decades before that phrase existed.</p>
+<p><strong>Potential Outcomes: experimental statistics and epidemiology.</strong> Neyman (1923) introduced the notation <span class="math inline">\(Y_i(t)\)</span> in the context of randomized agricultural experiments. Fisher (1935) placed randomization at the foundation of causal inference. The crucial extension to <em>observational</em> studies was made by Rubin (1974), who formalized the assignment mechanism and stated SUTVA explicitly. Robins (1986) extended potential outcomes to longitudinal treatments and time-varying confounding via <span class="math inline">\(g\)</span>-computation. Imbens and Angrist (1994) connected the framework to instrumental variables and defined the LATE.</p>
+<p><strong>DAGs and do-calculus: computer science and philosophy.</strong> Pearl developed Bayesian networks through the 1980s as a representation for probabilistic reasoning in AI. The pivotal step came in Pearl (1995), where the <em>do-operator</em> was introduced as a formal syntax for distinguishing interventional from observational distributions within a graph-based algebra. The 2000 monograph <em>Causality</em> synthesised DAGs, the do-calculus, identification theory, and the connections to potential outcomes into a unified framework.</p>
+<p><strong>Convergence.</strong> By the 2000s it became clear that all three frameworks are, under standard assumptions, <em>logically equivalent</em>: any result expressible in one can be translated into the others. The causal trinity is therefore not three competing theories but three dialects of the same language, each optimized for a different task. <span class="quarto-unresolved-ref">?fig-timeline</span> summarizes the key milestones.</p>
+<pre class="{tikz}"><code>#| label: fig-timeline
+#| fig-cap: "Key milestones in the three schools of causal inference. SEM (top, blue) originates in genetics and econometrics; PO (middle, purple) in experimental statistics; DAG (bottom, green) in computer science and philosophy. The three developed largely in isolation until converging in the 2000s."
+#| echo: false
+#| fig-width: 7
+
+\usetikzlibrary{arrows.meta, decorations.pathreplacing}
+\definecolor{semcolor}{RGB}{30,56,100}
+\definecolor{dagcolor}{RGB}{26,122,58}
+\definecolor{pocolor}{RGB}{150,50,150}
+\definecolor{accent}{RGB}{46,117,182}
+\definecolor{darkgrey}{RGB}{80,80,80}
+
+\begin{tikzpicture}[every node/.style={font=\scriptsize},
+  milestone/.style={rectangle, rounded corners=3pt, draw, thick,
+                    text width=3.1cm, align=center, inner sep=3pt, minimum height=0.7cm},
+  sem/.style={milestone, draw=semcolor, fill=semcolor!10, text=semcolor!80!black},
+  po/.style ={milestone, draw=pocolor,  fill=pocolor!10,  text=pocolor!80!black},
+  dag/.style={milestone, draw=dagcolor, fill=dagcolor!10, text=dagcolor!80!black},
+  tick/.style={thick, color=darkgrey}]
+
+\draw[tick, -{Stealth[length=6pt]}] (0,0) -- (14.8,0);
+\foreach \yr/\xpos in {1920/0.77, 1930/2.32, 1940/3.87, 1950/5.42,
+  1960/6.97, 1970/8.52, 1980/10.07, 1990/11.62, 2000/13.17}{
+  \draw[tick] (\xpos,0.12) -- (\xpos,-0.12)
+    node[below=1pt, font=\tiny\color{darkgrey}] {\yr};}
+
+\node[sem] at ({(1921-1915)*0.155}, 1.85) {Wright (1921)\\path analysis};
+\node[sem] at ({(1943-1915)*0.155}, 1.85) {Haavelmo (1943)\\structural eqs.};
+\node[sem] at ({(1950-1915)*0.155}, 1.85) {Cowles Commission\\(1940s--50s)};
+\node[sem] at ({(1976-1915)*0.155}, 1.85) {Lucas (1976)\\critique};
+
+\node[po] at ({(1923-1915)*0.155}, 0.65) {Neyman (1923)\\$Y_i(t)$ notation};
+\node[po] at ({(1935-1915)*0.155}, 0.65) {Fisher (1935)\\randomization};
+\node[po] at ({(1974-1915)*0.155}, 0.65) {Rubin (1974)\\obs.\ studies};
+\node[po] at ({(1986-1915)*0.155}, 0.65) {Holland (1986)\\JASA paper};
+\node[po] at ({(1994-1915)*0.155}, 0.65) {Imbens--Angrist\\(1994) LATE};
+
+\node[dag] at ({(1988-1915)*0.155}, -1.0) {Pearl (1988)\\Bayesian nets};
+\node[dag] at ({(1993-1915)*0.155}, -1.0) {Spirtes et al.\\(1993) PC alg.};
+\node[dag] at ({(1995-1915)*0.155}, -1.0) {Pearl (1995)\\do-operator};
+\node[dag] at ({(2000-1915)*0.155}, -1.0) {Pearl (2000)\\\textit{Causality}};
+
+\foreach \yr in {1921,1943,1950,1976}{
+  \fill[semcolor] ({(\yr-1915)*0.155},0) circle (2.2pt);
+  \draw[semcolor!60, thin] ({(\yr-1915)*0.155},0.12) -- ({(\yr-1915)*0.155},1.22);}
+\foreach \yr in {1923,1935,1974,1986,1994}{
+  \fill[pocolor] ({(\yr-1915)*0.155},0) circle (2.2pt);
+  \draw[pocolor!60, thin] ({(\yr-1915)*0.155},0.12) -- ({(\yr-1915)*0.155},0.22);}
+\foreach \yr in {1988,1993,1995,2000}{
+  \fill[dagcolor] ({(\yr-1915)*0.155},0) circle (2.2pt);
+  \draw[dagcolor!60, thin] ({(\yr-1915)*0.155},-0.12) -- ({(\yr-1915)*0.155},-0.38);}
+
+\node[font=\footnotesize\bfseries\color{semcolor}] at (-0.6,  1.85) {SEM};
+\node[font=\footnotesize\bfseries\color{pocolor}]  at (-0.6,  0.65) {PO};
+\node[font=\footnotesize\bfseries\color{dagcolor}] at (-0.6, -1.00) {DAG};
+
+\draw[thick, color=accent, decorate,
+      decoration={brace, amplitude=5pt, mirror}]
+  (12.5,-1.6) -- (14.5,-1.6)
+  node[midway, below=6pt, font=\scriptsize\color{accent}, align=center]
+    {convergence \&amp;\\unification};
+\end{tikzpicture}</code></pre>
+</section>
+</section>
+<section id="the-core-distinction" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="the-core-distinction"><span class="header-section-number">1.3</span> The Core Distinction</h2>
+<p>The single most important inequality of this course is: <span id="eq-core"><span class="math display">\[
+  \underbrace{f\!\left(y \mid x,\, \doop(T{=}t)\right)}_{\text{interventional}}
+  \;\neq\;
+  \underbrace{f\!\left(y \mid x,\, T{=}t\right)}_{\text{observational}}
+  \qquad \text{whenever } T \text{ is endogenous.}
+\tag{1.1}\]</span></span> The key assumption that connects the two densities is <em>conditional exchangeability</em>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Conditional Exchangeability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Given observed covariates <span class="math inline">\(X\)</span> and confounders <span class="math inline">\(U\)</span>, the treatment assignment is <em>conditionally exchangeable with the intervention</em> if <span class="math display">\[Y(t) \indep T \mid X,\, U,\]</span> or equivalently, <span class="math display">\[f(y \mid x,\, T{=}t,\, U{=}u) \;=\; f(y \mid x,\, \doop(T{=}t),\, U{=}u).\]</span> This says that once we condition on all common causes <span class="math inline">\((X, U)\)</span> of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, observing <span class="math inline">\(T{=}t\)</span> and intervening to set <span class="math inline">\(T{=}t\)</span> produce the same distribution of <span class="math inline">\(Y\)</span>: there is no residual confounding given <span class="math inline">\((X, U)\)</span>.</p>
+</div>
+</div>
+<p>Under conditional exchangeability, the interventional density has a direct representation in terms of observable quantities.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Proposition: Back-Door Adjustment Formula
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under conditional exchangeability (Definition above), <span id="eq-backdoor-formula"><span class="math display">\[
+  f(y \mid x,\, \doop(T{=}t))
+  \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.
+\tag{1.2}\]</span></span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Step (i): weight under the intervention.</strong> Under <span class="math inline">\(\doop(T{=}t)\)</span>, the arrow <span class="math inline">\(U \to T\)</span> is severed in the mutilated graph <span class="math inline">\(\Gcal_T\)</span>, so <span class="math inline">\(U \indep T \mid X\)</span> under the intervention. The law of total probability therefore gives: <span class="math display">\[f(y \mid x,\, \doop(T{=}t))
+  = \int f(y \mid x,\, \doop(T{=}t),\, U{=}u)\; p(u \mid x)\; du.\]</span></p>
+<p><strong>Step (ii): replacing the interventional kernel.</strong> By conditional exchangeability, <span class="math inline">\(f(y \mid x,\, \doop(T{=}t),\, U{=}u) = f(y \mid x,\, T{=}t,\, U{=}u)\)</span>. Substituting completes the proof. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Confounding Discrepancy
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>What OLS estimates is the observational density <span class="math inline">\(f(y \mid x, T{=}t)\)</span>, not the interventional density. The gap <span class="math display">\[f(y \mid x,\, T{=}t) - f(y \mid x,\, \doop(T{=}t))
+  = \int f(y \mid x,\, T{=}t,\, U{=}u)
+    \bigl[\, p(u \mid x,\, T{=}t) - p(u \mid x) \,\bigr]\, du\]</span> is non-zero whenever <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> are dependent — the endogeneity condition.</p>
+</div>
+</div>
+<section id="two-scenarios-observed-vs.-unobserved-confounder" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="two-scenarios-observed-vs.-unobserved-confounder"><span class="header-section-number">1.3.1</span> Two Scenarios: Observed vs.&nbsp;Unobserved Confounder</h3>
+<p><strong>Scenario 1: <span class="math inline">\(U\)</span> is observed (no unmeasured confounding).</strong> When every component of <span class="math inline">\(U\)</span> is recorded in the data, the back-door adjustment formula (<a href="#eq-backdoor-formula" class="quarto-xref">Equation&nbsp;<span>1.2</span></a>) becomes usable from data: <span id="eq-backdoor-cont"><span class="math display">\[
+  f(y \mid x,\, \doop(T{=}t))
+  = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.
+\tag{1.3}\]</span></span> The confounder is averaged over its <em>population</em> distribution <span class="math inline">\(p(u \mid x)\)</span>, not over the treatment-conditional distribution. A special case is <em>unconfoundedness</em>: if <span class="math inline">\(U \indep T \mid X\)</span> already holds observationally, formula <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> reduces to the familiar regression <span class="math inline">\(\E[Y \mid X{=}x, T{=}t]\)</span>. This is the key assumption behind regression adjustment and propensity score methods studied in Chapter 6.</p>
+<p><strong>Scenario 2: <span class="math inline">\(U\)</span> is unobserved (unmeasured confounding).</strong> When <span class="math inline">\(U\)</span> is latent, formula <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> is not usable. Additional structure beyond <span class="math inline">\((Y, T, X)\)</span> must be imposed. The main strategies studied in this course are <strong>instrumental variables</strong> (Chapter 7), the <strong>front-door criterion</strong> (Chapter 3), and <strong>sensitivity analysis</strong>.</p>
+<div id="tbl-scenarios" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-scenarios-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.1: The two scenarios arising from the back-door adjustment proposition.
+</figcaption>
+<div aria-describedby="tbl-scenarios-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Scenario 1: <span class="math inline">\(U\)</span> observed</strong></th>
+<th><strong>Scenario 2: <span class="math inline">\(U\)</span> unobserved</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Confounding type</td>
+<td>No unmeasured confounding</td>
+<td>Unmeasured confounding</td>
+</tr>
+<tr class="even">
+<td>Back-door formula usable?</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td>Identification route</td>
+<td>Back-door / standardization</td>
+<td>IV, front-door, …</td>
+</tr>
+<tr class="even">
+<td>Key assumption</td>
+<td>Unconfoundedness: <span class="math inline">\(U \indep T \mid X\)</span></td>
+<td>Exclusion restriction, monotonicity, …</td>
+</tr>
+<tr class="odd">
+<td>Chapters</td>
+<td>2–6</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="sec-gaussian" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="sec-gaussian"><span class="header-section-number">1.4</span> The Gaussian Linear Confounded Model</h2>
+<section id="setup" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">1.4.1</span> Setup</h3>
+<p>The Gaussian linear confounded model is our primary running example throughout this course. It is simple enough to permit closed-form calculations yet rich enough to illustrate every key concept.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Gaussian Linear Confounded Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The structural equations are <span id="eq-iv"><span class="math display">\[
+  Y = \beta T + \gamma U + \varepsilon, \qquad T = \alpha U + \delta,
+\tag{1.4}\]</span></span> where <span class="math inline">\(U\)</span> is an unobserved confounder and the three primitive variables are mutually independent: <span class="math display">\[U \sim \mathcal{N}(0,\sigma_U^2), \qquad
+  \varepsilon \sim \mathcal{N}(0,\sigma_\varepsilon^2), \qquad
+  \delta \sim \mathcal{N}(0,\sigma_\delta^2).\]</span> Here <span class="math inline">\(\beta\)</span> is the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>, <span class="math inline">\(\gamma\)</span> is the direct effect of the confounder <span class="math inline">\(U\)</span> on <span class="math inline">\(Y\)</span>, and <span class="math inline">\(\alpha\)</span> is the direct effect of <span class="math inline">\(U\)</span> on <span class="math inline">\(T\)</span>.</p>
+</div>
+</div>
+<p>The endogeneity of <span class="math inline">\(T\)</span> is immediate. From the analyst’s perspective, the composite error in the <span class="math inline">\(Y\)</span> equation is <span class="math inline">\(\gamma U + \varepsilon\)</span>, so: <span class="math display">\[\mathrm{Cov}(T,\; \gamma U + \varepsilon)
+  = \gamma\,\mathrm{Cov}(\alpha U + \delta,\; U)
+  = \gamma\alpha\sigma_U^2 \;\neq\; 0
+  \quad (\text{when } \alpha \neq 0 \text{ and } \gamma \neq 0).\]</span> Consequently, OLS regressing <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> does not estimate <span class="math inline">\(\beta\)</span>.</p>
+<p>The causal structure is captured by the DAG pair in <span class="quarto-unresolved-ref">?fig-surgery</span>. In the observational DAG, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open: unobserved confounder <span class="math inline">\(U\)</span> causes both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, making <span class="math inline">\(T\)</span> and the composite error <span class="math inline">\(\gamma U + \varepsilon\)</span> correlated. Under the intervention <span class="math inline">\(\doop(T{=}t)\)</span>, all arrows into <span class="math inline">\(T\)</span> are deleted (shown faded), severing the back-door path.</p>
+<pre class="{tikz}"><code>#| label: fig-surgery
+#| fig-cap: "Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention $\\doop(T{=}t)$. The back-door path $T \\leftarrow U \\to Y$ is eliminated; only the causal path $T \\to Y$ remains active. The treatment node becomes a fixed constant (rectangle)."
+#| echo: false
+#| fig-width: 4.5
+
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\tikzset{
+  node/.style  = {circle, draw=isublue, fill=defbg, thick, minimum size=0.7cm, font=\small},
+  unode/.style = {circle, draw=darkgrey, fill=gray!10, dashed, thick, minimum size=0.7cm, font=\small},
+  mnode/.style = {rectangle, rounded corners=3pt, draw=darkgrey, fill=gray!15, thick, minimum size=0.7cm, font=\small},
+  edge/.style  = {-{Stealth[length=5pt]}, thick, color=isublue},
+  dedge/.style = {-{Stealth[length=5pt]}, thick, color=darkgrey, dashed}
+}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node]  (T1) at (0.5,0)    {$T$};
+  \node[node]  (Y1) at (2.5,0)    {$Y$};
+  \node[unode] (U1) at (1.5,-1.3) {$U$};
+  \draw[edge]  (T1) -- (Y1);
+  \draw[dedge] (U1) -- (T1);
+  \draw[dedge] (U1) -- (Y1);
+  \node[font=\small\itshape\color{darkgrey}] at (1.5,-2.1) {Observational DAG};
+
+  \node[mnode] (T2) at (5.5,0)    {$t$};
+  \node[node]  (Y2) at (7.5,0)    {$Y$};
+  \node[unode] (U2) at (6.5,-1.3) {$U$};
+  \draw[edge]  (T2) -- (Y2);
+  \draw[dedge, opacity=0.25] (U2) -- (T2);
+  \draw[dedge] (U2) -- (Y2);
+  \node[font=\small\itshape\color{darkgrey}] at (6.5,-2.1) {Mutilated DAG: $\operatorname{do}(T{=}t)$};
+\end{tikzpicture}</code></pre>
+</section>
+<section id="two-explicit-densities" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="two-explicit-densities"><span class="header-section-number">1.4.2</span> Two Explicit Densities</h3>
+<p>Write <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span> for the marginal variance of <span class="math inline">\(T\)</span>.</p>
+<p><strong>Interventional density.</strong> Set <span class="math inline">\(T = t\)</span> externally. The back-door path through <span class="math inline">\(U\)</span> is severed, so <span class="math inline">\(U\)</span> is independent of <span class="math inline">\(T\)</span> under the intervention and is drawn from its marginal <span class="math inline">\(\mathcal{N}(0,\sigma_U^2)\)</span>. Then <span class="math inline">\(Y \mid \doop(T{=}t) = \beta t + \gamma U + \varepsilon\)</span> with <span class="math inline">\(U \indep \varepsilon\)</span>. Hence <span id="eq-int"><span class="math display">\[
+  f\!\left(y \mid \doop(T{=}t)\right)
+  = \mathcal{N}\!\left(\beta t,\;\;
+    \gamma^2\sigma_U^2 + \sigma_\varepsilon^2\right).
+\tag{1.5}\]</span></span></p>
+<p><strong>Observational density.</strong> Observe <span class="math inline">\(T = t\)</span>. Since <span class="math inline">\(Y\)</span> and <span class="math inline">\(T\)</span> are both linear combinations of the independent normals <span class="math inline">\((U, \varepsilon, \delta)\)</span>, the pair <span class="math inline">\((Y, T)\)</span> is jointly normal. Their covariance is <span class="math inline">\(\mathrm{Cov}(Y, T) = \beta\sigma_T^2 + \gamma\alpha\sigma_U^2\)</span>. Applying the conditional normal formula: <span id="eq-obs"><span class="math display">\[
+  f\!\left(y \mid T{=}t\right)
+  = \mathcal{N}\!\left(
+      \left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t,\;\;
+      \frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2}
+      + \sigma_\varepsilon^2
+    \right).
+\tag{1.6}\]</span></span></p>
+</section>
+<section id="the-endogeneity-gap" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="the-endogeneity-gap"><span class="header-section-number">1.4.3</span> The Endogeneity Gap</h3>
+<p>Equations <a href="#eq-int" class="quarto-xref">Equation&nbsp;<span>1.5</span></a> and <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> differ in both mean and variance:</p>
+<table class="caption-top table">
+<caption><em>Equal when <span class="math inline">\(\alpha = 0\)</span> or <span class="math inline">\(\gamma = 0\)</span> (no confounding)</em></caption>
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Interventional</strong></th>
+<th><strong>Observational</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(\beta t\)</span></td>
+<td><span class="math inline">\(\left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t\)</span></td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(\gamma^2\sigma_U^2 + \sigma_\varepsilon^2\)</span></td>
+<td><span class="math inline">\(\frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2} + \sigma_\varepsilon^2\)</span></td>
+</tr>
+<tr class="odd">
+<td>Residual</td>
+<td><span class="math inline">\((\gamma U{+}\varepsilon) \indep T\)</span></td>
+<td><span class="math inline">\((\gamma U{+}\varepsilon)\)</span> correlated with <span class="math inline">\(T\)</span></td>
+</tr>
+<tr class="even">
+<td>Identified by</td>
+<td>RCT (or IV, Chapter 7)</td>
+<td>OLS</td>
+</tr>
+</tbody>
+</table>
+<p>The <em>endogeneity bias</em> of OLS is <span class="math inline">\(\gamma\alpha\sigma_U^2/\sigma_T^2\)</span>: the coefficient of <span class="math inline">\(T\)</span> in the observational mean exceeds the causal coefficient <span class="math inline">\(\beta\)</span> by this amount. Numerically, with <span class="math inline">\(\alpha = \gamma = 1\)</span> and <span class="math inline">\(\sigma_U^2 = \sigma_\delta^2 = 1\)</span>: <span class="math display">\[\text{bias} = \frac{1 \times 1 \times 1}{1^2 \times 1 + 1} = \frac{1}{2} = 0.5.\]</span></p>
+</section>
+<section id="lab-simulating-the-two-densities" class="level3" data-number="1.4.4">
+<h3 data-number="1.4.4" class="anchored" data-anchor-id="lab-simulating-the-two-densities"><span class="header-section-number">1.4.4</span> Lab: Simulating the Two Densities</h3>
+<p>The analytical results of this section were verified by simulation using <span class="math inline">\(n = 10{,}000\)</span> draws from the structural equations with parameters <span class="math inline">\(\beta = 2\)</span>, <span class="math inline">\(\alpha = 1\)</span>, <span class="math inline">\(\gamma = 1\)</span>, <span class="math inline">\(\sigma_U = \sigma_\varepsilon = \sigma_\delta = 1\)</span>. The R code is distributed separately as <code>chapter1_lab.R</code>.</p>
+<p><strong>Experiment 1: OLS bias.</strong> By the omitted-variable bias formula, the OLS probability limit is <span class="math inline">\(\beta + \gamma\alpha\sigma_U^2/\sigma_T^2 = 2 + 0.5 = 2.5\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Simulated</strong></th>
+<th><strong>Theory</strong></th>
+<th><strong>Formula</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OLS slope</td>
+<td>2.5147</td>
+<td>2.5000</td>
+<td><span class="math inline">\(\beta + \gamma\alpha\sigma_U^2/\sigma_T^2\)</span></td>
+</tr>
+<tr class="even">
+<td>True <span class="math inline">\(\beta\)</span></td>
+<td>—</td>
+<td>2.0000</td>
+<td><span class="math inline">\(\beta\)</span></td>
+</tr>
+<tr class="odd">
+<td>Bias</td>
+<td>0.5147</td>
+<td>0.5000</td>
+<td><span class="math inline">\(\gamma\alpha\sigma_U^2/\sigma_T^2\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>OLS overestimates the causal effect by 25%.</p>
+<p><strong>Experiment 2: Two-sample comparison at <span class="math inline">\(t_0 = 1\)</span>.</strong> Theoretical values are from <a href="#eq-int" class="quarto-xref">Equation&nbsp;<span>1.5</span></a> and <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> at <span class="math inline">\(t_0 = 1\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Mean (Simulated)</strong></th>
+<th><strong>Mean (Theory)</strong></th>
+<th><strong>SD (Simulated)</strong></th>
+<th><strong>SD (Theory)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\E[Y \mid T{=}1]\)</span></td>
+<td>2.567</td>
+<td>2.500</td>
+<td>1.240</td>
+<td><span class="math inline">\(\sqrt{1.5} = 1.225\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\E[Y \mid \doop(T{=}1)]\)</span></td>
+<td>1.999</td>
+<td>2.000</td>
+<td>1.423</td>
+<td><span class="math inline">\(\sqrt{2} = 1.414\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The variance reduction in the observational distribution reflects the ratio <span class="math inline">\(\sigma_{\mathrm{obs}}^2/\sigma_{\mathrm{int}}^2 = 1.5/2 = 0.75\)</span>.</p>
+<p><strong>Experiment 3: Density overlay for varying <span class="math inline">\(\alpha\)</span>.</strong> <span class="quarto-unresolved-ref">?fig-density</span> shows the interventional density <span class="math inline">\(\mathcal{N}(\beta t_0,\, \gamma^2\sigma_U^2 + \sigma_\varepsilon^2)\)</span> (solid) and the observational density <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> (dashed), both evaluated at <span class="math inline">\(t_0 = 1\)</span>, for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span>.</p>
+<pre class="{tikz}"><code>#| label: fig-density
+#| fig-cap: "Interventional density $\\mathcal{N}(2,2)$ (solid black) versus observational density for $\\alpha \\in \\{0, 0.3, 0.7, 1.0\\}$ (dashed), evaluated at $t_0 = 1$. As $\\alpha$ increases, the observational curve shifts rightward (growing bias) and narrows (reduced variance). At $\\alpha = 0$ there is no confounding and the two densities coincide. The interventional curve (solid) is invariant to $\\alpha$."
+#| echo: false
+#| fig-width: 5
+
+\definecolor{accent}{RGB}{46,117,182}
+\definecolor{warnred}{RGB}{192,57,43}
+\definecolor{darkgrey}{RGB}{80,80,80}
+
+\begin{tikzpicture}
+\begin{scope}
+  \draw[-&gt;] (-0.3,0) -- (7.5,0) node[right] {$y$};
+  \draw[-&gt;] (0,-0.1) -- (0,2.8) node[above] {density};
+  \foreach \x/\lab in {0/0,1/1,2/2,3/3,4/4,5/5,6/6,7/7}
+    \draw (\x,0.05) -- (\x,-0.05) node[below, font=\tiny] {\lab};
+  \foreach \y/\lab in {0.5/0.1, 1.0/0.2, 1.5/0.3, 2.0/0.4, 2.5/0.5}
+    \draw (0.05,\y) -- (-0.05,\y) node[left, font=\tiny] {\lab};
+  \draw[thick, black, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2)^2/4)/3.545});
+  \draw[thick, darkgrey, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2)^2/4)/3.545});
+  \draw[thick, accent, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2.275)^2/3.835)/3.471});
+  \draw[thick, accent!70!black, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2.470)^2/3.342)/3.240});
+  \draw[thick, warnred, dashed, domain=0:6, samples=80]
+    plot (\x, {5*exp(-(\x-2.5)^2/3.0)/3.070});
+  \draw[thick, black]        (3.8,2.6) -- (4.4,2.6)
+    node[right, font=\footnotesize] {Interventional $\mathcal{N}(2,2)$};
+  \draw[thick, darkgrey, dashed]  (3.8,2.3) -- (4.4,2.3)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=0$};
+  \draw[thick, accent, dashed]    (3.8,2.0) -- (4.4,2.0)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=0.3$};
+  \draw[thick, accent!70!black, dashed] (3.8,1.7) -- (4.4,1.7)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=0.7$};
+  \draw[thick, warnred, dashed]   (3.8,1.4) -- (4.4,1.4)
+    node[right, font=\footnotesize] {Obs.\ $\alpha=1.0$};
+\end{scope}
+\end{tikzpicture}</code></pre>
+</section>
+<section id="sec-iv-vs-med" class="level3" data-number="1.4.5">
+<h3 data-number="1.4.5" class="anchored" data-anchor-id="sec-iv-vs-med"><span class="header-section-number">1.4.5</span> The IV DAG Versus the Mediation DAG</h3>
+<p>The IV DAG introduced above looks, at first glance, structurally similar to the mediation DAG that will appear in Chapter 8. The similarity is superficial; the conceptual difference is fundamental. Confusing the two is one of the most common errors in applied causal inference.</p>
+<p><span class="quarto-unresolved-ref">?fig-iv-vs-med</span> places the two DAGs side by side.</p>
+<pre class="{tikz}"><code>#| label: fig-iv-vs-med
+#| fig-cap: "The IV DAG (a) and the mediation DAG (b) both involve a three-node chain, but they are structurally and conceptually distinct. In (a), the instrument $Z$ is pre-treatment and exogenous: it satisfies $Z \\indep U$ and has no direct path to $Y$ (exclusion restriction). In (b), the mediator $M$ is post-treatment and endogenous: it is caused by $T$ and transmits part of $T$'s effect to $Y$."
+#| echo: false
+#| fig-width: 5.5
+
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\definecolor{causalgreen}{RGB}{26,122,58}
+\definecolor{warnred}{RGB}{192,57,43}
+\tikzset{
+  node/.style  = {circle, draw=isublue, fill=defbg, thick, minimum size=0.65cm, font=\small},
+  unode/.style = {circle, draw=darkgrey, fill=gray!10, dashed, thick, minimum size=0.65cm, font=\small},
+  edge/.style  = {-{Stealth[length=5pt]}, thick, color=isublue},
+  dedge/.style = {-{Stealth[length=5pt]}, thick, color=darkgrey, dashed}
+}
+\begin{tikzpicture}[node distance=1.9cm]
+  \begin{scope}[xshift=0cm]
+    \node[node]  (Z1) at (0,0)    {$Z$};
+    \node[node]  (T1) at (2.0,0)  {$T$};
+    \node[node]  (Y1) at (4.0,0)  {$Y$};
+    \node[unode] (U1) at (3.0,-1.4) {$U$};
+    \draw[edge]  (Z1) -- (T1);
+    \draw[edge]  (T1) -- (Y1);
+    \draw[dedge] (U1) -- (T1);
+    \draw[dedge] (U1) -- (Y1);
+    \node[font=\scriptsize\color{warnred}, text width=2.8cm, align=center]
+      at (2.0,1.0) {\textit{exclusion restriction:\\$Z$ has no direct path to $Y$}};
+    \node[font=\small\bfseries\color{isublue}] at (2.0,-2.4) {(a) IV DAG};
+    \node[font=\footnotesize\color{darkgrey}, text width=4.2cm, align=center]
+      at (2.0,-3.0) {$Z$ upstream, exogenous ($Z \perp U$), excluded from $Y$};
+  \end{scope}
+  \begin{scope}[xshift=6.5cm]
+    \node[node]  (T2) at (0,0)    {$T$};
+    \node[node]  (M2) at (2.0,0)  {$M$};
+    \node[node]  (Y2) at (4.0,0)  {$Y$};
+    \node[unode] (U2) at (2.0,-1.4) {$U$};
+    \draw[edge]  (T2) -- (M2);
+    \draw[edge]  (M2) -- (Y2);
+    \draw[edge, bend left=30] (T2) to (Y2);
+    \draw[dedge] (U2) -- (T2);
+    \draw[dedge] (U2) -- (Y2);
+    \node[font=\scriptsize\color{causalgreen}, text width=2.8cm, align=center]
+      at (2.0,1.0) {\textit{indirect path:\\$T \to M \to Y$}};
+    \node[font=\small\bfseries\color{isublue}] at (2.0,-2.4) {(b) Mediation DAG};
+    \node[font=\footnotesize\color{darkgrey}, text width=4.2cm, align=center]
+      at (2.0,-3.0) {$M$ downstream of $T$, lies on the causal path to $Y$};
+  \end{scope}
+\end{tikzpicture}</code></pre>
+<p><a href="#tbl-iv-vs-med" class="quarto-xref">Table&nbsp;<span>1.2</span></a> makes the comparison systematic.</p>
+<div id="tbl-iv-vs-med" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-iv-vs-med-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.2: Instrumental variable versus mediator: a systematic comparison.
+</figcaption>
+<div aria-describedby="tbl-iv-vs-med-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Instrument <span class="math inline">\(Z\)</span></strong></th>
+<th><strong>Mediator <span class="math inline">\(M\)</span></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Position relative to <span class="math inline">\(T\)</span></td>
+<td>Pre-treatment (upstream)</td>
+<td>Post-treatment (downstream)</td>
+</tr>
+<tr class="even">
+<td>Causal relationship to <span class="math inline">\(T\)</span></td>
+<td><span class="math inline">\(Z\)</span> causes <span class="math inline">\(T\)</span></td>
+<td><span class="math inline">\(T\)</span> causes <span class="math inline">\(M\)</span></td>
+</tr>
+<tr class="odd">
+<td>Direct path to <span class="math inline">\(Y\)</span>?</td>
+<td><strong>No</strong> (exclusion restriction)</td>
+<td><strong>Yes</strong> (<span class="math inline">\(M \to Y\)</span> on causal path)</td>
+</tr>
+<tr class="even">
+<td>Independence from <span class="math inline">\(U\)</span>?</td>
+<td><strong>Yes</strong> (<span class="math inline">\(Z \indep U\)</span>)</td>
+<td>Not required</td>
+</tr>
+<tr class="odd">
+<td>Primary purpose</td>
+<td>Identify <span class="math inline">\(T \to Y\)</span> with unmeasured confounding</td>
+<td>Decompose <span class="math inline">\(T \to Y\)</span> into direct and indirect</td>
+</tr>
+<tr class="even">
+<td>Key assumptions</td>
+<td>Relevance, exogeneity, exclusion</td>
+<td>Cross-world independence; no <span class="math inline">\(M\)</span>–<span class="math inline">\(Y\)</span> unmeasured confounding</td>
+</tr>
+<tr class="odd">
+<td>Course coverage</td>
+<td>Chapter 7</td>
+<td>Chapter 8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The two chains look similar but are not interchangeable: <span class="math display">\[\underbrace{Z \;\longrightarrow\; T \;\longrightarrow\; Y}_{\text{IV chain: } Z \text{ is the identification device}}
+  \qquad\text{versus}\qquad
+  \underbrace{T \;\longrightarrow\; M \;\longrightarrow\; Y}_{\text{Mediation chain: } M \text{ is on the causal path}}\]</span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>There is one important configuration where an observed post-treatment variable serves a role <em>analogous</em> to an instrument: the <em>front-door criterion</em> (Chapter 3). When <span class="math inline">\(T \to M \to Y\)</span> and <span class="math inline">\(T \leftarrow U \to Y\)</span> with <span class="math inline">\(U\)</span> unobserved, but <span class="math inline">\(M\)</span> is itself unconfounded, the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> can still be identified by combining two back-door adjustments. This is the one case where a mediator also plays an identification role.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-two-step" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="sec-two-step"><span class="header-section-number">1.5</span> The Two-Step Paradigm</h2>
+<p>Causal inference is a two-step discipline. The two steps are logically distinct and require different tools.</p>
+<section id="step-1-identification" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="step-1-identification"><span class="header-section-number">1.5.1</span> Step 1: Identification</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Identification
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A causal quantity <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span> is <em>identified</em> from the observational distribution <span class="math inline">\(P\)</span> if there exists a functional <span class="math inline">\(\Psi\)</span> such that <span class="math display">\[P(y \mid \doop(T{=}t)) = \Psi(P),\]</span> and <span class="math inline">\(\Psi(P)\)</span> depends only on the observable joint distribution.</p>
+</div>
+</div>
+<p>Identification is a purely mathematical question about the structure of the causal model: given the assumed graph and assumptions, can the interventional density be expressed as a function of the observed-data distribution? It does not depend on sample size.</p>
+<p>The main tools are: the back-door criterion (Chapters 2–3, applied in Chapters 5–6), the front-door criterion (Chapter 3), the three rules of the do-calculus (Chapter 3), and IV assumptions (Chapter 7).</p>
+</section>
+<section id="step-2-estimation" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="step-2-estimation"><span class="header-section-number">1.5.2</span> Step 2: Estimation</h3>
+<p>Once <span class="math inline">\(\Psi(P)\)</span> has been identified, the statistical problem is to estimate <span class="math inline">\(\Psi(P)\)</span> from <span class="math inline">\(n\)</span> observations <span class="math inline">\(O_1,\dots,O_n\)</span> as efficiently as possible. The main tools are efficient influence functions (EIF), inverse probability weighting (IPW), doubly robust estimators, and double machine learning (DML), all covered in Part III.</p>
+</section>
+<section id="sec-simpson" class="level3" data-number="1.5.3">
+<h3 data-number="1.5.3" class="anchored" data-anchor-id="sec-simpson"><span class="header-section-number">1.5.3</span> A Worked Example: Flu Vaccination and Infection</h3>
+<p><strong>Scenario.</strong> A public health agency observes 1,000 individuals over one flu season. Each person either received a flu vaccine (<span class="math inline">\(T=1\)</span>) or did not (<span class="math inline">\(T=0\)</span>), and either became infected (<span class="math inline">\(Y=1\)</span>) or did not (<span class="math inline">\(Y=0\)</span>). Age group <span class="math inline">\(X\)</span> (elderly <span class="math inline">\(= E\)</span>, young <span class="math inline">\(= Y\)</span>) is recorded for all individuals. Elderly people are both more likely to be vaccinated and more susceptible to infection, so <span class="math inline">\(X\)</span> confounds the relationship between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>The causal DAG is shown in <span class="quarto-unresolved-ref">?fig-vaccination</span>.</p>
+<pre class="{tikz}"><code>#| label: fig-vaccination
+#| fig-cap: "Causal DAG for the vaccination example. The green arrow is the causal path $T \\to Y$. The red dashed arrows form the back-door path $T \\leftarrow X \\to Y$: age $X$ causes both vaccination $T$ and infection $Y$, creating a spurious association. Because $X$ is observed, conditioning on it blocks the back-door path."
+#| echo: false
+#| fig-width: 3.5
+
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\definecolor{causalgreen}{RGB}{26,122,58}
+\definecolor{backdoorred}{RGB}{192,57,43}
+\tikzset{
+  node/.style  = {circle, draw=isublue, fill=defbg, thick, minimum size=0.65cm, font=\small},
+  cedge/.style = {-{Stealth[length=5pt]}, thick, color=causalgreen},
+  bedge/.style = {-{Stealth[length=5pt]}, thick, color=backdoorred, dashed}
+}
+\begin{tikzpicture}[node distance=2.0cm]
+  \node[node] (X) {$X$};
+  \node[node, right of=X] (T) {$T$};
+  \node[node, right of=T] (Y) {$Y$};
+  \draw[cedge] (T) -- (Y) node[midway, above, font=\small\color{causalgreen}] {causal};
+  \draw[bedge] (X) -- (T);
+  \draw[bedge] (X) to[out=-30, in=-150] (Y);
+  \node[font=\small\itshape\color{darkgrey}, below=0.3cm of X] {Age};
+  \node[font=\small\itshape\color{darkgrey}, below=0.3cm of T] {Vaccine};
+  \node[font=\small\itshape\color{darkgrey}, below=0.3cm of Y] {Infection};
+  \node[font=\small\color{backdoorred}, below=0.9cm of T] {back-door};
+\end{tikzpicture}</code></pre>
+<p><strong>Observed data.</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Vaccinated (<span class="math inline">\(T=1\)</span>)</strong></th>
+<th></th>
+<th><strong>Unvaccinated (<span class="math inline">\(T=0\)</span>)</strong></th>
+<th></th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><span class="math inline">\(n\)</span></td>
+<td>Infected</td>
+<td><span class="math inline">\(n\)</span></td>
+<td>Infected</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Elderly (<span class="math inline">\(X=E\)</span>)</td>
+<td>360</td>
+<td>108 (30%)</td>
+<td>40</td>
+<td>20 (50%)</td>
+<td>400</td>
+</tr>
+<tr class="odd">
+<td>Young (<span class="math inline">\(X=Y\)</span>)</td>
+<td>60</td>
+<td>3 (5%)</td>
+<td>540</td>
+<td>54 (10%)</td>
+<td>600</td>
+</tr>
+<tr class="even">
+<td><strong>Total</strong></td>
+<td>420</td>
+<td>111 (26.4%)</td>
+<td>580</td>
+<td>74 (12.8%)</td>
+<td>1,000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Simpson’s paradox.</strong> Within every stratum the vaccine reduces infection. Yet in the aggregate the vaccinated group has a <em>higher</em> infection rate (26.4% vs 12.8%). The reversal occurs because the vaccinated group is disproportionately elderly (86% of vaccinated vs.&nbsp;7% of unvaccinated).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Stratum</th>
+<th>Vaccinated</th>
+<th>Unvaccinated</th>
+<th>Difference</th>
+<th>Conclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Elderly (<span class="math inline">\(X=E\)</span>)</td>
+<td>30%</td>
+<td>50%</td>
+<td><span class="math inline">\(-20\)</span> pp</td>
+<td>vaccine helps</td>
+</tr>
+<tr class="even">
+<td>Young (<span class="math inline">\(X=Y\)</span>)</td>
+<td>5%</td>
+<td>10%</td>
+<td><span class="math inline">\(-5\)</span> pp</td>
+<td>vaccine helps</td>
+</tr>
+<tr class="odd">
+<td><strong>Aggregate</strong></td>
+<td><strong>26.4%</strong></td>
+<td><strong>12.8%</strong></td>
+<td><strong><span class="math inline">\(+13.6\)</span> pp</strong></td>
+<td><strong>vaccine harms??</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 1: Identification.</strong> The set <span class="math inline">\(\{X\}\)</span> satisfies the back-door criterion: it blocks the path <span class="math inline">\(T \leftarrow X \to Y\)</span> and contains no descendant of <span class="math inline">\(T\)</span>. By the back-door formula: <span id="eq-backdoor"><span class="math display">\[
+  P\!\left(Y{=}1 \mid \doop(T{=}t)\right)
+  = \sum_{x \in \{E,Y\}}
+    P(Y{=}1 \mid T{=}t, X{=}x)\,P(X{=}x).
+\tag{1.7}\]</span></span></p>
+<p><strong>Step 2: Estimation.</strong> Plugging sample proportions into <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>1.7</span></a>, with <span class="math inline">\(\hat{P}(X{=}E) = 0.4\)</span> and <span class="math inline">\(\hat{P}(X{=}Y) = 0.6\)</span>: <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}1))
+    = 0.30 \times 0.4 + 0.05 \times 0.6 = 0.15, \qquad
+  \hat{P}(Y{=}1 \mid \doop(T{=}0))
+    = 0.50 \times 0.4 + 0.10 \times 0.6 = 0.26.\]</span> The estimated causal risk difference is <span class="math inline">\(\hat{\Delta}_{\mathrm{causal}} = 0.15 - 0.26 = -0.11\)</span>: the vaccine causally reduces infection probability by 11 percentage points.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Two Steps, Concretely
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Step 1 (identification)</strong> established — from the DAG alone — that the back-door formula (<a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>1.7</span></a>) expresses the causal quantity as a functional of observable data.</p>
+<p><strong>Step 2 (estimation)</strong> replaced the population probabilities in that formula with sample proportions.</p>
+<p>These two steps are logically separate: Step 1 is a mathematical argument about the causal model that does not depend on sample size; Step 2 is a statistical argument about finite-sample estimation that does not depend on the causal model. A researcher who skips Step 1 and reports the raw difference conflates the two and draws the wrong conclusion.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="summary" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">1.6</span> Summary</h2>
+<ol type="1">
+<li><p><strong>Interventional vs.&nbsp;observational distribution.</strong> Causal inference answers questions about interventions <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>, not about observations <span class="math inline">\(f(y \mid T{=}t)\)</span>. These two distributions coincide only under exogeneity; whenever <span class="math inline">\(T\)</span> is endogenous they differ, and the difference is endogeneity bias.</p></li>
+<li><p><strong>The causal trinity.</strong> The same causal question can be expressed in three languages — SEM (equation surgery), DAG (graph surgery), and potential outcomes (<span class="math inline">\(Y(t)\)</span>). The do-operator makes the interventional/observational distinction syntactically explicit. Fluency in all three is essential for modern causal reasoning.</p></li>
+<li><p><strong>Endogeneity bias in the Gaussian confounded model.</strong> In the Gaussian linear confounded model, the coefficient of <span class="math inline">\(T\)</span> in the observational mean <span class="math inline">\(\E[Y \mid T{=}t]\)</span> exceeds the causal coefficient <span class="math inline">\(\beta\)</span> by <span class="math inline">\(\gamma\alpha\sigma_U^2/\sigma_T^2\)</span>, where <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span>. This is the omitted-variable bias.</p></li>
+<li><p><strong>Two-step paradigm.</strong> Causal inference is a two-step discipline: <em>identification</em> (expressing <span class="math inline">\(\Psi(P)\)</span> as a functional of observable data, a mathematical question about the causal model) followed by <em>estimation</em> (constructing <span class="math inline">\(\hat{\Psi}_n\)</span> efficiently from <span class="math inline">\(n\)</span> observations, a statistical question about finite samples). The two steps are logically independent.</p></li>
+<li><p><strong>Instrument vs.&nbsp;mediator.</strong> The IV DAG (<span class="math inline">\(Z \to T \to Y\)</span> with <span class="math inline">\(Z \indep U\)</span>) and the mediation DAG (<span class="math inline">\(T \to M \to Y\)</span>) are structurally distinct. Conflating the two leads to violations of the exclusion restriction and identification failure.</p></li>
+</ol>
+<p><em>Causal inference is the study of when the observational distribution contains enough information to recover the interventional distribution. Everything in this course — the back-door criterion, do-calculus, instrumental variables, doubly robust estimation — is an answer to that question in a particular setting.</em></p>
+</section>
+<section id="problems" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="problems"><span class="header-section-number">1.7</span> Problems</h2>
+<p><strong>1. Do-notation fundamentals.</strong> For each statement below, decide whether it refers to an interventional or an observational distribution, and rewrite it unambiguously using do-notation where appropriate.</p>
+<ol type="a">
+<li>“The probability that a patient recovers given that they took the drug.”</li>
+<li>“The probability that a patient would recover if we prescribed the drug to everyone.”</li>
+<li>“Among students who attended tutoring, the average exam score was 85.”</li>
+<li>“If we enrolled all students in tutoring, the average exam score would be 85.”</li>
+</ol>
+<p><strong>2. Deriving the observational density.</strong> In the Gaussian confounded model, verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> by carrying out the following steps. Let <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span>.</p>
+<ol type="a">
+<li>Show that <span class="math inline">\((Y, T)\)</span> is jointly normal by writing both as linear combinations of the independent normals <span class="math inline">\((U, \varepsilon, \delta)\)</span>.</li>
+<li>Compute <span class="math inline">\(\mathrm{Cov}(Y, T)\)</span> and <span class="math inline">\(\mathrm{Var}(T)\)</span>.</li>
+<li>Apply the conditional normal formula to derive <span class="math inline">\(\E[Y \mid T{=}t]\)</span> and <span class="math inline">\(\mathrm{Var}[Y \mid T{=}t]\)</span>, and hence verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a>.</li>
+<li>Show that the OLS probability limit is <span class="math inline">\(\beta + \gamma\alpha\sigma_U^2/\sigma_T^2\)</span>, and interpret this as an omitted-variable bias formula.</li>
+</ol>
+<p><strong>3. The causal trinity.</strong> Consider the following verbal causal claim: “Aspirin (<span class="math inline">\(T\)</span>) reduces the risk of heart attack (<span class="math inline">\(Y\)</span>) because it inhibits platelet aggregation (<span class="math inline">\(M\)</span>), but patients with pre-existing cardiovascular disease (<span class="math inline">\(U\)</span>, unobserved) are both more likely to take aspirin and more likely to have a heart attack.”</p>
+<ol type="a">
+<li>Draw the causal DAG implied by this description.</li>
+<li>Write down the recursive SEM with appropriate structural functions <span class="math inline">\(f_T\)</span>, <span class="math inline">\(f_M\)</span>, <span class="math inline">\(f_Y\)</span>.</li>
+<li>State the SUTVA assumption and discuss whether it is plausible in this setting.</li>
+<li>Explain why <span class="math inline">\(\E[Y \mid T{=}1] - \E[Y \mid T{=}0]\)</span> does not identify the causal effect <span class="math inline">\(\E[Y \mid \doop(T{=}1)] - \E[Y \mid \doop(T{=}0)]\)</span> in this DAG.</li>
+</ol>
+<p><strong>4. IV versus mediation.</strong> For each scenario below, determine whether the intermediate variable described is an <em>instrument</em> or a <em>mediator</em>, and state which identifying assumption it satisfies or violates.</p>
+<ol type="a">
+<li>A researcher uses distance to the nearest college (<span class="math inline">\(Z\)</span>) to study the effect of college attendance (<span class="math inline">\(T\)</span>) on earnings (<span class="math inline">\(Y\)</span>).</li>
+<li>A nutritionist studies how a high-fiber diet (<span class="math inline">\(T\)</span>) reduces cholesterol (<span class="math inline">\(M\)</span>), which in turn reduces heart disease risk (<span class="math inline">\(Y\)</span>).</li>
+<li>A political scientist uses rainfall on election day (<span class="math inline">\(Z\)</span>) to estimate the effect of voter turnout (<span class="math inline">\(T\)</span>) on electoral outcomes (<span class="math inline">\(Y\)</span>).</li>
+<li>A pharmacologist studies whether a drug (<span class="math inline">\(T\)</span>) reduces blood pressure (<span class="math inline">\(Y\)</span>) by inhibiting a specific enzyme (<span class="math inline">\(M\)</span>), and proposes to use <span class="math inline">\(M\)</span> as an instrument for <span class="math inline">\(T\)</span>. Evaluate this proposal.</li>
+</ol>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-richardson2014ace" class="csl-entry" role="listitem">
+Richardson, Thomas S., and James M. Robins. 2014. <em><span>ACE</span>
+Bounds; Single World Intervention Graphs (<span>SWIGs</span>) and
+Identification of Causal Effects</em>. University of Washington.
+</div>
+<div id="ref-rubin1974estimating" class="csl-entry" role="listitem">
+Rubin, Donald B. 1974. <span>“Estimating Causal Effects of Treatments in
+Randomized and Nonrandomized Studies.”</span> <em>Journal of Educational
+Psychology</em> 66 (5): 688–701.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Preface">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

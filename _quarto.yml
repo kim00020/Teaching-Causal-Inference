@@ -1,0 +1,43 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Theory and Methods in Causal Inference"
+  author: "Jae-kwang Kim"
+  date: today
+  chapters:
+    - index.qmd
+    - chapter_01.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    html-math-method: mathjax
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            tags: 'ams',
+            macros: {
+              doop:   ["\\operatorname{do}"],
+              indep:  ["\\perp\\!\\!\\!\\perp"],
+              nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+              E:      ["\\mathbb{E}"],
+              Gcal:   ["\\mathcal{G}"],
+              Pa:     ["\\mathrm{Pa}"],
+              De:     ["\\mathrm{De}"],
+              An:     ["\\mathrm{An}"],
+              Nd:     ["\\mathrm{Nd}"],
+              pto:    ["\\overset{p}{\\to}"],
+              expit:  ["\\operatorname{expit}"]
+            }
+          }
+        };
+        </script>
