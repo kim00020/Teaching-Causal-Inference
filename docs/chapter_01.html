@@ -353,54 +353,21 @@ window.Quarto = {
 </section>
 <section id="the-causal-trinity-three-languages-for-one-idea" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="the-causal-trinity-three-languages-for-one-idea"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</h2>
-<p>The same causal question — what happens when we set <span class="math inline">\(T = t\)</span>? — can be expressed in three distinct but equivalent languages. Collectively, we call these the <strong>causal trinity</strong>: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. Each member of the trinity illuminates a different facet of the same underlying idea, and fluency in all three is essential for modern causal reasoning. <span class="quarto-unresolved-ref">?fig-trinity</span> depicts their relationships.</p>
-<pre class="{tikz}"><code>#| label: fig-trinity
-#| fig-cap: "The **causal trinity**: three languages that express the same causal question from different vantage points. Potential outcomes define *what* we want to estimate; the DAG with graph surgery specifies *how* to identify it from observed data; the SEM provides the *generative mechanism* for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages. All three converge on the same central question (ellipse)."
-#| echo: false
-#| fig-width: 5
-
-\usetikzlibrary{arrows.meta, calc, positioning, shapes.geometric}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{accent}{RGB}{46,117,182}
-\definecolor{defbg}{RGB}{238,244,251}
-\definecolor{semcolor}{RGB}{30,56,100}
-\definecolor{dagcolor}{RGB}{26,122,58}
-\definecolor{pocolor}{RGB}{150,50,150}
-\definecolor{darkgrey}{RGB}{80,80,80}
-
-\begin{tikzpicture}[
-  lang/.style = {
-    rectangle, rounded corners=6pt, draw, very thick,
-    text width=3.0cm, align=center, minimum height=1.4cm, font=\bfseries\small
-  },
-  sem/.style   = {lang, draw=semcolor, fill=semcolor!10, text=semcolor},
-  dag/.style   = {lang, draw=dagcolor, fill=dagcolor!10, text=dagcolor},
-  po/.style    = {lang, draw=pocolor,  fill=pocolor!10,  text=pocolor},
-  center/.style = {ellipse, draw=accent, fill=defbg, thick,
-                   text width=2.6cm, align=center, font=\small\itshape\color{accent}},
-  trans/.style = {&lt;-&gt;, thick, color=darkgrey, shorten &gt;=4pt, shorten &lt;=4pt},
-  tlabel/.style = {font=\footnotesize\itshape, color=darkgrey, fill=white, inner sep=2pt}
-]
-\node[po]  (PO)  at (90:3.8cm)   {Potential\\Outcomes\\$Y(t)$};
-\node[sem] (SEM) at (210:3.8cm)  {Structural Equation\\Model (SEM)\\$Y = f_Y(T,U,\varepsilon)$};
-\node[dag] (DAG) at (330:3.8cm)  {DAG \&amp;\\Graph Surgery\\$\mathcal{G},\;\mathcal{G}_T$};
-\node[center] (C) at (0,0) {What happens\\when we\\set $T = t$?};
-\draw[-{Stealth[length=5pt]}, thick, color=pocolor!70, shorten &gt;=4pt, shorten &lt;=4pt] (PO)  -- (C);
-\draw[-{Stealth[length=5pt]}, thick, color=semcolor!70, shorten &gt;=4pt, shorten &lt;=4pt] (SEM) -- (C);
-\draw[-{Stealth[length=5pt]}, thick, color=dagcolor!70, shorten &gt;=4pt, shorten &lt;=4pt] (DAG) -- (C);
-\draw[trans] (PO)  -- (SEM)
-  node[tlabel, midway, left=2pt] {\parbox{2.4cm}{\centering consistency\\+ no interference}};
-\draw[trans] (SEM) -- (DAG)
-  node[tlabel, midway, below=4pt] {\parbox{2.4cm}{\centering equation\\$\leftrightarrow$ arrow}};
-\draw[trans] (DAG) -- (PO)
-  node[tlabel, midway, right=2pt] {\parbox{2.4cm}{\centering SUTVA\\+ graph structure}};
-\node[font=\scriptsize\color{pocolor}, text width=2.6cm, align=center]
-  at ($(PO)+(0,1.1)$) {Defines estimands\\(ATE, ATT, LATE)};
-\node[font=\scriptsize\color{semcolor}, text width=2.6cm, align=center]
-  at ($(SEM)+(-1.5,-0.8)$) {Likelihood\\construction};
-\node[font=\scriptsize\color{dagcolor}, text width=2.6cm, align=center]
-  at ($(DAG)+(1.5,-0.8)$) {Identification\\via do-calculus};
-\end{tikzpicture}</code></pre>
+<p>The same causal question — what happens when we set <span class="math inline">\(T = t\)</span>? — can be expressed in three distinct but equivalent languages. Collectively, we call these the <strong>causal trinity</strong>: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. Each member of the trinity illuminates a different facet of the same underlying idea, and fluency in all three is essential for modern causal reasoning. <a href="#fig-trinity" class="quarto-xref">Figure&nbsp;<span>1.1</span></a> depicts their relationships.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-trinity" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-trinity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="chapter_01_files/figure-html/fig-trinity-1.png" class="img-fluid figure-img" width="480">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trinity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that express the same causal question from different vantage points. Potential outcomes define <em>what</em> we want to estimate; the DAG with graph surgery specifies <em>how</em> to identify it from observed data; the SEM provides the <em>generative mechanism</em> for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages. All three converge on the same central question (ellipse).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <section id="language-1-structural-equation-models" class="level3" data-number="1.2.1">
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="language-1-structural-equation-models"><span class="header-section-number">1.2.1</span> Language 1: Structural Equation Models</h3>
 <p>A structural equation model (SEM) represents the causal data-generating mechanism as a system of equations, one per variable, together with a joint distribution over exogenous errors.</p>
@@ -450,7 +417,7 @@ window.Quarto = {
 <p>In the observational DAG, arrows into <span class="math inline">\(T\)</span> encode the mechanisms that determine <span class="math inline">\(T\)</span> (including back-door paths through unobserved variables). Under <span class="math inline">\(\doop(T{=}t)\)</span>, all arrows into <span class="math inline">\(T\)</span> are <em>deleted</em>. The resulting mutilated graph <span class="math inline">\(\Gcal_T\)</span> has no back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>: the causal effect flows only along the direct path <span class="math inline">\(T \to Y\)</span>.</p>
 </div>
 </div>
-<p>The observational and mutilated DAGs for the Gaussian confounded model are shown side by side in <span class="quarto-unresolved-ref">?fig-surgery</span> in <a href="#sec-gaussian" class="quarto-xref"><span>Section 1.4</span></a>.</p>
+<p>The observational and mutilated DAGs for the Gaussian confounded model are shown side by side in <a href="#fig-surgery" class="quarto-xref">Figure&nbsp;<span>1.3</span></a> in <a href="#sec-gaussian" class="quarto-xref"><span>Section 1.4</span></a>.</p>
 </section>
 <section id="language-3-potential-outcomes" class="level3" data-number="1.2.3">
 <h3 data-number="1.2.3" class="anchored" data-anchor-id="language-3-potential-outcomes"><span class="header-section-number">1.2.3</span> Language 3: Potential Outcomes</h3>
@@ -496,69 +463,21 @@ window.Quarto = {
 <p><strong>Structural Equation Models: genetics and econometrics.</strong> The oldest strand begins with the biologist Sewall Wright (1921), who introduced <em>path analysis</em> to decompose correlations among hereditary traits into direct and indirect causal contributions. The framework was transplanted into economics by Haavelmo (1943), who argued that economic relationships should be modeled as autonomous structural equations robust to policy interventions. The Cowles Commission formalized simultaneous equation systems throughout the 1940s–50s. Lucas’s (1976) critique — that reduced-form equations break down when policy changes the data-generating process — is essentially a statement of the interventional/observational distinction, decades before that phrase existed.</p>
 <p><strong>Potential Outcomes: experimental statistics and epidemiology.</strong> Neyman (1923) introduced the notation <span class="math inline">\(Y_i(t)\)</span> in the context of randomized agricultural experiments. Fisher (1935) placed randomization at the foundation of causal inference. The crucial extension to <em>observational</em> studies was made by Rubin (1974), who formalized the assignment mechanism and stated SUTVA explicitly. Robins (1986) extended potential outcomes to longitudinal treatments and time-varying confounding via <span class="math inline">\(g\)</span>-computation. Imbens and Angrist (1994) connected the framework to instrumental variables and defined the LATE.</p>
 <p><strong>DAGs and do-calculus: computer science and philosophy.</strong> Pearl developed Bayesian networks through the 1980s as a representation for probabilistic reasoning in AI. The pivotal step came in Pearl (1995), where the <em>do-operator</em> was introduced as a formal syntax for distinguishing interventional from observational distributions within a graph-based algebra. The 2000 monograph <em>Causality</em> synthesised DAGs, the do-calculus, identification theory, and the connections to potential outcomes into a unified framework.</p>
-<p><strong>Convergence.</strong> By the 2000s it became clear that all three frameworks are, under standard assumptions, <em>logically equivalent</em>: any result expressible in one can be translated into the others. The causal trinity is therefore not three competing theories but three dialects of the same language, each optimized for a different task. <span class="quarto-unresolved-ref">?fig-timeline</span> summarizes the key milestones.</p>
-<pre class="{tikz}"><code>#| label: fig-timeline
-#| fig-cap: "Key milestones in the three schools of causal inference. SEM (top, blue) originates in genetics and econometrics; PO (middle, purple) in experimental statistics; DAG (bottom, green) in computer science and philosophy. The three developed largely in isolation until converging in the 2000s."
-#| echo: false
-#| fig-width: 7
-
-\usetikzlibrary{arrows.meta, decorations.pathreplacing}
-\definecolor{semcolor}{RGB}{30,56,100}
-\definecolor{dagcolor}{RGB}{26,122,58}
-\definecolor{pocolor}{RGB}{150,50,150}
-\definecolor{accent}{RGB}{46,117,182}
-\definecolor{darkgrey}{RGB}{80,80,80}
-
-\begin{tikzpicture}[every node/.style={font=\scriptsize},
-  milestone/.style={rectangle, rounded corners=3pt, draw, thick,
-                    text width=3.1cm, align=center, inner sep=3pt, minimum height=0.7cm},
-  sem/.style={milestone, draw=semcolor, fill=semcolor!10, text=semcolor!80!black},
-  po/.style ={milestone, draw=pocolor,  fill=pocolor!10,  text=pocolor!80!black},
-  dag/.style={milestone, draw=dagcolor, fill=dagcolor!10, text=dagcolor!80!black},
-  tick/.style={thick, color=darkgrey}]
-
-\draw[tick, -{Stealth[length=6pt]}] (0,0) -- (14.8,0);
-\foreach \yr/\xpos in {1920/0.77, 1930/2.32, 1940/3.87, 1950/5.42,
-  1960/6.97, 1970/8.52, 1980/10.07, 1990/11.62, 2000/13.17}{
-  \draw[tick] (\xpos,0.12) -- (\xpos,-0.12)
-    node[below=1pt, font=\tiny\color{darkgrey}] {\yr};}
-
-\node[sem] at ({(1921-1915)*0.155}, 1.85) {Wright (1921)\\path analysis};
-\node[sem] at ({(1943-1915)*0.155}, 1.85) {Haavelmo (1943)\\structural eqs.};
-\node[sem] at ({(1950-1915)*0.155}, 1.85) {Cowles Commission\\(1940s--50s)};
-\node[sem] at ({(1976-1915)*0.155}, 1.85) {Lucas (1976)\\critique};
-
-\node[po] at ({(1923-1915)*0.155}, 0.65) {Neyman (1923)\\$Y_i(t)$ notation};
-\node[po] at ({(1935-1915)*0.155}, 0.65) {Fisher (1935)\\randomization};
-\node[po] at ({(1974-1915)*0.155}, 0.65) {Rubin (1974)\\obs.\ studies};
-\node[po] at ({(1986-1915)*0.155}, 0.65) {Holland (1986)\\JASA paper};
-\node[po] at ({(1994-1915)*0.155}, 0.65) {Imbens--Angrist\\(1994) LATE};
-
-\node[dag] at ({(1988-1915)*0.155}, -1.0) {Pearl (1988)\\Bayesian nets};
-\node[dag] at ({(1993-1915)*0.155}, -1.0) {Spirtes et al.\\(1993) PC alg.};
-\node[dag] at ({(1995-1915)*0.155}, -1.0) {Pearl (1995)\\do-operator};
-\node[dag] at ({(2000-1915)*0.155}, -1.0) {Pearl (2000)\\\textit{Causality}};
-
-\foreach \yr in {1921,1943,1950,1976}{
-  \fill[semcolor] ({(\yr-1915)*0.155},0) circle (2.2pt);
-  \draw[semcolor!60, thin] ({(\yr-1915)*0.155},0.12) -- ({(\yr-1915)*0.155},1.22);}
-\foreach \yr in {1923,1935,1974,1986,1994}{
-  \fill[pocolor] ({(\yr-1915)*0.155},0) circle (2.2pt);
-  \draw[pocolor!60, thin] ({(\yr-1915)*0.155},0.12) -- ({(\yr-1915)*0.155},0.22);}
-\foreach \yr in {1988,1993,1995,2000}{
-  \fill[dagcolor] ({(\yr-1915)*0.155},0) circle (2.2pt);
-  \draw[dagcolor!60, thin] ({(\yr-1915)*0.155},-0.12) -- ({(\yr-1915)*0.155},-0.38);}
-
-\node[font=\footnotesize\bfseries\color{semcolor}] at (-0.6,  1.85) {SEM};
-\node[font=\footnotesize\bfseries\color{pocolor}]  at (-0.6,  0.65) {PO};
-\node[font=\footnotesize\bfseries\color{dagcolor}] at (-0.6, -1.00) {DAG};
-
-\draw[thick, color=accent, decorate,
-      decoration={brace, amplitude=5pt, mirror}]
-  (12.5,-1.6) -- (14.5,-1.6)
-  node[midway, below=6pt, font=\scriptsize\color{accent}, align=center]
-    {convergence \&amp;\\unification};
-\end{tikzpicture}</code></pre>
+<p><strong>Convergence.</strong> By the 2000s it became clear that all three frameworks are, under standard assumptions, <em>logically equivalent</em>: any result expressible in one can be translated into the others. The causal trinity is therefore not three competing theories but three dialects of the same language, each optimized for a different task. <a href="#fig-timeline" class="quarto-xref">Figure&nbsp;<span>1.2</span></a> summarizes the key milestones.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-timeline" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="chapter_01_files/figure-html/fig-timeline-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (top, blue) originates in genetics and econometrics; PO (middle, purple) in experimental statistics; DAG (bottom, green) in computer science and philosophy. The three developed largely in isolation until converging in the 2000s.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="the-core-distinction" class="level2" data-number="1.3">
@@ -717,40 +636,21 @@ Table&nbsp;1.1: The two scenarios arising from the back-door adjustment proposit
   = \gamma\,\mathrm{Cov}(\alpha U + \delta,\; U)
   = \gamma\alpha\sigma_U^2 \;\neq\; 0
   \quad (\text{when } \alpha \neq 0 \text{ and } \gamma \neq 0).\]</span> Consequently, OLS regressing <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> does not estimate <span class="math inline">\(\beta\)</span>.</p>
-<p>The causal structure is captured by the DAG pair in <span class="quarto-unresolved-ref">?fig-surgery</span>. In the observational DAG, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open: unobserved confounder <span class="math inline">\(U\)</span> causes both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, making <span class="math inline">\(T\)</span> and the composite error <span class="math inline">\(\gamma U + \varepsilon\)</span> correlated. Under the intervention <span class="math inline">\(\doop(T{=}t)\)</span>, all arrows into <span class="math inline">\(T\)</span> are deleted (shown faded), severing the back-door path.</p>
-<pre class="{tikz}"><code>#| label: fig-surgery
-#| fig-cap: "Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention $\\doop(T{=}t)$. The back-door path $T \\leftarrow U \\to Y$ is eliminated; only the causal path $T \\to Y$ remains active. The treatment node becomes a fixed constant (rectangle)."
-#| echo: false
-#| fig-width: 4.5
-
-\usetikzlibrary{arrows.meta, positioning}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{defbg}{RGB}{238,244,251}
-\definecolor{darkgrey}{RGB}{80,80,80}
-\tikzset{
-  node/.style  = {circle, draw=isublue, fill=defbg, thick, minimum size=0.7cm, font=\small},
-  unode/.style = {circle, draw=darkgrey, fill=gray!10, dashed, thick, minimum size=0.7cm, font=\small},
-  mnode/.style = {rectangle, rounded corners=3pt, draw=darkgrey, fill=gray!15, thick, minimum size=0.7cm, font=\small},
-  edge/.style  = {-{Stealth[length=5pt]}, thick, color=isublue},
-  dedge/.style = {-{Stealth[length=5pt]}, thick, color=darkgrey, dashed}
-}
-\begin{tikzpicture}[node distance=1.8cm]
-  \node[node]  (T1) at (0.5,0)    {$T$};
-  \node[node]  (Y1) at (2.5,0)    {$Y$};
-  \node[unode] (U1) at (1.5,-1.3) {$U$};
-  \draw[edge]  (T1) -- (Y1);
-  \draw[dedge] (U1) -- (T1);
-  \draw[dedge] (U1) -- (Y1);
-  \node[font=\small\itshape\color{darkgrey}] at (1.5,-2.1) {Observational DAG};
-
-  \node[mnode] (T2) at (5.5,0)    {$t$};
-  \node[node]  (Y2) at (7.5,0)    {$Y$};
-  \node[unode] (U2) at (6.5,-1.3) {$U$};
-  \draw[edge]  (T2) -- (Y2);
-  \draw[dedge, opacity=0.25] (U2) -- (T2);
-  \draw[dedge] (U2) -- (Y2);
-  \node[font=\small\itshape\color{darkgrey}] at (6.5,-2.1) {Mutilated DAG: $\operatorname{do}(T{=}t)$};
-\end{tikzpicture}</code></pre>
+<p>The causal structure is captured by the DAG pair in <a href="#fig-surgery" class="quarto-xref">Figure&nbsp;<span>1.3</span></a>. In the observational DAG, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open: unobserved confounder <span class="math inline">\(U\)</span> causes both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, making <span class="math inline">\(T\)</span> and the composite error <span class="math inline">\(\gamma U + \varepsilon\)</span> correlated. Under the intervention <span class="math inline">\(\doop(T{=}t)\)</span>, all arrows into <span class="math inline">\(T\)</span> are deleted (shown faded), severing the back-door path.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-surgery" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-surgery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="chapter_01_files/figure-html/fig-surgery-1.png" class="img-fluid figure-img" width="432">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-surgery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.3: Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention <span class="math inline">\(\doop(T{=}t)\)</span>. The back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is eliminated; only the causal path <span class="math inline">\(T \to Y\)</span> remains active. The treatment node becomes a fixed constant (rectangle).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="two-explicit-densities" class="level3" data-number="1.4.2">
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="two-explicit-densities"><span class="header-section-number">1.4.2</span> Two Explicit Densities</h3>
@@ -888,101 +788,40 @@ Table&nbsp;1.1: The two scenarios arising from the back-door adjustment proposit
 </tbody>
 </table>
 <p>The variance reduction in the observational distribution reflects the ratio <span class="math inline">\(\sigma_{\mathrm{obs}}^2/\sigma_{\mathrm{int}}^2 = 1.5/2 = 0.75\)</span>.</p>
-<p><strong>Experiment 3: Density overlay for varying <span class="math inline">\(\alpha\)</span>.</strong> <span class="quarto-unresolved-ref">?fig-density</span> shows the interventional density <span class="math inline">\(\mathcal{N}(\beta t_0,\, \gamma^2\sigma_U^2 + \sigma_\varepsilon^2)\)</span> (solid) and the observational density <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> (dashed), both evaluated at <span class="math inline">\(t_0 = 1\)</span>, for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span>.</p>
-<pre class="{tikz}"><code>#| label: fig-density
-#| fig-cap: "Interventional density $\\mathcal{N}(2,2)$ (solid black) versus observational density for $\\alpha \\in \\{0, 0.3, 0.7, 1.0\\}$ (dashed), evaluated at $t_0 = 1$. As $\\alpha$ increases, the observational curve shifts rightward (growing bias) and narrows (reduced variance). At $\\alpha = 0$ there is no confounding and the two densities coincide. The interventional curve (solid) is invariant to $\\alpha$."
-#| echo: false
-#| fig-width: 5
-
-\definecolor{accent}{RGB}{46,117,182}
-\definecolor{warnred}{RGB}{192,57,43}
-\definecolor{darkgrey}{RGB}{80,80,80}
-
-\begin{tikzpicture}
-\begin{scope}
-  \draw[-&gt;] (-0.3,0) -- (7.5,0) node[right] {$y$};
-  \draw[-&gt;] (0,-0.1) -- (0,2.8) node[above] {density};
-  \foreach \x/\lab in {0/0,1/1,2/2,3/3,4/4,5/5,6/6,7/7}
-    \draw (\x,0.05) -- (\x,-0.05) node[below, font=\tiny] {\lab};
-  \foreach \y/\lab in {0.5/0.1, 1.0/0.2, 1.5/0.3, 2.0/0.4, 2.5/0.5}
-    \draw (0.05,\y) -- (-0.05,\y) node[left, font=\tiny] {\lab};
-  \draw[thick, black, domain=0:6, samples=80]
-    plot (\x, {5*exp(-(\x-2)^2/4)/3.545});
-  \draw[thick, darkgrey, dashed, domain=0:6, samples=80]
-    plot (\x, {5*exp(-(\x-2)^2/4)/3.545});
-  \draw[thick, accent, dashed, domain=0:6, samples=80]
-    plot (\x, {5*exp(-(\x-2.275)^2/3.835)/3.471});
-  \draw[thick, accent!70!black, dashed, domain=0:6, samples=80]
-    plot (\x, {5*exp(-(\x-2.470)^2/3.342)/3.240});
-  \draw[thick, warnred, dashed, domain=0:6, samples=80]
-    plot (\x, {5*exp(-(\x-2.5)^2/3.0)/3.070});
-  \draw[thick, black]        (3.8,2.6) -- (4.4,2.6)
-    node[right, font=\footnotesize] {Interventional $\mathcal{N}(2,2)$};
-  \draw[thick, darkgrey, dashed]  (3.8,2.3) -- (4.4,2.3)
-    node[right, font=\footnotesize] {Obs.\ $\alpha=0$};
-  \draw[thick, accent, dashed]    (3.8,2.0) -- (4.4,2.0)
-    node[right, font=\footnotesize] {Obs.\ $\alpha=0.3$};
-  \draw[thick, accent!70!black, dashed] (3.8,1.7) -- (4.4,1.7)
-    node[right, font=\footnotesize] {Obs.\ $\alpha=0.7$};
-  \draw[thick, warnred, dashed]   (3.8,1.4) -- (4.4,1.4)
-    node[right, font=\footnotesize] {Obs.\ $\alpha=1.0$};
-\end{scope}
-\end{tikzpicture}</code></pre>
+<p><strong>Experiment 3: Density overlay for varying <span class="math inline">\(\alpha\)</span>.</strong> <a href="#fig-density" class="quarto-xref">Figure&nbsp;<span>1.4</span></a> shows the interventional density <span class="math inline">\(\mathcal{N}(\beta t_0,\, \gamma^2\sigma_U^2 + \sigma_\varepsilon^2)\)</span> (solid) and the observational density <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> (dashed), both evaluated at <span class="math inline">\(t_0 = 1\)</span>, for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-density" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="chapter_01_files/figure-html/fig-density-1.png" class="img-fluid figure-img" width="480">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.4: Interventional density <span class="math inline">\(\mathcal{N}(2,2)\)</span> (solid black) versus observational density for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span> (dashed), evaluated at <span class="math inline">\(t_0 = 1\)</span>. As <span class="math inline">\(\alpha\)</span> increases, the observational curve shifts rightward (growing bias) and narrows (reduced variance). At <span class="math inline">\(\alpha = 0\)</span> there is no confounding and the two densities coincide. The interventional curve (solid) is invariant to <span class="math inline">\(\alpha\)</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="sec-iv-vs-med" class="level3" data-number="1.4.5">
 <h3 data-number="1.4.5" class="anchored" data-anchor-id="sec-iv-vs-med"><span class="header-section-number">1.4.5</span> The IV DAG Versus the Mediation DAG</h3>
 <p>The IV DAG introduced above looks, at first glance, structurally similar to the mediation DAG that will appear in Chapter 8. The similarity is superficial; the conceptual difference is fundamental. Confusing the two is one of the most common errors in applied causal inference.</p>
-<p><span class="quarto-unresolved-ref">?fig-iv-vs-med</span> places the two DAGs side by side.</p>
-<pre class="{tikz}"><code>#| label: fig-iv-vs-med
-#| fig-cap: "The IV DAG (a) and the mediation DAG (b) both involve a three-node chain, but they are structurally and conceptually distinct. In (a), the instrument $Z$ is pre-treatment and exogenous: it satisfies $Z \\indep U$ and has no direct path to $Y$ (exclusion restriction). In (b), the mediator $M$ is post-treatment and endogenous: it is caused by $T$ and transmits part of $T$'s effect to $Y$."
-#| echo: false
-#| fig-width: 5.5
-
-\usetikzlibrary{arrows.meta, positioning}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{defbg}{RGB}{238,244,251}
-\definecolor{darkgrey}{RGB}{80,80,80}
-\definecolor{causalgreen}{RGB}{26,122,58}
-\definecolor{warnred}{RGB}{192,57,43}
-\tikzset{
-  node/.style  = {circle, draw=isublue, fill=defbg, thick, minimum size=0.65cm, font=\small},
-  unode/.style = {circle, draw=darkgrey, fill=gray!10, dashed, thick, minimum size=0.65cm, font=\small},
-  edge/.style  = {-{Stealth[length=5pt]}, thick, color=isublue},
-  dedge/.style = {-{Stealth[length=5pt]}, thick, color=darkgrey, dashed}
-}
-\begin{tikzpicture}[node distance=1.9cm]
-  \begin{scope}[xshift=0cm]
-    \node[node]  (Z1) at (0,0)    {$Z$};
-    \node[node]  (T1) at (2.0,0)  {$T$};
-    \node[node]  (Y1) at (4.0,0)  {$Y$};
-    \node[unode] (U1) at (3.0,-1.4) {$U$};
-    \draw[edge]  (Z1) -- (T1);
-    \draw[edge]  (T1) -- (Y1);
-    \draw[dedge] (U1) -- (T1);
-    \draw[dedge] (U1) -- (Y1);
-    \node[font=\scriptsize\color{warnred}, text width=2.8cm, align=center]
-      at (2.0,1.0) {\textit{exclusion restriction:\\$Z$ has no direct path to $Y$}};
-    \node[font=\small\bfseries\color{isublue}] at (2.0,-2.4) {(a) IV DAG};
-    \node[font=\footnotesize\color{darkgrey}, text width=4.2cm, align=center]
-      at (2.0,-3.0) {$Z$ upstream, exogenous ($Z \perp U$), excluded from $Y$};
-  \end{scope}
-  \begin{scope}[xshift=6.5cm]
-    \node[node]  (T2) at (0,0)    {$T$};
-    \node[node]  (M2) at (2.0,0)  {$M$};
-    \node[node]  (Y2) at (4.0,0)  {$Y$};
-    \node[unode] (U2) at (2.0,-1.4) {$U$};
-    \draw[edge]  (T2) -- (M2);
-    \draw[edge]  (M2) -- (Y2);
-    \draw[edge, bend left=30] (T2) to (Y2);
-    \draw[dedge] (U2) -- (T2);
-    \draw[dedge] (U2) -- (Y2);
-    \node[font=\scriptsize\color{causalgreen}, text width=2.8cm, align=center]
-      at (2.0,1.0) {\textit{indirect path:\\$T \to M \to Y$}};
-    \node[font=\small\bfseries\color{isublue}] at (2.0,-2.4) {(b) Mediation DAG};
-    \node[font=\footnotesize\color{darkgrey}, text width=4.2cm, align=center]
-      at (2.0,-3.0) {$M$ downstream of $T$, lies on the causal path to $Y$};
-  \end{scope}
-\end{tikzpicture}</code></pre>
+<p><a href="#fig-iv-vs-med" class="quarto-xref">Figure&nbsp;<span>1.5</span></a> places the two DAGs side by side.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-iv-vs-med" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-iv-vs-med-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="chapter_01_files/figure-html/fig-iv-vs-med-1.png" class="img-fluid figure-img" width="528">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-iv-vs-med-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.5: The IV DAG (a) and the mediation DAG (b) both involve a three-node chain, but they are structurally and conceptually distinct. In (a), the instrument <span class="math inline">\(Z\)</span> is pre-treatment and exogenous: it satisfies <span class="math inline">\(Z \indep U\)</span> and has no direct path to <span class="math inline">\(Y\)</span> (exclusion restriction). In (b), the mediator <span class="math inline">\(M\)</span> is post-treatment and endogenous: it is caused by <span class="math inline">\(T\)</span> and transmits part of <span class="math inline">\(T\)</span>’s effect to <span class="math inline">\(Y\)</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <p><a href="#tbl-iv-vs-med" class="quarto-xref">Table&nbsp;<span>1.2</span></a> makes the comparison systematic.</p>
 <div id="tbl-iv-vs-med" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1090,35 +929,21 @@ Table&nbsp;1.2: Instrumental variable versus mediator: a systematic comparison.
 <section id="sec-simpson" class="level3" data-number="1.5.3">
 <h3 data-number="1.5.3" class="anchored" data-anchor-id="sec-simpson"><span class="header-section-number">1.5.3</span> A Worked Example: Flu Vaccination and Infection</h3>
 <p><strong>Scenario.</strong> A public health agency observes 1,000 individuals over one flu season. Each person either received a flu vaccine (<span class="math inline">\(T=1\)</span>) or did not (<span class="math inline">\(T=0\)</span>), and either became infected (<span class="math inline">\(Y=1\)</span>) or did not (<span class="math inline">\(Y=0\)</span>). Age group <span class="math inline">\(X\)</span> (elderly <span class="math inline">\(= E\)</span>, young <span class="math inline">\(= Y\)</span>) is recorded for all individuals. Elderly people are both more likely to be vaccinated and more susceptible to infection, so <span class="math inline">\(X\)</span> confounds the relationship between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>.</p>
-<p>The causal DAG is shown in <span class="quarto-unresolved-ref">?fig-vaccination</span>.</p>
-<pre class="{tikz}"><code>#| label: fig-vaccination
-#| fig-cap: "Causal DAG for the vaccination example. The green arrow is the causal path $T \\to Y$. The red dashed arrows form the back-door path $T \\leftarrow X \\to Y$: age $X$ causes both vaccination $T$ and infection $Y$, creating a spurious association. Because $X$ is observed, conditioning on it blocks the back-door path."
-#| echo: false
-#| fig-width: 3.5
-
-\usetikzlibrary{arrows.meta, positioning}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{defbg}{RGB}{238,244,251}
-\definecolor{darkgrey}{RGB}{80,80,80}
-\definecolor{causalgreen}{RGB}{26,122,58}
-\definecolor{backdoorred}{RGB}{192,57,43}
-\tikzset{
-  node/.style  = {circle, draw=isublue, fill=defbg, thick, minimum size=0.65cm, font=\small},
-  cedge/.style = {-{Stealth[length=5pt]}, thick, color=causalgreen},
-  bedge/.style = {-{Stealth[length=5pt]}, thick, color=backdoorred, dashed}
-}
-\begin{tikzpicture}[node distance=2.0cm]
-  \node[node] (X) {$X$};
-  \node[node, right of=X] (T) {$T$};
-  \node[node, right of=T] (Y) {$Y$};
-  \draw[cedge] (T) -- (Y) node[midway, above, font=\small\color{causalgreen}] {causal};
-  \draw[bedge] (X) -- (T);
-  \draw[bedge] (X) to[out=-30, in=-150] (Y);
-  \node[font=\small\itshape\color{darkgrey}, below=0.3cm of X] {Age};
-  \node[font=\small\itshape\color{darkgrey}, below=0.3cm of T] {Vaccine};
-  \node[font=\small\itshape\color{darkgrey}, below=0.3cm of Y] {Infection};
-  \node[font=\small\color{backdoorred}, below=0.9cm of T] {back-door};
-\end{tikzpicture}</code></pre>
+<p>The causal DAG is shown in <a href="#fig-vaccination" class="quarto-xref">Figure&nbsp;<span>1.6</span></a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-vaccination" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-vaccination-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="chapter_01_files/figure-html/fig-vaccination-1.png" class="img-fluid figure-img" width="336">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vaccination-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.6: Causal DAG for the vaccination example. The green arrow is the causal path <span class="math inline">\(T \to Y\)</span>. The red dashed arrows form the back-door path <span class="math inline">\(T \leftarrow X \to Y\)</span>: age <span class="math inline">\(X\)</span> causes both vaccination <span class="math inline">\(T\)</span> and infection <span class="math inline">\(Y\)</span>, creating a spurious association. Because <span class="math inline">\(X\)</span> is observed, conditioning on it blocks the back-door path.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <p><strong>Observed data.</strong></p>
 <table class="caption-top table">
 <thead>
