@@ -70,6 +70,7 @@ format:
     number-sections: true
     colorlinks: true
     papersize: a4
+    toc: false
     geometry:
       - top=2.5cm
       - bottom=2.5cm
@@ -77,6 +78,9 @@ format:
       - right=2.5cm
     include-in-header:
       text: |
+        \usepackage{xcolor}
+        \definecolor{isublue}{RGB}{30,56,100}
+        \definecolor{accent}{RGB}{46,117,182}
         \newcommand{\doop}{\operatorname{do}}
         \newcommand{\indep}{\perp\!\!\!\perp}
         \newcommand{\E}{\mathbb{E}}
@@ -87,3 +91,20 @@ format:
         \newcommand{\Nd}{\mathrm{Nd}}
         \newcommand{\pto}{\overset{p}{\to}}
         \newcommand{\expit}{\operatorname{expit}}
+        \AtBeginDocument{%
+          \begin{titlepage}
+            \centering
+            \vspace*{3cm}
+            {\Huge\bfseries\color{isublue}
+              Theory and Methods in Causal Inference}\\[1.2cm]
+            {\LARGE\color{accent} Lecture Notes}\\[0.8cm]
+            \color{accent}\rule{0.6\textwidth}{1.2pt}\\[0.8cm]
+            {\large Jae Kwang Kim \\[0.3cm]
+              Department of Statistics\\[0.3cm]
+              Iowa State University}\\[2cm]
+            {\normalsize STAT 5900B}\\[0.3cm]
+            \vfill
+          \end{titlepage}
+          \tableofcontents
+          \newpage
+        }
