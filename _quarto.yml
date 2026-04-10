@@ -80,13 +80,14 @@ format:
     include-in-header:
       text: |
         \usepackage{xcolor}
+        \usepackage{centernot}
         \definecolor{isublue}{RGB}{30,56,100}
         \definecolor{accent}{RGB}{46,117,182}
         \definecolor{darkgrey}{RGB}{80,80,80}
         \renewcommand{\maketitle}{}
         \newcommand{\doop}{\operatorname{do}}
         \newcommand{\indep}{\perp\!\!\!\perp}
-        \newcommand{\nindep}{\mathrel{\not\!\perp\!\!\!\perp}}
+        \newcommand{\nindep}{\centernot{\indep}}
         \newcommand{\E}{\mathbb{E}}
         \newcommand{\Gcal}{\mathcal{G}}
         \newcommand{\Pa}{\mathrm{Pa}}

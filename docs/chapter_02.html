@@ -344,7 +344,7 @@ window.Quarto = {
 <li><span class="math inline">\(\An(v)\)</span> = all nodes with a directed path to <span class="math inline">\(v\)</span> are the <em>ancestors</em> of <span class="math inline">\(v\)</span>.</li>
 <li><span class="math inline">\(\Nd(v) = \mathcal{V} \setminus (\De(v) \cup \{v\})\)</span> are the <em>non-descendants</em> of <span class="math inline">\(v\)</span>.</li>
 </ul>
-<p>Note that <span class="math inline">\(\Nd(v)\)</span> includes the parents of <span class="math inline">\(v\)</span>; when stating the local Markov property in <a href="#sec-markov" class="quarto-xref"><span class="quarto-unresolved-ref">sec-markov</span></a>, we will exclude the parents explicitly.</p>
+<p>Note that <span class="math inline">\(\Nd(v)\)</span> includes the parents of <span class="math inline">\(v\)</span>; when stating the local Markov property in <a href="#sec-markov" class="quarto-xref"><span>Section 2.4</span></a>, we will exclude the parents explicitly.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -433,7 +433,7 @@ window.Quarto = {
 </section>
 <section id="paths-blocking-and-d-separation" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="paths-blocking-and-d-separation"><span class="header-section-number">2.2</span> Paths, Blocking, and d-Separation</h2>
-<p>A DAG encodes direct causal relationships through its edges, but variables can also be statistically related through longer routes that mix directed and reversed edges. The concept of a <em>path</em> formalises these routes, and the question of whether a path transmits or blocks statistical dependence — depending on which variables are conditioned upon — is precisely what d-separation answers. The key insight is that conditioning can both <em>close</em> channels that were open (by blocking a chain or fork) and <em>open</em> channels that were closed (by activating a collider). <a href="#fig-chain-fork-collider" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-chain-fork-collider</span></a> illustrates all three cases.</p>
+<p>A DAG encodes direct causal relationships through its edges, but variables can also be statistically related through longer routes that mix directed and reversed edges. The concept of a <em>path</em> formalises these routes, and the question of whether a path transmits or blocks statistical dependence — depending on which variables are conditioned upon — is precisely what d-separation answers. The key insight is that conditioning can both <em>close</em> channels that were open (by blocking a chain or fork) and <em>open</em> channels that were closed (by activating a collider). <a href="#fig-chain-fork-collider" class="quarto-xref">Figure&nbsp;<span>2.1</span></a> illustrates all three cases.</p>
 <section id="path-structures" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="path-structures"><span class="header-section-number">2.2.1</span> Path Structures</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -507,7 +507,7 @@ Figure&nbsp;2.1: The three fundamental path structures in a DAG, with their defa
 <p>The critical asymmetry — colliders are <em>closed by default</em> and <em>opened</em> by conditioning, while chains and forks are <em>open by default</em> and <em>closed</em> by conditioning — is what makes collider bias so easy to overlook in practice.</p>
 <p><strong>Chain: Smoking <span class="math inline">\(\to\)</span> Tar <span class="math inline">\(\to\)</span> Cancer.</strong> Let <span class="math inline">\(A\)</span> = smoking, <span class="math inline">\(M\)</span> = tar deposits, <span class="math inline">\(B\)</span> = lung cancer. Marginally, heavy smokers have elevated cancer rates — the path is open. But conditioning on tar level blocks the path: once tar level is fixed, the causal channel is fully accounted for.</p>
 <p><strong>Fork: Poverty <span class="math inline">\(\to\)</span> Poor Diet; Poverty <span class="math inline">\(\to\)</span> Lack of Exercise.</strong> Let <span class="math inline">\(M\)</span> = poverty, <span class="math inline">\(A\)</span> = poor diet, <span class="math inline">\(B\)</span> = lack of exercise. Unconditionally, diet quality and exercise are correlated through poverty. Conditioning on income level blocks the path and removes this spurious association.</p>
-<p><strong>Collider: Accident <span class="math inline">\(\to\)</span> Hospitalization <span class="math inline">\(\leftarrow\)</span> Cancer.</strong> Let <span class="math inline">\(A\)</span> = traffic accident, <span class="math inline">\(B\)</span> = cancer, <span class="math inline">\(M\)</span> = hospitalization. In the general population, <span class="math inline">\(A \indep B\)</span>. But among hospitalized patients — conditioning on <span class="math inline">\(M\)</span> — the two become negatively associated. This is Berkson’s bias <span class="citation" data-cites="berkson1946limitations">(<a href="#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>.</p>
+<p><strong>Collider: Accident <span class="math inline">\(\to\)</span> Hospitalization <span class="math inline">\(\leftarrow\)</span> Cancer.</strong> Let <span class="math inline">\(A\)</span> = traffic accident, <span class="math inline">\(B\)</span> = cancer, <span class="math inline">\(M\)</span> = hospitalization. In the general population, <span class="math inline">\(A \indep B\)</span>. But among hospitalized patients — conditioning on <span class="math inline">\(M\)</span> — the two become negatively associated. This is Berkson’s bias <span class="citation" data-cites="berkson1946limitations">(<a href="chapter_01.html#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -588,7 +588,7 @@ Figure&nbsp;2.1: The three fundamental path structures in a DAG, with their defa
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Verma &amp; Pearl (1988); <span class="citation" data-cites="pearl2009causality">Pearl (<a href="#ref-pearl2009causality" role="doc-biblioref">2009</a>)</span>, Theorem 1.2.4
+<span class="screen-reader-only">Tip</span>Theorem: Verma &amp; Pearl (1988); <span class="citation" data-cites="pearl2009causality">Pearl (<a href="chapter_01.html#ref-pearl2009causality" role="doc-biblioref">2009</a>)</span>, Theorem 1.2.4
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -605,10 +605,10 @@ Figure&nbsp;2.1: The three fundamental path structures in a DAG, with their defa
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span class="quarto-unresolved-ref">thm-dsep</span></a> states that d-separation implies conditional independence for every distribution Markov with respect to <span class="math inline">\(\Gcal\)</span>. The converse need not hold without additional assumptions such as <em>faithfulness</em>: a conditional independence may occur in the data because of special parameter values even when the corresponding nodes are not d-separated in the graph.</p>
+<p><span class="quarto-unresolved-ref">?thm-dsep</span> states that d-separation implies conditional independence for every distribution Markov with respect to <span class="math inline">\(\Gcal\)</span>. The converse need not hold without additional assumptions such as <em>faithfulness</em>: a conditional independence may occur in the data because of special parameter values even when the corresponding nodes are not d-separated in the graph.</p>
 </div>
 </div>
-<p><a href="#tbl-markov-implications" class="quarto-xref">Table&nbsp;<span class="quarto-unresolved-ref">tbl-markov-implications</span></a> summarizes the Markov factorization and its independence implication for each of the three path structures.</p>
+<p><a href="#tbl-markov-implications" class="quarto-xref">Table&nbsp;<span>2.1</span></a> summarizes the Markov factorization and its independence implication for each of the three path structures.</p>
 <div id="tbl-markov-implications" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-markov-implications-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -704,8 +704,8 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 </section>
 <section id="practical-ways-to-check-d-separation" class="level3" data-number="2.2.4">
 <h3 data-number="2.2.4" class="anchored" data-anchor-id="practical-ways-to-check-d-separation"><span class="header-section-number">2.2.4</span> Practical Ways to Check d-Separation</h3>
-<p><strong>Bayes-Ball Intuition.</strong> Imagine releasing a ball from <span class="math inline">\(X\)</span> asking whether it can reach <span class="math inline">\(Y\)</span>, given that nodes in <span class="math inline">\(\mathbf{S}\)</span> are observed. At a chain or fork node not in <span class="math inline">\(\mathbf{S}\)</span>: ball passes through. At a chain or fork node in <span class="math inline">\(\mathbf{S}\)</span>: ball stops. At a collider not in <span class="math inline">\(\mathbf{S}\)</span> (and no descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball stops. At a collider in <span class="math inline">\(\mathbf{S}\)</span> (or with a descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball passes through. The algorithm is formalized in <span class="citation" data-cites="shachter1998bayesball">Shachter (<a href="#ref-shachter1998bayesball" role="doc-biblioref">1998</a>)</span>.</p>
-<p><strong>Moral Graph Transformation.</strong> (1) Restrict to the ancestral set <span class="math inline">\(\An(X \cup Y \cup \mathbf{S})\)</span>. (2) Moralise: for every collider <span class="math inline">\(A \to C \leftarrow B\)</span>, add an undirected edge <span class="math inline">\(A - B\)</span>. (3) Remove all edge directions. (4) Delete all nodes in <span class="math inline">\(\mathbf{S}\)</span>. If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are disconnected in the result, then <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span>. A full treatment is in <span class="citation" data-cites="lauritzen1996graphical">Lauritzen (<a href="#ref-lauritzen1996graphical" role="doc-biblioref">1996</a>, Ch. 3)</span>.</p>
+<p><strong>Bayes-Ball Intuition.</strong> Imagine releasing a ball from <span class="math inline">\(X\)</span> asking whether it can reach <span class="math inline">\(Y\)</span>, given that nodes in <span class="math inline">\(\mathbf{S}\)</span> are observed. At a chain or fork node not in <span class="math inline">\(\mathbf{S}\)</span>: ball passes through. At a chain or fork node in <span class="math inline">\(\mathbf{S}\)</span>: ball stops. At a collider not in <span class="math inline">\(\mathbf{S}\)</span> (and no descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball stops. At a collider in <span class="math inline">\(\mathbf{S}\)</span> (or with a descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball passes through. The algorithm is formalized in <span class="citation" data-cites="shachter1998bayesball">Shachter (<a href="chapter_01.html#ref-shachter1998bayesball" role="doc-biblioref">1998</a>)</span>.</p>
+<p><strong>Moral Graph Transformation.</strong> (1) Restrict to the ancestral set <span class="math inline">\(\An(X \cup Y \cup \mathbf{S})\)</span>. (2) Moralise: for every collider <span class="math inline">\(A \to C \leftarrow B\)</span>, add an undirected edge <span class="math inline">\(A - B\)</span>. (3) Remove all edge directions. (4) Delete all nodes in <span class="math inline">\(\mathbf{S}\)</span>. If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are disconnected in the result, then <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span>. A full treatment is in <span class="citation" data-cites="lauritzen1996graphical">Lauritzen (<a href="chapter_01.html#ref-lauritzen1996graphical" role="doc-biblioref">1996</a>, Ch. 3)</span>.</p>
 </section>
 </section>
 <section id="sec-collider" class="level2" data-number="2.3">
@@ -718,7 +718,7 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Warning: Collider Bias <span class="citation" data-cites="berkson1946limitations">(<a href="#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>
+<span class="screen-reader-only">Warning</span>Warning: Collider Bias <span class="citation" data-cites="berkson1946limitations">(<a href="chapter_01.html#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -846,7 +846,7 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <em>global Markov property</em> is the statement that every d-separation in <span class="math inline">\(\Gcal\)</span> implies a conditional independence in <span class="math inline">\(P\)</span> — precisely the content of <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span class="quarto-unresolved-ref">thm-dsep</span></a>. For DAGs, the local and global Markov properties are equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Proposition 3.27)</span>.</p>
+<p>The <em>global Markov property</em> is the statement that every d-separation in <span class="math inline">\(\Gcal\)</span> implies a conditional independence in <span class="math inline">\(P\)</span> — precisely the content of <span class="quarto-unresolved-ref">?thm-dsep</span>. For DAGs, the local and global Markov properties are equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="chapter_01.html#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Proposition 3.27)</span>.</p>
 </div>
 </div>
 <p>An immediate consequence is the <em>Markov factorization</em>: <span id="eq-markov"><span class="math display">\[p(v_1, \dots, v_k) \;=\; \prod_{i=1}^{k} p\!\left(v_i \mid \Pa(v_i)\right). \tag{2.1}\]</span></span></p>
@@ -898,7 +898,7 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 <li><em>Query (iii):</em> <span class="math inline">\((N \indep Y \mid \{E, B\})_{\Gcal}\)</span>? Path 1 blocked by <span class="math inline">\(E\)</span>; Path 2 collider opened but <span class="math inline">\(B\)</span> blocks it. <span class="math inline">\(\Rightarrow (N \indep Y \mid E, B)_{\Gcal}\)</span>.</li>
 <li><em>Query (iv):</em> <span class="math inline">\((N \indep B)_{\Gcal}\)</span>? Path <span class="math inline">\(N \to E \leftarrow B\)</span>: collider at <span class="math inline">\(E\)</span> with <span class="math inline">\(E \notin \varnothing\)</span> — blocked. <span class="math inline">\(\Rightarrow N \indep B\)</span>.</li>
 </ul>
-<p><strong>Step 3 — Conditional Independence.</strong> By <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span class="quarto-unresolved-ref">thm-dsep</span></a>: <span class="math inline">\(N \indep B\)</span>, <span class="math inline">\(N \indep Y \mid E, B\)</span>, <span class="math inline">\(N \nindep Y\)</span>, <span class="math inline">\(N \nindep Y \mid E\)</span>.</p>
+<p><strong>Step 3 — Conditional Independence.</strong> By <span class="quarto-unresolved-ref">?thm-dsep</span>: <span class="math inline">\(N \indep B\)</span>, <span class="math inline">\(N \indep Y \mid E, B\)</span>, <span class="math inline">\(N \nindep Y\)</span>, <span class="math inline">\(N \nindep Y \mid E\)</span>.</p>
 <p><strong>Step 4 — Identification.</strong> The only back-door path is <span class="math inline">\(E \leftarrow B \to Y\)</span>. With <span class="math inline">\(\mathbf{S} = \{B\}\)</span>: <span class="math display">\[P(y \mid \doop(E{=}e)) \;=\; \sum_{b} P(y \mid e, b)\,P(b).\]</span> Every term involves only the observed distribution, so the causal effect is identified entirely from observational data.</p>
 </section>
 <section id="the-big-picture" class="level2" data-number="2.6">
@@ -927,7 +927,7 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 <li><p>The three elementary path patterns — chain, fork, and collider — determine when conditioning on a middle node blocks or opens a path. Chains and forks are <em>open by default</em> and blocked by conditioning; colliders are <em>closed by default</em> and opened by conditioning.</p></li>
 <li><p>The d-separation criterion is a graphical rule: <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are d-separated by <span class="math inline">\(\mathbf{S}\)</span> exactly when every path between them is blocked by <span class="math inline">\(\mathbf{S}\)</span>. Under the Markov property, this graphical statement implies a corresponding conditional independence in the distribution.</p></li>
 <li><p>The Markov factorization <span class="math inline">\(p = \prod_i p(x_i \mid \Pa(x_i))\)</span> is the formal bridge between the graph and the joint distribution, and is the starting point for all identification derivations.</p></li>
-<li><p>Collider bias <span class="citation" data-cites="berkson1946limitations">(<a href="#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span> is one of the most common errors in applied causal inference. Conditioning on a descendant of a collider opens the collider just as conditioning on the collider itself does.</p></li>
+<li><p>Collider bias <span class="citation" data-cites="berkson1946limitations">(<a href="chapter_01.html#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span> is one of the most common errors in applied causal inference. Conditioning on a descendant of a collider opens the collider just as conditioning on the collider itself does.</p></li>
 <li><p>D-separation provides a graphical criterion for reading off conditional independence implications of a DAG. Under the Markov property, these imply corresponding conditional independences in the observed distribution. The IV DAG analysis illustrates this directly: the claim that <span class="math inline">\(Z\)</span> is a valid instrument is encoded as d-separation statements in the graph, yet the core assumptions of exogeneity and exclusion are substantive and not fully verifiable from observational data alone.</p></li>
 <li><p><strong>A practical workflow.</strong> To analyze a DAG, proceed in four steps: identify the graph structure, determine which paths are open or blocked, translate d-separation statements into conditional independences under the Markov property, and then interpret those independences in light of the causal question.</p></li>
 </ol>
@@ -964,7 +964,7 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 <ol type="a">
 <li>By marginalizing over <span class="math inline">\(M\)</span>, show that <span class="math inline">\(A \indep B\)</span> in the joint distribution.</li>
 <li>Show that conditioning on <span class="math inline">\(M\)</span> breaks this independence.</li>
-<li>Explain in one sentence why parts (a) and (b) together are consistent with <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span class="quarto-unresolved-ref">thm-dsep</span></a>.</li>
+<li>Explain in one sentence why parts (a) and (b) together are consistent with <span class="quarto-unresolved-ref">?thm-dsep</span>.</li>
 </ol>
 <p><strong>6. Terminology check.</strong> Consider the DAG with edges <span class="math inline">\(U \to X\)</span>, <span class="math inline">\(U \to Z\)</span>, <span class="math inline">\(X \to W\)</span>, <span class="math inline">\(Z \to W\)</span>, <span class="math inline">\(W \to Y\)</span>.</p>
 <ol type="a">
@@ -996,7 +996,7 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 </section>
 <section id="references" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
-<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-berkson1946limitations" class="csl-entry" role="listitem">
 Berkson, Joseph. 1946. <span>“Limitations of the Application of Fourfold Table Analysis to Hospital Data.”</span> <em>Biometrics Bulletin</em> 2 (3): 47–53.
 </div>
