@@ -1,0 +1,457 @@
+---
+engine: knitr
+suppress-bibliography: true
+---
+
+# Potential Outcomes and the Connection to Do-Calculus
+
+::: {.callout-note icon=false}
+## Learning Objectives
+
+By the end of this chapter, students should be able to:
+
+1. Define the potential outcome $Y(t)$, state SUTVA precisely, and derive the consistency equation $Y = Y(T)$.
+2. Define the ATE and ATT, explain how they relate to each other, and re-express them as functionals of the structural equation for $Y$.
+3. Show that the linear SEM structural coefficient $\beta$ equals the ATE under homogeneous effects, and explain why ATE and ATT diverge under treatment effect heterogeneity.
+4. State the ignorability assumption, interpret it graphically as a back-door condition, and explain why overlap is a necessary companion assumption.
+5. Describe the SWIG construction of @richardson2014ace, explain why the fixed half is a source node, and use d-separation in the SWIG to derive the ignorability condition directly from the graph.
+:::
+
+## Motivation: A Third Language for Causality {#sec-motivation}
+
+The first three chapters developed causal inference primarily in the languages of structural equations and directed acyclic graphs. In this chapter we introduce a third language: the potential outcomes framework of @neyman1923application and @rubin1974estimating.
+
+Potential outcomes provide a direct language for defining causal estimands. Quantities such as the average treatment effect, the average treatment effect on the treated, and related causal contrasts are most naturally written in terms of counterfactual outcomes $Y(1)$, $Y(0)$, and more generally $Y(t)$. The two frameworks should be viewed as complementary rather than competing: potential outcomes define the causal quantities of interest, while DAGs and the do-calculus clarify identification.
+
+```{tikz}
+#| echo: false
+#| fig-width: 6
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{accent}{RGB}{46,117,182}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\begin{tikzpicture}[
+    stage/.style={rectangle, rounded corners=5pt, draw=isublue, fill=defbg, thick,
+                  minimum width=2.8cm, minimum height=1.0cm,
+                  align=center, font=\small\bfseries\color{isublue}},
+    hilight/.style={rectangle, rounded corners=5pt, draw=accent, fill=defbg, thick,
+                    minimum width=2.8cm, minimum height=1.0cm,
+                    align=center, font=\small\bfseries\color{accent}},
+    sub/.style={font=\scriptsize\itshape\color{darkgrey}, align=center},
+    arr/.style={-{Stealth[length=7pt,width=5pt]}, line width=1.8pt, color=accent}
+  ]
+  \node[stage]   (ID)  {Identification\\(Chs.\ 1--3)};
+  \node[hilight, right=1.2cm of ID]  (PO) {Potential Outcomes\\(Ch.\ 4) $\leftarrow$ \textit{here}};
+  \node[stage, right=1.2cm of PO]   (RD)  {Research Designs\\(Chs.\ 5--8)};
+  \node[stage, right=1.2cm of RD]   (EST) {Estimation\\(Part III)};
+  \draw[arr] (ID)  -- (PO);
+  \draw[arr] (PO)  -- (RD);
+  \draw[arr] (RD)  -- (EST);
+  \node[sub, below=0.28cm of ID]  {DAGs, do-calculus,\\identification};
+  \node[sub, below=0.28cm of PO]  {Define estimands;\\bridge frameworks};
+  \node[sub, below=0.28cm of RD]  {Propensity scores, IV,\\mediation};
+  \node[sub, below=0.28cm of EST] {Regression, IPW,\\doubly robust};
+\end{tikzpicture}
+```
+
+## The Neyman--Rubin Potential Outcomes Framework {#sec-po}
+
+### The Potential Outcome
+
+::: {.callout-note icon=false}
+## Definition: Potential Outcome {#def-po}
+
+[@neyman1923application; @rubin1974estimating] For each unit $i$ and each possible treatment value $t \in \mathcal{T}$, the *potential outcome* $Y_i(t)$ is the value of the outcome that unit $i$ *would have exhibited* had its treatment been set to $t$, possibly contrary to fact.
+
+The collection $\{Y_i(t) : t \in \mathcal{T}\}$ is called the *schedule of potential outcomes* for unit $i$. In the binary case $\mathcal{T} = \{0,1\}$, the schedule is $(Y_i(0),\, Y_i(1))$.
+:::
+
+$Y_i(1)$ is the outcome unit $i$ would achieve *under treatment*; $Y_i(0)$ is the outcome under *control*. Only one of these is ever observed for any given unit. The unobserved potential outcome is called the *counterfactual*.
+
+::: {.callout-warning icon=false}
+## The Fundamental Problem of Causal Inference
+
+[@holland1986statistics] For any unit $i$, at most one potential outcome $Y_i(t)$ is observed. The individual-level causal effect $Y_i(1) - Y_i(0)$ is therefore *never directly observable*. Causal inference is an inference problem precisely because this quantity must be recovered from a population of units rather than from a single unit.
+:::
+
+### SUTVA and Consistency
+
+::: {.callout-note icon=false}
+## Definition: SUTVA {#def-sutva}
+
+[@rubin1980randomization] The *stable unit treatment value assumption* has two components:
+
+1. **No interference.** The potential outcome $Y_i(t)$ depends only on unit $i$'s own treatment, not on the treatments of other units: $Y_i(t_1, \ldots, t_n) = Y_i(t_i)$.
+2. **No hidden versions.** For each treatment level $t$, there is a single well-defined version.
+:::
+
+**The consistency equation.** Under SUTVA, the observed outcome $Y_i$ equals the potential outcome at the treatment actually received:
+$$Y_i \;=\; Y_i(T_i).$$ {#eq-consistency}
+
+This equation is the bridge between the potential outcome world and the observed data world. It fails whenever SUTVA fails: if treatment spills over between units (e.g., vaccination provides herd immunity), or if the treatment label $T=1$ covers multiple distinct interventions.
+
+### Connection to the Do-Operator
+
+The notation $Y(t)$ and the expression $P(Y \mid \doop(T{=}t))$ refer to the same causal idea viewed from two complementary angles. Under the structural causal framework adopted in these notes, together with consistency and no interference, these two descriptions coincide.
+
+::: {.callout-tip icon=false}
+## Proposition: Potential Outcomes and the Do-Operator {#prop-po-do}
+
+Under the structural causal model of Chapters 1--3, together with consistency and no interference (SUTVA),
+$$Y(t) \;\overset{d}{=}\; Y \mid \doop(T{=}t),$$ {#eq-po-do}
+so that $P(Y(t) \le y) = P(Y \le y \mid \doop(T{=}t))$ for every $y$. Equivalently, $\E[Y(t)] = \E[Y \mid \doop(T{=}t)]$.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+In the mutilated SEM $\Gcal_{\overline{T}}$, the structural equation for $T$ is replaced by $T := t$ for every unit. The structural model then determines the value of $Y$ for unit $i$ from $t$ and unit $i$'s own background variables --- which is precisely what the potential outcomes framework defines as $Y_i(t)$. SUTVA's no-interference condition ensures $Y_i(t)$ does not depend on other units' treatment values, so the marginal distribution of $Y$ in $\Gcal_{\overline{T}}$ equals the marginal distribution of $Y(t)$. By definition of the do-operator, the former is $f(y \mid \doop(T{=}t))$. $\square$
+:::
+
+This equivalence lets us move freely between two notational traditions. When defining estimands such as $\E[Y(1) - Y(0)]$, potential-outcome notation is often most natural. When proving identification results from a graph, the do-operator is often more transparent: $f(y \mid \doop(t)) \neq f(y \mid T{=}t)$ whenever $T$ is endogenous, whereas $Y(t)$ carries no such syntactic marker.
+
+## Causal Estimands {#sec-estimands}
+
+### The Average Treatment Effect and Its Relatives
+
+::: {.callout-note icon=false}
+## Definition: ATE and ATT {#def-ate}
+
+For a binary treatment $T \in \{0,1\}$:
+
+- The *average treatment effect* (ATE) is $\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)]$.
+- The *average treatment effect on the treated* (ATT) is $\tau_{\mathrm{ATT}} = \E[Y(1) - Y(0) \mid T{=}1]$.
+:::
+
+The ATE and ATT coincide only when the treatment effect does not depend on who selected into treatment. The naïve estimator $\hat\tau_{\mathrm{naive}} = \bar{Y}_{T=1} - \bar{Y}_{T=0}$ estimates $\E[Y \mid T{=}1] - \E[Y \mid T{=}0] \neq \E[Y(1)] - \E[Y(0)]$, with the gap being the selection bias induced by endogeneity.
+
+::: {.callout-note icon=false}
+## Remark
+
+ATE and ATT coincide when $\E[Y(t) \mid T] = \E[Y(t)]$ for $t \in \{0,1\}$, i.e., when treatment assignment is mean-independent of potential outcomes. In a randomized experiment, this holds by design.
+:::
+
+### Causal Estimands as Functionals of the Structural Equation {#sec-sem-po}
+
+The potential outcome $Y_i(t)$ was introduced as a *hypothetical*: the value unit $i$ would have exhibited under treatment $t$. The SEM framework of Chapter 1 gives this hypothetical a precise generative meaning.
+
+**From structural equation to potential outcome.** In the SEM, the outcome is determined by a structural equation
+$$Y \;=\; g(T,\, \mathbf{X},\, U_Y),$$ {#eq-sem-y}
+where $U_Y$ collects all sources of variation in $Y$ not already accounted for by $(T, \mathbf{X})$. The potential outcome under $\doop(T{=}t)$ is obtained by substituting $t$ for $T$ while holding everything else fixed:
+$$Y_i(t) \;=\; g(t,\, \mathbf{X}_i,\, U_{Y,i}).$$ {#eq-po-from-sem}
+
+**ATE and ATT as structural parameters.**
+$$\tau_{\mathrm{ATE}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y)\right],$$ {#eq-ate-sem}
+$$\tau_{\mathrm{ATT}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y) \mid T{=}1\right].$$ {#eq-att-sem}
+
+**The linear SEM as a special case.** In the Gaussian linear SEM of Chapter 1, $Y = \beta T + \boldsymbol{\gamma}^{\top}\mathbf{X} + \varepsilon$, the unit-level effect is $Y_i(1) - Y_i(0) = \beta$ for every unit. Consequently,
+$$\tau_{\mathrm{ATE}} \;=\; \tau_{\mathrm{ATT}} \;=\; \beta.$$
+The structural coefficient $\beta$ *is* the average treatment effect: no averaging over heterogeneity is needed because there is none.
+
+**Heterogeneous effects.** In the nonparametric SEM @eq-sem-y, the unit-level effect $g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ varies across units. The ATE averages this over the full population; the ATT averages it over the treated subpopulation. The two differ whenever treatment selection correlates with the individual effect size.
+
+::: {.callout-note icon=false}
+## Remark
+
+The SEM representation @eq-po-from-sem clarifies why the potential outcomes framework and the do-calculus are *equivalent in content but different in emphasis*. The do-calculus works with the interventional distribution $f(y \mid \doop(T{=}t))$ as a population-level object. The potential outcomes framework works with unit-level quantities $Y_i(t)$ and asks what population summaries (ATE, ATT) are scientifically meaningful. The SEM ties the two together: $Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i})$ is the unit-level object, and integrating over the distribution of $(\mathbf{X}, U_Y)$ recovers the interventional distribution.
+:::
+
+## Ignorability and the Back-Door Criterion {#sec-ignorability}
+
+### The Ignorability Assumption
+
+The central identifying assumption in observational studies is that treatment assignment is as good as random after conditioning on observed covariates $X$.
+
+::: {.callout-note icon=false}
+## Definition: Strong Ignorability {#def-ignorability}
+
+[@rosenbaum1983central] The treatment assignment $T$ is *strongly ignorable* given $X$ if:
+
+1. **Unconfoundedness:** $\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X$.
+2. **Overlap (positivity):** $0 < P(T{=}1 \mid X{=}x) < 1$ for all $x$ in the support of $X$.
+:::
+
+Under strong ignorability, the ATE is identified:
+$$\tau_{\mathrm{ATE}} \;=\; \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right].$$ {#eq-ate-id}
+
+This is the back-door adjustment formula of Chapter 3, written in potential-outcome notation.
+
+### Faithfulness and the Completeness of D-Separation
+
+::: {.callout-note icon=false}
+## Definition: Faithfulness {#def-faithfulness}
+
+A distribution $P$ is **faithful** to a DAG $\Gcal$ if every conditional independence that holds in $P$ is entailed by d-separation in $\Gcal$: that is, $X \indep Y \mid \mathbf{Z}$ in $P$ only if $X$ and $Y$ are d-separated by $\mathbf{Z}$ in $\Gcal$.
+
+Equivalently, faithfulness rules out *accidental* cancellations of causal paths. Together, the Markov property and faithfulness make d-separation a *complete* characterization of the conditional independence structure of $P$.
+:::
+
+Faithfulness is deferred to this chapter because its primary role is as a hypothesis of the theorem below, not as a tool for reading conditional independences off a graph. In practice, faithfulness fails only on measure-zero sets of parameter values, so it is considered a mild assumption.
+
+### Ignorability as a Graphical Statement
+
+The potential-outcomes assumption $(Y(0), Y(1)) \;\indep\; T \mid X$ is the counterfactual expression of the idea that, after conditioning on $X$, treatment assignment carries no residual information about the outcome that would be observed under the intervention $T{=}t$. In the language of DAGs, the closely related idea is that $X$ blocks all back-door paths from $T$ to $Y$.
+
+::: {.callout-tip icon=false}
+## Theorem: Ignorability $\Leftrightarrow$ Back-Door Criterion {#thm-ign-bd}
+
+Under the Markov and faithfulness assumptions for the DAG $\Gcal$, unconfoundedness $(Y(0), Y(1)) \indep T \mid X$ is equivalent to $X$ satisfying the back-door criterion for the effect of $T$ on $Y$ in $\Gcal$:
+
+1. No node in $X$ is a descendant of $T$.
+2. $X$ blocks every back-door path from $T$ to $Y$.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof Sketch
+
+$(\Rightarrow)$ Suppose $X$ satisfies the back-door criterion. In the mutilated graph $\Gcal_{\overline{T}}$, all arrows into $T$ are deleted, severing every back-door path from $T$ to $Y$. The back-door criterion then guarantees that $X$ blocks all remaining non-causal paths between $T$ and $Y$ in $\Gcal_{\overline{T}}$. The Markov property applied to $\Gcal_{\overline{T}}$ gives $(Y \indep T \mid X)_{\Gcal_{\overline{T}}}$, which translates to $(Y(t) \indep T \mid X)$ for all $t$, i.e., unconfoundedness.
+
+$(\Leftarrow)$ Suppose $(Y(0), Y(1)) \indep T \mid X$ holds. By faithfulness, every conditional independence in $P$ corresponds to a d-separation in $\Gcal$. Consider the SWIG $\Gcal(t)$ obtained by splitting $T$ into its random and fixed halves. Because the fixed half $t$ has no incoming edges by construction, every path from the random half $T$ to a potential outcome $Y(t)$ must pass through $T$'s parents in $\Gcal$ --- that is, every such path is a back-door path. The d-separation $(Y(t) \indep T \mid X)_{\Gcal(t)}$ therefore requires $X$ to block all back-door paths from $T$ to $Y$. If any member of $X$ were a descendant of $T$, conditioning on it could open a previously blocked collider path, contradicting the assumed independence. Both conditions of the back-door criterion are satisfied. $\square$
+:::
+
+::: {.callout-note icon=false}
+## Remark
+
+The direction most important for practice is $(\Rightarrow)$: a graphical adjustment set justifies the counterfactual independence needed for standardization, regression adjustment, or propensity-score methods, and it requires only the Markov property. In applied work it is safest to regard the back-door criterion as a *sufficient* graphical condition for ignorability, and to invoke the biconditional only when faithfulness has been explicitly assumed.
+:::
+
+::: {.callout-note icon=false}
+## Example: Labor Training Program
+
+[@lalonde1986evaluating; @dehejia1999causal] Let $T$ = receipt of job training, $Y$ = earnings two years later, $X$ = (age, education, prior earnings, race, marital status).
+
+The back-door path $T \leftarrow X \to Y$ is blocked by conditioning on $X$, leaving only the causal path $T \to Y$. Ignorability holds if this DAG is correctly specified. If there is an unobserved variable $U$ (motivation, ability) that affects both training participation and earnings, $X$ fails the back-door criterion and ignorability fails.
+:::
+
+### Overlap and Positivity
+
+::: {.callout-warning icon=false}
+## Why Overlap Is Non-Negotiable
+
+Without overlap, some covariate strata contain only treated or only control units. In those strata, $\E[Y \mid T{=}0, X{=}x]$ or $\E[Y \mid T{=}1, X{=}x]$ is unobservable, and @eq-ate-id cannot be evaluated at those values of $x$. Identification of the ATE fails not because the causal structure is wrong, but because the data do not span the support needed. The ATT may remain identified even when full overlap fails, because ATT averages only over the treated population where $P(T{=}1 \mid X) > 0$ by construction.
+:::
+
+## Single World Intervention Graphs {#sec-swig}
+
+The potential outcomes framework and the do-calculus share a common goal but differ in representation. Single World Intervention Graphs (SWIGs), introduced by @richardson2014ace and given an accessible practical treatment by @bezuidenhout2025swigs, provide a unified graphical representation that encodes both.
+
+### The SWIG Construction {#sec-swig-def}
+
+In the original DAG $\Gcal$, the node $T$ represents the treatment as it naturally occurs. Under $\doop(T{=}t)$, however, the treatment is externally fixed. The SWIG separates these two roles by *splitting* $T$ into two pieces:
+
+- a **random half** (left side, capital letter $T$): represents the treatment value that would naturally occur, and retains all incoming edges from $T$'s causal parents;
+- a **fixed half** (right side, lowercase letter $t$): represents the externally imposed intervention value, carries all outgoing edges that formerly left $T$, and has *no* edge to or from the random half.
+
+::: {.callout-note icon=false}
+## Definition: Single World Intervention Graph {#def-swig}
+
+[@richardson2014ace] The *SWIG* $\Gcal(t)$ is constructed from $\Gcal$ by:
+
+1. Replacing $T$ with two nodes: random half $T$ (all incoming edges retained) and fixed half $t$ (all outgoing edges retained).
+2. Severing the direct connection between the two halves.
+3. Redrawing causal arrows at the split node: *all arrows into the split node land on the random half*; *all arrows departing the split node leave from the fixed half*.
+4. Relabeling every descendant $V$ of $T$ in $\Gcal$ as $V(t)$, indicating it is a potential outcome under $\doop(T{=}t)$.
+:::
+
+@fig-swig illustrates the construction for the simple confounded-treatment graph.
+
+```{tikz}
+#| label: fig-swig
+#| fig-cap: "Converting the confounded-treatment DAG ($L$ is a confounder) into the SWIG for $\\doop(A{=}a)$. The treatment node splits: the random half $A$ (circle) retains the incoming arrow from $L$; the fixed half $a$ (square) carries the outgoing arrow to $Y(a)$. D-separation in the SWIG gives $A \\indep Y(a) \\mid L$ (conditional ignorability)."
+#| echo: false
+#| fig-width: 5
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\tikzset{
+  rnd/.style={circle, draw=isublue, fill=defbg, thick, minimum size=9mm, font=\small\bfseries},
+  fix/.style={rectangle, draw=isublue, fill=gray!15, thick, minimum size=9mm, font=\small\bfseries}
+}
+\begin{tikzpicture}[>=stealth]
+  \begin{scope}[xshift=0cm]
+    \node[rnd] (L)  at (1.4, 1.5) {$L$};
+    \node[rnd] (A)  at (0,   0)   {$A$};
+    \node[rnd] (Y)  at (2.8, 0)   {$Y$};
+    \draw[->,thick,color=isublue](L)--(A);
+    \draw[->,thick,color=isublue](L)--(Y);
+    \draw[->,thick,color=isublue](A)--(Y);
+    \node[font=\small\itshape\color{darkgrey}] at (1.4,-0.85) {DAG};
+  \end{scope}
+  \node[font=\large] at (3.9, 0.4) {$\Rightarrow$};
+  \begin{scope}[xshift=4.9cm]
+    \node[rnd] (Lr)  at (1.9, 1.5) {$L$};
+    \node[rnd] (Ar)  at (0.4, 0)   {$A$};
+    \node[fix] (af)  at (1.5, 0)   {$a$};
+    \node[rnd] (Ya)  at (3.5, 0)   {$Y(a)$};
+    \draw[->,thick,color=isublue](Lr)--(Ar);
+    \draw[->,thick,color=isublue](Lr)--(Ya);
+    \draw[->,thick,color=isublue](af)--(Ya);
+    \node[font=\small\itshape\color{darkgrey}] at (1.9,-0.85) {SWIG $\mathcal{G}(a)$};
+  \end{scope}
+\end{tikzpicture}
+```
+
+### The Fixed Half as a Source Node {#sec-swig-dsep}
+
+::: {.callout-note icon=false}
+## The Fixed Half Is a Source Node
+
+In $\Gcal(t)$, the fixed half $t$ has **no incoming edges**. Step 2 of the construction severs the connection from the random half $T$, and no other node in $\Gcal$ has a direct arrow into $t$. Three consequences follow immediately.
+
+1. **No path arrives at $t$ from another node.** The edge $T \to t$ does not exist in $\Gcal(t)$. In particular, the path $T \to t \to Y(t)$ *cannot be formed*: it is not "blocked" by a d-separation rule --- it simply does not exist as a path in the graph.
+2. **$t$ cannot lie strictly between two other nodes on a path.** Because $t$ has no parents, it is never a transit node; it can only be an *origin* of paths leading to descendants $V(t)$.
+3. **The random half $T$ and the fixed half $t$ are d-separated by the empty set.** With no edge between them and no common ancestor, $T \indep t$ holds unconditionally in $\Gcal(t)$.
+
+This is not an additional d-separation rule: it is a direct consequence of the SWIG construction. The fixed half $t$ represents an externally stipulated intervention --- it is not *caused* by anything within the system, so it has no parents.
+:::
+
+With $t$ as a source node, every path from the random half $T$ to a potential outcome $V(t)$ must travel *away* from $T$ through $T$'s parents in $\Gcal$ --- that is, every such path is a back-door path. This is the structural fact that makes the back-door criterion readable directly from the SWIG.
+
+**Recovering ignorability from the SWIG.** In @fig-swig, the only paths from the random half $A$ to $Y(a)$ are back-door paths through $A$'s parents. The path $A \leftarrow L \to Y(a)$ is open, but blocked by conditioning on $L$. No other path connects $A$ to $Y(a)$. Conditioning on $L$ achieves d-separation:
+$$A \;\indep\; Y(a) \;\big|\; L \quad \text{in } \Gcal(a),$$
+which is exactly the conditional ignorability of Definition 4.3 (Strong Ignorability), now *derived* as a graph-structural consequence rather than asserted as an assumption.
+
+### When Ignorability Fails: The Hidden Confounder {#sec-swig-hidden}
+
+The SWIG is equally useful for diagnosing *failures* of ignorability. @fig-swig-hidden shows the SWIG when a hidden common cause $U$ affects both $A$ and $Y$.
+
+```{tikz}
+#| label: fig-swig-hidden
+#| fig-cap: "Adding a hidden confounder $U$ (dashed circle) to the confounded-treatment DAG and its SWIG. In $\\mathcal{G}(a)$, the hidden path $A \\leftarrow U \\to Y(a)$ cannot be blocked by any observed covariate. Ignorability fails."
+#| echo: false
+#| fig-width: 5.5
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\tikzset{
+  rnd/.style={circle, draw=isublue, fill=defbg, thick, minimum size=9mm, font=\small\bfseries},
+  fix/.style={rectangle, draw=isublue, fill=gray!15, thick, minimum size=9mm, font=\small\bfseries},
+  hid/.style={circle, draw=isublue, fill=white, thick, dashed, minimum size=9mm, font=\small\bfseries}
+}
+\begin{tikzpicture}[>=stealth]
+  \begin{scope}[xshift=0cm]
+    \node[rnd] (L)  at (1.4, 1.5)  {$L$};
+    \node[rnd] (A)  at (0,   0)    {$A$};
+    \node[rnd] (Y)  at (2.8, 0)    {$Y$};
+    \node[hid] (U)  at (1.4,-1.2)  {$U$};
+    \draw[->,thick,color=isublue](L)--(A);
+    \draw[->,thick,color=isublue](L)--(Y);
+    \draw[->,thick,color=isublue](A)--(Y);
+    \draw[->,thick,dashed,color=isublue](U)--(A);
+    \draw[->,thick,dashed,color=isublue](U)--(Y);
+    \node[font=\small\itshape\color{darkgrey}] at (1.4,-2.15) {DAG (with hidden $U$)};
+  \end{scope}
+  \node[font=\large] at (4.1, 0.15) {$\Rightarrow$};
+  \begin{scope}[xshift=5.1cm]
+    \node[rnd] (Lr)  at (1.9, 1.5)  {$L$};
+    \node[rnd] (Ar)  at (0.4, 0)    {$A$};
+    \node[fix] (af)  at (1.5, 0)    {$a$};
+    \node[rnd] (Ya)  at (3.5, 0)    {$Y(a)$};
+    \node[hid] (Ur)  at (1.9,-1.2)  {$U$};
+    \draw[->,thick,color=isublue](Lr)--(Ar);
+    \draw[->,thick,color=isublue](Lr)--(Ya);
+    \draw[->,thick,color=isublue](af)--(Ya);
+    \draw[->,thick,dashed,color=isublue](Ur)--(Ar);
+    \draw[->,thick,dashed,color=isublue](Ur)--(Ya);
+    \node[font=\small\itshape\color{darkgrey}] at (1.9,-2.15) {SWIG $\mathcal{G}(a)$ (with hidden $U$)};
+  \end{scope}
+\end{tikzpicture}
+```
+
+In the SWIG $\Gcal(a)$ with hidden $U$, the paths from $A$ to $Y(a)$ are: (1) $A \leftarrow L \to Y(a)$: blocked by conditioning on $L$; (2) $A \leftarrow U \to Y(a)$: open regardless of $L$, since $U$ is unobserved.
+
+Even after conditioning on $L$, the path through $U$ remains open, so $A \nindep Y(a) \mid L$ in $\Gcal(a)$, and ignorability fails. The failure is *immediately visible* from the SWIG: an unblocked dashed arrow entering the random half $A$ signals that selection into treatment carries information about the potential outcome that no set of observed covariates can remove.
+
+::: {.callout-note icon=false}
+## Remark
+
+This failure motivates the instrumental variable designs of Chapter 7. When a valid instrument $Z$ is available --- one that affects $A$ but has no direct effect on $Y$ and is independent of $U$ --- the IV strategy sidesteps the unblocked $U$-path rather than attempting to block it by covariate adjustment.
+:::
+
+### What SWIGs Achieve {#sec-swig-achieve}
+
+**1. Potential outcomes as random variables in a DAG.** In $\Gcal(t)$, the variable $Y(t)$ is an ordinary node with well-defined parents: the fixed half $t$ and any other causes of $Y$ retained from $\Gcal$. Its marginal distribution equals the interventional distribution $f(y \mid \doop(T{=}t))$, establishing Proposition 4.1 graphically.
+
+**2. The mutilated graph as a special case.** Removing the random half $T$ from $\Gcal(t)$ yields exactly the mutilated graph $\Gcal_{\overline{T}}$ of Chapter 1. The SWIG is a more informative version that retains the random half alongside the fixed half, making it possible to ask questions about the relationship between the natural treatment $T$ and the potential outcomes $V(t)$.
+
+**3. Unconfoundedness as a d-separation statement.** The ignorability condition $(Y(t) \indep T \mid X)$ is a standard d-separation statement *in the SWIG* $\Gcal(t)$, verifiable by path-tracing. Ignorability is no longer an assertion encoded in potential-outcome notation alone; it is a structural claim about the graph.
+
+**4. A single graph for both frameworks.** The SWIG simultaneously hosts the natural treatment $T$ (random half), the intervention value $t$ (fixed half), the potential outcomes $V(t)$, and all d-separation relationships among them.
+
+::: {.callout-warning icon=false}
+## Cross-World Independence and Its Limits
+
+Consider $Y(1) \indep Y(0)$: $Y(1)$ lives in SWIG $\Gcal(1)$ and $Y(0)$ lives in SWIG $\Gcal(0)$. No unit is ever observed in both worlds simultaneously, so no data can directly test this independence. More generally, statements such as $Y(t) \indep T(t') \mid X$ for $t \neq t'$ involve variables from *different SWIGs*. SWIGs make such assumptions explicit: the analyst must specify a joint distribution across multiple SWIGs --- a commitment that potential-outcome notation alone does not force.
+:::
+
+::: {.callout-note icon=false}
+## Remark
+
+More than one node may be split in a single SWIG. In longitudinal settings with time-varying treatments $(A_0, A_1)$, splitting both nodes yields the sequential-randomization SWIG, from which the two *sequential exchangeability* conditions needed to identify the g-formula follow directly by d-separation.
+:::
+
+## Where the Frameworks Agree and Diverge {#sec-comparison}
+
+| **Task** | **Potential Outcomes** | **Do-Calculus / DAG** | **SEM** |
+|---|---|---|---|
+| Define causal estimands (ATE, ATT) | ✓ Native language | Via $\E[Y \mid \doop(t)]$ | Via structural equations |
+| Encode causal assumptions | Stated informally; graph hidden | ✓ Explicit directed edges | ✓ Structural equations |
+| Read conditional independence | Not native without additional structure | ✓ d-separation | With graph only |
+| Identification from observational data | Via ignorability assumptions | ✓ Back-door, front-door, do-calculus | ✓ Via exclusion restrictions |
+| Cross-world assumptions (e.g., monotonicity) | ✓ Natural to state | Requires multiple SWIGs | Implicit in structural model |
+| Standard in statistics/epidemiology | ✓ Dominant | Growing rapidly | Econometrics |
+
+::: {.callout-note icon=false}
+## Our Position in This Course
+
+Both frameworks are indispensable. We use *potential outcomes* to *define* causal estimands. We use the *do-calculus and DAGs* for *identification*. SWIGs provide the formal bridge when both are needed simultaneously.
+
+The do-operator language is preferred throughout this course because it makes the interventional/observational distinction *syntactically enforced*: $f(y \mid \doop(t))$ cannot be confused with $f(y \mid T{=}t)$, whereas $\E[Y(t)]$ carries no such syntactic marker.
+:::
+
+## Summary
+
+1. The potential outcome $Y(t)$ is the outcome that would be observed under the intervention $T = t$. Under consistency, no interference, and the structural causal semantics adopted in these notes, the observed outcome satisfies $Y_i = Y_i(T_i)$, and the potential outcome $Y(t)$ has the same distribution as the outcome under the intervention $\doop(T{=}t)$.
+
+2. The ATE and ATT are averages of the unit-level causal effect $Y_i(1) - Y_i(0) = g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ over the full population and the treated subpopulation respectively. In the linear SEM, both equal the structural coefficient $\beta$. They diverge under heterogeneous effects when treatment selection correlates with individual effect size.
+
+3. Strong ignorability $(Y(0),Y(1)) \indep T \mid X$ with overlap identifies the ATE via @eq-ate-id. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption used in adjustment formulas.
+
+4. SWIGs [@richardson2014ace; @bezuidenhout2025swigs] are constructed from a DAG by splitting each intervened node into a random half (capital letter, retaining incoming edges) and a fixed half (lowercase letter, retaining outgoing edges), and relabeling descendants as potential outcomes. The fixed half is a *source node*: it has no incoming edges by construction, so no path from the random half $T$ to a potential outcome $V(t)$ can pass through $t$. Every such path is therefore a back-door path, and d-separation in the SWIG makes ignorability graphically transparent.
+
+5. The frameworks are complementary: potential outcomes define estimands; the do-calculus identifies them. SWIGs provide the formal bridge when both are needed simultaneously.
+
+---
+
+*In observational studies, ignorability must be justified by substantive knowledge encoded in a causal graph. Randomized experiments provide a fundamentally different solution: when treatment is assigned randomly, $(Y(0),Y(1)) \indep T$ holds by design, guaranteeing ignorability without any covariate adjustment. Chapter 5 studies randomized experiments as the canonical design where causal effects are identifiable directly from the data-generating mechanism.*
+
+## Problems
+
+**1. SUTVA and consistency.** Suppose $n = 3$ units receive binary treatments $(T_1, T_2, T_3)$ and unit $i$'s outcome may depend on all three treatments: $Y_i = Y_i(T_1, T_2, T_3)$.
+
+(a) How many potential outcomes does unit 1 have? Write them out explicitly.
+(b) SUTVA imposes no interference: $Y_i(T_1,T_2,T_3) = Y_i(T_i)$. How many distinct potential outcomes remain?
+(c) Give a real-world example where no-interference plausibly holds and one where it plausibly fails. In the latter case, explain what identification strategy (if any) remains available.
+
+**2. ATE, ATT, and selection bias.** Let $(Y(0), Y(1), T) \sim P$ with $P(T{=}1) = 0.5$. Suppose $\E[Y(1)] = 3$, $\E[Y(0)] = 1$, $\E[Y(1) \mid T{=}1] = 4$, $\E[Y(0) \mid T{=}1] = 2$, $\E[Y(1) \mid T{=}0] = 2$, $\E[Y(0) \mid T{=}0] = 0$.
+
+(a) Compute the ATE and ATT. Are they equal?
+(b) Compute the naïve estimator $\E[Y \mid T{=}1] - \E[Y \mid T{=}0]$. Decompose the gap between this and the ATE into a selection bias term and an ATT--ATE difference.
+(c) Under what graphical condition on the DAG would the naïve estimator equal the ATE? State this condition in both potential outcome language (ignorability) and do-calculus language (back-door criterion).
+
+**3. Causal estimands from the structural equation.** Consider the nonparametric SEM $Y = g(T, X, U_Y)$ with binary treatment $T \in \{0,1\}$, observed covariate $X$, and unobserved error $U_Y$ independent of $(T, X)$ in the mutilated graph.
+
+(a) Write $\tau_{\mathrm{ATE}}$ and $\tau_{\mathrm{ATT}}$ as expectations of $g(1, X, U_Y) - g(0, X, U_Y)$ over the appropriate distribution. Under what condition do they coincide?
+(b) Specialize to the linear SEM $g(t, x, u) = \alpha + \beta t + \gamma x + u$. Show that the unit-level causal effect $Y_i(1) - Y_i(0)$ is constant across all units, and hence $\tau_{\mathrm{ATE}} = \tau_{\mathrm{ATT}} = \beta$.
+(c) Now consider the heterogeneous SEM $g(t, x, u) = (\alpha + u)\,t + \gamma x$, where $U_Y \sim \mathcal{N}(0, \sigma^2)$, $\mathrm{Cov}(U_Y, T) = \rho$, and $P(T{=}1) = p \in (0,1)$. Compute $\tau_{\mathrm{ATE}}$ and $\tau_{\mathrm{ATT}}$. Show that they differ when $\rho \neq 0$, and interpret this difference.
+(d) In part (c), explain why OLS estimation of $Y$ on $T$ and $X$ does not recover either $\tau_{\mathrm{ATE}}$ or $\tau_{\mathrm{ATT}}$ when $\rho \neq 0$.
+
+**4. SWIGs and ignorability.** Consider the DAG: $X \to T$, $X \to Y$, $T \to Y$, with $X$ fully observed.
+
+(a) Construct the SWIG $\Gcal(t)$ by splitting $T$ into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome $Y(t)$.
+(b) In $\Gcal(t)$, identify all paths between the random half $T$ and $Y(t)$. Apply the SWIG d-separation rules to determine which paths are blocked and which are open before conditioning.
+(c) Use d-separation in $\Gcal(t)$ to verify that $(Y(t) \indep T \mid X)_{\Gcal(t)}$ holds. Conclude that $X$ satisfies the back-door criterion, confirming Theorem 4.1.
+(d) Now add a hidden common cause $U \to T$, $U \to Y$. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure (if any) would be needed for identification.
