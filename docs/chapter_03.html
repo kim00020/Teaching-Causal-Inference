@@ -508,11 +508,11 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Back-Door Adjustment Formula <span class="citation" data-cites="pearl1993comment">(<a href="chapter_01.html#ref-pearl1993comment" role="doc-biblioref">Pearl 1993</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: Back-Door Adjustment Formula
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>If <span class="math inline">\(\mathbf{S}\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span>, and <span class="math display">\[P(T{=}t \mid \mathbf{S}{=}\mathbf{s}) \;&gt;\; 0 \quad \text{for all } \mathbf{s} \text{ with } P(\mathbf{S}{=}\mathbf{s}) &gt; 0, \tag{positivity}\]</span> then: <span id="eq-backdoor"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int P(y \mid T{=}t,\;\mathbf{S}{=}\mathbf{s})\,dP(\mathbf{s}). \tag{3.1}\]</span></span></p>
+<p>If <span class="math inline">\(\mathbf{S}\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span> <span class="citation" data-cites="pearl1993comment">(<a href="chapter_01.html#ref-pearl1993comment" role="doc-biblioref">Pearl 1993</a>)</span>, and <span class="math display">\[P(T{=}t \mid \mathbf{S}{=}\mathbf{s}) \;&gt;\; 0 \quad \text{for all } \mathbf{s} \text{ with } P(\mathbf{S}{=}\mathbf{s}) &gt; 0, \tag{positivity}\]</span> then: <span id="eq-backdoor"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int P(y \mid T{=}t,\;\mathbf{S}{=}\mathbf{s})\,dP(\mathbf{s}). \tag{3.1}\]</span></span></p>
 <p>Equivalently, for any measurable function <span class="math inline">\(h\)</span>: <span id="eq-backdoor-exp"><span class="math display">\[\E\!\left[h(Y) \mid \doop(T{=}t)\right] \;=\; \E_{\mathbf{S}}\!\Bigl[\E\bigl[h(Y) \mid T{=}t,\;\mathbf{S}\bigr]\Bigr]. \tag{3.2}\]</span></span></p>
 </div>
 </div>
@@ -725,11 +725,11 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Front-Door Adjustment Formula <span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: Front-Door Adjustment Formula
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>If <span class="math inline">\(M\)</span> satisfies the front-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>, and <span class="math inline">\(P(t) &gt; 0\)</span> for all <span class="math inline">\(t\)</span>, then: <span id="eq-frontdoor"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int \underbrace{\Bigl[\int P(y \mid T{=}t',\;M{=}m)\,dP(t')\Bigr]}_{\text{Stage 2}} \;\underbrace{dP(m \mid t)}_{\text{Stage 1}}. \tag{3.3}\]</span></span></p>
+<p>If <span class="math inline">\(M\)</span> satisfies the front-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> <span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span>, and <span class="math inline">\(P(t) &gt; 0\)</span> for all <span class="math inline">\(t\)</span>, then: <span id="eq-frontdoor"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int \underbrace{\Bigl[\int P(y \mid T{=}t',\;M{=}m)\,dP(t')\Bigr]}_{\text{Stage 2}} \;\underbrace{dP(m \mid t)}_{\text{Stage 1}}. \tag{3.3}\]</span></span></p>
 <p>Equivalently, writing <span class="math inline">\(\mu(t',m) = \E[Y \mid T{=}t',\;M{=}m]\)</span>: <span id="eq-frontdoor-exp"><span class="math display">\[\E\!\left[Y \mid \doop(T{=}t)\right] \;=\; \E_{M \mid T=t}\!\Bigl[\E_T\bigl[\mu(T,\,M)\bigr]\Bigr]. \tag{3.4}\]</span></span></p>
 <p><strong>Stage 1</strong>: <span class="math inline">\(dP(m \mid t)\)</span> is the distribution of the mediator <span class="math inline">\(M\)</span> given <span class="math inline">\(T{=}t\)</span>. Front-door condition 2 guarantees no confounding between <span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span>.</p>
 <p><strong>Stage 2</strong>: <span class="math inline">\(\int P(y \mid t',\,m)\,dP(t')\)</span> is the back-door-adjusted causal effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>, with <span class="math inline">\(T\)</span> serving as the adjustment variable.</p>
@@ -746,7 +746,7 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span> The classic front-door example: <span class="math inline">\(T\)</span> = smoking, <span class="math inline">\(M\)</span> = tar deposits in lungs, <span class="math inline">\(Y\)</span> = lung cancer, <span class="math inline">\(U\)</span> = genetic predisposition (unobserved). The graph is <span class="math inline">\(T \to M \to Y\)</span> with <span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span>. There is no direct <span class="math inline">\(T\to Y\)</span> path.</p>
+<p>The classic front-door example <span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span>: <span class="math inline">\(T\)</span> = smoking, <span class="math inline">\(M\)</span> = tar deposits in lungs, <span class="math inline">\(Y\)</span> = lung cancer, <span class="math inline">\(U\)</span> = genetic predisposition (unobserved). The graph is <span class="math inline">\(T \to M \to Y\)</span> with <span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span>. There is no direct <span class="math inline">\(T\to Y\)</span> path.</p>
 <p>Conditions 1–3 are satisfied. The front-door formula gives: <span class="math display">\[P(\text{cancer} \mid \doop(T{=}\text{smoke})) = \int\!\left[\int P(\text{cancer} \mid t', m)\,dP(t')\right] dP(m \mid \text{smoke}),\]</span> which is entirely computable from the observed joint distribution of <span class="math inline">\((T, M, Y)\)</span>, without any data on <span class="math inline">\(U\)</span>.</p>
 </div>
 </div>
@@ -902,11 +902,11 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: The Three Rules of Do-Calculus <span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: The Three Rules of Do-Calculus
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\Gcal\)</span> be a DAG over variables <span class="math inline">\(\mathcal{V}\)</span>, and let <span class="math inline">\(X, Y, Z, W \subseteq \mathcal{V}\)</span> be disjoint sets. The rules hold for any distribution <span class="math inline">\(P\)</span> Markov with respect to <span class="math inline">\(\Gcal\)</span>.</p>
+<p>Let <span class="math inline">\(\Gcal\)</span> be a DAG over variables <span class="math inline">\(\mathcal{V}\)</span> <span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span>, and let <span class="math inline">\(X, Y, Z, W \subseteq \mathcal{V}\)</span> be disjoint sets. The rules hold for any distribution <span class="math inline">\(P\)</span> Markov with respect to <span class="math inline">\(\Gcal\)</span>.</p>
 <p><strong>Rule 1 (Insertion/Deletion of Observations).</strong> <span class="math display">\[P(y \mid \doop(x), z, w) \;=\; P(y \mid \doop(x), w) \quad\text{if}\quad (Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\underline{Z}}}.\]</span> If <span class="math inline">\(Y\)</span> and <span class="math inline">\(Z\)</span> are d-separated in the graph with arrows into <span class="math inline">\(X\)</span> deleted <em>and</em> arrows out of <span class="math inline">\(Z\)</span> deleted, then conditioning on <span class="math inline">\(Z\)</span> has no effect on the distribution of <span class="math inline">\(Y\)</span>.</p>
 <p><strong>Rule 2 (Action/Observation Exchange).</strong> <span class="math display">\[P(y \mid \doop(x), \doop(z), w) \;=\; P(y \mid \doop(x), z, w) \quad\text{if}\quad (Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\overline{Z(W)}}}.\]</span> When the condition holds, intervening on <span class="math inline">\(Z\)</span> is equivalent to conditioning on <span class="math inline">\(Z\)</span>.</p>
 <p><strong>Rule 3 (Insertion/Deletion of Actions).</strong> <span class="math display">\[P(y \mid \doop(x), \doop(z), w) \;=\; P(y \mid \doop(x), w) \quad\text{if}\quad (Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\overline{Z(\overline{W})}}}.\]</span> When the condition holds, the intervention <span class="math inline">\(\doop(z)\)</span> can be deleted entirely.</p>
@@ -1070,11 +1070,11 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Completeness of the Do-Calculus <span class="citation" data-cites="shpitser2006identification">(<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">Shpitser and Pearl 2006</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: Completeness of the Do-Calculus
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\Gcal\)</span> be a semi-Markovian DAG. A causal quantity <span class="math inline">\(P(y \mid \doop(t))\)</span> is identifiable from <span class="math inline">\(P\)</span> relative to <span class="math inline">\(\Gcal\)</span> if and only if the do-calculus can derive a purely observational expression for it.</p>
+<p>Let <span class="math inline">\(\Gcal\)</span> be a semi-Markovian DAG. A causal quantity <span class="math inline">\(P(y \mid \doop(t))\)</span> is identifiable from <span class="math inline">\(P\)</span> relative to <span class="math inline">\(\Gcal\)</span> if and only if the do-calculus can derive a purely observational expression for it <span class="citation" data-cites="shpitser2006identification">(<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">Shpitser and Pearl 2006</a>)</span>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -1116,7 +1116,7 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 </div>
 <div id="callout-34" class="callout-34-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="shpitser2006identification">(<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">Shpitser and Pearl 2006</a>)</span> introduced the <em>ID algorithm</em>: a procedure that takes as input a semi-Markovian DAG <span class="math inline">\(\Gcal\)</span>, a target intervention distribution <span class="math inline">\(P(y \mid \doop(t))\)</span>, and the observed joint distribution <span class="math inline">\(P\)</span>, and either returns an explicit observational formula or reports non-identifiability.</p>
+<p>The <em>ID algorithm</em> <span class="citation" data-cites="shpitser2006identification">(<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">Shpitser and Pearl 2006</a>)</span> is a procedure that takes as input a semi-Markovian DAG <span class="math inline">\(\Gcal\)</span>, a target intervention distribution <span class="math inline">\(P(y \mid \doop(t))\)</span>, and the observed joint distribution <span class="math inline">\(P\)</span>, and either returns an explicit observational formula or reports non-identifiability.</p>
 <p><strong>Sufficiency</strong>: proved constructively via the ID algorithm. The algorithm proceeds recursively: (1) <em>Simplification</em> — remove nodes not ancestral to <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal_{\overline{T}}\)</span>; (2) <em>Decomposition by c-components</em> — factorise over confounded components; (3) <em>Recursive identification</em> — attempt to identify each c-component factor; (4) <em>Failure</em> — if any subproblem cannot be reduced, return FAIL.</p>
 <p><strong>Necessity</strong>: proved by showing that whenever the ID algorithm fails, the causal effect is genuinely non-identifiable. The key graphical obstruction is the <em>hedge</em>: a pair of subgraphs <span class="math inline">\((F, F')\)</span> encoding a “loop” of confounding that the do-calculus cannot break.</p>
 <p><span class="citation" data-cites="shpitser2006identification">Shpitser and Pearl (<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">2006</a>)</span> prove that the ID algorithm fails if and only if <span class="math inline">\(\Gcal\)</span> contains a hedge. When a hedge exists, one can explicitly construct two observationally indistinguishable models with different causal effects. Combining sufficiency and necessity: the do-calculus succeeds if and only if no hedge exists. <span class="math inline">\(\square\)</span></p>

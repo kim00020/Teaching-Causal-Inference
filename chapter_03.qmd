@@ -219,9 +219,9 @@ Now suppose a researcher naively includes $C$ in the adjustment set. Adding $C$ 
 :::
 
 ::: {.callout-tip icon=false}
-## Theorem: Back-Door Adjustment Formula [@pearl1993comment] {#thm-backdoor}
+## Theorem: Back-Door Adjustment Formula {#thm-backdoor}
 
-If $\mathbf{S}$ satisfies the back-door criterion for the effect of $T$ on $Y$ in $\Gcal$, and
+If $\mathbf{S}$ satisfies the back-door criterion for the effect of $T$ on $Y$ in $\Gcal$ [@pearl1993comment], and
 $$P(T{=}t \mid \mathbf{S}{=}\mathbf{s}) \;>\; 0 \quad \text{for all } \mathbf{s} \text{ with } P(\mathbf{S}{=}\mathbf{s}) > 0, \tag{positivity}$$
 then:
 $$P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int P(y \mid T{=}t,\;\mathbf{S}{=}\mathbf{s})\,dP(\mathbf{s}).$$ {#eq-backdoor}
@@ -364,9 +364,9 @@ $$P(y \mid \doop(T{=}t)) = \sum_m P(m \mid t)\sum_{t'} P(y \mid t', m)\,P(t').$$
 ### The Front-Door Formula
 
 ::: {.callout-tip icon=false}
-## Theorem: Front-Door Adjustment Formula [@pearl1995causal] {#thm-frontdoor}
+## Theorem: Front-Door Adjustment Formula {#thm-frontdoor}
 
-If $M$ satisfies the front-door criterion for the effect of $T$ on $Y$, and $P(t) > 0$ for all $t$, then:
+If $M$ satisfies the front-door criterion for the effect of $T$ on $Y$ [@pearl1995causal], and $P(t) > 0$ for all $t$, then:
 $$P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int \underbrace{\Bigl[\int P(y \mid T{=}t',\;M{=}m)\,dP(t')\Bigr]}_{\text{Stage 2}} \;\underbrace{dP(m \mid t)}_{\text{Stage 1}}.$$ {#eq-frontdoor}
 
 Equivalently, writing $\mu(t',m) = \E[Y \mid T{=}t',\;M{=}m]$:
@@ -382,7 +382,7 @@ The formula is the composition of two back-door applications. (1) Identify $P(m 
 ::: {.callout-note icon=false}
 ## Example: Smoking, Tar, and Cancer {#ex-smoking}
 
-[@pearl1995causal] The classic front-door example: $T$ = smoking, $M$ = tar deposits in lungs, $Y$ = lung cancer, $U$ = genetic predisposition (unobserved). The graph is $T \to M \to Y$ with $U \to T$ and $U \to Y$. There is no direct $T\to Y$ path.
+The classic front-door example [@pearl1995causal]: $T$ = smoking, $M$ = tar deposits in lungs, $Y$ = lung cancer, $U$ = genetic predisposition (unobserved). The graph is $T \to M \to Y$ with $U \to T$ and $U \to Y$. There is no direct $T\to Y$ path.
 
 Conditions 1--3 are satisfied. The front-door formula gives:
 $$P(\text{cancer} \mid \doop(T{=}\text{smoke})) = \int\!\left[\int P(\text{cancer} \mid t', m)\,dP(t')\right] dP(m \mid \text{smoke}),$$
@@ -448,9 +448,9 @@ Each rule has the form *"expression A = expression B if $(Y \indep Z \mid X, W)_
 | $\Gcal_{\overline{X}\,\overline{Z(\overline{W})}}$ | all arrows *into* $X$ | arrows *into* $Z$ that are not from ancestors of $W$ in $\Gcal_{\overline{X}}$ |
 
 ::: {.callout-tip icon=false}
-## Theorem: The Three Rules of Do-Calculus [@pearl1995causal] {#thm-docalculus}
+## Theorem: The Three Rules of Do-Calculus {#thm-docalculus}
 
-Let $\Gcal$ be a DAG over variables $\mathcal{V}$, and let $X, Y, Z, W \subseteq \mathcal{V}$ be disjoint sets. The rules hold for any distribution $P$ Markov with respect to $\Gcal$.
+Let $\Gcal$ be a DAG over variables $\mathcal{V}$ [@pearl1995causal], and let $X, Y, Z, W \subseteq \mathcal{V}$ be disjoint sets. The rules hold for any distribution $P$ Markov with respect to $\Gcal$.
 
 **Rule 1 (Insertion/Deletion of Observations).**
 $$P(y \mid \doop(x), z, w) \;=\; P(y \mid \doop(x), w) \quad\text{if}\quad (Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\underline{Z}}}.$$
@@ -570,9 +570,9 @@ A natural question after seeing the three rules is: are they enough? Could there
 Throughout Sections @sec-mutilated--@sec-rules we have represented latent common causes as explicit unobserved nodes. The completeness theorem uses a more general graph class that encodes latent common causes compactly as *bidirected edges*: a bidirected edge $X \leftrightarrow Y$ stands for an unobserved variable $U$ with $U \to X$ and $U \to Y$. A DAG augmented with such bidirected edges is called a *semi-Markovian DAG*.
 
 ::: {.callout-tip icon=false}
-## Theorem: Completeness of the Do-Calculus [@shpitser2006identification] {#thm-completeness}
+## Theorem: Completeness of the Do-Calculus {#thm-completeness}
 
-Let $\Gcal$ be a semi-Markovian DAG. A causal quantity $P(y \mid \doop(t))$ is identifiable from $P$ relative to $\Gcal$ if and only if the do-calculus can derive a purely observational expression for it.
+Let $\Gcal$ be a semi-Markovian DAG. A causal quantity $P(y \mid \doop(t))$ is identifiable from $P$ relative to $\Gcal$ if and only if the do-calculus can derive a purely observational expression for it [@shpitser2006identification].
 :::
 
 ::: {.callout-note icon=false}
@@ -624,7 +624,7 @@ Let $T, Y, U \in \{0, 1\}$ with $U \sim \mathrm{Bernoulli}(1/2)$.
 ::: {.callout-note collapse=true icon=false}
 ## Proof Sketch and the ID Algorithm
 
-[@shpitser2006identification] introduced the *ID algorithm*: a procedure that takes as input a semi-Markovian DAG $\Gcal$, a target intervention distribution $P(y \mid \doop(t))$, and the observed joint distribution $P$, and either returns an explicit observational formula or reports non-identifiability.
+The *ID algorithm* [@shpitser2006identification] is a procedure that takes as input a semi-Markovian DAG $\Gcal$, a target intervention distribution $P(y \mid \doop(t))$, and the observed joint distribution $P$, and either returns an explicit observational formula or reports non-identifiability.
 
 **Sufficiency**: proved constructively via the ID algorithm. The algorithm proceeds recursively: (1) *Simplification* --- remove nodes not ancestral to $Y$ in $\Gcal_{\overline{T}}$; (2) *Decomposition by c-components* --- factorise over confounded components; (3) *Recursive identification* --- attempt to identify each c-component factor; (4) *Failure* --- if any subproblem cannot be reduced, return FAIL.
 
