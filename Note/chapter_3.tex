@@ -32,8 +32,10 @@ By the end of this chapter, students should be able to:
         that licenses each rule, and use them to prove the back-door and
         front-door formulas.
   \item State the completeness theorem of \citet{shpitser2006identification} and explain
-        its practical implication: if the do-calculus cannot identify a quantity,
-        no method can.
+        its practical implication: if the do-calculus cannot identify a quantity
+        from the observational distribution relative to the assumed graph, then
+        no purely observational method can do so without additional assumptions
+        or new data.
 \end{enumerate}
 \end{tcolorbox}
 
@@ -61,6 +63,21 @@ d-separation.  This chapter takes the next step: translating the graphical
 language into \emph{identification formulas} --- expressions that write the
 interventional distribution $P(y \mid \doop(T{=}t))$ entirely in terms of
 quantities observable from data.
+
+\begin{remark}
+\textbf{How to read this chapter.}
+This chapter has two pedagogical layers.
+Sections~\ref{w3:sec:mutilated}--\ref{w3:sec:frontdoor} develop the two
+most important concrete identification criteria --- back-door and front-door
+adjustment --- using intervention graphs and direct graphical reasoning.
+These sections are the core material for a first reading.
+
+Sections~\ref{w3:sec:rules}--\ref{w3:sec:completeness} then place these
+criteria inside the more general theory of the do-calculus and
+identifiability.
+These later sections are conceptually important, but they are more abstract
+and may be read as a second pass after the concrete criteria are understood.
+\end{remark}
 
 \subsection{What Does Intervention Mean?}
 \label{w3:sec:intervention-meaning}
@@ -139,7 +156,7 @@ Let $\Gcal = (\mathcal{V}, \mathcal{E})$ be a DAG and $X \subseteq
 \mathcal{V}$ a set of nodes.
 \begin{itemize}
   \item $\Gcal_{\overline{X}}$ (\emph{intervention graph}, or
-        \emph{intervention graph} in Pearl's terminology) is obtained by
+        \emph{mutilated graph} in Pearl's terminology) is obtained by
         \emph{deleting all edges into} $X$: remove every arrow
         $V \to X_i$ for all $X_i \in X$.
         This represents the intervention $\doop(X{=}x)$, which
@@ -317,14 +334,23 @@ effect walks out through the front.
 \begin{remark}
 The adjustment set $\mathbf{S}$ here plays the same role as the
 conditioning set in the d-separation notation of Chapter~2.
-Specifically, condition~2 is
-equivalent to requiring $(Y \indep T \mid \mathbf{S})_{\Gcal_{\overline{T}}}$:
-$\mathbf{S}$ d-separates $T$ and $Y$ in the intervention graph.  The
-back-door criterion adds two constraints that $\mathbf{S}$ in Chapter~2
-did not carry: $\mathbf{S}$ must consist of \emph{observed} variables
-only, and it must contain no descendant of $T$.  Every valid adjustment
-set $\mathbf{S}$ is therefore a valid d-separator, but the converse does
-not hold --- a set that d-separates $T$ and $Y$ may still fail the
+Specifically, condition~2 is equivalent to requiring
+$(Y \indep T \mid \mathbf{S})_{\Gcal_{\underline{T}}}$:
+$\mathbf{S}$ d-separates $T$ and $Y$ in the graph $\Gcal_{\underline{T}}$
+obtained by \emph{deleting all arrows \textbf{out of} $T$}.  Removing
+$T$'s outgoing edges eliminates the causal paths $T \to \cdots \to Y$,
+leaving only back-door paths between $T$ and $Y$; condition~2 therefore
+reduces to checking d-separation in $\Gcal_{\underline{T}}$.  (The
+intervention graph $\Gcal_{\overline{T}}$, which deletes arrows
+\emph{into} $T$, is the wrong graph for this check: it preserves
+$T \to Y$ as an open path, so $(Y \indep T \mid \mathbf{S})_{\Gcal_{\overline{T}}}$
+fails even for valid adjustment sets.)
+The back-door criterion adds two constraints that $\mathbf{S}$ in
+Chapter~2 did not carry: $\mathbf{S}$ must consist of \emph{observed}
+variables only, and it must contain no descendant of $T$.  Every valid
+adjustment set $\mathbf{S}$ is therefore a valid d-separator in
+$\Gcal_{\underline{T}}$, but the converse does not hold --- a set that
+d-separates $T$ and $Y$ in $\Gcal_{\underline{T}}$ may still fail the
 back-door criterion if it contains a descendant of $T$ or an unobserved
 variable.
 \end{remark}
@@ -358,6 +384,86 @@ The criterion is satisfied, and the back-door formula gives:
 \]
 This is the simplest possible application: one confounder, one back-door
 path, one adjustment variable.
+\end{example}
+
+\begin{example}{Two Back-Door Paths: Both Must Be Blocked}
+\label{w3:ex:twopaths}
+Condition~2 is a \emph{conjunction}: $\mathbf{S}$ must block
+\emph{every} back-door path, not merely the most visible one.  This
+example shows that blocking each path requires a separate witness in
+$\mathbf{S}$, and that blocking one while leaving the other open still
+yields a biased estimator.
+
+\medskip
+\noindent\textbf{Graph.}
+Consider a treatment $T$, outcome $Y$, observed variables $C_1$ and
+$C_2$, and an unobserved confounder $U$:
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.6cm]
+  \node[node]  (C1) at (0.0, 1.5) {$C_1$};
+  \node[unode] (U)  at (2.2, 1.5) {$U$};
+  \node[node]  (C2) at (4.4, 1.5) {$C_2$};
+  \node[node]  (T)  at (0.0, 0)   {$T$};
+  \node[node]  (Y)  at (4.4, 0)   {$Y$};
+  \draw[edge]  (C1) -- (T);
+  \draw[edge]  (C1) -- (Y);
+  \draw[dedge] (U)  -- (T);
+  \draw[dedge] (U)  -- (C2);
+  \draw[edge]  (C2) -- (Y);
+  \draw[edge]  (T)  -- (Y);
+\end{tikzpicture}
+\end{center}
+
+\noindent
+There are exactly two back-door paths from $T$ to $Y$:
+\begin{enumerate}
+  \item $T \leftarrow C_1 \to Y$\quad (direct confounding by the observed $C_1$),
+  \item $T \leftarrow U \to C_2 \to Y$\quad (indirect confounding via the
+        unobserved $U$, which routes through the observed proxy $C_2$).
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Does $\mathbf{S} = \{C_1\}$ work?}
+\begin{itemize}
+  \item Condition~1: $C_1$ is not a descendant of $T$. \checkmark
+  \item Condition~2: $\{C_1\}$ blocks path~1 (fork blocked at $C_1$) \checkmark,
+        but leaves path~2 open ($C_1$ is not on the path
+        $T \leftarrow U \to C_2 \to Y$, and $C_2$ is unconditioned). $\times$
+\end{itemize}
+\textbf{Fails}: the residual confounding via $U \to C_2 \to Y$ is uncontrolled.
+
+\medskip
+\noindent\textbf{Does $\mathbf{S} = \{C_2\}$ work?}
+\begin{itemize}
+  \item Condition~1: $C_2$ is not a descendant of $T$. \checkmark
+  \item Condition~2: $\{C_2\}$ blocks path~2 (chain blocked at $C_2$) \checkmark,
+        but leaves path~1 open ($C_2$ is not on $T \leftarrow C_1 \to Y$,
+        and $C_1$ is unconditioned). $\times$
+\end{itemize}
+\textbf{Fails}: the direct confounding via $C_1$ is uncontrolled.
+
+\medskip
+\noindent\textbf{Does $\mathbf{S} = \{C_1, C_2\}$ work?}
+\begin{itemize}
+  \item Condition~1: neither $C_1$ nor $C_2$ is a descendant of $T$. \checkmark
+  \item Condition~2: $C_1$ blocks path~1; $C_2$ blocks path~2. \checkmark
+\end{itemize}
+\textbf{Succeeds.}  The back-door formula gives:
+\[
+  P(y \mid \doop(T{=}t))
+  \;=\; \sum_{c_1,\,c_2} P(y \mid t,\,c_1,\,c_2)\,P(c_1,\,c_2).
+\]
+
+\medskip
+\noindent\textbf{Remark.}
+The unobserved $U$ never appears in the formula: what matters is
+that $C_2$ sits on the back-door path between $T$ and $Y$ (specifically,
+on the segment $U \to C_2 \to Y$) and is observed.  Conditioning on $C_2$
+blocks the path at the chain node $C_2$, just as conditioning on $C_1$
+blocks it at the fork node $C_1$.  The identification strategy exploits
+the \emph{position} of the observed variables on the back-door paths, not
+direct measurement of the confounders themselves.
 \end{example}
 
 \begin{warn}{Why Condition~1 Is Essential: A Worked Counterexample}
@@ -399,10 +505,69 @@ If $U$ is unobserved and no other observed variable sits on the back-door path,
 the total causal effect is \emph{not identified} by back-door adjustment in this graph.
 \end{warn}
 
+\begin{warn}{Why Condition~2 Can Be Violated by a Collider: M-Bias}
+Condition~2 requires $\mathbf{S}$ to \emph{block} every back-door path.
+A subtler failure mode than including a descendant of $T$ is including a
+variable that is a \emph{collider} on a back-door path: conditioning on a
+collider \emph{opens} that path rather than blocking it, introducing
+confounding where none existed before.
+
+Consider the following DAG. The treatment $T$ has a direct effect on $Y$.
+Two unobserved variables $U_1$ and $U_2$ share a common \emph{observed}
+descendant $C$ (e.g., a baseline characteristic recorded before treatment),
+with $U_1$ also affecting $T$ and $U_2$ also affecting $Y$.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node]  (T) at (0,    0)    {$T$};
+  \node[node]  (C) at (2.0,  1.3)  {$C$};
+  \node[node]  (Y) at (4.0,  0)    {$Y$};
+  \node[unode] (U1) at (0.8,  2.4)  {$U_1$};
+  \node[unode] (U2) at (3.2,  2.4)  {$U_2$};
+  \draw[edge]  (T) -- (Y);
+  \draw[dedge] (U1) -- (T);
+  \draw[dedge] (U1) -- (C);
+  \draw[dedge] (U2) -- (C);
+  \draw[dedge] (U2) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+\noindent
+The only back-door path from $T$ to $Y$ is
+$T \leftarrow U_1 \to C \leftarrow U_2 \to Y$.
+Node $C$ is a \emph{collider} on this path.  By the d-separation rules of
+Chapter~2, a collider \emph{blocks} the path by default (without any
+conditioning), so the causal effect of $T$ on $Y$ is already identified
+with $\mathbf{S} = \varnothing$: $P(y \mid \doop(t)) = P(y \mid t)$.
+
+Now suppose a researcher naively includes $C$ in the adjustment set,
+reasoning that $C$ is a pretreatment covariate and ``more adjustment is
+safer.''  This reasoning is wrong.  Adding $C$ to $\mathbf{S}$
+\emph{activates} the collider, opening the path
+$T \leftarrow U_1 \to C \leftarrow U_2 \to Y$.  The back-door path, which
+was dormant, now transmits a spurious association between $T$ and $Y$
+through the unobserved variables $U_1$ and $U_2$.  The set $\{C\}$
+therefore fails Condition~2: it does not block the back-door path; it
+creates one.  The resulting estimator $\sum_c P(y \mid t, c)\,P(c)$ is
+\emph{biased} for the causal effect.
+
+This phenomenon is called \emph{M-bias} because the graph has an M-shaped
+skeleton ($T \leftarrow U_1 \to C \leftarrow U_2 \to Y$).  The practical
+lesson is that Condition~1 alone (``include all pretreatment variables'')
+is not sufficient; every candidate adjustment variable must also be
+verified not to open a previously closed back-door path.
+\end{warn}
+
 \begin{thm}{Back-Door Adjustment Formula \citep{pearl1993comment}}
 \label{w3:thm:backdoor}
 If $\mathbf{S}$ satisfies the back-door criterion for the effect of $T$ on
-$Y$ in $\Gcal$, then:
+$Y$ in $\Gcal$, and
+\begin{equation}
+  P(T{=}t \mid \mathbf{S}{=}\mathbf{s}) \;>\; 0
+  \quad \text{for all } \mathbf{s} \text{ with } P(\mathbf{S}{=}\mathbf{s}) > 0,
+  \label{w3:eq:positivity}
+\end{equation}
+then:
 \begin{equation}
   P\!\left(y \mid \doop(T{=}t)\right)
   \;=\; \int P(y \mid T{=}t,\;\mathbf{S}{=}\mathbf{s})\,dP(\mathbf{s}).
@@ -424,6 +589,23 @@ within each stratum, is causal because all back-door paths are blocked.
 When $\mathbf{S}$ is discrete, the integral reduces to
 $\sum_{\mathbf{s}} P(y \mid t, \mathbf{s})\,P(\mathbf{s})$.
 \end{thm}
+
+\begin{remark}
+Condition~\eqref{w3:eq:positivity} is the \emph{positivity} (or
+\emph{overlap}) assumption.  It requires every value of the treatment
+$T{=}t$ to be observable within each stratum of $\mathbf{S}$: if some
+stratum $\mathbf{s}$ never receives treatment $t$ in the data, the
+conditional distribution $P(y \mid t, \mathbf{s})$ is undefined, and the
+right-hand side of~\eqref{w3:eq:backdoor} cannot be computed.
+Positivity is a \emph{data-support} condition, not a graphical one: the
+back-door criterion is a property of the DAG, but positivity is a property
+of the joint distribution $P$.  Both must hold simultaneously for the
+adjustment formula to be well-defined.  When positivity fails on a set of
+measure zero, the formula still identifies $P(y \mid \doop(t))$ because
+the offending strata contribute zero mass to the outer integral; the
+concern is practical failure (sparse or empty cells) rather than a
+theoretical identification failure.
+\end{remark}
 
 The derivation uses Rules~2 and~3 of the do-calculus; the complete
 three-step proof is given in Section~\ref{w3:sec:proofs}.
@@ -455,6 +637,90 @@ subject of Chapter~13.  The interpretation of the formula is important:
         \eqref{w3:eq:backdoor} reduces to $P(y \mid \doop(t)) = P(y \mid t)$:
         the observational and interventional distributions coincide.
 \end{itemize}
+
+\begin{example}{Back-Door Adjustment: A Numerical Walkthrough}
+\label{w3:ex:backdoor-numerical}
+We now trace the adjustment formula~\eqref{w3:eq:backdoor} through explicit
+numbers.  Use the single-confounder graph of Example~\ref{w3:ex:singleconf}
+($T \leftarrow C \to Y$, $T \to Y$) with all variables binary:
+$C$ = disease severity ($0$ = mild, $1$ = severe),
+$T$ = treatment ($0$ = no, $1$ = yes),
+$Y$ = recovery ($0$ = no, $1$ = yes).
+
+\medskip
+\noindent\textbf{Data-generating distribution.}
+Severity is equally prevalent, $P(C{=}1) = 0.5$, and \emph{sicker patients
+are preferentially treated}: $P(T{=}1 \mid C{=}0) = 0.20$ and
+$P(T{=}1 \mid C{=}1) = 0.80$.  The outcome probabilities are:
+
+\medskip
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{\hspace{6pt}}ccc@{\hspace{20pt}}cc@{\hspace{6pt}}}
+\toprule
+$C$ & $P(C)$ & $P(T{=}1\mid C)$ & $P(Y{=}1\mid T{=}0,\,C)$ & $P(Y{=}1\mid T{=}1,\,C)$ \\
+\midrule
+0 & 0.50 & 0.20 & 0.10 & 0.40 \\
+1 & 0.50 & 0.80 & 0.50 & 0.80 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip\noindent
+The treatment effect within each stratum is
+$P(Y{=}1\mid T{=}1,C{=}c) - P(Y{=}1\mid T{=}0,C{=}c) = 0.30$ for both
+$c=0$ and $c=1$, so the true average causal effect is $\mathrm{ACE} = 0.30$.
+
+\medskip
+\noindent\textbf{Step 1: The naïve (unadjusted) estimand.}
+Because $P(T{=}1) = 0.5$, the marginal outcome rates are:
+\begin{align*}
+  P(Y{=}1 \mid T{=}1)
+  &= \frac{P(Y{=}1,\,T{=}1)}{P(T{=}1)}
+   = \frac{0.40\times 0.20\times 0.5 \;+\; 0.80\times 0.80\times 0.5}{0.5}
+   = \frac{0.04 + 0.32}{0.5} = 0.72,\\[4pt]
+  P(Y{=}1 \mid T{=}0)
+  &= \frac{0.10\times 0.80\times 0.5 \;+\; 0.50\times 0.20\times 0.5}{0.5}
+   = \frac{0.04 + 0.05}{0.5} = 0.18.
+\end{align*}
+Na\"{i}ve difference: $0.72 - 0.18 = \mathbf{0.54}$.
+
+\medskip
+\noindent\textbf{Step 2: The back-door adjusted estimand.}
+Since $\{C\}$ satisfies the back-door criterion (no descendant of $T$, blocks
+$T \leftarrow C \to Y$), formula~\eqref{w3:eq:backdoor} applies.  Weighting
+the stratum-specific outcome rates by the \emph{population} marginal
+$P(C)$ rather than by $P(C \mid T)$:
+\begin{align*}
+  P\!\left(Y{=}1 \mid \doop(T{=}1)\right)
+  &= P(Y{=}1\mid T{=}1,C{=}0)\,P(C{=}0)
+    + P(Y{=}1\mid T{=}1,C{=}1)\,P(C{=}1)\\
+  &= 0.40\times 0.5 \;+\; 0.80\times 0.5 \;=\; 0.60,\\[4pt]
+  P\!\left(Y{=}1 \mid \doop(T{=}0)\right)
+  &= 0.10\times 0.5 \;+\; 0.50\times 0.5 \;=\; 0.30.
+\end{align*}
+Adjusted difference: $0.60 - 0.30 = \mathbf{0.30}$ --- matching the true ACE.
+
+\medskip
+\noindent\textbf{Diagnosis of the bias.}
+The na\"{i}ve estimate ($0.54$) overstates the causal effect by $0.24$.
+The source is the severity--treatment association: treated patients are
+predominantly severe ($C{=}1$), who recover at higher rates \emph{even
+without treatment} ($0.50$ vs.\ $0.10$).  Marginal comparison therefore
+conflates the treatment benefit with the baseline severity difference.
+The back-door formula removes this confounding by imposing the
+\emph{same} covariate distribution $P(C)$ on both potential worlds,
+recovering the true ACE.
+
+\medskip
+\noindent\textbf{What the formula is not.}
+Note that the adjusted formula is \emph{not}
+$\sum_c P(Y{=}1\mid T{=}1,C{=}c)\,P(C{=}c \mid T{=}1)$: that is just
+$P(Y{=}1 \mid T{=}1) = 0.72$ again.  The entire force of the adjustment
+lies in replacing the treatment-conditional distribution $P(C \mid T)$
+with the population marginal $P(C)$, as equation~\eqref{w3:eq:backdoor}
+requires.
+\end{example}
 
 \subsection{Application to the Education--Earnings DAG}
 \label{w3:sec:education-ex}
@@ -518,6 +784,33 @@ Both conditions hold: neither $N$ nor $B$ is a descendant of $E$, and
 $\{N,B\}$ blocks the only back-door path.  So $\{N,B\}$ also yields a
 valid (though redundant) adjustment formula.
 \end{example}
+
+\begin{remark}
+The Education example illustrates three important points about the set of
+valid adjustment sets.
+
+\textbf{(a) Multiple valid sets may exist, and they identify the same
+quantity.}  Both $\{B\}$ and $\{N,B\}$ satisfy the back-door criterion
+here.  Any such set yields the same interventional distribution
+$P(y \mid \doop(E{=}e))$; the identification target is unique even though
+the adjustment sets are not.
+
+\textbf{(b) Supersets of a valid adjustment set are not automatically
+valid.}  Adding a variable to a valid set can violate Condition~2 if that
+variable is a collider on some back-door path (as in the M-bias example
+above).  In this particular graph $\{N,B\}$ happens to remain valid
+because $N$ is not a collider on any back-door path and creates no new
+open path.  But this must be verified from the graph, not assumed.
+
+\textbf{(c) Smaller valid sets are often preferable in practice.}  Every
+variable added to $\mathbf{S}$ must also satisfy positivity
+(condition~\eqref{w3:eq:positivity}).  Adjusting for $N$ in addition to
+$B$ requires $P(E{=}e \mid B{=}b, N{=}n) > 0$ for all cells $(b,n)$, a
+stricter requirement than $P(E{=}e \mid B{=}b) > 0$ alone.  Sparse or
+empty cells in high-dimensional strata inflate variance and cause practical
+positivity failure.  Adjusting for fewer variables --- the minimal
+sufficient set --- is generally more efficient and more robust.
+\end{remark}
 
 % ==============================================================
 \section{The Front-Door Criterion}
@@ -585,6 +878,102 @@ All three conditions hold, so the front-door formula applies:
   P(y \mid \doop(T{=}t))
   = \sum_m P(m \mid t)\sum_{t'} P(y \mid t', m)\,P(t').
 \]
+\end{example}
+
+\begin{example}{When the Front-Door Criterion Fails}
+\label{w3:ex:frontdoorfail}
+Each condition of Definition~\ref{w3:def:frontdoor} is load-bearing.
+We illustrate what breaks when exactly one condition fails, by modifying
+the prototypical front-door graph in two separate ways.
+
+\medskip
+\noindent\textbf{Case (a): Condition~2 fails --- the $T \to M$ link is confounded.}
+
+Start with the prototypical graph and add the edge $U \to M$, so the
+unobserved confounder also directly affects the mediator:
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.6cm]
+  \node[node]  (T) at (0, 0)     {$T$};
+  \node[node]  (M) at (2.2, 0)   {$M$};
+  \node[node]  (Y) at (4.4, 0)   {$Y$};
+  \node[unode] (U) at (1.1,-1.3) {$U$};
+  \draw[edge]  (T) -- (M);
+  \draw[edge]  (M) -- (Y);
+  \draw[dedge] (U) -- (T);
+  \draw[dedge, color=warnred] (U) -- (M)
+    node[midway, below right, font=\scriptsize\color{warnred}] {new};
+  \draw[dedge] (U) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+\noindent
+Condition~1 still holds ($M$ intercepts all directed paths $T \to M \to Y$).
+But condition~2 now \textbf{fails}: the path $T \leftarrow U \to M$ is an
+unblocked back-door path from $T$ to $M$.  Because $U$ is unobserved, there
+is no observed variable that can block this path.
+
+\textit{Why the formula breaks.}  Stage~1 of the front-door formula uses
+$P(M{=}m \mid T{=}t)$ as if the $T \to M$ link were unconfounded.  But
+with $U \to M$, the association between $T$ and $M$ is partly due to
+their shared cause $U$, not purely the causal effect $T \to M$.
+The quantity $P(m \mid t)$ therefore mixes cause and confounding, and
+Stage~1 no longer estimates $P(m \mid \doop(T{=}t))$.
+
+\medskip
+\noindent\textbf{Case (b): Condition~3 fails --- the $M \to Y$ link has
+an extra unobserved confounder.}
+
+Return to the prototypical graph and add a second unobserved variable $V$
+that affects both $M$ and $Y$:
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.6cm]
+  \node[node]  (T) at (0, 0)     {$T$};
+  \node[node]  (M) at (2.2, 0)   {$M$};
+  \node[node]  (Y) at (4.4, 0)   {$Y$};
+  \node[unode] (U) at (1.1,-1.3) {$U$};
+  \node[unode] (V) at (3.3,-1.3) {$V$};
+  \draw[edge]  (T) -- (M);
+  \draw[edge]  (M) -- (Y);
+  \draw[dedge] (U) -- (T);
+  \draw[dedge] (U) -- (Y);
+  \draw[dedge, color=warnred] (V) -- (M)
+    node[midway, below left, font=\scriptsize\color{warnred}] {new};
+  \draw[dedge, color=warnred] (V) -- (Y)
+    node[midway, below right, font=\scriptsize\color{warnred}] {new};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+Conditions~1 and~2 still hold.  But condition~3 now \textbf{fails}: the
+path $M \leftarrow V \to Y$ is a back-door path from $M$ to $Y$ that is
+\emph{not} blocked by conditioning on $T$.  The path goes
+$M \leftarrow V \to Y$ and does not pass through $T$, so fixing $T$ does
+nothing to close it.
+
+\textit{Why the formula breaks.}  Stage~2 uses $\sum_{t'} P(y \mid t', m)\,P(t')$
+as the back-door-adjusted effect of $M$ on $Y$, with $T$ as the adjustment
+variable.  But $T$ only satisfies the back-door criterion for $M \to Y$
+when it blocks \emph{all} back-door paths from $M$ to $Y$.  The new path
+$M \leftarrow V \to Y$ is not blocked by $T$, so $T$ is no longer a valid
+adjustment set for Stage~2, and the Stage~2 quantity is a biased estimate
+of $P(y \mid \doop(M{=}m))$.
+
+\medskip
+\noindent\textbf{Summary.}
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{\hspace{6pt}}lll@{\hspace{6pt}}}
+\toprule
+\textbf{Modification} & \textbf{Condition violated} & \textbf{Stage broken} \\
+\midrule
+Add $U \to M$ & Cond.~2: $T \to M$ confounded & Stage~1 \\
+Add $V \to M$ and $V \to Y$ & Cond.~3: $M \to Y$ confounded by $V$ & Stage~2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+In both cases the criterion detects the failure before any formula is written down: the graphical check on each condition precisely identifies which stage of the two-stage argument collapses.
 \end{example}
 
 The prototypical graph where the front-door criterion applies is:
@@ -866,11 +1255,26 @@ full do-calculus (or the ID algorithm) can still identify the causal
 effect.
 \end{warn}
 
+\medskip\noindent
+Up to this point, the chapter has focused on two concrete identification
+criteria that can be checked directly in common graphical settings.
+We now turn to the more general algebraic machinery that subsumes both.
+The purpose of the do-calculus is not to replace back-door and front-door
+adjustment with something unrelated, but to show that both are instances
+of a single system for transforming interventional expressions into
+observational ones.
+
 % ==============================================================
 \section{The Three Rules of Do-Calculus}
 \label{w3:sec:rules}
 % ==============================================================
 
+\noindent\textbf{General theory.}\enspace
+The remainder of this chapter develops the general calculus of
+identification and the limits of what can be identified from observational
+data alone.
+
+\medskip
 Having seen two concrete identification strategies, we now develop the
 general algebraic machinery that underlies both.  \citet{pearl1995causal}
 introduced the three rules of do-calculus as a system for manipulating
@@ -884,6 +1288,22 @@ Section~\ref{w3:sec:proofs}.  Whether the three rules are
 question; Section~\ref{w3:sec:completeness} presents the completeness
 theorem of \citet{shpitser2006identification}, which answers it
 affirmatively.
+
+\begin{remark}
+\textbf{First reading / second reading.}
+On a first reading, focus on the qualitative role of the three rules:
+Rule~1 adds or removes observations, Rule~2 exchanges an action for an
+observation, and Rule~3 adds or removes actions.
+The detailed graph subscripts and formal statements can be absorbed
+gradually.
+The main conceptual point is that each rule tests whether a variable
+becomes irrelevant after the appropriate arrows have been deleted from
+the graph --- exactly the same kind of d-separation check introduced in
+Chapter~2.
+On a second reading, work through the graphical conditions in the
+statement table and verify them on the examples in
+Section~\ref{w3:sec:rules-intuition}.
+\end{remark}
 
 \subsection{Statement of the Rules}
 \label{w3:sec:rules-statement}
@@ -903,6 +1323,9 @@ Each rule has the form \emph{``expression~A = expression~B if
 $(Y \indep Z \mid X, W)_{\Gcal'}$''}, where $\Gcal'$ is a specific
 intervention graph built from $\Gcal$ by two deletions.
 The subscript encodes both deletions in compressed notation.
+The graph subscripts may look heavier than the ideas themselves.
+They are simply bookkeeping devices that record which incoming or
+outgoing arrows were deleted before the d-separation condition is checked.
 The table below gives the recipe for each subscript that appears.
 
 \medskip
@@ -932,6 +1355,20 @@ $(Y \indep Z \mid X, W)_{\Gcal'}$ is then checked by the same
 d-separation algorithm used in Chapter~2: find all paths between $Y$ and
 $Z$, and verify that every path is blocked by $\{X, W\}$ in $\Gcal'$.
 
+\medskip\noindent
+\textbf{The essential pattern.}
+At first reading, the notation of the do-calculus can look more
+complicated than the ideas themselves.  The underlying logic is always
+the same: each rule asks whether a certain observation or intervention
+is \emph{irrelevant} once the appropriate arrows have been removed from
+the graph.  Remove the arrows, check d-separation, and if the check
+passes, the rule applies.  The graph subscripts are
+\emph{bookkeeping devices} that record exactly which arrows were deleted
+before the d-separation condition is checked --- nothing more.
+Once that is clear, the three rules reduce to three instances of a
+single question: \emph{``In the simplified graph obtained by this
+particular surgery, does the relevant d-separation hold?''}
+
 \begin{thm}{The Three Rules of Do-Calculus \citep{pearl1995causal}}
 \label{w3:thm:docalculus}
 Let $\Gcal$ be a DAG over variables $\mathcal{V}$, and let $X, Y, Z, W
@@ -949,6 +1386,15 @@ If $Y$ and $Z$ are d-separated in the graph with arrows into $X$ deleted
 \emph{and} arrows out of $Z$ deleted, then conditioning on $Z$ has no
 effect on the distribution of $Y$ (given $\doop(x)$ and $W$).
 
+\smallskip
+\noindent\textit{Instance} ($Z \to T \to Y$, intervene on $T$).
+Set $X{=}T$, $Z{=}Z$, $W{=}\varnothing$.
+Form $\Gcal_{\overline{T}\,\underline{Z}}$: delete $Z\to T$ (arrow into $T$),
+then delete all outgoing arrows of $Z$ — but $Z \to T$ was already gone, so $Z$
+becomes isolated.  Since $(Y \indep Z)_{\Gcal_{\overline{T}\,\underline{Z}}}$
+holds, Rule~1 gives $P(y \mid \doop(t), z) = P(y \mid \doop(t))$: knowing the
+former cause $Z$ of $T$ is irrelevant once $T$ has been set externally.
+
 \medskip
 \noindent\textbf{Rule 2 (Action/Observation Exchange).}
 \[
@@ -959,6 +1405,17 @@ effect on the distribution of $Y$ (given $\doop(x)$ and $W$).
 When the condition holds, intervening on $Z$ is equivalent to conditioning
 on $Z$ (within the scope of $\doop(x)$ and $W$).
 
+\smallskip
+\noindent\textit{Instance} ($Z \to T \to Y$, condition on $T$).
+Set $X{=}\varnothing$, $Z{=}Z$, $W{=}\{T\}$.
+Form $\Gcal_{\overline{Z(T)}}$: delete arrows into $Z$ except those from
+$T$ — but $Z$ has no parents, so $\Gcal_{\overline{Z(T)}} = \Gcal$.
+The only path from $Z$ to $Y$ is $Z \to T \to Y$, which is a chain
+blocked by $T \in W$.  Since $(Y \indep Z \mid T)_{\Gcal_{\overline{Z(T)}}}$
+holds, Rule~2 gives $P(y \mid \doop(z), t) = P(y \mid z, t)$: with $T$
+observed, intervening on $Z$ versus merely observing $Z{=}z$ makes no
+difference to $Y$.
+
 \medskip
 \noindent\textbf{Rule 3 (Insertion/Deletion of Actions).}
 \[
@@ -968,6 +1425,18 @@ on $Z$ (within the scope of $\doop(x)$ and $W$).
 \]
 When the condition holds, the intervention $\doop(z)$ can be deleted
 entirely.
+
+\smallskip
+\noindent\textit{Instance} ($Z \to T \to Y$, already intervening on $T$).
+Set $X{=}T$, $Z{=}Z$, $W{=}\varnothing$.
+Form $\Gcal_{\overline{T}\,\overline{Z(\overline{\varnothing})}} =
+\Gcal_{\overline{T}\,\overline{Z}}$: delete arrows into $T$ (removes
+$Z \to T$), then delete arrows into $Z$ (none exist).  Node $Z$ is
+now isolated with no path to $Y$, so
+$(Y \indep Z)_{\Gcal_{\overline{T}\,\overline{Z}}}$ holds.  Rule~3 gives
+$P(y \mid \doop(t), \doop(z)) = P(y \mid \doop(t))$: with $T$ already
+fixed, setting $Z$ to any value cannot reach $Y$, so $\doop(z)$ is
+superfluous.
 \end{thm}
 
 \begin{remark}
@@ -977,6 +1446,34 @@ terms from a do-expression: Rule~1 handles observations; Rule~2 exchanges
 actions for observations; Rule~3 deletes actions.  Any sequence of such
 operations that converts a do-expression into a purely observational
 expression is an \emph{identification proof}.
+\end{remark}
+
+\begin{remark}[Soundness of the Rules]
+\label{w3:rem:soundness}
+The three rules are \emph{sound}: each holds for every distribution $P$
+Markov with respect to $\Gcal$.  The argument for Rule~2 is instructive.
+Recall that the post-intervention distribution $P(\cdot \mid \doop(x))$
+is Markov with respect to $\Gcal_{\overline{X}}$: the Markov factorization
+of $\Gcal_{\overline{X}}$ is exactly $P$ with the structural equation
+for $X$ replaced by the constant $x$ (the truncated factorization).
+Rule~2 asserts $P(y \mid \doop(x), \doop(z), w) = P(y \mid \doop(x), z, w)$
+when $(Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\overline{Z(W)}}}$.
+\emph{Why does this hold?}  In the post-$\doop(x)$ world, the
+distribution is Markov with respect to $\Gcal_{\overline{X}}$.  Further
+intervening on $Z$ gives a distribution Markov with respect to
+$\Gcal_{\overline{X}\,\overline{Z}}$, a sub-graph of
+$\Gcal_{\overline{X}\,\overline{Z(W)}}$.  The d-separation condition
+$(Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\overline{Z(W)}}}$ therefore
+implies $Y \indep Z \mid W$ in the post-$\doop(x,z)$ distribution.  Since
+the distribution of $Y$ is the same whether we \emph{intervene} on $Z$ or
+\emph{observe} $Z$ — precisely because the d-separation blocks all
+back-door paths from $Z$ to $Y$ that $\doop(z)$ would additionally sever
+— the two expressions are equal.  Rules~1 and~3 are analogous: Rule~1
+checks that observing $Z$ is irrelevant (d-separation in
+$\Gcal_{\overline{X}\,\underline{Z}}$); Rule~3 checks that intervening on
+$Z$ has no downstream effect on $Y$ (d-separation in
+$\Gcal_{\overline{X}\,\overline{Z(\overline{W})}}$).
+Full proofs appear in \citet{pearl1995causal}.
 \end{remark}
 
 \begin{center}
@@ -1034,37 +1531,53 @@ the only paths from $Z$ to $Y$ are causal (forward) paths, then intervening
 on $Z$ and conditioning on $Z$ have the same effect on $Y$ --- there is no
 confounding between $Z$ and $Y$.
 
-\begin{example}{Rule 2 --- Exchanging Intervention for Observation}
+\begin{example}{Rule 2 --- Action/Observation Exchange}
 \label{w3:ex:rule2}
-Graph: $Z \to T \to Y$, no other edges.  Suppose we have already intervened
-on $T$ and wish to exchange the intervention $\doop(z)$ for the observation
-$z$ in the expression $P(y \mid \doop(z), t)$.
+Graph: $X \to Z \to Y$, no other edges.  Suppose we have already intervened
+on $X$ and wish to exchange the intervention $\doop(z)$ for the observation
+$z$ in $P(y \mid \doop(x), \doop(z))$.
 
+\medskip
+\noindent\textbf{Original graph.}
 \begin{center}
 \begin{tikzpicture}
-  \node[node] (Z) at (0,0)   {$Z$};
-  \node[node] (T) at (1.8,0) {$T$};
+  \node[node] (X) at (0,0)   {$X$};
+  \node[node] (Z) at (1.8,0) {$Z$};
   \node[node] (Y) at (3.6,0) {$Y$};
-  \draw[edge] (Z) -- (T);
-  \draw[edge] (T) -- (Y);
+  \draw[edge] (X) -- (Z);
+  \draw[edge] (Z) -- (Y);
 \end{tikzpicture}
 \end{center}
 
-\noindent
-Here $X = \varnothing$, $Z = Z$, $W = \{T\}$.  Form
-$\Gcal_{\overline{Z(T)}}$: delete arrows into $Z$ except those from $T$.
-Since $Z$ has no incoming arrows, $\Gcal_{\overline{Z(T)}} = \Gcal$.
-Check $(Y \indep Z \mid T)_{\Gcal}$: the only path from $Z$ to $Y$ is
-$Z \to T \to Y$, which is a chain blocked by conditioning on $T$. \checkmark
+\noindent\textbf{Modified graph} $\Gcal_{\overline{X}\,\overline{Z}}$:
+delete arrows into $X$ (none to remove) and all arrows into $Z$ (removes
+$X \to Z$).  Node $Z$ has no incoming arrows in the modified graph.
 
-Rule~2 gives:
+\begin{center}
+\begin{tikzpicture}
+  \node[node] (X) at (0,0)   {$X$};
+  \node[node] (Z) at (1.8,0) {$Z$};
+  \node[node] (Y) at (3.6,0) {$Y$};
+  \draw[xedge] (X) -- (Z);
+  \draw[edge]  (Z) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{D-separation check}: in the modified graph, $Z$ has
+no incoming arrows, so there are no back-door paths from $Z$ to $Y$.
+The only path is the causal $Z \to Y$.  Since $Y$ depends on $Z$ only
+through $Z$'s value (not through the mechanism that produced $Z$),
+$(Y \indep Z)_{\Gcal_{\overline{X}\,\overline{Z}}}$ holds in the sense
+that no spurious association between $Z$ and $Y$ can arise. \checkmark
+
+\noindent\textbf{Rule~2 gives}:
 \[
-  P(y \mid \doop(z), t) \;=\; P(y \mid z, t).
+  P(y \mid \doop(x), \doop(z)) \;=\; P(y \mid \doop(x), z).
 \]
-\textit{Interpretation}: $T$ mediates the entire influence of $Z$ on $Y$.
-Once $T$ is observed, the distribution of $Y$ is the same whether $Z$ was
-set by an external intervention or merely observed to equal $z$ --- $T$
-screens off $Z$ from $Y$ completely.
+\textit{Interpretation}: $Y$ depends on $Z$ only through $Z$'s value, not
+through the causal mechanism that generated $Z$.  Externally fixing $Z$
+and merely observing $Z{=}z$ are therefore equivalent for $Y$: in both
+cases, $Z$'s downstream effect on $Y$ is exactly the same.
 \end{example}
 
 \paragraph{Rule 3 --- Deleting an Intervention.}
@@ -1074,35 +1587,156 @@ setting $Z$ to any value has no effect on $Y$, so $\doop(z)$ can be dropped.
 
 \begin{example}{Rule 3 --- Deleting an Irrelevant Intervention}
 \label{w3:ex:rule3}
-Same graph as Example~\ref{w3:ex:rule1}: $Z \to T \to Y$, no other edges.
-Now suppose we intervene on \emph{both} $Z$ and $T$.
+Graph: $Z \to X \to Y$, no other edges.  Suppose we intervene on both $X$
+and $Z$, and wish to drop $\doop(z)$ from $P(y \mid \doop(x), \doop(z))$.
+
+\medskip
+\noindent\textbf{Original graph.}
+\begin{center}
+\begin{tikzpicture}
+  \node[node] (Z) at (0,0)   {$Z$};
+  \node[node] (X) at (1.8,0) {$X$};
+  \node[node] (Y) at (3.6,0) {$Y$};
+  \draw[edge] (Z) -- (X);
+  \draw[edge] (X) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{Modified graph} $\Gcal_{\overline{X}\,\overline{Z}}$:
+delete all arrows into $X$ (removes $Z \to X$), then delete all arrows
+into $Z$ (none to remove).  Node $Z$ is now isolated.
 
 \begin{center}
 \begin{tikzpicture}
   \node[node] (Z) at (0,0)   {$Z$};
-  \node[node] (T) at (1.8,0) {$T$};
+  \node[node] (X) at (1.8,0) {$X$};
   \node[node] (Y) at (3.6,0) {$Y$};
-  \draw[edge] (Z) -- (T);
-  \draw[edge] (T) -- (Y);
+  \draw[xedge] (Z) -- (X);
+  \draw[edge]  (X) -- (Y);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{D-separation check}: in the modified graph, $Z$ is
+isolated.  There is no path from $Z$ to $Y$, so
+$(Y \indep Z)_{\Gcal_{\overline{X}\,\overline{Z}}}$ holds trivially.
+\checkmark
+
+\noindent\textbf{Rule~3 gives}:
+\[
+  P(y \mid \doop(x), \doop(z)) \;=\; P(y \mid \doop(x)).
+\]
+\textit{Interpretation}: once $X$ is fixed externally, $Z$'s only route
+to $Y$ (through $X$) is severed.  Setting $Z$ to any value cannot change
+$Y$, so the intervention $\doop(z)$ is superfluous and can be deleted.
+
+\textit{Contrast with Rule~1}: if instead of intervening on $Z$ we merely
+\emph{observe} it, Example~\ref{w3:ex:rule1} shows that the same
+d-separation argument lets us drop the \emph{observation} $z$ from
+$P(y \mid \doop(x), z)$.  Rule~1 deletes a redundant observation;
+Rule~3 deletes a redundant intervention.
+\end{example}
+
+\begin{example}{A Two-Rule Derivation: the Proxy Variable Graph}
+\label{w3:ex:tworule}
+The three preceding examples each applied one rule to a simple chain.
+We now chain two rules in sequence to derive a non-trivial identification
+formula for a graph that requires both.
+
+\medskip
+\noindent\textbf{Graph.}
+$T$ has a direct effect on $Y$.  An unobserved variable $U$ is a common
+cause of $T$ and an observed proxy $S$; $S$ in turn causes $Y$.
+$U$ does \emph{not} directly cause $Y$.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+  \node[node]  (T) at (0, 0)    {$T$};
+  \node[unode] (U) at (1.6, 1.2){$U$};
+  \node[node]  (S) at (3.2, 1.2){$S$};
+  \node[node]  (Y) at (3.2, 0)  {$Y$};
+  \draw[edge]  (T) -- (Y);
+  \draw[dedge] (U) -- (T);
+  \draw[dedge] (U) -- (S);
+  \draw[edge]  (S) -- (Y);
 \end{tikzpicture}
 \end{center}
 
 \noindent
-In $\Gcal_{\overline{T}}$ (delete arrows into $T$: removes $Z \to T$),
-node $Z$ has no causal path to $Y$.  Rule~3 gives:
-\[
-  P(y \mid \doop(t), \doop(z)) \;=\; P(y \mid \doop(t)).
-\]
-\textit{Interpretation}: with $T$ already fixed by intervention, $Z$'s
-only route to $Y$ (through $T$) is blocked.  Setting $Z$ to any value
-cannot change $Y$, so the intervention $\doop(z)$ is superfluous and can
-be deleted.
+Because $U$ is unobserved, back-door adjustment directly on $U$ is
+infeasible.  However, $S$ lies on the back-door path $T \leftarrow U \to
+S \to Y$, and $S$ is observed.  We now derive the identification formula
+using the rules, making every graphical check explicit.
 
-\textit{Contrast with Rule~1}: Example~\ref{w3:ex:rule1} showed that the
-\emph{observation} $z$ can also be deleted from $P(y \mid \doop(t), z)$
-for the same reason.  Rule~1 deletes a redundant \emph{observation};
-Rule~3 deletes a redundant \emph{intervention}.  Both apply here because
-$\doop(t)$ renders $Z$ causally inert.
+\medskip
+\noindent\textbf{Goal}: simplify $P(y \mid \doop(t))$ to a purely
+observational expression.
+
+\medskip
+\noindent\textbf{Step 1.  Introduce $S$ by the law of total probability.}
+\[
+  P(y \mid \doop(t))
+  \;=\; \sum_s P(y \mid \doop(t),\,s)\;P(s \mid \doop(t)).
+\]
+This produces two sub-expressions: the conditional
+$P(y \mid \doop(t), s)$ and the marginal $P(s \mid \doop(t))$.
+Each is handled by a separate rule.
+
+\medskip
+\noindent\textbf{Step 2.  Rule~3 applied to $P(s \mid \doop(t))$.}
+
+\emph{Claim}: $P(s \mid \doop(t)) = P(s)$.
+
+\emph{Rule~3 condition} (with $X{=}\varnothing$, $Z{=}T$, $W{=}\varnothing$):
+$(S \indep T)_{\Gcal_{\overline{T}}}$.
+
+\emph{Graphical check}: form $\Gcal_{\overline{T}}$ by deleting the arrow
+$U \to T$.  The remaining edges are $T \to Y$, $U \to S$, $S \to Y$.
+In this graph, $T$ has no parents and no edge connects $T$ to $S$ or to
+the $U$--$S$ component.  There is no path between $T$ and $S$, so
+$(S \indep T)_{\Gcal_{\overline{T}}}$. \checkmark
+
+\emph{Conclusion}: $P(s \mid \doop(t)) = P(s)$.
+
+\medskip
+\noindent\textbf{Step 3.  Back-door d-separation argument applied to
+$P(y \mid \doop(t), s)$.}
+
+\emph{Claim}: $P(y \mid \doop(t), s) = P(y \mid t, s)$.
+
+\emph{Condition} (back-door criterion with $\mathbf{S}=\{S\}$):
+$(Y \indep T \mid S)_{\Gcal_{\underline{T}}}$.
+
+\emph{Graphical check}: form $\Gcal_{\underline{T}}$ by deleting the
+arrow $T \to Y$.  The remaining edges are $U \to T$, $U \to S$, $S \to Y$.
+Paths between $T$ and $Y$ in $\Gcal_{\underline{T}}$: only the back-door
+path $T \leftarrow U \to S \to Y$.  Node $S$ is a non-collider on this
+path; conditioning on $S$ blocks it. \checkmark
+
+\emph{Conclusion}: by the truncated factorization, $\{S\}$ satisfies the
+back-door criterion for $(T, Y)$, so $P(y \mid \doop(t), s) = P(y \mid t, s)$.
+
+\medskip
+\noindent\textbf{Combining Steps 1--3:}
+\[
+  P(y \mid \doop(t))
+  \;=\; \sum_s P(y \mid t,\,s)\;P(s).
+\]
+The causal effect of $T$ on $Y$ is identified by standardizing the
+conditional distribution $P(y \mid t, s)$ over the population marginal
+$P(s)$ --- even though the confounder $U$ is entirely unobserved.
+
+\medskip
+\noindent\textbf{What each rule did.}
+Step~2 used Rule~3 to \emph{decouple $S$ from the intervention}: the
+d-separation check confirmed that $T$ has no causal route to $S$ in the
+post-intervention world, so $P(s \mid \doop(t)) = P(s)$.
+Step~3 used the back-door d-separation in $\Gcal_{\underline{T}}$ to
+\emph{justify treating the intervention $\doop(t)$ as an observation $t$}
+within each stratum of $S$.  Neither step alone suffices: without
+Step~2, the marginal retains a $\doop(t)$; without Step~3, the
+conditional cannot be converted to an observational quantity.
+The complete formula follows only after both rules are applied to
+their respective sub-expressions.
 \end{example}
 
 \subsection{Proofs of the Identification Formulas}
@@ -1111,7 +1745,7 @@ With the three rules now in hand, we can prove the two identification
 formulas stated in Sections~\ref{w3:sec:backdoor}
 and~\ref{w3:sec:frontdoor}.
 
-\begin{tcolorbox}[defstyle, title={Proof of Theorem~\ref{w3:thm:backdoor} (Back-Door Formula) via Rules~2 and~3}]
+\begin{tcolorbox}[defstyle, title={Proof of Theorem~\ref{w3:thm:backdoor} (Back-Door Formula) via Rule~3 and the Back-Door d-Separation Argument}]
 
 \noindent\textit{Graph structure}: $T \to Y$, unobserved $U \to T$,
 $U \to Y$, and observed $\mathbf{S}$ blocking the back-door path
@@ -1147,22 +1781,33 @@ probability.}
 
 \noindent\textbf{Step 2: Simplify $P(\mathbf{s} \mid \doop(t))$.}
 Because $\mathbf{S}$ contains no descendants of $T$ (condition~1),
-intervening on $T$ cannot causally affect any node in $\mathbf{S}$.  In
-the intervention graph $\Gcal_{\overline{T}}$, all arrows into $T$ have been
-deleted, so $T$ has no parents and no causal path from $T$ reaches
-$\mathbf{S}$.  By Rule~3:
+intervening on $T$ cannot causally affect any node in $\mathbf{S}$.
+The graphical condition for Rule~3 is $(\mathbf{S} \indep T)_{\Gcal_{\overline{T}}}$:
+in $\Gcal_{\overline{T}}$, all arrows into $T$ are deleted so $T$ has no
+parents, and no directed path from $T$ reaches any node in $\mathbf{S}$
+(by condition~1).  Therefore $(\mathbf{S} \indep T)_{\Gcal_{\overline{T}}}$
+holds, and Rule~3 gives:
 \[
   P(\mathbf{s} \mid \doop(t)) = P(\mathbf{s}).
 \]
 
 \noindent\textbf{Step 3: Convert $P(y \mid \doop(t), \mathbf{s})$ to an
 observation.}
-Condition~2 guarantees that $\mathbf{S}$ blocks all back-door paths from
-$T$ to $Y$.  In $\Gcal_{\overline{T}}$, the only remaining paths from $T$
-to $Y$ are causal paths.  Rule~2 then licenses the exchange:
+Condition~2 ensures that, within each stratum $\mathbf{S}=\mathbf{s}$,
+all back-door paths from $T$ to $Y$ are blocked and any residual
+association between $T$ and $Y$ conditional on $\mathbf{S}$ is purely
+causal.  By the truncated factorization formula for $P(\cdot\mid\doop(t))$,
+the post-intervention conditional distribution of $Y$ given $T=t$ and
+$\mathbf{S}=\mathbf{s}$ therefore equals the observational conditional:
 \[
   P(y \mid \doop(t), \mathbf{s}) = P(y \mid t, \mathbf{s}).
 \]
+(\textit{Note}: this step does \emph{not} follow from Rule~2 directly,
+because the Rule~2 condition $(Y \indep T \mid \mathbf{S})_{\Gcal_{\overline{T(\mathbf{S})}}}$
+fails whenever $T \to Y$ is a direct edge.  The equality instead holds by
+the structural argument above: condition~2 implies
+$(Y \indep T \mid \mathbf{S})_{\Gcal_{\underline{T}}}$, which together
+with the truncated factorization gives the result.)
 
 \noindent\textbf{Combining:}
 \[
@@ -1220,9 +1865,6 @@ $U$ is also independent of $M$ in $\Gcal_{\overline{T}}$.  Therefore:
 \[
   P(y \mid \doop(t), m) \;=\; \int P(y \mid m, u)\,dP(u) \;=\; P(y \mid \doop(m)).
 \]
-This also follows from Rule~3: in $\Gcal_{\overline{M}\,\overline{T}}$,
-$T$ is isolated and $(Y \indep T)$ holds, licensing
-$P(y \mid \doop(t), \doop(m)) = P(y \mid \doop(m))$.
 
 \medskip
 \noindent\textit{Step 3b}: $P(y \mid \doop(m)) = \int P(y \mid m, t')\,dP(t')$.
@@ -1251,6 +1893,12 @@ the effect of $M$ on $Y$, and Theorem~\ref{w3:thm:backdoor} gives:
 \label{w3:sec:completeness}
 % ==============================================================
 
+\noindent\textbf{General theory (continued).}\enspace
+This section is included to explain the scope and limits of the
+do-calculus.  Students need not master the ID algorithm procedurally on
+a first reading; the main takeaway is that identifiability is a structural
+property of the graph, not merely a matter of algebraic cleverness.
+
 A natural question after seeing the three rules is: are they enough?
 Could there be a graph where the causal effect is identifiable in principle,
 but none of the rules --- applied in any sequence --- can derive a purely
@@ -1275,7 +1923,97 @@ only if the do-calculus can derive a purely observational expression for it.
 \end{thm}
 
 The proof is beyond the scope of this chapter; the sketch below is
-provided for reference and independent reading.
+provided for reference and independent reading.  Before turning to the
+proof machinery, we ground the theorem in the simplest possible
+non-identifiable graph.
+
+\begin{example}{The Bow Graph: The Simplest Non-Identifiable Structure}
+\label{w3:ex:bowgraph}
+The \emph{bow graph} is the semi-Markovian DAG with one directed edge
+$T \to Y$ and one bidirected edge $T \leftrightarrow Y$ (representing an
+unobserved $U$ with $U \to T$ and $U \to Y$):
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.0cm]
+  %--- left panel: explicit U node ---
+  \node[node]  (T1) at (0, 0)     {$T$};
+  \node[node]  (Y1) at (2.4, 0)   {$Y$};
+  \node[unode] (U1) at (1.2, 1.2) {$U$};
+  \draw[edge]  (T1) -- (Y1);
+  \draw[dedge] (U1) -- (T1);
+  \draw[dedge] (U1) -- (Y1);
+  \node[font=\small\itshape\color{darkgrey}] at (1.2,-0.7)
+    {explicit $U$};
+
+  %--- right panel: bidirected notation ---
+  \node[node]  (T2) at (5.2, 0)   {$T$};
+  \node[node]  (Y2) at (7.6, 0)   {$Y$};
+  \draw[edge]  (T2) -- (Y2);
+  \draw[{Stealth[length=5pt]}-{Stealth[length=5pt]},
+        thick, color=darkgrey, dashed,
+        bend left=45] (T2) to (Y2);
+  \node[font=\small\itshape\color{darkgrey}] at (6.4,-0.7)
+    {semi-Markovian notation};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+The single back-door path is $T \leftarrow U \to Y$.  Because $U$ is
+unobserved and there are no other variables in the graph, no observed set
+can block this path, so the back-door criterion cannot be satisfied.  The
+front-door criterion also fails: there is no observed mediator on any
+directed path from $T$ to $Y$.  We now show \emph{directly} that
+$P(y \mid \doop(t))$ is not determined by the observed distribution
+$P(T, Y)$ alone, by constructing two models that agree on $P(T, Y)$ but
+disagree on $P(y \mid \doop(t))$.
+
+Let $T, Y, U \in \{0, 1\}$ with $U \sim \mathrm{Bernoulli}(1/2)$.
+
+\medskip
+\noindent\textbf{Model $\mathcal{M}_1$ (pure confounding; no causal effect of $T$).}
+\[
+  T \;=\; U, \qquad Y \;=\; U.
+\]
+Both $T$ and $Y$ are driven entirely by $U$; the arrow $T \to Y$ carries
+no causal influence.  Since $T = U$ and $Y = U$, the observed joint
+distribution is $P(T{=}0, Y{=}0) = P(T{=}1, Y{=}1) = 1/2$ and
+$P(T \neq Y) = 0$.
+
+Under the intervention $\doop(T{=}1)$, the equation $T = U$ is replaced
+by the constant $T = 1$, but $Y = U$ is unchanged.  Therefore:
+\[
+  P_1\!\left(Y{=}1 \mid \doop(T{=}1)\right) \;=\; P(U{=}1) \;=\; \tfrac{1}{2}.
+\]
+
+\medskip
+\noindent\textbf{Model $\mathcal{M}_2$ (full causal effect; $U$ acts on $Y$ only through $T$).}
+\[
+  T \;=\; U, \qquad Y \;=\; T.
+\]
+$Y$ is determined entirely by $T$; $U$ affects $Y$ only via $T$.  Since
+$T = U$ again, we have $Y = T = U$, so the observed joint distribution is
+again $P(T{=}0, Y{=}0) = P(T{=}1, Y{=}1) = 1/2$ and $P(T \neq Y) = 0$
+--- \emph{identical} to $\mathcal{M}_1$.
+
+Under the intervention $\doop(T{=}1)$, the equation $T = U$ is replaced
+by $T = 1$, and $Y = T = 1$ deterministically.  Therefore:
+\[
+  P_2\!\left(Y{=}1 \mid \doop(T{=}1)\right) \;=\; 1.
+\]
+
+\medskip
+\noindent\textbf{Conclusion.}  The two models produce identical observed
+distributions $P(T,Y)$, so no observational data set, however large, can
+distinguish $\mathcal{M}_1$ from $\mathcal{M}_2$.  Yet they assign
+different values to $P(Y{=}1 \mid \doop(T{=}1))$ --- $1/2$ in
+$\mathcal{M}_1$ versus $1$ in $\mathcal{M}_2$ --- and correspondingly
+different average causal effects ($0$ versus $1$).  Therefore
+$P(y \mid \doop(t))$ is \emph{not identified} from $P(T, Y)$ in the bow
+graph.  The completeness theorem tells us that no identification method
+--- the do-calculus or otherwise --- can overcome this obstruction: the
+bow graph contains a hedge, and the ID algorithm returns
+\textsc{fail}.
+\end{example}
 
 \begin{tcolorbox}[defstyle, title={Proof Sketch and the ID Algorithm}]
 \citet{shpitser2006identification} introduced the \emph{ID algorithm}
@@ -1442,9 +2180,11 @@ as the primary strategy when unmeasured confounding rules out the back-door
 route.  Chapter~8 then studies mediation analysis, decomposing total effects
 into direct and indirect components.
 The completeness theorem (Section~\ref{w3:sec:completeness}) closes the
-loop: every identifiable
-causal effect can be found by the do-calculus, and every non-identifiable
-one cannot be found by any method.  Part~III (Chapter~9 and beyond) then
+loop: every causal effect that is identifiable from the observational
+distribution relative to the assumed graph can be derived by the
+do-calculus, and every effect that is not identifiable in that setting
+cannot be recovered by any observational method without additional
+assumptions or new data.  Part~III (Chapter~9 and beyond) then
 turns to estimation.
 
 \medskip
@@ -1482,10 +2222,14 @@ turns to estimation.
         derivable as three-step sequences of these rules
         (Section~\ref{w3:sec:proofs}).
 
-  \item The do-calculus is complete \citep{shpitser2006identification}: a
-        causal effect is identified from observational data if and only if
-        the do-calculus can derive a purely observational expression for it.
-        Non-identifiability is a fundamental obstacle, not a technical one.
+  \item \textbf{Completeness.} The do-calculus is complete for
+        identification from observational data relative to the assumed
+        graph \citep{shpitser2006identification}: a causal effect is
+        identifiable if and only if the do-calculus can derive a purely
+        observational expression for it.  If the do-calculus cannot
+        identify the quantity in that setting, then no purely
+        observational method can do so without additional assumptions or
+        new data.
 \end{enumerate}
 
 % ==============================================================
@@ -1547,14 +2291,21 @@ turns to estimation.
   the structural obstruction.
   \begin{enumerate}[label=(\alph*)]
     \item $T \to Y$, $U \to T$, $U \to Y$, $U$ unobserved.
-    \item $T \to Y$, $U \to T$, $U \to Y$, $U$ unobserved; with instrument
-          $Z \to T$.
-          (\textit{Hint}: in the non-parametric setting, an instrument
-          alone does not identify the average causal effect
-          $P(y\mid\doop(t))$ without additional structural assumptions
-          such as linearity or monotonicity.  What the instrument
-          \emph{does} identify --- the Wald estimand and the LATE --- is
-          developed in Chapter~7.)
+    \item $T \to Y$, $U \to T$, $U \to Y$, $U$ unobserved; with
+          instrument $Z \to T$ and $Z \indep U$ (no direct $Z \to Y$ edge).
+          Show that $P(y \mid \doop(t))$ is \textbf{not} identified
+          non-parametrically from $P(Z, T, Y)$ by constructing two binary
+          SEMs $\mathcal{M}_1$ and $\mathcal{M}_2$, each compatible with
+          the IV graph, such that (i)~$P_{\mathcal{M}_1}(Z, T, Y) =
+          P_{\mathcal{M}_2}(Z, T, Y)$ and (ii)~$P_{\mathcal{M}_1}(Y{=}1
+          \mid \doop(T{=}1)) \ne P_{\mathcal{M}_2}(Y{=}1 \mid
+          \doop(T{=}1))$.  (\textit{Hint}: let $Z, U \sim
+          \mathrm{Bern}(1/2)$ independently and set $T = U$ in both
+          models --- the IV graph permits $Z$ to enter $T$'s structural
+          equation with zero coefficient.  Then set $Y = U$ in
+          $\mathcal{M}_1$ and $Y = T$ in $\mathcal{M}_2$.  Verify that
+          both models produce the same joint $P(Z, T, Y)$, and compute
+          the ACE under $\doop(T{=}1)$ in each model.})
     \item $T \to M \to Y$, $U \to T$, $U \to Y$, $U \to M$, $U$
           unobserved.  (\textit{Hint}: first check whether the back-door
           criterion can be satisfied --- is there any observed variable
@@ -1564,66 +2315,97 @@ turns to estimation.
     \item $T \to Y$, $X \to T$, $X \to Y$, $X$ observed.
   \end{enumerate}
 
+  \item \textbf{Back-door formula: proof and uniqueness.}
+
+  \begin{enumerate}[label=(\alph*)]
+    \item Let $\mathcal{M}$ be a structural causal model Markov with
+          respect to $\Gcal$, and let $\mathbf{S}$ satisfy the back-door
+          criterion for $(T, Y)$ in $\Gcal$ with positivity.  Prove
+          that
+          \[
+            P(y \mid \doop(t))
+            \;=\; \int P(y \mid t,\, \mathbf{s})\,dP(\mathbf{s}).
+          \]
+          (\textit{Hint}: begin with
+          $P(y \mid \doop(t)) = \int P(y \mid \doop(t), \mathbf{s})
+          \,P(\mathbf{s} \mid \doop(t))\,d\mathbf{s}$.
+          Apply the Rule~3 graphical condition
+          $(\mathbf{S} \indep T)_{\Gcal_{\overline{T}}}$, using
+          back-door condition~1, to simplify $P(\mathbf{s} \mid
+          \doop(t))$.  Then invoke the d-separation
+          $(Y \indep T \mid \mathbf{S})_{\Gcal_{\underline{T}}}$,
+          which back-door condition~2 implies, together with the
+          truncated factorization, to argue
+          $P(y \mid \doop(t), \mathbf{s}) = P(y \mid t,
+          \mathbf{s})$.)
+
+    \item Suppose $\mathbf{S}_1$ and $\mathbf{S}_2$ both satisfy the
+          back-door criterion for $(T, Y)$ in $\Gcal$ (with
+          positivity).  Deduce from part~(a) that
+          \[
+            \int P(y \mid t,\, \mathbf{s}_1)\,dP(\mathbf{s}_1)
+            \;=\;
+            \int P(y \mid t,\, \mathbf{s}_2)\,dP(\mathbf{s}_2).
+          \]
+          Interpret this result: the identification target
+          $P(y \mid \doop(t))$ is unique even when the adjustment set
+          is not.
+  \end{enumerate}
+
+  \item \textbf{Rule sequencing on an unseen graph.}
+  Consider the graph from Example~\ref{w3:ex:twopaths}:
+  $C_1 \to T$, $C_1 \to Y$, $U \to T$, $U \to C_2$, $C_2 \to Y$,
+  $T \to Y$, with $C_1$ and $C_2$ observed and $U$ unobserved.
+  Example~\ref{w3:ex:twopaths} established that $\{C_1, C_2\}$ is a
+  valid back-door adjustment set.
+
+  Derive
+  $P(y \mid \doop(t)) = \sum_{c_1,c_2}
+  P(y \mid t, c_1, c_2)\,P(c_1, c_2)$
+  from first principles using the three rules.  For each step:
+  (i)~name the rule applied,
+  (ii)~form the relevant intervention graph by stating which arrows are
+       deleted and what edges remain, and
+  (iii)~verify the required d-separation condition by tracing all paths
+        and confirming each is blocked.
+
+  \item \textbf{Non-identifiability by construction.}
+  This problem practices the technique of
+  Example~\ref{w3:ex:bowgraph}: prove non-identifiability by
+  exhibiting two observationally equivalent models with different
+  causal effects.
+
+  Consider the graph from Case~(a) of
+  Example~\ref{w3:ex:frontdoorfail}: $T \to M \to Y$,
+  $U \to T$, $U \to M$, $U \to Y$ (front-door condition~2 violated
+  because $U$ confounds $T \to M$).  Let $T, M, Y, U \in \{0,1\}$
+  with $U \sim \mathrm{Bern}(1/2)$.
+
+  \begin{enumerate}[label=(\alph*)]
+    \item Construct two SEMs $\mathcal{M}_1$ and $\mathcal{M}_2$,
+          each compatible with the graph, such that
+          $P_{\mathcal{M}_1}(T, M, Y) = P_{\mathcal{M}_2}(T, M, Y)$
+          but
+          $P_{\mathcal{M}_1}(Y{=}1 \mid \doop(T{=}1))
+          \ne P_{\mathcal{M}_2}(Y{=}1 \mid \doop(T{=}1))$.
+          (\textit{Hint}: set $T = U$ in both models.  In
+          $\mathcal{M}_1$ set $M = U$ and $Y = U$; in $\mathcal{M}_2$
+          set $M = T$ and $Y = M$.  Verify both produce
+          $P(T{=}0, M{=}0, Y{=}0) = P(T{=}1, M{=}1, Y{=}1) =
+          \tfrac{1}{2}$, then compute the ACE in each model under
+          $\doop(T{=}1)$.)
+
+    \item Explain precisely which identification strategy fails in
+          this graph and why.  Your explanation should reference
+          (i)~the back-door criterion (is there any observed variable
+          that blocks $T \leftarrow U \to Y$?), (ii)~the front-door
+          criterion (which condition fails and which stage of the
+          two-stage argument collapses), and (iii)~the completeness
+          theorem (what does the existence of your two models imply
+          about any identification method?).
+  \end{enumerate}
+
 \end{enumerate}
-
-% ==============================================================
-\newpage
-\section*{Biographical Note: Judea Pearl}
-\addcontentsline{toc}{section}{Biographical Note: Judea Pearl}
-% ==============================================================
-
-\begin{tcolorbox}[
-  colback=defbg, colframe=isublue, arc=4pt,
-  boxrule=0.8pt, left=8pt, right=8pt, top=6pt, bottom=6pt
-]
-\textbf{Judea Pearl} (born 1936, Tel Aviv) is a computer scientist and
-philosopher whose work over four decades created the modern mathematical
-foundations of causal inference and probabilistic reasoning.
-
-Pearl trained as an electrical engineer, receiving his B.Sc.\ from the
-Technion (Israel Institute of Technology) in 1960 and his Ph.D.\ from
-the Polytechnic Institute of Brooklyn in 1965.  He joined the faculty of
-UCLA in 1970, where he has remained ever since.  His early research was
-in hardware design and adaptive systems, but in the late 1970s he turned
-to artificial intelligence and the problem of reasoning under uncertainty.
-
-His first landmark contribution was the \emph{Bayesian network} (1985): a
-directed acyclic graph in which nodes represent random variables and edges
-encode conditional independence structure via the Markov factorization.
-Pearl's belief-propagation algorithm made exact inference in such networks
-tractable, and Bayesian networks became the dominant framework for
-probabilistic reasoning in AI throughout the 1980s and 1990s.
-
-The second, and arguably deeper, contribution was the \emph{do-calculus}
-(1993--1995).  Pearl recognized that Bayesian networks, despite their
-power, could not distinguish association from causation: the same DAG that
-encodes observational dependencies is also used to model interventions, but
-the two require different algebra.  He introduced the $\doop(\cdot)$
-operator to represent external interventions, the intervention-graph
-semantics to compute their effects, and the three rules of do-calculus as a
-complete axiomatic system for moving between interventional and
-observational distributions.  His 2000 monograph
-\textit{Causality: Models, Reasoning, and Inference} unified these ideas
-into a comprehensive theory, covering identification, counterfactuals,
-mediation, and the potential-outcomes framework as a special case.
-
-In recognition of these contributions, Pearl was awarded the \textbf{ACM
-Turing Award} in 2011 --- the highest honor in computer science,
-often described as the ``Nobel Prize of computing'' --- ``for fundamental
-contributions to artificial intelligence through the development of a
-calculus for probabilistic and causal reasoning.''  He is also the
-recipient of the Benjamin Franklin Medal in Computers and Cognitive Science
-(2008) and numerous honorary doctorates.
-
-Pearl has been a persistent advocate for what he calls the
-\emph{ladder of causation}: a hierarchy distinguishing association
-(seeing), intervention (doing), and counterfactual reasoning (imagining).
-He argues that true intelligence --- human or artificial --- requires
-climbing all three rungs, and that current machine learning systems, however
-powerful, remain largely confined to the first.  His 2018 popular book
-\textit{The Book of Why} (co-authored with Dana Mackenzie) brings these
-ideas to a general audience.
-\end{tcolorbox}
 
 % ==============================================================
 \newpage
