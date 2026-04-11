@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; The Do-Calculus and Identification Criteria – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./chapter_02.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_03.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-mutilated" id="toc-sec-mutilated" class="nav-link active" data-scroll-target="#sec-mutilated"><span class="header-section-number">3.1</span> From d-Separation to Intervention: Intervention Graphs</a>
+  <ul class="collapse">
+  <li><a href="#what-does-intervention-mean" id="toc-what-does-intervention-mean" class="nav-link" data-scroll-target="#what-does-intervention-mean"><span class="header-section-number">3.1.1</span> What Does Intervention Mean?</a></li>
+  <li><a href="#sec-operations" id="toc-sec-operations" class="nav-link" data-scroll-target="#sec-operations"><span class="header-section-number">3.1.2</span> The Two Graph Operations</a></li>
+  </ul></li>
+  <li><a href="#sec-backdoor" id="toc-sec-backdoor" class="nav-link" data-scroll-target="#sec-backdoor"><span class="header-section-number">3.2</span> The Back-Door Criterion</a>
+  <ul class="collapse">
+  <li><a href="#motivation-when-the-confounder-is-unobserved" id="toc-motivation-when-the-confounder-is-unobserved" class="nav-link" data-scroll-target="#motivation-when-the-confounder-is-unobserved"><span class="header-section-number">3.2.1</span> Motivation: When the Confounder Is Unobserved</a></li>
+  <li><a href="#definition-and-theorem" id="toc-definition-and-theorem" class="nav-link" data-scroll-target="#definition-and-theorem"><span class="header-section-number">3.2.2</span> Definition and Theorem</a></li>
+  <li><a href="#the-adjustment-formula-standardization" id="toc-the-adjustment-formula-standardization" class="nav-link" data-scroll-target="#the-adjustment-formula-standardization"><span class="header-section-number">3.2.3</span> The Adjustment Formula: Standardization</a></li>
+  </ul></li>
+  <li><a href="#sec-frontdoor" id="toc-sec-frontdoor" class="nav-link" data-scroll-target="#sec-frontdoor"><span class="header-section-number">3.3</span> The Front-Door Criterion</a>
+  <ul class="collapse">
+  <li><a href="#the-configuration-and-criterion" id="toc-the-configuration-and-criterion" class="nav-link" data-scroll-target="#the-configuration-and-criterion"><span class="header-section-number">3.3.1</span> The Configuration and Criterion</a></li>
+  <li><a href="#the-front-door-formula" id="toc-the-front-door-formula" class="nav-link" data-scroll-target="#the-front-door-formula"><span class="header-section-number">3.3.2</span> The Front-Door Formula</a></li>
+  </ul></li>
+  <li><a href="#sec-rules" id="toc-sec-rules" class="nav-link" data-scroll-target="#sec-rules"><span class="header-section-number">3.4</span> The Three Rules of Do-Calculus</a>
+  <ul class="collapse">
+  <li><a href="#statement-of-the-rules" id="toc-statement-of-the-rules" class="nav-link" data-scroll-target="#statement-of-the-rules"><span class="header-section-number">3.4.1</span> Statement of the Rules</a></li>
+  <li><a href="#intuition-for-each-rule" id="toc-intuition-for-each-rule" class="nav-link" data-scroll-target="#intuition-for-each-rule"><span class="header-section-number">3.4.2</span> Intuition for Each Rule</a></li>
+  <li><a href="#sec-proofs" id="toc-sec-proofs" class="nav-link" data-scroll-target="#sec-proofs"><span class="header-section-number">3.4.3</span> Proofs of the Identification Formulas</a></li>
+  </ul></li>
+  <li><a href="#sec-completeness" id="toc-sec-completeness" class="nav-link" data-scroll-target="#sec-completeness"><span class="header-section-number">3.5</span> The Do-Calculus is Complete</a></li>
+  <li><a href="#the-big-picture" id="toc-the-big-picture" class="nav-link" data-scroll-target="#the-big-picture"><span class="header-section-number">3.6</span> The Big Picture</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">3.7</span> Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">3.8</span> Problems</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Define the two intervention graph operations <span class="math inline">\(\Gcal_{\overline{X}}\)</span> and <span class="math inline">\(\Gcal_{\underline{X}}\)</span> and explain their causal interpretation.</li>
+<li>Apply the back-door criterion to determine whether a set <span class="math inline">\(\mathbf{S}\)</span> identifies a causal effect, and write the back-door adjustment formula.</li>
+<li>Apply the front-door criterion in graphs where the confounder is unobserved but a suitable mediator exists.</li>
+<li>State all three rules of do-calculus, identify the graph condition that licenses each rule, and use them to prove the back-door and front-door formulas.</li>
+<li>State the completeness theorem of <span class="citation" data-cites="shpitser2006identification">Shpitser and Pearl (<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">2006</a>)</span> and explain its practical implication: if the do-calculus cannot identify a quantity from the observational distribution relative to the assumed graph, then no purely observational method can do so without additional assumptions or new data.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>How to Read This Chapter
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This chapter has two pedagogical layers. Sections 3.1–3.3 develop the two most important concrete identification criteria — back-door and front-door adjustment — using intervention graphs and direct graphical reasoning. These sections are the core material for a first reading.</p>
+<p>Sections 3.4–3.5 then place these criteria inside the more general theory of the do-calculus and identifiability. These later sections are conceptually important, but they are more abstract and may be read as a second pass after the concrete criteria are understood.</p>
+</div>
+</div>
+<section id="sec-mutilated" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-mutilated"><span class="header-section-number">3.1</span> From d-Separation to Intervention: Intervention Graphs</h2>
+<p>In Chapter 2 we learned to read conditional independence from a DAG using d-separation. This chapter takes the next step: translating the graphical language into <em>identification formulas</em> — expressions that write the interventional distribution <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span> entirely in terms of quantities observable from data.</p>
+<section id="what-does-intervention-mean" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="what-does-intervention-mean"><span class="header-section-number">3.1.1</span> What Does Intervention Mean?</h3>
+<p>Before introducing any graph machinery, it is worth being precise about what the <span class="math inline">\(\doop(\cdot)\)</span> operator means and why it is not the same as conditioning.</p>
+<p><strong>Conditioning versus intervening.</strong> The conditional distribution <span class="math inline">\(P(Y \mid T{=}t)\)</span> describes the subpopulation of units for whom <span class="math inline">\(T\)</span> was <em>observed</em> to equal <span class="math inline">\(t\)</span>. Because treatment assignment may be influenced by confounders, this subpopulation is not representative of the full population. The interventional distribution <span class="math inline">\(P(Y \mid \doop(T{=}t))\)</span>, by contrast, describes the population that would result if <span class="math inline">\(T\)</span> were <em>externally set</em> to <span class="math inline">\(t\)</span> for everyone — removing the natural process that determines <span class="math inline">\(T\)</span> and replacing it with the forced value. The two distributions coincide only when <span class="math inline">\(T\)</span> has no unmeasured common causes with <span class="math inline">\(Y\)</span>.</p>
+<p>A simple illustration: suppose temperature <span class="math inline">\(Z\)</span> causes both ice-cream sales <span class="math inline">\(T\)</span> and crime <span class="math inline">\(Y\)</span>.</p>
+<ul>
+<li><span class="math inline">\(P(Y \mid T{=}t)\)</span> is the crime rate on days when ice-cream sales happen to equal <span class="math inline">\(t\)</span> — high sales happen on hot days, which also drive higher crime, so the correlation is confounded by <span class="math inline">\(Z\)</span>.</li>
+<li><span class="math inline">\(P(Y \mid \doop(T{=}t))\)</span> is the crime rate we would observe if we <em>fixed</em> sales at level <span class="math inline">\(t\)</span> by decree. Forcing sales does not change the temperature, so crime remains driven only by <span class="math inline">\(Z\)</span>, not by the sales level we mandated. If <span class="math inline">\(T\)</span> has no direct causal path to <span class="math inline">\(Y\)</span>, then <span class="math inline">\(P(Y \mid \doop(T{=}t)) = P(Y)\)</span> for all <span class="math inline">\(t\)</span>.</li>
+</ul>
+<p><strong>The structural basis of the do-operator.</strong> In the SEM framework of Chapter 1, every variable is generated by a structural equation. For the treatment node: <span class="math display">\[T \;=\; f_T\!\bigl(\Pa(T),\, U_T\bigr),\]</span> where <span class="math inline">\(\Pa(T)\)</span> are the causal parents of <span class="math inline">\(T\)</span> and <span class="math inline">\(U_T\)</span> is exogenous noise. An <em>intervention</em> <span class="math inline">\(\doop(T{=}t)\)</span> <strong>replaces this entire equation</strong> with the constant <span class="math inline">\(T = t\)</span>. The replacement has two consequences: (1) <span class="math inline">\(T\)</span> is no longer influenced by its parents — its dependence on <span class="math inline">\(\Pa(T)\)</span> and <span class="math inline">\(U_T\)</span> is severed; (2) all other structural equations remain unchanged.</p>
+<p><strong>Graph surgery as the graphical realization.</strong> Because <span class="math inline">\(\Pa(T)\)</span> no longer affects <span class="math inline">\(T\)</span> after the intervention, every arrow pointing <em>into</em> <span class="math inline">\(T\)</span> in the DAG becomes meaningless and should be removed. The resulting graph — the <em>intervention graph</em> <span class="math inline">\(\Gcal_{\overline{T}}\)</span> — represents the post-intervention world. D-separation in <span class="math inline">\(\Gcal_{\overline{T}}\)</span> therefore encodes conditional independence in <span class="math inline">\(P(\,\cdot \mid \doop(T{=}t))\)</span>, not in the original observational distribution <span class="math inline">\(P\)</span>.</p>
+</section>
+<section id="sec-operations" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="sec-operations"><span class="header-section-number">3.1.2</span> The Two Graph Operations</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Intervention Graphs <span class="math inline">\(\Gcal_{\overline{X}}\)</span> and <span class="math inline">\(\Gcal_{\underline{X}}\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\Gcal = (\mathcal{V}, \mathcal{E})\)</span> be a DAG and <span class="math inline">\(X \subseteq \mathcal{V}\)</span> a set of nodes.</p>
+<ul>
+<li><span class="math inline">\(\Gcal_{\overline{X}}\)</span> (<em>intervention graph</em>, or <em>mutilated graph</em>) is obtained by <em>deleting all edges into</em> <span class="math inline">\(X\)</span>: remove every arrow <span class="math inline">\(V \to X_i\)</span> for all <span class="math inline">\(X_i \in X\)</span>. This represents the intervention <span class="math inline">\(\doop(X{=}x)\)</span>, which replaces the structural equation for <span class="math inline">\(X\)</span> by the constant <span class="math inline">\(x\)</span>, thereby severing <span class="math inline">\(X\)</span>’s dependence on all its former parents.</li>
+<li><span class="math inline">\(\Gcal_{\underline{X}}\)</span> (<em>auxiliary observation graph</em>) is obtained by <em>deleting all edges out of</em> <span class="math inline">\(X\)</span>: remove every arrow <span class="math inline">\(X_i \to V\)</span> for all <span class="math inline">\(X_i \in X\)</span>. This is a <em>technical device</em> used in Rule 1 of the do-calculus to determine when an observation on <span class="math inline">\(X\)</span> can be inserted into or removed from a probability expression. It does <em>not</em> represent a probabilistic model of conditioning on <span class="math inline">\(X\)</span>.</li>
+</ul>
+</div>
+</div>
+<p><strong>Mnemonic.</strong> <span class="math display">\[\Gcal_{\overline{X}}: \text{cut \emph{incoming} arrows into } X, \qquad \Gcal_{\underline{X}}: \text{cut \emph{outgoing} arrows from } X.\]</span></p>
+<p><a href="#fig-mutilations" class="quarto-xref">Figure&nbsp;<span>3.1</span></a> illustrates both operations on the IV DAG <span class="math inline">\(\{Z \to T,\; T \to Y,\; U \to T,\; U \to Y\}\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-mutilations" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mutilations-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_03_files/figure-html/fig-mutilations-1.pdf" class="img-fluid" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mutilations-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been removed. <span class="math inline">\(\Gcal_{\overline{T}}\)</span> models external intervention <span class="math inline">\(\doop(T{=}t)\)</span>: the back-door path <span class="math inline">\(T\leftarrow U \to Y\)</span> is severed. <span class="math inline">\(\Gcal_{\underline{T}}\)</span> deactivates <span class="math inline">\(T\)</span>’s influence on its descendants, used by Rule 1 to add or delete <span class="math inline">\(T\)</span> from a conditioning set.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Intervention Principle
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the original DAG <span class="math inline">\(\Gcal\)</span>, the node <span class="math inline">\(T\)</span> is determined by its parents <span class="math inline">\(\Pa(T)\)</span> via the structural equation <span class="math inline">\(T = f_T(\Pa(T), \varepsilon_T)\)</span>. Intervening on <span class="math inline">\(T\)</span> removes the structural mechanism that normally determines <span class="math inline">\(T\)</span>; therefore the parents of <span class="math inline">\(T\)</span> no longer influence it. The intervention <span class="math inline">\(\doop(T{=}t)\)</span> <em>replaces this equation</em> with the constant <span class="math inline">\(T = t\)</span>, making <span class="math inline">\(T\)</span> independent of all its former parents. Graphically, this severs every arrow into <span class="math inline">\(T\)</span>. The remaining structure of the graph is unchanged.</p>
+<p>A d-separation statement in <span class="math inline">\(\Gcal_{\overline{T}}\)</span> is therefore a conditional independence statement in the <em>post-intervention</em> distribution <span class="math inline">\(P(\,\cdot \mid \doop(T{=}t))\)</span>, not in the observational distribution <span class="math inline">\(P\)</span>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-backdoor" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-backdoor"><span class="header-section-number">3.2</span> The Back-Door Criterion</h2>
+<p>The back-door criterion is the most widely used identification strategy. It gives a simple graphical condition under which conditioning on an observed set <span class="math inline">\(\mathbf{S}\)</span> is sufficient to identify the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>.</p>
+<section id="motivation-when-the-confounder-is-unobserved" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="motivation-when-the-confounder-is-unobserved"><span class="header-section-number">3.2.1</span> Motivation: When the Confounder Is Unobserved</h3>
+<p>If all common causes of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> were observed, identification would be trivial: adjust for all of them. The interesting case is when some confounders are <em>unobserved</em>, yet an observed set <span class="math inline">\(\mathbf{S}\)</span> can still block every spurious path.</p>
+<p>Consider the following DAG. A drug <span class="math inline">\(T\)</span> affects recovery <span class="math inline">\(Y\)</span>. Socioeconomic status <span class="math inline">\(U\)</span> is an unobserved confounder (<span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>), but <span class="math inline">\(U\)</span> also affects an observed proxy <span class="math inline">\(W\)</span> (<span class="math inline">\(U \to W\)</span>), which in turn affects <span class="math inline">\(Y\)</span> (<span class="math inline">\(W \to Y\)</span>).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><embed src="chapter_03_files/figure-html/unnamed-chunk-1-1.pdf" class="img-fluid" width="240"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The only back-door path is <span class="math inline">\(T \leftarrow U \to W \to Y\)</span>. Although <span class="math inline">\(U\)</span> is unobserved, <span class="math inline">\(W\)</span> sits on this path and <em>is</em> observed. Conditioning on <span class="math inline">\(W\)</span> blocks the path at the chain node <span class="math inline">\(W\)</span>, and <span class="math inline">\(W\)</span> is not a descendant of <span class="math inline">\(T\)</span>, so <span class="math inline">\(\mathbf{S} = \{W\}\)</span> satisfies the back-door criterion. The key insight: the criterion does not require adjusting for the confounders themselves, only for an observed set that <em>intercepts</em> every back-door path.</p>
+</section>
+<section id="definition-and-theorem" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="definition-and-theorem"><span class="header-section-number">3.2.2</span> Definition and Theorem</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Back-Door Criterion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A set of observed variables <span class="math inline">\(\mathbf{S}\)</span> satisfies the <em>back-door criterion</em> for the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span> if:</p>
+<ol type="1">
+<li>No node in <span class="math inline">\(\mathbf{S}\)</span> is a descendant of <span class="math inline">\(T\)</span>.</li>
+<li><span class="math inline">\(\mathbf{S}\)</span> blocks every <em>back-door path</em> from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>, i.e., every path that begins with an arrow pointing <em>into</em> <span class="math inline">\(T\)</span>.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The terminology reflects the geometry of the graph relative to <span class="math inline">\(T\)</span>. A <em>back-door path</em> enters <span class="math inline">\(T\)</span> from behind — it begins with an arrow pointing <em>into</em> <span class="math inline">\(T\)</span> — and represents a confounding route through which <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> become spuriously associated without any causal mechanism from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. The front-door criterion (Section <a href="#sec-frontdoor" class="quarto-xref"><span>Section 3.3</span></a>) is named for the complementary idea: it identifies the causal effect by intercepting the <em>front-door</em> (causal) paths at a mediator <span class="math inline">\(M\)</span>, rather than blocking the back-door (confounding) paths directly.</p>
+<p>Condition 2 is equivalent to requiring <span class="math inline">\((Y \indep T \mid \mathbf{S})_{\Gcal_{\underline{T}}}\)</span>: <span class="math inline">\(\mathbf{S}\)</span> d-separates <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> in the graph <span class="math inline">\(\Gcal_{\underline{T}}\)</span>, obtained by <em>deleting all arrows out of</em> <span class="math inline">\(T\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: A Single Confounder
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider the DAG <span class="math inline">\(T \leftarrow C \to Y\)</span> with <span class="math inline">\(T \to Y\)</span>, where <span class="math inline">\(C\)</span> is an observed confounder. Does <span class="math inline">\(\mathbf{S} = \{C\}\)</span> satisfy the back-door criterion?</p>
+<ol type="1">
+<li><span class="math inline">\(C\)</span> is not a descendant of <span class="math inline">\(T\)</span>. ✓</li>
+<li><span class="math inline">\(\{C\}\)</span> blocks <span class="math inline">\(T \leftarrow C \to Y\)</span> (fork at <span class="math inline">\(C\)</span>). ✓</li>
+</ol>
+<p>The back-door formula gives: <span class="math inline">\(P(y \mid \doop(T{=}t)) = \sum_c P(y \mid t, c)\,P(c).\)</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Two Back-Door Paths — Both Must Be Blocked
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider treatment <span class="math inline">\(T\)</span>, outcome <span class="math inline">\(Y\)</span>, observed variables <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span>, and an unobserved confounder <span class="math inline">\(U\)</span> with edges <span class="math inline">\(C_1 \to T\)</span>, <span class="math inline">\(C_1 \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to C_2\)</span>, <span class="math inline">\(C_2 \to Y\)</span>, <span class="math inline">\(T \to Y\)</span>.</p>
+<p>There are exactly two back-door paths: (1) <span class="math inline">\(T \leftarrow C_1 \to Y\)</span> and (2) <span class="math inline">\(T \leftarrow U \to C_2 \to Y\)</span>.</p>
+<ul>
+<li><span class="math inline">\(\mathbf{S} = \{C_1\}\)</span>: blocks path 1 but leaves path 2 open. <strong>Fails.</strong></li>
+<li><span class="math inline">\(\mathbf{S} = \{C_2\}\)</span>: blocks path 2 but leaves path 1 open. <strong>Fails.</strong></li>
+<li><span class="math inline">\(\mathbf{S} = \{C_1, C_2\}\)</span>: <span class="math inline">\(C_1\)</span> blocks path 1; <span class="math inline">\(C_2\)</span> blocks path 2. <strong>Succeeds.</strong></li>
+</ul>
+<p><span class="math display">\[P(y \mid \doop(T{=}t)) \;=\; \sum_{c_1,\,c_2} P(y \mid t,\,c_1,\,c_2)\,P(c_1,\,c_2).\]</span></p>
+<p>The unobserved <span class="math inline">\(U\)</span> never appears in the formula: what matters is that <span class="math inline">\(C_2\)</span> sits on the back-door path and is observed.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Why Condition 1 Is Essential: A Worked Counterexample
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider a drug <span class="math inline">\(T\)</span> that affects recovery <span class="math inline">\(Y\)</span> via direct effect <span class="math inline">\(T \to Y\)</span> and indirect effect <span class="math inline">\(T \to M \to Y\)</span>, with unobserved confounder <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. If we naively try <span class="math inline">\(\mathbf{S} = \{M\}\)</span>:</p>
+<ol type="1">
+<li>It violates Condition 1: <span class="math inline">\(M\)</span> is a descendant of <span class="math inline">\(T\)</span>.</li>
+<li>It <em>blocks causal information</em>: the stratum-specific association <span class="math inline">\(P(y \mid t, m)\)</span> holds <span class="math inline">\(M\)</span> fixed, so it cannot see the effect of <span class="math inline">\(T\)</span> that flows through <span class="math inline">\(M\)</span>. The result estimates the direct effect <span class="math inline">\(T \to Y\)</span> only, not the total causal effect.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Why Condition 2 Can Be Violated by a Collider: M-Bias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider the DAG with <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U_1 \to T\)</span>, <span class="math inline">\(U_1 \to C\)</span>, <span class="math inline">\(U_2 \to C\)</span>, <span class="math inline">\(U_2 \to Y\)</span>, where <span class="math inline">\(U_1, U_2\)</span> are unobserved and <span class="math inline">\(C\)</span> is observed. The only back-door path is <span class="math inline">\(T \leftarrow U_1 \to C \leftarrow U_2 \to Y\)</span>. Node <span class="math inline">\(C\)</span> is a <em>collider</em> on this path, which is blocked by default: <span class="math inline">\(P(y \mid \doop(t)) = P(y \mid t)\)</span>.</p>
+<p>Now suppose a researcher naively includes <span class="math inline">\(C\)</span> in the adjustment set. Adding <span class="math inline">\(C\)</span> to <span class="math inline">\(\mathbf{S}\)</span> <em>activates</em> the collider, opening the back-door path. The set <span class="math inline">\(\{C\}\)</span> fails Condition 2: it creates a back-door path rather than blocking one. This is called <em>M-bias</em>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Back-Door Adjustment Formula <span class="citation" data-cites="pearl1993comment">(<a href="chapter_01.html#ref-pearl1993comment" role="doc-biblioref">Pearl 1993</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(\mathbf{S}\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span>, and <span class="math display">\[P(T{=}t \mid \mathbf{S}{=}\mathbf{s}) \;&gt;\; 0 \quad \text{for all } \mathbf{s} \text{ with } P(\mathbf{S}{=}\mathbf{s}) &gt; 0, \tag{positivity}\]</span> then: <span id="eq-backdoor"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int P(y \mid T{=}t,\;\mathbf{S}{=}\mathbf{s})\,dP(\mathbf{s}). \tag{3.1}\]</span></span></p>
+<p>Equivalently, for any measurable function <span class="math inline">\(h\)</span>: <span id="eq-backdoor-exp"><span class="math display">\[\E\!\left[h(Y) \mid \doop(T{=}t)\right] \;=\; \E_{\mathbf{S}}\!\Bigl[\E\bigl[h(Y) \mid T{=}t,\;\mathbf{S}\bigr]\Bigr]. \tag{3.2}\]</span></span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Positivity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The positivity (or overlap) condition requires every value of the treatment <span class="math inline">\(T{=}t\)</span> to be observable within each stratum of <span class="math inline">\(\mathbf{S}\)</span>. It is a <em>data-support</em> condition, not a graphical one: the back-door criterion is a property of the DAG, but positivity is a property of the joint distribution <span class="math inline">\(P\)</span>. Both must hold simultaneously for the adjustment formula to be well-defined.</p>
+</div>
+</div>
+</section>
+<section id="the-adjustment-formula-standardization" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="the-adjustment-formula-standardization"><span class="header-section-number">3.2.3</span> The Adjustment Formula: Standardization</h3>
+<p>Equation <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> is also known as the <em>standardization formula</em> or, in the epidemiological literature, the <em>g-formula</em> <span class="citation" data-cites="robins1986new">(<a href="chapter_01.html#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span>. The interpretation is important:</p>
+<ul>
+<li><span class="math inline">\(P(y \mid t, \mathbf{s})\)</span> is the stratum-specific conditional distribution of <span class="math inline">\(Y\)</span> given <span class="math inline">\(T{=}t\)</span> and <span class="math inline">\(\mathbf{S}{=}\mathbf{s}\)</span>. Within each stratum, <span class="math inline">\(T\)</span> is not confounded, so this conditional distribution <em>is</em> causal.</li>
+<li>The outer integration <span class="math inline">\(\int \cdots\, dP(\mathbf{s})\)</span> weights the strata by the <em>population marginal</em> distribution of <span class="math inline">\(\mathbf{S}\)</span>, rather than the treatment-conditional distribution.</li>
+<li>In a randomized experiment, <span class="math inline">\(\mathbf{S} = \varnothing\)</span> satisfies the back-door criterion, and <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> reduces to <span class="math inline">\(P(y \mid \doop(t)) = P(y \mid t)\)</span>.</li>
+</ul>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Back-Door Adjustment — A Numerical Walkthrough
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use the single-confounder graph <span class="math inline">\(T \leftarrow C \to Y\)</span>, <span class="math inline">\(T \to Y\)</span> with all variables binary: <span class="math inline">\(C\)</span> = disease severity, <span class="math inline">\(T\)</span> = treatment, <span class="math inline">\(Y\)</span> = recovery.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(C\)</span></th>
+<th><span class="math inline">\(P(C)\)</span></th>
+<th><span class="math inline">\(P(T{=}1\mid C)\)</span></th>
+<th><span class="math inline">\(P(Y{=}1\mid T{=}0,\,C)\)</span></th>
+<th><span class="math inline">\(P(Y{=}1\mid T{=}1,\,C)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0.50</td>
+<td>0.20</td>
+<td>0.10</td>
+<td>0.40</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>0.50</td>
+<td>0.80</td>
+<td>0.50</td>
+<td>0.80</td>
+</tr>
+</tbody>
+</table>
+<p>The true ACE is <span class="math inline">\(0.30\)</span> (treatment effect within each stratum).</p>
+<p><strong>Naïve estimate</strong>: <span class="math inline">\(P(Y{=}1 \mid T{=}1) - P(Y{=}1 \mid T{=}0) = 0.72 - 0.18 = \mathbf{0.54}\)</span>.</p>
+<p><strong>Back-door adjusted estimate</strong>: weighting by <span class="math inline">\(P(C)\)</span>: <span class="math display">\[P(Y{=}1 \mid \doop(T{=}1)) = 0.40 \times 0.5 + 0.80 \times 0.5 = 0.60,\]</span> <span class="math display">\[P(Y{=}1 \mid \doop(T{=}0)) = 0.10 \times 0.5 + 0.50 \times 0.5 = 0.30.\]</span> Adjusted difference: <span class="math inline">\(0.60 - 0.30 = \mathbf{0.30}\)</span> — matching the true ACE.</p>
+<p>The naïve estimate overstates the causal effect by <span class="math inline">\(0.24\)</span> because treated patients are predominantly severe (<span class="math inline">\(C{=}1\)</span>), who recover at higher rates even without treatment.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Back-Door Identification in the Education Example
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Education–Earnings DAG from Chapter 2: edges <span class="math inline">\(N \to E\)</span>, <span class="math inline">\(B \to E\)</span>, <span class="math inline">\(B \to Y\)</span>, <span class="math inline">\(E \to Y\)</span>.</p>
+<p><strong>Back-door paths from <span class="math inline">\(E\)</span> to <span class="math inline">\(Y\)</span>:</strong> Only <span class="math inline">\(E \leftarrow B \to Y\)</span>.</p>
+<p><strong>Does <span class="math inline">\(\{B\}\)</span> satisfy the criterion?</strong> (1) <span class="math inline">\(B\)</span> is not a descendant of <span class="math inline">\(E\)</span>. ✓ (2) <span class="math inline">\(\{B\}\)</span> blocks <span class="math inline">\(E \leftarrow B \to Y\)</span> (fork at <span class="math inline">\(B\)</span>). ✓</p>
+<p><span class="math display">\[P(y \mid \doop(E{=}e)) = \sum_b P(y \mid e, b)\,P(b).\]</span></p>
+<p><strong>Does <span class="math inline">\(\{N\}\)</span> work?</strong> <span class="math inline">\(N\)</span> is not a descendant of <span class="math inline">\(E\)</span>, but <span class="math inline">\(\{N\}\)</span> does <em>not</em> block <span class="math inline">\(E \leftarrow B \to Y\)</span>. <strong>Fails.</strong></p>
+<p><strong>Does <span class="math inline">\(\{N, B\}\)</span> work?</strong> Both conditions hold. <strong>Valid</strong> (though redundant).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Multiple Valid Adjustment Sets
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>(a)</strong> Both <span class="math inline">\(\{B\}\)</span> and <span class="math inline">\(\{N,B\}\)</span> satisfy the back-door criterion here. Any such set yields the same interventional distribution; the identification target is unique even though the adjustment sets are not.</p>
+<p><strong>(b)</strong> Supersets of a valid adjustment set are not automatically valid. Adding a variable can violate Condition 2 if that variable is a collider on some back-door path (as in the M-bias example). This must be verified from the graph, not assumed.</p>
+<p><strong>(c)</strong> Smaller valid sets are often preferable in practice. Every variable added to <span class="math inline">\(\mathbf{S}\)</span> must also satisfy positivity. Adjusting for fewer variables reduces variance and avoids practical positivity failure.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-frontdoor" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="sec-frontdoor"><span class="header-section-number">3.3</span> The Front-Door Criterion</h2>
+<p>The back-door criterion requires that all confounders be observed. The front-door criterion provides identification in a different configuration: when there exists a measured <em>mediator</em> <span class="math inline">\(M\)</span> on the causal path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> with specific independence properties.</p>
+<section id="the-configuration-and-criterion" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="the-configuration-and-criterion"><span class="header-section-number">3.3.1</span> The Configuration and Criterion</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Front-Door Criterion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A set of variables <span class="math inline">\(\mathbf{M}\)</span> satisfies the <em>front-door criterion</em> for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span> if:</p>
+<ol type="1">
+<li><span class="math inline">\(\mathbf{M}\)</span> intercepts all directed paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> (all causal paths pass through <span class="math inline">\(\mathbf{M}\)</span>).</li>
+<li>There are no unblocked back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(\mathbf{M}\)</span> (the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(\mathbf{M}\)</span> is not confounded).</li>
+<li>All back-door paths from <span class="math inline">\(\mathbf{M}\)</span> to <span class="math inline">\(Y\)</span> are blocked by <span class="math inline">\(T\)</span> (conditioning on <span class="math inline">\(T\)</span> closes all confounding of the <span class="math inline">\(\mathbf{M} \to Y\)</span> effect).</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: A Single Mediator with Unobserved Confounding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider the DAG <span class="math inline">\(T \to M \to Y\)</span> with <span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span>, where <span class="math inline">\(M\)</span> is observed and <span class="math inline">\(U\)</span> is unobserved.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><embed src="chapter_03_files/figure-html/unnamed-chunk-2-1.pdf" class="img-fluid" width="288"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Does <span class="math inline">\(M\)</span> satisfy the front-door criterion?</p>
+<ol type="1">
+<li><em><span class="math inline">\(M\)</span> intercepts all directed paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</em> The only directed path is <span class="math inline">\(T \to M \to Y\)</span>. ✓</li>
+<li><em>No unblocked back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span>.</em> There is no edge <span class="math inline">\(U \to M\)</span>, so no back-door path exists. ✓</li>
+<li><em>All back-door paths from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> are blocked by <span class="math inline">\(T\)</span>.</em> The only back-door path is <span class="math inline">\(M \leftarrow T \leftarrow U \to Y\)</span>. Conditioning on <span class="math inline">\(T\)</span> blocks this path (chain at <span class="math inline">\(T\)</span>). ✓</li>
+</ol>
+<p>All three conditions hold, so the front-door formula applies: <span class="math display">\[P(y \mid \doop(T{=}t)) = \sum_m P(m \mid t)\sum_{t'} P(y \mid t', m)\,P(t').\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: When the Front-Door Criterion Fails
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Case (a): Condition 2 fails — the <span class="math inline">\(T \to M\)</span> link is confounded.</strong> Adding the edge <span class="math inline">\(U \to M\)</span> to the prototypical graph creates an unblocked back-door path <span class="math inline">\(T \leftarrow U \to M\)</span> from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span>. Stage 1 of the front-door formula uses <span class="math inline">\(P(M{=}m \mid T{=}t)\)</span> as if the <span class="math inline">\(T \to M\)</span> link were unconfounded. But with <span class="math inline">\(U \to M\)</span>, the association between <span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span> is partly due to their shared cause <span class="math inline">\(U\)</span>, so Stage 1 no longer estimates <span class="math inline">\(P(m \mid \doop(T{=}t))\)</span>.</p>
+<p><strong>Case (b): Condition 3 fails — the <span class="math inline">\(M \to Y\)</span> link has an extra unobserved confounder.</strong> Adding a second unobserved variable <span class="math inline">\(V\)</span> with <span class="math inline">\(V \to M\)</span> and <span class="math inline">\(V \to Y\)</span> creates a back-door path <span class="math inline">\(M \leftarrow V \to Y\)</span> from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> that is <em>not</em> blocked by conditioning on <span class="math inline">\(T\)</span>. Stage 2 uses <span class="math inline">\(\sum_{t'} P(y \mid t', m)\,P(t')\)</span> as the back-door-adjusted effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span> with <span class="math inline">\(T\)</span> as adjustment, but <span class="math inline">\(T\)</span> is no longer a valid adjustment set.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Modification</strong></th>
+<th><strong>Condition violated</strong></th>
+<th><strong>Stage broken</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Add <span class="math inline">\(U \to M\)</span></td>
+<td>Cond. 2: <span class="math inline">\(T \to M\)</span> confounded</td>
+<td>Stage 1</td>
+</tr>
+<tr class="even">
+<td>Add <span class="math inline">\(V \to M\)</span> and <span class="math inline">\(V \to Y\)</span></td>
+<td>Cond. 3: <span class="math inline">\(M \to Y\)</span> confounded by <span class="math inline">\(V\)</span></td>
+<td>Stage 2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-front-door-formula" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="the-front-door-formula"><span class="header-section-number">3.3.2</span> The Front-Door Formula</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Front-Door Adjustment Formula <span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(M\)</span> satisfies the front-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>, and <span class="math inline">\(P(t) &gt; 0\)</span> for all <span class="math inline">\(t\)</span>, then: <span id="eq-frontdoor"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int \underbrace{\Bigl[\int P(y \mid T{=}t',\;M{=}m)\,dP(t')\Bigr]}_{\text{Stage 2}} \;\underbrace{dP(m \mid t)}_{\text{Stage 1}}. \tag{3.3}\]</span></span></p>
+<p>Equivalently, writing <span class="math inline">\(\mu(t',m) = \E[Y \mid T{=}t',\;M{=}m]\)</span>: <span id="eq-frontdoor-exp"><span class="math display">\[\E\!\left[Y \mid \doop(T{=}t)\right] \;=\; \E_{M \mid T=t}\!\Bigl[\E_T\bigl[\mu(T,\,M)\bigr]\Bigr]. \tag{3.4}\]</span></span></p>
+<p><strong>Stage 1</strong>: <span class="math inline">\(dP(m \mid t)\)</span> is the distribution of the mediator <span class="math inline">\(M\)</span> given <span class="math inline">\(T{=}t\)</span>. Front-door condition 2 guarantees no confounding between <span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span>.</p>
+<p><strong>Stage 2</strong>: <span class="math inline">\(\int P(y \mid t',\,m)\,dP(t')\)</span> is the back-door-adjusted causal effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>, with <span class="math inline">\(T\)</span> serving as the adjustment variable.</p>
+</div>
+</div>
+<p>The formula is the composition of two back-door applications. (1) Identify <span class="math inline">\(P(m \mid \doop(T{=}t))\)</span>: by condition 2, no back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span> exist, so <span class="math inline">\(P(m \mid \doop(T{=}t)) = P(m \mid T{=}t)\)</span>. (2) Identify <span class="math inline">\(P(y \mid \doop(M{=}m))\)</span>: by condition 3, <span class="math inline">\(T\)</span> is a valid back-door adjustment set for the <span class="math inline">\(M \to Y\)</span> effect, so <span class="math inline">\(P(y \mid \doop(M{=}m)) = \int P(y \mid T{=}t',\;M{=}m)\,dP(t')\)</span>. (3) Chain the two stages via condition 1.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Smoking, Tar, and Cancer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span> The classic front-door example: <span class="math inline">\(T\)</span> = smoking, <span class="math inline">\(M\)</span> = tar deposits in lungs, <span class="math inline">\(Y\)</span> = lung cancer, <span class="math inline">\(U\)</span> = genetic predisposition (unobserved). The graph is <span class="math inline">\(T \to M \to Y\)</span> with <span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span>. There is no direct <span class="math inline">\(T\to Y\)</span> path.</p>
+<p>Conditions 1–3 are satisfied. The front-door formula gives: <span class="math display">\[P(\text{cancer} \mid \doop(T{=}\text{smoke})) = \int\!\left[\int P(\text{cancer} \mid t', m)\,dP(t')\right] dP(m \mid \text{smoke}),\]</span> which is entirely computable from the observed joint distribution of <span class="math inline">\((T, M, Y)\)</span>, without any data on <span class="math inline">\(U\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Front-Door Formula — Binary Numerical Computation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(T, M, Y \in \{0, 1\}\)</span> with <span class="math inline">\(U\)</span> unobserved and the graph <span class="math inline">\(T \to M \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(T\)</span></th>
+<th><span class="math inline">\(M\)</span></th>
+<th><span class="math inline">\(Y\)</span></th>
+<th><span class="math inline">\(P(T,M,Y)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0.360</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0.040</td>
+</tr>
+<tr class="odd">
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0.050</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0.050</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.070</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0.030</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0.120</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0.280</td>
+</tr>
+</tbody>
+</table>
+<p>The inner sum (Stage 2) for each value of <span class="math inline">\(M\)</span>: <span class="math display">\[S_0 = \sum_{t'} P(Y{=}1 \mid t', M{=}0)\,P(t') = 0.1 \times 0.5 + 0.3 \times 0.5 = 0.20,\]</span> <span class="math display">\[S_1 = \sum_{t'} P(Y{=}1 \mid t', M{=}1)\,P(t') = 0.5 \times 0.5 + 0.7 \times 0.5 = 0.60.\]</span></p>
+<p>Applying the outer sum (Stage 1): <span class="math display">\[P(Y{=}1 \mid \doop(T{=}1)) = 0.2 \times 0.20 + 0.8 \times 0.60 = 0.52,\]</span> <span class="math display">\[P(Y{=}1 \mid \doop(T{=}0)) = 0.8 \times 0.20 + 0.2 \times 0.60 = 0.28.\]</span></p>
+<p>ACE <span class="math inline">\(= 0.52 - 0.28 = 0.24\)</span>. The naïve estimate <span class="math inline">\(0.62 - 0.18 = 0.44\)</span> is almost twice the true causal effect.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Comparing Back-Door and Front-Door
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The two criteria are <em>not</em> nested. Neither implies the other.</p>
+<ul>
+<li>The back-door criterion requires all confounders to be observed (or blocked by observed variables), but places no restriction on mediators.</li>
+<li>The front-door criterion requires an observed mediator intercepting all causal paths, but the confounder <span class="math inline">\(U\)</span> can be entirely unobserved.</li>
+</ul>
+<p>There exist graphs where neither criterion alone applies, but where the full do-calculus (or the ID algorithm) can still identify the causal effect.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-rules" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="sec-rules"><span class="header-section-number">3.4</span> The Three Rules of Do-Calculus</h2>
+<p>Having seen two concrete identification strategies, we now develop the general algebraic machinery that underlies both. <span class="citation" data-cites="pearl1995causal">Pearl (<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">1995</a>)</span> introduced the three rules of do-calculus as a system for manipulating expressions involving the do-operator: each rule licenses a transformation that removes or exchanges terms, bringing the expression one step closer to a purely observational formula.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: First Reading / Second Reading
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On a first reading, focus on the qualitative role of the three rules: Rule 1 adds or removes observations, Rule 2 exchanges an action for an observation, and Rule 3 adds or removes actions. The detailed graph subscripts and formal statements can be absorbed gradually. Each rule tests whether a variable becomes irrelevant after the appropriate arrows have been deleted from the graph — exactly the same kind of d-separation check introduced in Chapter 2.</p>
+</div>
+</div>
+<section id="statement-of-the-rules" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="statement-of-the-rules"><span class="header-section-number">3.4.1</span> Statement of the Rules</h3>
+<p>Each rule has the form <em>“expression A = expression B if <span class="math inline">\((Y \indep Z \mid X, W)_{\Gcal'}\)</span>”</em>, where <span class="math inline">\(\Gcal'\)</span> is a specific intervention graph built from <span class="math inline">\(\Gcal\)</span> by two deletions.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Subscript</strong></th>
+<th><strong>Step 1: delete</strong></th>
+<th><strong>Step 2: delete</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\Gcal_{\overline{X}\,\underline{Z}}\)</span></td>
+<td>all arrows <em>into</em> <span class="math inline">\(X\)</span></td>
+<td>all arrows <em>out of</em> <span class="math inline">\(Z\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\Gcal_{\overline{X}\,\overline{Z(W)}}\)</span></td>
+<td>all arrows <em>into</em> <span class="math inline">\(X\)</span></td>
+<td>arrows <em>into</em> <span class="math inline">\(Z\)</span> except those from <span class="math inline">\(W\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\Gcal_{\overline{X}\,\overline{Z(\overline{W})}}\)</span></td>
+<td>all arrows <em>into</em> <span class="math inline">\(X\)</span></td>
+<td>arrows <em>into</em> <span class="math inline">\(Z\)</span> that are not from ancestors of <span class="math inline">\(W\)</span> in <span class="math inline">\(\Gcal_{\overline{X}}\)</span></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: The Three Rules of Do-Calculus <span class="citation" data-cites="pearl1995causal">(<a href="chapter_01.html#ref-pearl1995causal" role="doc-biblioref">Pearl 1995</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\Gcal\)</span> be a DAG over variables <span class="math inline">\(\mathcal{V}\)</span>, and let <span class="math inline">\(X, Y, Z, W \subseteq \mathcal{V}\)</span> be disjoint sets. The rules hold for any distribution <span class="math inline">\(P\)</span> Markov with respect to <span class="math inline">\(\Gcal\)</span>.</p>
+<p><strong>Rule 1 (Insertion/Deletion of Observations).</strong> <span class="math display">\[P(y \mid \doop(x), z, w) \;=\; P(y \mid \doop(x), w) \quad\text{if}\quad (Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\underline{Z}}}.\]</span> If <span class="math inline">\(Y\)</span> and <span class="math inline">\(Z\)</span> are d-separated in the graph with arrows into <span class="math inline">\(X\)</span> deleted <em>and</em> arrows out of <span class="math inline">\(Z\)</span> deleted, then conditioning on <span class="math inline">\(Z\)</span> has no effect on the distribution of <span class="math inline">\(Y\)</span>.</p>
+<p><strong>Rule 2 (Action/Observation Exchange).</strong> <span class="math display">\[P(y \mid \doop(x), \doop(z), w) \;=\; P(y \mid \doop(x), z, w) \quad\text{if}\quad (Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\overline{Z(W)}}}.\]</span> When the condition holds, intervening on <span class="math inline">\(Z\)</span> is equivalent to conditioning on <span class="math inline">\(Z\)</span>.</p>
+<p><strong>Rule 3 (Insertion/Deletion of Actions).</strong> <span class="math display">\[P(y \mid \doop(x), \doop(z), w) \;=\; P(y \mid \doop(x), w) \quad\text{if}\quad (Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\overline{Z(\overline{W})}}}.\]</span> When the condition holds, the intervention <span class="math inline">\(\doop(z)\)</span> can be deleted entirely.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Each rule is a <em>conditional independence statement in a specific intervention graph</em>. The three rules cover all ways of adding or removing terms from a do-expression: Rule 1 handles observations; Rule 2 exchanges actions for observations; Rule 3 deletes actions. Any sequence of such operations that converts a do-expression into a purely observational expression is an <em>identification proof</em>.</p>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Rule</strong></th>
+<th><strong>Interpretation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rule 1</td>
+<td>Insert or delete <em>observations</em> from a conditioning set</td>
+</tr>
+<tr class="even">
+<td>Rule 2</td>
+<td>Exchange an <em>intervention</em> <span class="math inline">\(\doop(z)\)</span> for an <em>observation</em> <span class="math inline">\(z\)</span></td>
+</tr>
+<tr class="odd">
+<td>Rule 3</td>
+<td>Insert or delete <em>interventions</em> from an expression</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="intuition-for-each-rule" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="intuition-for-each-rule"><span class="header-section-number">3.4.2</span> Intuition for Each Rule</h3>
+<p><strong>Rule 1 — Adding/Removing Observations.</strong> The condition <span class="math inline">\((Y \indep Z \mid X, W)_{\Gcal_{\overline{X}\,\underline{Z}}}\)</span> says: in the post-<span class="math inline">\(\doop(x)\)</span> world, if we further deactivate <span class="math inline">\(Z\)</span>’s causal influence (delete its outgoing arrows), <span class="math inline">\(Y\)</span> and <span class="math inline">\(Z\)</span> become independent given <span class="math inline">\(W\)</span>. This means <span class="math inline">\(Z\)</span> carries no information about <span class="math inline">\(Y\)</span> that is not already in <span class="math inline">\(W\)</span>, so it can be freely inserted or removed from the conditioning set.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Rule 1 — Deleting a Redundant Observation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Graph: <span class="math inline">\(Z \to T \to Y\)</span>, no other edges. Suppose we intervene on <span class="math inline">\(T\)</span>.</p>
+<p>In <span class="math inline">\(\Gcal_{\overline{T}\,\underline{Z}}\)</span>: delete arrows into <span class="math inline">\(T\)</span> (removes <span class="math inline">\(Z \to T\)</span>), then delete arrows out of <span class="math inline">\(Z\)</span> (nothing remains). Node <span class="math inline">\(Z\)</span> is now isolated, so <span class="math inline">\((Y \indep Z \mid T)\)</span> holds trivially. Rule 1 gives: <span class="math display">\[P(y \mid \doop(t), z) \;=\; P(y \mid \doop(t)).\]</span> Once we fix <span class="math inline">\(T\)</span> externally, knowing <span class="math inline">\(Z\)</span> (the former cause of <span class="math inline">\(T\)</span>) carries no additional information about <span class="math inline">\(Y\)</span>.</p>
+</div>
+</div>
+<p><strong>Rule 2 — Swapping Action for Observation.</strong> This is the most frequently used rule. If the only paths from <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span> are causal (forward) paths, then intervening on <span class="math inline">\(Z\)</span> and conditioning on <span class="math inline">\(Z\)</span> have the same effect on <span class="math inline">\(Y\)</span> — there is no confounding between <span class="math inline">\(Z\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Rule 2 — Action/Observation Exchange
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Graph: <span class="math inline">\(X \to Z \to Y\)</span>. Form <span class="math inline">\(\Gcal_{\overline{X}\,\overline{Z}}\)</span>: delete arrows into <span class="math inline">\(X\)</span> (none) and all arrows into <span class="math inline">\(Z\)</span> (removes <span class="math inline">\(X \to Z\)</span>). Node <span class="math inline">\(Z\)</span> has no incoming arrows. The only path from <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span> is the causal <span class="math inline">\(Z \to Y\)</span>; <span class="math inline">\((Y \indep Z)_{\Gcal_{\overline{X}\,\overline{Z}}}\)</span> holds. Rule 2 gives: <span class="math display">\[P(y \mid \doop(x), \doop(z)) \;=\; P(y \mid \doop(x), z).\]</span> <span class="math inline">\(Y\)</span> depends on <span class="math inline">\(Z\)</span> only through <span class="math inline">\(Z\)</span>’s value, not through the mechanism that generated <span class="math inline">\(Z\)</span>.</p>
+</div>
+</div>
+<p><strong>Rule 3 — Deleting an Intervention.</strong> The condition says that <span class="math inline">\(Z\)</span> has no causal path to <span class="math inline">\(Y\)</span> that is not blocked by <span class="math inline">\(X\)</span> or <span class="math inline">\(W\)</span> in the appropriate intervention graph. Setting <span class="math inline">\(Z\)</span> to any value has no effect on <span class="math inline">\(Y\)</span>, so <span class="math inline">\(\doop(z)\)</span> can be dropped.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Rule 3 — Deleting an Irrelevant Intervention
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Graph: <span class="math inline">\(Z \to X \to Y\)</span>. Form <span class="math inline">\(\Gcal_{\overline{X}\,\overline{Z}}\)</span>: delete all arrows into <span class="math inline">\(X\)</span> (removes <span class="math inline">\(Z \to X\)</span>), then delete all arrows into <span class="math inline">\(Z\)</span> (none). Node <span class="math inline">\(Z\)</span> is now isolated; <span class="math inline">\((Y \indep Z)_{\Gcal_{\overline{X}\,\overline{Z}}}\)</span> holds trivially. Rule 3 gives: <span class="math display">\[P(y \mid \doop(x), \doop(z)) \;=\; P(y \mid \doop(x)).\]</span> Once <span class="math inline">\(X\)</span> is fixed externally, <span class="math inline">\(Z\)</span>’s only route to <span class="math inline">\(Y\)</span> (through <span class="math inline">\(X\)</span>) is severed.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: A Two-Rule Derivation — the Proxy Variable Graph
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Graph.</strong> <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to S\)</span>, <span class="math inline">\(S \to Y\)</span> (<span class="math inline">\(U\)</span> unobserved, <span class="math inline">\(S\)</span> observed).</p>
+<p><strong>Step 1.</strong> Introduce <span class="math inline">\(S\)</span> by the law of total probability: <span class="math display">\[P(y \mid \doop(t)) \;=\; \sum_s P(y \mid \doop(t),\,s)\;P(s \mid \doop(t)).\]</span></p>
+<p><strong>Step 2. Rule 3 applied to <span class="math inline">\(P(s \mid \doop(t))\)</span>.</strong> Form <span class="math inline">\(\Gcal_{\overline{T}}\)</span> by deleting <span class="math inline">\(U \to T\)</span>. In this graph, <span class="math inline">\(T\)</span> has no parents and no edge connects <span class="math inline">\(T\)</span> to <span class="math inline">\(S\)</span>. <span class="math inline">\((S \indep T)_{\Gcal_{\overline{T}}}\)</span> holds, so <span class="math inline">\(P(s \mid \doop(t)) = P(s)\)</span>.</p>
+<p><strong>Step 3. Back-door d-separation applied to <span class="math inline">\(P(y \mid \doop(t), s)\)</span>.</strong> Form <span class="math inline">\(\Gcal_{\underline{T}}\)</span> by deleting <span class="math inline">\(T \to Y\)</span>. The only back-door path <span class="math inline">\(T \leftarrow U \to S \to Y\)</span> is blocked by conditioning on <span class="math inline">\(S\)</span>. Therefore <span class="math inline">\(P(y \mid \doop(t), s) = P(y \mid t, s)\)</span>.</p>
+<p><strong>Combining:</strong> <span class="math display">\[P(y \mid \doop(t)) \;=\; \sum_s P(y \mid t,\,s)\;P(s).\]</span></p>
+</div>
+</div>
+</section>
+<section id="sec-proofs" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="sec-proofs"><span class="header-section-number">3.4.3</span> Proofs of the Identification Formulas</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof of the Back-Door Formula (Theorem 3.1)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-30" class="callout-30-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><em>Graph structure</em>: <span class="math inline">\(T \to Y\)</span>, unobserved <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>, and observed <span class="math inline">\(\mathbf{S}\)</span> blocking the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span>.</p>
+<p><strong>Step 1: Introduce <span class="math inline">\(\mathbf{S}\)</span> by the law of total probability.</strong> <span class="math display">\[P(y \mid \doop(t)) = \int P(y \mid \doop(t),\;\mathbf{s})\,dP(\mathbf{s} \mid \doop(t)).\]</span></p>
+<p><strong>Step 2: Simplify <span class="math inline">\(P(\mathbf{s} \mid \doop(t))\)</span>.</strong> Because <span class="math inline">\(\mathbf{S}\)</span> contains no descendants of <span class="math inline">\(T\)</span> (condition 1), the graphical condition <span class="math inline">\((\mathbf{S} \indep T)_{\Gcal_{\overline{T}}}\)</span> holds. Rule 3 gives <span class="math inline">\(P(\mathbf{s} \mid \doop(t)) = P(\mathbf{s})\)</span>.</p>
+<p><strong>Step 3: Convert <span class="math inline">\(P(y \mid \doop(t), \mathbf{s})\)</span> to an observation.</strong> Condition 2 implies <span class="math inline">\((Y \indep T \mid \mathbf{S})_{\Gcal_{\underline{T}}}\)</span>. By the truncated factorization: <span class="math inline">\(P(y \mid \doop(t), \mathbf{s}) = P(y \mid t, \mathbf{s})\)</span>.</p>
+<p><strong>Combining:</strong> <span class="math display">\[P(y \mid \doop(t)) = \int P(y \mid t, \mathbf{s})\,dP(\mathbf{s}). \qquad \square\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-31-contents" aria-controls="callout-31" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof of the Front-Door Formula (Theorem 3.2)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-31" class="callout-31-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><em>Graph structure</em>: <span class="math inline">\(T \to M \to Y\)</span>, unobserved <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>, no direct <span class="math inline">\(T \to Y\)</span> edge.</p>
+<p><strong>Step 1: Introduce <span class="math inline">\(M\)</span> by the law of total probability.</strong> <span class="math display">\[P(y \mid \doop(t)) = \int P(y \mid \doop(t),\;m)\,dP(m \mid \doop(t)).\]</span></p>
+<p><strong>Step 2: Simplify <span class="math inline">\(P(m \mid \doop(t))\)</span>.</strong> In <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, there are no back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span> by front-door condition 2. Rule 2 applies: <span class="math inline">\(P(m \mid \doop(t)) = P(m \mid t)\)</span>.</p>
+<p><strong>Step 3a: <span class="math inline">\(P(y \mid \doop(t), m) = P(y \mid \doop(m))\)</span>.</strong> In <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> become independent, and since there is no arrow <span class="math inline">\(U \to M\)</span> (condition 2), <span class="math inline">\(U\)</span> is also independent of <span class="math inline">\(M\)</span>. Therefore <span class="math inline">\(P(y \mid \doop(t), m) = \int P(y \mid m, u)\,dP(u) = P(y \mid \doop(m))\)</span>.</p>
+<p><strong>Step 3b: <span class="math inline">\(P(y \mid \doop(m)) = \int P(y \mid m, t')\,dP(t')\)</span>.</strong> By front-door condition 3, <span class="math inline">\(\{T\}\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>, and the back-door formula gives the result.</p>
+<p><strong>Assembling:</strong> <span class="math display">\[P(y \mid \doop(t)) = \int\!\left[\int P(y \mid t',\,m)\,dP(t')\right]dP(m \mid t). \qquad \square\]</span></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-completeness" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="sec-completeness"><span class="header-section-number">3.5</span> The Do-Calculus is Complete</h2>
+<p>A natural question after seeing the three rules is: are they enough? Could there be a graph where the causal effect is identifiable in principle, but none of the rules can derive a purely observational expression? <span class="citation" data-cites="shpitser2006identification">Shpitser and Pearl (<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">2006</a>)</span> answered this definitively.</p>
+<p>Throughout Sections <a href="#sec-mutilated" class="quarto-xref"><span>Section 3.1</span></a>–<a href="#sec-rules" class="quarto-xref"><span>Section 3.4</span></a> we have represented latent common causes as explicit unobserved nodes. The completeness theorem uses a more general graph class that encodes latent common causes compactly as <em>bidirected edges</em>: a bidirected edge <span class="math inline">\(X \leftrightarrow Y\)</span> stands for an unobserved variable <span class="math inline">\(U\)</span> with <span class="math inline">\(U \to X\)</span> and <span class="math inline">\(U \to Y\)</span>. A DAG augmented with such bidirected edges is called a <em>semi-Markovian DAG</em>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Completeness of the Do-Calculus <span class="citation" data-cites="shpitser2006identification">(<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">Shpitser and Pearl 2006</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\Gcal\)</span> be a semi-Markovian DAG. A causal quantity <span class="math inline">\(P(y \mid \doop(t))\)</span> is identifiable from <span class="math inline">\(P\)</span> relative to <span class="math inline">\(\Gcal\)</span> if and only if the do-calculus can derive a purely observational expression for it.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: The Bow Graph — The Simplest Non-Identifiable Structure
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <em>bow graph</em> is the semi-Markovian DAG with one directed edge <span class="math inline">\(T \to Y\)</span> and one bidirected edge <span class="math inline">\(T \leftrightarrow Y\)</span> (representing an unobserved <span class="math inline">\(U\)</span> with <span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span>).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><embed src="chapter_03_files/figure-html/unnamed-chunk-3-1.pdf" class="img-fluid" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Because <span class="math inline">\(U\)</span> is unobserved and there are no other variables, no observed set can block the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span>, and no observed mediator exists. We show <span class="math inline">\(P(y \mid \doop(t))\)</span> is not identified by constructing two models.</p>
+<p>Let <span class="math inline">\(T, Y, U \in \{0, 1\}\)</span> with <span class="math inline">\(U \sim \mathrm{Bernoulli}(1/2)\)</span>.</p>
+<p><strong>Model <span class="math inline">\(\mathcal{M}_1\)</span> (pure confounding; no causal effect of <span class="math inline">\(T\)</span>).</strong> <span class="math inline">\(T = U\)</span>, <span class="math inline">\(Y = U\)</span>. Both are driven entirely by <span class="math inline">\(U\)</span>. The observed joint: <span class="math inline">\(P(T{=}0, Y{=}0) = P(T{=}1, Y{=}1) = 1/2\)</span>. Under <span class="math inline">\(\doop(T{=}1)\)</span>, <span class="math inline">\(Y = U\)</span> is unchanged: <span class="math inline">\(P_1(Y{=}1 \mid \doop(T{=}1)) = 1/2\)</span>.</p>
+<p><strong>Model <span class="math inline">\(\mathcal{M}_2\)</span> (full causal effect).</strong> <span class="math inline">\(T = U\)</span>, <span class="math inline">\(Y = T\)</span>. <span class="math inline">\(Y\)</span> is determined entirely by <span class="math inline">\(T\)</span>. The observed joint is <em>identical</em> to <span class="math inline">\(\mathcal{M}_1\)</span>. Under <span class="math inline">\(\doop(T{=}1)\)</span>, <span class="math inline">\(Y = T = 1\)</span> deterministically: <span class="math inline">\(P_2(Y{=}1 \mid \doop(T{=}1)) = 1\)</span>.</p>
+<p><strong>Conclusion.</strong> The two models produce identical <span class="math inline">\(P(T, Y)\)</span> yet assign different values to <span class="math inline">\(P(Y{=}1 \mid \doop(T{=}1))\)</span> — <span class="math inline">\(1/2\)</span> versus <span class="math inline">\(1\)</span>. Therefore <span class="math inline">\(P(y \mid \doop(t))\)</span> is <em>not identified</em> from <span class="math inline">\(P(T, Y)\)</span> in the bow graph.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof Sketch and the ID Algorithm
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-34" class="callout-34-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="shpitser2006identification">(<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">Shpitser and Pearl 2006</a>)</span> introduced the <em>ID algorithm</em>: a procedure that takes as input a semi-Markovian DAG <span class="math inline">\(\Gcal\)</span>, a target intervention distribution <span class="math inline">\(P(y \mid \doop(t))\)</span>, and the observed joint distribution <span class="math inline">\(P\)</span>, and either returns an explicit observational formula or reports non-identifiability.</p>
+<p><strong>Sufficiency</strong>: proved constructively via the ID algorithm. The algorithm proceeds recursively: (1) <em>Simplification</em> — remove nodes not ancestral to <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal_{\overline{T}}\)</span>; (2) <em>Decomposition by c-components</em> — factorise over confounded components; (3) <em>Recursive identification</em> — attempt to identify each c-component factor; (4) <em>Failure</em> — if any subproblem cannot be reduced, return FAIL.</p>
+<p><strong>Necessity</strong>: proved by showing that whenever the ID algorithm fails, the causal effect is genuinely non-identifiable. The key graphical obstruction is the <em>hedge</em>: a pair of subgraphs <span class="math inline">\((F, F')\)</span> encoding a “loop” of confounding that the do-calculus cannot break.</p>
+<p><span class="citation" data-cites="shpitser2006identification">Shpitser and Pearl (<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">2006</a>)</span> prove that the ID algorithm fails if and only if <span class="math inline">\(\Gcal\)</span> contains a hedge. When a hedge exists, one can explicitly construct two observationally indistinguishable models with different causal effects. Combining sufficiency and necessity: the do-calculus succeeds if and only if no hedge exists. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Practical Implication of Completeness
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Theorem 3.3 has a crucial practical implication: <em>if the ID algorithm reports non-identification, then no estimation method — however clever — can recover the causal effect from observational data alone</em>, given the assumed graph structure. Non-identification is not a limitation of a particular technique; it is a fundamental property of the causal model. Three remedies exist: impose additional structural assumptions (e.g., linearity or monotonicity) that go beyond the graph; collect additional data that break the obstruction; or target a different, identified causal quantity instead.</p>
+</div>
+</div>
+</section>
+<section id="the-big-picture" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="the-big-picture"><span class="header-section-number">3.6</span> The Big Picture</h2>
+<p>This chapter completes the <em>theoretical</em> identification machinery of the course. The chain of reasoning begun in Chapter 1 and formalised in Chapter 2 now terminates in concrete identification formulas. Chapters 4–7 then apply this machinery to specific research designs.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-bigpicture" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bigpicture-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_03_files/figure-html/fig-bigpicture-1.pdf" class="img-fluid" width="528">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bigpicture-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: The six-level pipeline from causal assumptions to estimation.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The completeness theorem (Section <a href="#sec-completeness" class="quarto-xref"><span>Section 3.5</span></a>) closes the loop: every causal effect that is identifiable from the observational distribution relative to the assumed graph can be derived by the do-calculus, and every effect that is not identifiable cannot be recovered by any observational method without additional assumptions or new data.</p>
+</section>
+<section id="summary" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="summary"><span class="header-section-number">3.7</span> Summary</h2>
+<ol type="1">
+<li><p>Two graph operations underpin the do-calculus: <span class="math inline">\(\Gcal_{\overline{X}}\)</span> (delete arrows <em>into</em> <span class="math inline">\(X\)</span>, modeling the intervention <span class="math inline">\(\doop(x)\)</span>) and <span class="math inline">\(\Gcal_{\underline{X}}\)</span> (delete arrows <em>out of</em> <span class="math inline">\(X\)</span>, used as a technical device for Rule 1 — it does not model conditioning on <span class="math inline">\(X\)</span>).</p></li>
+<li><p>The back-door criterion identifies <span class="math inline">\(P(y \mid \doop(t))\)</span> when an observed set <span class="math inline">\(\mathbf{S}\)</span> blocks all back-door paths and contains no descendant of <span class="math inline">\(T\)</span>. The general formula is <span class="math inline">\(\int P(y \mid t, \mathbf{s})\,dP(\mathbf{s})\)</span>, equivalently <span class="math inline">\(\E_{\mathbf{S}}\!\left[\E[h(Y)\mid T{=}t,\mathbf{S}]\right]\)</span> in iterated-expectation form (standardization; the g-formula for <span class="math inline">\(K=1\)</span>).</p></li>
+<li><p>The front-door criterion identifies <span class="math inline">\(P(y \mid \doop(t))\)</span> via an observed mediator <span class="math inline">\(M\)</span> intercepting all causal paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>, even when the confounder <span class="math inline">\(U\)</span> is entirely unobserved, provided the three front-door conditions hold.</p></li>
+<li><p>The do-calculus has three rules, each licensed by a d-separation condition in an appropriate intervention graph. Rule 1 adds/removes observations; Rule 2 exchanges actions for observations; Rule 3 deletes actions. The back-door and front-door formulas are each derivable as three-step sequences of these rules.</p></li>
+<li><p><strong>Completeness.</strong> The do-calculus is complete for identification from observational data relative to the assumed graph <span class="citation" data-cites="shpitser2006identification">(<a href="chapter_01.html#ref-shpitser2006identification" role="doc-biblioref">Shpitser and Pearl 2006</a>)</span>: a causal effect is identifiable if and only if the do-calculus can derive a purely observational expression for it. If the do-calculus cannot identify the quantity in that setting, then no purely observational method can do so without additional assumptions or new data.</p></li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="problems"><span class="header-section-number">3.8</span> Problems</h2>
+<p><strong>1. Warm-up: graph operations.</strong> Let <span class="math inline">\(\Gcal\)</span> be the IV DAG with edges <span class="math inline">\(Z \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span> (<span class="math inline">\(U\)</span> unobserved).</p>
+<ol type="a">
+<li>Draw <span class="math inline">\(\Gcal_{\overline{T}}\)</span> and identify all paths from <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span> that remain open.</li>
+<li>Draw <span class="math inline">\(\Gcal_{\underline{T}}\)</span> and identify all paths from <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span> that remain. For each path, classify it as a causal chain, fork, or collider path, and state whether it is open or closed by default.</li>
+<li>In <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, is <span class="math inline">\(Z \indep Y \mid \varnothing\)</span>? Justify by listing all paths from <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal_{\overline{T}}\)</span> and checking whether each is open or blocked.</li>
+<li>How does the absence of a direct edge <span class="math inline">\(Z \to Y\)</span> in the DAG relate to the exclusion restriction?</li>
+</ol>
+<p><strong>2. Back-door practice.</strong> Consider the DAG: <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(T \to M\)</span>, <span class="math inline">\(M \to Y\)</span>, <span class="math inline">\(T \to Y\)</span>, where <span class="math inline">\(X\)</span> is observed.</p>
+<ol type="a">
+<li>List all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</li>
+<li>Does <span class="math inline">\(\{X\}\)</span> satisfy the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>? Write the resulting adjustment formula.</li>
+<li>Does <span class="math inline">\(\{M\}\)</span> satisfy the back-door criterion? Explain why or why not.</li>
+<li>Does <span class="math inline">\(\{X, M\}\)</span> satisfy the back-door criterion? Identify which condition <span class="math inline">\(M\)</span> violates.</li>
+<li>Even if the formal criterion issue in (d) were somehow set aside, explain the substantive bias that arises from conditioning on a mediator <span class="math inline">\(M\)</span> that lies on a causal path <span class="math inline">\(T \to M \to Y\)</span>.</li>
+</ol>
+<p><strong>3. Front-door identification.</strong> Consider the DAG: <span class="math inline">\(T \to M \to Y\)</span>, with <span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span> (unobserved <span class="math inline">\(U\)</span>, no direct <span class="math inline">\(T \to Y\)</span> edge).</p>
+<ol type="a">
+<li>Verify that <span class="math inline">\(M\)</span> satisfies all three front-door conditions.</li>
+<li>Derive the front-door formula step by step, citing the do-calculus rule used at each step.</li>
+<li>Now add a direct edge <span class="math inline">\(T \to Y\)</span> to the graph. Does <span class="math inline">\(M\)</span> still satisfy the front-door criterion? Explain which condition fails.</li>
+</ol>
+<p><strong>4. Identification or non-identification?</strong> For each of the following DAGs, determine whether <span class="math inline">\(P(y \mid \doop(t))\)</span> is identified non-parametrically. If identified, state the formula; if not, explain the structural obstruction.</p>
+<ol type="a">
+<li><span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>, <span class="math inline">\(U\)</span> unobserved.</li>
+<li>Same as (a) with instrument <span class="math inline">\(Z \to T\)</span> and <span class="math inline">\(Z \indep U\)</span> (no direct <span class="math inline">\(Z \to Y\)</span> edge). Show that <span class="math inline">\(P(y \mid \doop(t))\)</span> is <strong>not</strong> identified non-parametrically by constructing two binary SEMs <span class="math inline">\(\mathcal{M}_1\)</span> and <span class="math inline">\(\mathcal{M}_2\)</span> that agree on <span class="math inline">\(P(Z, T, Y)\)</span> but disagree on <span class="math inline">\(P(Y{=}1 \mid \doop(T{=}1))\)</span>.</li>
+<li><span class="math inline">\(T \to M \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>, <span class="math inline">\(U \to M\)</span>, <span class="math inline">\(U\)</span> unobserved.</li>
+<li><span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(X\)</span> observed.</li>
+</ol>
+<p><strong>5. Back-door formula: proof and uniqueness.</strong></p>
+<ol type="a">
+<li>Let <span class="math inline">\(\mathcal{M}\)</span> be a structural causal model Markov with respect to <span class="math inline">\(\Gcal\)</span>, and let <span class="math inline">\(\mathbf{S}\)</span> satisfy the back-door criterion for <span class="math inline">\((T, Y)\)</span> in <span class="math inline">\(\Gcal\)</span> with positivity. Prove that <span class="math inline">\(P(y \mid \doop(t)) = \int P(y \mid t,\, \mathbf{s})\,dP(\mathbf{s})\)</span>.</li>
+<li>Suppose <span class="math inline">\(\mathbf{S}_1\)</span> and <span class="math inline">\(\mathbf{S}_2\)</span> both satisfy the back-door criterion for <span class="math inline">\((T, Y)\)</span> in <span class="math inline">\(\Gcal\)</span>. Deduce from part (a) that <span class="math inline">\(\int P(y \mid t,\, \mathbf{s}_1)\,dP(\mathbf{s}_1) = \int P(y \mid t,\, \mathbf{s}_2)\,dP(\mathbf{s}_2)\)</span>. Interpret this result.</li>
+</ol>
+<p><strong>6. Rule sequencing on an unseen graph.</strong> Consider the graph from the two-path example: <span class="math inline">\(C_1 \to T\)</span>, <span class="math inline">\(C_1 \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to C_2\)</span>, <span class="math inline">\(C_2 \to Y\)</span>, <span class="math inline">\(T \to Y\)</span>, with <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> observed and <span class="math inline">\(U\)</span> unobserved. Derive <span class="math inline">\(P(y \mid \doop(t)) = \sum_{c_1,c_2} P(y \mid t, c_1, c_2)\,P(c_1, c_2)\)</span> from first principles using the three rules. For each step: (i) name the rule applied, (ii) state which arrows are deleted, and (iii) verify the required d-separation condition.</p>
+<p><strong>7. Non-identifiability by construction.</strong> Consider the graph <span class="math inline">\(T \to M \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to M\)</span>, <span class="math inline">\(U \to Y\)</span> (front-door condition 2 violated because <span class="math inline">\(U\)</span> confounds <span class="math inline">\(T \to M\)</span>). Let <span class="math inline">\(T, M, Y, U \in \{0,1\}\)</span> with <span class="math inline">\(U \sim \mathrm{Bern}(1/2)\)</span>.</p>
+<ol type="a">
+<li>Construct two SEMs <span class="math inline">\(\mathcal{M}_1\)</span> and <span class="math inline">\(\mathcal{M}_2\)</span>, each compatible with the graph, such that <span class="math inline">\(P_{\mathcal{M}_1}(T, M, Y) = P_{\mathcal{M}_2}(T, M, Y)\)</span> but <span class="math inline">\(P_{\mathcal{M}_1}(Y{=}1 \mid \doop(T{=}1)) \ne P_{\mathcal{M}_2}(Y{=}1 \mid \doop(T{=}1))\)</span>.</li>
+<li>Explain precisely which identification strategy fails in this graph and why, referencing (i) the back-door criterion, (ii) the front-door criterion, and (iii) the completeness theorem.</li>
+</ol>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-pearl1993comment" class="csl-entry" role="listitem">
+Pearl, Judea. 1993. <span>“Comment: Graphical Models, Causality and Intervention.”</span> <em>Statistical Science</em> 8 (3): 266–69.
+</div>
+<div id="ref-pearl1995causal" class="csl-entry" role="listitem">
+Pearl, Judea. 1995. <span>“Causal Diagrams for Empirical Research.”</span> <em>Biometrika</em> 82 (4): 669–88.
+</div>
+<div id="ref-robins1986new" class="csl-entry" role="listitem">
+Robins, James M. 1986. <span>“A New Approach to Causal Inference in Mortality Studies with a Sustained Exposure Period—Application to Control of the Healthy Worker Survivor Effect.”</span> <em>Mathematical Modelling</em> 7 (9–12): 1393–512.
+</div>
+<div id="ref-shpitser2006identification" class="csl-entry" role="listitem">
+Shpitser, Ilya, and Judea Pearl. 2006. <span>“Identification of Joint Interventional Distributions in Recursive Semi-<span>M</span>arkovian Causal Models.”</span> <em>Proceedings of the Twenty-First National Conference on Artificial Intelligence (AAAI)</em> 21: 1219–26.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_02.html" class="pagination-link" aria-label="DAGs and d-Separation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

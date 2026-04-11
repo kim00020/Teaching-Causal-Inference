@@ -214,6 +214,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -1063,7 +1069,7 @@ Figure&nbsp;1.6: Causal DAG for the vaccination example. The green arrow is the 
   = \sum_{x \in \{E,Y\}}
     P(Y{=}1 \mid T{=}t, X{=}x)\,P(X{=}x).
 \tag{1.7}\]</span></span></p>
-<p><strong>Step 2: Estimation.</strong> Plugging sample proportions into <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>1.7</span></a>, with <span class="math inline">\(\hat{P}(X{=}E) = 0.4\)</span> and <span class="math inline">\(\hat{P}(X{=}Y) = 0.6\)</span>: <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}1))
+<p><strong>Step 2: Estimation.</strong> Plugging sample proportions into <a href="chapter_03.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>, with <span class="math inline">\(\hat{P}(X{=}E) = 0.4\)</span> and <span class="math inline">\(\hat{P}(X{=}Y) = 0.6\)</span>: <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}1))
     = 0.30 \times 0.4 + 0.05 \times 0.6 = 0.15, \qquad
   \hat{P}(Y{=}1 \mid \doop(T{=}0))
     = 0.50 \times 0.4 + 0.10 \times 0.6 = 0.26.\]</span> The estimated causal risk difference is <span class="math inline">\(\hat{\Delta}_{\mathrm{causal}} = 0.15 - 0.26 = -0.11\)</span>: the vaccine causally reduces infection probability by 11 percentage points.</p>
@@ -1077,7 +1083,7 @@ Figure&nbsp;1.6: Causal DAG for the vaccination example. The green arrow is the 
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Step 1 (identification)</strong> established — from the DAG alone — that the back-door formula (<a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>1.7</span></a>) expresses the causal quantity as a functional of observable data.</p>
+<p><strong>Step 1 (identification)</strong> established — from the DAG alone — that the back-door formula (<a href="chapter_03.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>) expresses the causal quantity as a functional of observable data.</p>
 <p><strong>Step 2 (estimation)</strong> replaced the population probabilities in that formula with sample proportions.</p>
 <p>These two steps are logically separate: Step 1 is a mathematical argument about the causal model that does not depend on sample size; Step 2 is a statistical argument about finite-sample estimation that does not depend on the causal model. A researcher who skips Step 1 and reports the raw difference conflates the two and draws the wrong conclusion.</p>
 </div>
@@ -1138,6 +1144,14 @@ Table Analysis to Hospital Data.”</span> <em>Biometrics Bulletin</em> 2
 Lauritzen, Steffen L. 1996. <em>Graphical Models</em>. Oxford University
 Press.
 </div>
+<div id="ref-pearl1993comment" class="csl-entry" role="listitem">
+Pearl, Judea. 1993. <span>“Comment: Graphical Models, Causality and
+Intervention.”</span> <em>Statistical Science</em> 8 (3): 266–69.
+</div>
+<div id="ref-pearl1995causal" class="csl-entry" role="listitem">
+Pearl, Judea. 1995. <span>“Causal Diagrams for Empirical
+Research.”</span> <em>Biometrika</em> 82 (4): 669–88.
+</div>
 <div id="ref-pearl2009causality" class="csl-entry" role="listitem">
 Pearl, Judea. 2009. <em>Causality: Models, Reasoning, and
 Inference</em>. 2nd ed. Cambridge University Press.
@@ -1146,6 +1160,12 @@ Inference</em>. 2nd ed. Cambridge University Press.
 Richardson, Thomas S., and James M. Robins. 2014. <em><span>ACE</span>
 Bounds; Single World Intervention Graphs (<span>SWIGs</span>) and
 Identification of Causal Effects</em>. University of Washington.
+</div>
+<div id="ref-robins1986new" class="csl-entry" role="listitem">
+Robins, James M. 1986. <span>“A New Approach to Causal Inference in
+Mortality Studies with a Sustained Exposure Period—Application to
+Control of the Healthy Worker Survivor Effect.”</span> <em>Mathematical
+Modelling</em> 7 (9–12): 1393–512.
 </div>
 <div id="ref-rubin1974estimating" class="csl-entry" role="listitem">
 Rubin, Donald B. 1974. <span>“Estimating Causal Effects of Treatments in
@@ -1157,6 +1177,12 @@ Shachter, Ross D. 1998. <span>“Bayes-Ball: The Rational Pastime (for
 Determining Irrelevance and Requisite Information in Belief Networks and
 Influence Diagrams).”</span> <em>Proceedings of the Fourteenth
 Conference on Uncertainty in Artificial Intelligence (UAI)</em>, 480–87.
+</div>
+<div id="ref-shpitser2006identification" class="csl-entry" role="listitem">
+Shpitser, Ilya, and Judea Pearl. 2006. <span>“Identification of Joint
+Interventional Distributions in Recursive Semi-<span>M</span>arkovian
+Causal Models.”</span> <em>Proceedings of the Twenty-First National
+Conference on Artificial Intelligence (AAAI)</em> 21: 1219–26.
 </div>
 </div>
 
