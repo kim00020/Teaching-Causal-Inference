@@ -220,6 +220,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
@@ -269,7 +275,6 @@ window.Quarto = {
   <li><a href="#the-big-picture" id="toc-the-big-picture" class="nav-link" data-scroll-target="#the-big-picture"><span class="header-section-number">2.6</span> The Big Picture</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">2.7</span> Summary</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">2.8</span> Problems</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
@@ -530,7 +535,7 @@ Figure&nbsp;2.1: The three fundamental path structures in a DAG. Chains and fork
 <p>The critical asymmetry — colliders are <em>closed by default</em> and <em>opened</em> by conditioning, while chains and forks are <em>open by default</em> and <em>closed</em> by conditioning — is what makes collider bias so easy to overlook in practice.</p>
 <p><strong>Chain: Smoking <span class="math inline">\(\to\)</span> Tar <span class="math inline">\(\to\)</span> Cancer.</strong> Let <span class="math inline">\(A\)</span> = smoking, <span class="math inline">\(M\)</span> = tar deposits, <span class="math inline">\(B\)</span> = lung cancer. Marginally, heavy smokers have elevated cancer rates — the path is open. Conditioning on tar level blocks the path: once tar level is fixed, the causal channel is fully accounted for.</p>
 <p><strong>Fork: Poverty <span class="math inline">\(\to\)</span> Poor Diet; Poverty <span class="math inline">\(\to\)</span> Lack of Exercise.</strong> Let <span class="math inline">\(M\)</span> = poverty, <span class="math inline">\(A\)</span> = poor diet, <span class="math inline">\(B\)</span> = lack of exercise. Unconditionally, diet quality and exercise are correlated through poverty. Conditioning on income level removes this spurious association.</p>
-<p><strong>Collider: Accident <span class="math inline">\(\to\)</span> Hospitalization <span class="math inline">\(\leftarrow\)</span> Cancer.</strong> Let <span class="math inline">\(A\)</span> = traffic accident, <span class="math inline">\(B\)</span> = cancer, <span class="math inline">\(M\)</span> = hospitalization. In the general population, <span class="math inline">\(A \indep B\)</span>. But among hospitalized patients — conditioning on <span class="math inline">\(M\)</span> — the two become negatively associated. This is Berkson’s bias <span class="citation" data-cites="berkson1946limitations">(<a href="chapter_01.html#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>.</p>
+<p><strong>Collider: Accident <span class="math inline">\(\to\)</span> Hospitalization <span class="math inline">\(\leftarrow\)</span> Cancer.</strong> Let <span class="math inline">\(A\)</span> = traffic accident, <span class="math inline">\(B\)</span> = cancer, <span class="math inline">\(M\)</span> = hospitalization. In the general population, <span class="math inline">\(A \indep B\)</span>. But among hospitalized patients — conditioning on <span class="math inline">\(M\)</span> — the two become negatively associated. This is Berkson’s bias <span class="citation" data-cites="berkson1946limitations">(<a href="references.html#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -615,7 +620,7 @@ Figure&nbsp;2.1: The three fundamental path structures in a DAG. Chains and fork
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="pearl2009causality">(<a href="chapter_01.html#ref-pearl2009causality" role="doc-biblioref">Pearl 2009</a>, Theorem 1.2.4)</span> If <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span>, then <span class="math inline">\(X \indep Y \mid \mathbf{S}\)</span> in every distribution that is Markov with respect to <span class="math inline">\(\Gcal\)</span>.</p>
+<p><span class="citation" data-cites="pearl2009causality">(<a href="references.html#ref-pearl2009causality" role="doc-biblioref">Pearl 2009</a>, Theorem 1.2.4)</span> If <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span>, then <span class="math inline">\(X \indep Y \mid \mathbf{S}\)</span> in every distribution that is Markov with respect to <span class="math inline">\(\Gcal\)</span>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -675,8 +680,8 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 </section>
 <section id="practical-ways-to-check-d-separation" class="level3" data-number="2.2.4">
 <h3 data-number="2.2.4" class="anchored" data-anchor-id="practical-ways-to-check-d-separation"><span class="header-section-number">2.2.4</span> Practical Ways to Check d-Separation</h3>
-<p><strong>Bayes-Ball Intuition.</strong> Imagine releasing a ball from <span class="math inline">\(X\)</span> asking whether it can reach <span class="math inline">\(Y\)</span>, given that nodes in <span class="math inline">\(\mathbf{S}\)</span> are observed. At a chain or fork node not in <span class="math inline">\(\mathbf{S}\)</span>: ball passes through. At a chain or fork node in <span class="math inline">\(\mathbf{S}\)</span>: ball stops. At a collider not in <span class="math inline">\(\mathbf{S}\)</span> (and no descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball stops. At a collider in <span class="math inline">\(\mathbf{S}\)</span> (or with a descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball passes through <span class="citation" data-cites="shachter1998bayesball">(<a href="chapter_01.html#ref-shachter1998bayesball" role="doc-biblioref">Shachter 1998</a>)</span>.</p>
-<p><strong>Moral Graph Transformation.</strong> (1) Restrict to the ancestral set <span class="math inline">\(\An(X \cup Y \cup \mathbf{S})\)</span>. (2) Moralise: for every collider <span class="math inline">\(A \to C \leftarrow B\)</span>, add an undirected edge <span class="math inline">\(A - B\)</span>. (3) Remove all edge directions. (4) Delete all nodes in <span class="math inline">\(\mathbf{S}\)</span>. If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are disconnected, then <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span> <span class="citation" data-cites="lauritzen1996graphical">(<a href="chapter_01.html#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Ch. 3)</span>.</p>
+<p><strong>Bayes-Ball Intuition.</strong> Imagine releasing a ball from <span class="math inline">\(X\)</span> asking whether it can reach <span class="math inline">\(Y\)</span>, given that nodes in <span class="math inline">\(\mathbf{S}\)</span> are observed. At a chain or fork node not in <span class="math inline">\(\mathbf{S}\)</span>: ball passes through. At a chain or fork node in <span class="math inline">\(\mathbf{S}\)</span>: ball stops. At a collider not in <span class="math inline">\(\mathbf{S}\)</span> (and no descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball stops. At a collider in <span class="math inline">\(\mathbf{S}\)</span> (or with a descendant in <span class="math inline">\(\mathbf{S}\)</span>): ball passes through <span class="citation" data-cites="shachter1998bayesball">(<a href="references.html#ref-shachter1998bayesball" role="doc-biblioref">Shachter 1998</a>)</span>.</p>
+<p><strong>Moral Graph Transformation.</strong> (1) Restrict to the ancestral set <span class="math inline">\(\An(X \cup Y \cup \mathbf{S})\)</span>. (2) Moralise: for every collider <span class="math inline">\(A \to C \leftarrow B\)</span>, add an undirected edge <span class="math inline">\(A - B\)</span>. (3) Remove all edge directions. (4) Delete all nodes in <span class="math inline">\(\mathbf{S}\)</span>. If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are disconnected, then <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span> <span class="citation" data-cites="lauritzen1996graphical">(<a href="references.html#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Ch. 3)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -882,7 +887,7 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <em>global Markov property</em> is the statement that every d-separation in <span class="math inline">\(\Gcal\)</span> implies a conditional independence in <span class="math inline">\(P\)</span> — precisely the content of Theorem 2.1 (Verma &amp; Pearl). For DAGs, the local and global Markov properties are equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="chapter_01.html#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Proposition 3.27)</span>.</p>
+<p>The <em>global Markov property</em> is the statement that every d-separation in <span class="math inline">\(\Gcal\)</span> implies a conditional independence in <span class="math inline">\(P\)</span> — precisely the content of Theorem 2.1 (Verma &amp; Pearl). For DAGs, the local and global Markov properties are equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="references.html#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Proposition 3.27)</span>.</p>
 </div>
 </div>
 <p>An immediate consequence is the <em>Markov factorization</em>: <span id="eq-markov"><span class="math display">\[p(v_1, \dots, v_k) \;=\; \prod_{i=1}^{k} p\!\left(v_i \mid \Pa(v_i)\right). \tag{2.1}\]</span></span></p>
@@ -962,7 +967,7 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 <li><p><strong>Three-node motifs.</strong> Every path is built from three local structures: chains, forks, and colliders. Chains and forks are open by default and blocked by conditioning on the middle node. Colliders are blocked by default and opened by conditioning on the collider or one of its descendants.</p></li>
 <li><p><strong>d-Separation and conditional independence.</strong> The d-separation criterion is a graphical rule: <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are d-separated by <span class="math inline">\(\mathbf{S}\)</span> exactly when every path between them is blocked by <span class="math inline">\(\mathbf{S}\)</span>. Under the Markov property, this implies the corresponding conditional independence. Some such implications may be assessed empirically, but agreement with data does not by itself verify the graph.</p></li>
 <li><p><strong>Markov factorization.</strong> The local Markov property yields <span class="math display">\[p(v_1,\dots,v_k) \;=\; \prod_{i=1}^{k} p\!\left(v_i \mid \Pa(v_i)\right),\]</span> which expresses the joint distribution in terms of local conditional distributions.</p></li>
-<li><p><strong>Collider bias.</strong> Conditioning on a collider — or on a descendant of a collider — can induce a spurious association between otherwise independent variables <span class="citation" data-cites="berkson1946limitations">(<a href="chapter_01.html#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>. This is the <em>opposite</em> of confounding adjustment: conditioning on a common cause removes spurious association, whereas conditioning on a common effect creates it.</p></li>
+<li><p><strong>Collider bias.</strong> Conditioning on a collider — or on a descendant of a collider — can induce a spurious association between otherwise independent variables <span class="citation" data-cites="berkson1946limitations">(<a href="references.html#ref-berkson1946limitations" role="doc-biblioref">Berkson 1946</a>)</span>. This is the <em>opposite</em> of confounding adjustment: conditioning on a common cause removes spurious association, whereas conditioning on a common effect creates it.</p></li>
 <li><p><strong>A practical workflow.</strong> To analyze a DAG, proceed in four steps: identify the graph structure, determine which paths are open or blocked, translate d-separation statements into conditional independences under the Markov property, and interpret those independences in light of the causal question.</p></li>
 </ol>
 </section>
@@ -1021,9 +1026,8 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 <li>Does conditioning on <span class="math inline">\(C\)</span> induce collider bias between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span>?</li>
 <li>Does conditioning on <span class="math inline">\(D\)</span> open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>? State which clause of Definition 2.1 applies.</li>
 </ol>
-</section>
-<section id="references" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+
+
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-berkson1946limitations" class="csl-entry" role="listitem">
 Berkson, Joseph. 1946. <span>“Limitations of the Application of Fourfold Table Analysis to Hospital Data.”</span> <em>Biometrics Bulletin</em> 2 (3): 47–53.
@@ -1038,8 +1042,6 @@ Pearl, Judea. 2009. <em>Causality: Models, Reasoning, and Inference</em>. 2nd ed
 Shachter, Ross D. 1998. <span>“Bayes-Ball: The Rational Pastime (for Determining Irrelevance and Requisite Information in Belief Networks and Influence Diagrams).”</span> <em>Proceedings of the Fourteenth Conference on Uncertainty in Artificial Intelligence (UAI)</em>, 480–87.
 </div>
 </div>
-
-
 </section>
 
 </main> <!-- /main -->
