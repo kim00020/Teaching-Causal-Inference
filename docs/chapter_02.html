@@ -604,7 +604,7 @@ Figure&nbsp;2.1: The three fundamental path structures in a DAG. Chains and fork
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="quarto-unresolved-ref">?thm-dsep</span> states that d-separation implies conditional independence for every distribution Markov with respect to <span class="math inline">\(\Gcal\)</span>. The converse need not hold without additional assumptions such as <em>faithfulness</em>.</p>
+<p>Theorem 2.1 (Verma &amp; Pearl) states that d-separation implies conditional independence for every distribution Markov with respect to <span class="math inline">\(\Gcal\)</span>. The converse need not hold without additional assumptions such as <em>faithfulness</em>.</p>
 </div>
 </div>
 <p><a href="#tbl-markov-implications" class="quarto-xref">Table&nbsp;<span>2.1</span></a> summarizes the Markov factorization and its independence implication for each of the three path structures.</p>
@@ -702,7 +702,7 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 <p><strong>(2)</strong> Is <span class="math inline">\(X_1 \indep Y \mid W\)</span>? Yes. Both open paths pass through the fork <span class="math inline">\(W\)</span>; conditioning on <span class="math inline">\(W\)</span> blocks them.</p>
 <p><strong>(3)</strong> Is <span class="math inline">\(T \indep M_2 \mid M_1\)</span>? Yes. The path <span class="math inline">\(T \to M_1 \to M_2\)</span> is blocked by <span class="math inline">\(M_1\)</span>; all other paths are also blocked.</p>
 <p><strong>(4)</strong> Does conditioning on <span class="math inline">\(C\)</span> create collider bias? Yes. <span class="math inline">\(C\)</span> is a collider on <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>. Conditioning on <span class="math inline">\(C\)</span> opens this path, inducing a spurious association between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span>.</p>
-<p><strong>(5)</strong> Does conditioning on <span class="math inline">\(D\)</span> open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>? Yes. <span class="math inline">\(D\)</span> is a descendant of <span class="math inline">\(C\)</span>. By clause (2) of <span class="quarto-unresolved-ref">?def-dsep</span>, the collider at <span class="math inline">\(C\)</span> is activated.</p>
+<p><strong>(5)</strong> Does conditioning on <span class="math inline">\(D\)</span> open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>? Yes. <span class="math inline">\(D\)</span> is a descendant of <span class="math inline">\(C\)</span>. By clause (2) of Definition 2.1, the collider at <span class="math inline">\(C\)</span> is activated.</p>
 </div>
 </div>
 </section>
@@ -858,7 +858,7 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <em>global Markov property</em> is the statement that every d-separation in <span class="math inline">\(\Gcal\)</span> implies a conditional independence in <span class="math inline">\(P\)</span> — precisely the content of <span class="quarto-unresolved-ref">?thm-dsep</span>. For DAGs, the local and global Markov properties are equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="chapter_01.html#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Proposition 3.27)</span>.</p>
+<p>The <em>global Markov property</em> is the statement that every d-separation in <span class="math inline">\(\Gcal\)</span> implies a conditional independence in <span class="math inline">\(P\)</span> — precisely the content of Theorem 2.1 (Verma &amp; Pearl). For DAGs, the local and global Markov properties are equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="chapter_01.html#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Proposition 3.27)</span>.</p>
 </div>
 </div>
 <p>An immediate consequence is the <em>Markov factorization</em>: <span id="eq-markov"><span class="math display">\[p(v_1, \dots, v_k) \;=\; \prod_{i=1}^{k} p\!\left(v_i \mid \Pa(v_i)\right). \tag{2.1}\]</span></span></p>
@@ -910,7 +910,7 @@ Table&nbsp;2.1: Markov factorization and d-separation result for each path struc
 <li><em>Query (iii):</em> <span class="math inline">\((N \indep Y \mid \{E, B\})_{\Gcal}\)</span>? Path 1 blocked by <span class="math inline">\(E\)</span>; Path 2 opened at <span class="math inline">\(E\)</span> but blocked at <span class="math inline">\(B\)</span>. <span class="math inline">\((N \indep Y \mid E, B)_{\Gcal}\)</span>.</li>
 <li><em>Query (iv):</em> <span class="math inline">\((N \indep B)_{\Gcal}\)</span>? Only path <span class="math inline">\(N \to E \leftarrow B\)</span> has collider <span class="math inline">\(E\)</span> with <span class="math inline">\(E \notin \varnothing\)</span> — blocked. <span class="math inline">\(N \indep B\)</span>.</li>
 </ul>
-<p><strong>Step 3 — Conditional Independence.</strong> By <span class="quarto-unresolved-ref">?thm-dsep</span>: <span class="math inline">\(N \indep B\)</span>, <span class="math inline">\(N \indep Y \mid E, B\)</span>, <span class="math inline">\(N \nindep Y\)</span>, <span class="math inline">\(N \nindep Y \mid E\)</span>.</p>
+<p><strong>Step 3 — Conditional Independence.</strong> By Theorem 2.1 (Verma &amp; Pearl): <span class="math inline">\(N \indep B\)</span>, <span class="math inline">\(N \indep Y \mid E, B\)</span>, <span class="math inline">\(N \nindep Y\)</span>, <span class="math inline">\(N \nindep Y \mid E\)</span>.</p>
 <p><strong>Step 4 — Identification.</strong> The only back-door path is <span class="math inline">\(E \leftarrow B \to Y\)</span>. With <span class="math inline">\(\mathbf{S} = \{B\}\)</span>: <span class="math display">\[P(y \mid \doop(E{=}e)) \;=\; \sum_{b} P(y \mid e, b)\,P(b).\]</span></p>
 </section>
 <section id="the-big-picture" class="level2" data-number="2.6">
@@ -968,7 +968,7 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 <ol type="a">
 <li>By marginalizing over <span class="math inline">\(M\)</span>, show that <span class="math inline">\(A \indep B\)</span> in the joint distribution.</li>
 <li>Show that conditioning on <span class="math inline">\(M\)</span> breaks this independence.</li>
-<li>Explain why parts (a) and (b) together are consistent with <span class="quarto-unresolved-ref">?thm-dsep</span>.</li>
+<li>Explain why parts (a) and (b) together are consistent with Theorem 2.1 (Verma &amp; Pearl).</li>
 </ol>
 <p><strong>5. Terminology check.</strong> Consider the DAG with edges <span class="math inline">\(U \to X\)</span>, <span class="math inline">\(U \to Z\)</span>, <span class="math inline">\(X \to W\)</span>, <span class="math inline">\(Z \to W\)</span>, <span class="math inline">\(W \to Y\)</span>.</p>
 <ol type="a">
@@ -989,13 +989,13 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 <li>Is <span class="math inline">\(X_1 \indep X_3\)</span> marginally? Justify both graphically and algebraically.</li>
 <li>Explain why conditioning on the common cause <span class="math inline">\(X_2\)</span> removes the association.</li>
 </ol>
-<p><strong>8. d-Separation in the practice DAG.</strong> Refer to the eight-node DAG in <span class="citation" data-cites="ex-practicedag">(<a href="chapter_01.html#ref-ex-practicedag" role="doc-biblioref"><strong>ex-practicedag?</strong></a>)</span>. For each query, state whether it is true or false and justify by listing all relevant paths.</p>
+<p><strong>8. d-Separation in the practice DAG.</strong> Refer to the eight-node DAG in the eight-node example above. For each query, state whether it is true or false and justify by listing all relevant paths.</p>
 <ol type="a">
 <li><span class="math inline">\(X_1 \indep Y\)</span></li>
 <li><span class="math inline">\(X_1 \indep Y \mid W\)</span></li>
 <li><span class="math inline">\(T \indep M_2 \mid M_1\)</span></li>
 <li>Does conditioning on <span class="math inline">\(C\)</span> induce collider bias between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span>?</li>
-<li>Does conditioning on <span class="math inline">\(D\)</span> open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>? State which clause of <span class="quarto-unresolved-ref">?def-dsep</span> applies.</li>
+<li>Does conditioning on <span class="math inline">\(D\)</span> open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>? State which clause of Definition 2.1 applies.</li>
 </ol>
 </section>
 <section id="references" class="level2 unnumbered">

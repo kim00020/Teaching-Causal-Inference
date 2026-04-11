@@ -286,7 +286,7 @@ If $(X \indep Y \mid \mathbf{S})_{\Gcal}$, then $X \indep Y \mid \mathbf{S}$ in 
 ::: {.callout-note icon=false}
 ## Remark: Soundness, Not Converse
 
-@thm-dsep states that d-separation implies conditional independence for every distribution Markov with respect to $\Gcal$. The converse need not hold without additional assumptions such as *faithfulness*.
+Theorem 2.1 (Verma & Pearl) states that d-separation implies conditional independence for every distribution Markov with respect to $\Gcal$. The converse need not hold without additional assumptions such as *faithfulness*.
 :::
 
 @tbl-markov-implications summarizes the Markov factorization and its independence implication for each of the three path structures.
@@ -383,7 +383,7 @@ Consider the DAG with nodes $W$, $X_1$, $T$, $M_1$, $M_2$, $Y$, $C$, $D$ and edg
 
 **(4)** Does conditioning on $C$ create collider bias? Yes. $C$ is a collider on $X_1 \to C \leftarrow M_2$. Conditioning on $C$ opens this path, inducing a spurious association between $X_1$ and $M_2$.
 
-**(5)** Does conditioning on $D$ open the path $X_1 \to C \leftarrow M_2$? Yes. $D$ is a descendant of $C$. By clause (2) of @def-dsep, the collider at $C$ is activated.
+**(5)** Does conditioning on $D$ open the path $X_1 \to C \leftarrow M_2$? Yes. $D$ is a descendant of $C$. By clause (2) of Definition 2.1, the collider at $C$ is activated.
 :::
 
 ## Collider Bias and the IV DAG {#sec-collider}
@@ -476,7 +476,7 @@ That is, once we condition on the direct causes of a node, that node is independ
 ::: {.callout-note icon=false}
 ## Remark
 
-The *global Markov property* is the statement that every d-separation in $\Gcal$ implies a conditional independence in $P$ --- precisely the content of @thm-dsep. For DAGs, the local and global Markov properties are equivalent [@lauritzen1996graphical, Proposition 3.27].
+The *global Markov property* is the statement that every d-separation in $\Gcal$ implies a conditional independence in $P$ --- precisely the content of Theorem 2.1 (Verma & Pearl). For DAGs, the local and global Markov properties are equivalent [@lauritzen1996graphical, Proposition 3.27].
 :::
 
 An immediate consequence is the *Markov factorization*:
@@ -536,7 +536,7 @@ $$p(n, b, e, y) \;=\; p(n)\,p(b)\,p(e \mid n, b)\,p(y \mid e, b).$$
 - *Query (iii):* $(N \indep Y \mid \{E, B\})_{\Gcal}$? Path 1 blocked by $E$; Path 2 opened at $E$ but blocked at $B$. $(N \indep Y \mid E, B)_{\Gcal}$.
 - *Query (iv):* $(N \indep B)_{\Gcal}$? Only path $N \to E \leftarrow B$ has collider $E$ with $E \notin \varnothing$ --- blocked. $N \indep B$.
 
-**Step 3 --- Conditional Independence.** By @thm-dsep: $N \indep B$, $N \indep Y \mid E, B$, $N \nindep Y$, $N \nindep Y \mid E$.
+**Step 3 --- Conditional Independence.** By Theorem 2.1 (Verma & Pearl): $N \indep B$, $N \indep Y \mid E, B$, $N \nindep Y$, $N \nindep Y \mid E$.
 
 **Step 4 --- Identification.** The only back-door path is $E \leftarrow B \to Y$. With $\mathbf{S} = \{B\}$:
 $$P(y \mid \doop(E{=}e)) \;=\; \sum_{b} P(y \mid e, b)\,P(b).$$
@@ -621,7 +621,7 @@ which expresses the joint distribution in terms of local conditional distributio
 
 (a) By marginalizing over $M$, show that $A \indep B$ in the joint distribution.
 (b) Show that conditioning on $M$ breaks this independence.
-(c) Explain why parts (a) and (b) together are consistent with @thm-dsep.
+(c) Explain why parts (a) and (b) together are consistent with Theorem 2.1 (Verma & Pearl).
 
 **5. Terminology check.** Consider the DAG with edges $U \to X$, $U \to Z$, $X \to W$, $Z \to W$, $W \to Y$.
 
@@ -642,13 +642,13 @@ which expresses the joint distribution in terms of local conditional distributio
 (b) Is $X_1 \indep X_3$ marginally? Justify both graphically and algebraically.
 (c) Explain why conditioning on the common cause $X_2$ removes the association.
 
-**8. d-Separation in the practice DAG.** Refer to the eight-node DAG in @ex-practicedag. For each query, state whether it is true or false and justify by listing all relevant paths.
+**8. d-Separation in the practice DAG.** Refer to the eight-node DAG in the eight-node example above. For each query, state whether it is true or false and justify by listing all relevant paths.
 
 (a) $X_1 \indep Y$
 (b) $X_1 \indep Y \mid W$
 (c) $T \indep M_2 \mid M_1$
 (d) Does conditioning on $C$ induce collider bias between $X_1$ and $M_2$?
-(e) Does conditioning on $D$ open the path $X_1 \to C \leftarrow M_2$? State which clause of @def-dsep applies.
+(e) Does conditioning on $D$ open the path $X_1 \to C \leftarrow M_2$? State which clause of Definition 2.1 applies.
 
 ## References {.unnumbered}
 
