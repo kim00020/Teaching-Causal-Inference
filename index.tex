@@ -615,7 +615,7 @@ in the support of \(T\) and almost all \((x, u)\):
 \begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-tip-color!10!white, colframe=quarto-callout-tip-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title={Proposition: Back-Door Adjustment Formula}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
 
 Under conditional exchangeability and positivity,
-\begin{equation}\protect\phantomsection\label{eq-backdoor-formula}{f(y \mid x,\, \doop(T{=}t)) \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.}\end{equation}
+\[f(y \mid x,\, \doop(T{=}t)) \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.\]
 
 \end{tcolorbox}
 
@@ -637,7 +637,7 @@ conditional exchangeability,
 What OLS estimates is the observational density, not the interventional
 density:
 \[f(y \mid x,\, T{=}t) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.\]
-The kernel is the same as in Equation~\ref{eq-backdoor-formula}, but
+The kernel is the same as in Equation~\ref{eq-backdoor-cont}, but
 averaged over the \emph{selection-distorted} weight
 \(p(u \mid x, T{=}t)\). Because \(U\) and \(T\) are dependent through
 the back-door path, \(p(u \mid x, T{=}t) \neq p(u \mid x)\), and the gap
@@ -675,7 +675,7 @@ Chapters in this course & Chapters 2--6 & Chapter 7 \\
 }
 
 \textbf{Scenario 1: \(U\) is observed.} The back-door adjustment formula
-Equation~\ref{eq-backdoor-formula} is usable from data:
+Equation~\ref{eq-backdoor-cont} is usable from data:
 \begin{equation}\protect\phantomsection\label{eq-backdoor-cont}{f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.}\end{equation}
 A special case is \emph{unconfoundedness}: if \(U \indep T \mid X\)
 already holds observationally, Equation~\ref{eq-backdoor-cont} reduces

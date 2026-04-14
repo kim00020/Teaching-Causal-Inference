@@ -518,7 +518,7 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under conditional exchangeability and positivity, <span id="eq-backdoor-formula"><span class="math display">\[f(y \mid x,\, \doop(T{=}t)) \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du. \tag{1.3}\]</span></span></p>
+<p>Under conditional exchangeability and positivity, <span class="math display">\[f(y \mid x,\, \doop(T{=}t)) \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.\]</span></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -547,7 +547,7 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>What OLS estimates is the observational density, not the interventional density: <span class="math display">\[f(y \mid x,\, T{=}t) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.\]</span> The kernel is the same as in <a href="#eq-backdoor-formula" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-formula</span></a>, but averaged over the <em>selection-distorted</em> weight <span class="math inline">\(p(u \mid x, T{=}t)\)</span>. Because <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> are dependent through the back-door path, <span class="math inline">\(p(u \mid x, T{=}t) \neq p(u \mid x)\)</span>, and the gap is non-zero whenever <span class="math inline">\(T\)</span> is endogenous.</p>
+<p>What OLS estimates is the observational density, not the interventional density: <span class="math display">\[f(y \mid x,\, T{=}t) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.\]</span> The kernel is the same as in <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a>, but averaged over the <em>selection-distorted</em> weight <span class="math inline">\(p(u \mid x, T{=}t)\)</span>. Because <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> are dependent through the back-door path, <span class="math inline">\(p(u \mid x, T{=}t) \neq p(u \mid x)\)</span>, and the gap is non-zero whenever <span class="math inline">\(T\)</span> is endogenous.</p>
 </div>
 </div>
 <section id="two-scenarios-observed-vs.-unobserved-confounder" class="level3" data-number="1.3.1">
@@ -593,7 +593,7 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </tr>
 </tbody>
 </table>
-<p><strong>Scenario 1: <span class="math inline">\(U\)</span> is observed.</strong> The back-door adjustment formula <a href="#eq-backdoor-formula" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-formula</span></a> is usable from data: <span id="eq-backdoor-cont"><span class="math display">\[f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du. \tag{1.4}\]</span></span> A special case is <em>unconfoundedness</em>: if <span class="math inline">\(U \indep T \mid X\)</span> already holds observationally, <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a> reduces to the familiar regression <span class="math inline">\(\E[Y \mid X{=}x, T{=}t]\)</span>.</p>
+<p><strong>Scenario 1: <span class="math inline">\(U\)</span> is observed.</strong> The back-door adjustment formula <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a> is usable from data: <span id="eq-backdoor-cont"><span class="math display">\[f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du. \tag{1.3}\]</span></span> A special case is <em>unconfoundedness</em>: if <span class="math inline">\(U \indep T \mid X\)</span> already holds observationally, <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a> reduces to the familiar regression <span class="math inline">\(\E[Y \mid X{=}x, T{=}t]\)</span>.</p>
 <p><strong>Scenario 2: <span class="math inline">\(U\)</span> is unobserved.</strong> <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a> is not usable. Additional structure beyond <span class="math inline">\((Y, T, X)\)</span> must be imposed: <strong>instrumental variables</strong> (Chapter 7), the <strong>front-door criterion</strong> (Chapter 3), or <strong>sensitivity analysis</strong>.</p>
 </section>
 </section>
@@ -611,7 +611,7 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The structural equations are <span id="eq-iv"><span class="math display">\[Y = \beta T + \gamma U + \varepsilon, \qquad T = \alpha U + \delta, \tag{1.5}\]</span></span> where <span class="math inline">\(U\)</span> is an unobserved confounder and the three primitive variables are mutually independent: <span class="math inline">\(U \sim \mathcal{N}(0,\sigma_U^2)\)</span>, <span class="math inline">\(\varepsilon \sim \mathcal{N}(0,\sigma_\varepsilon^2)\)</span>, <span class="math inline">\(\delta \sim \mathcal{N}(0,\sigma_\delta^2)\)</span>.</p>
+<p>The structural equations are <span id="eq-iv"><span class="math display">\[Y = \beta T + \gamma U + \varepsilon, \qquad T = \alpha U + \delta, \tag{1.4}\]</span></span> where <span class="math inline">\(U\)</span> is an unobserved confounder and the three primitive variables are mutually independent: <span class="math inline">\(U \sim \mathcal{N}(0,\sigma_U^2)\)</span>, <span class="math inline">\(\varepsilon \sim \mathcal{N}(0,\sigma_\varepsilon^2)\)</span>, <span class="math inline">\(\delta \sim \mathcal{N}(0,\sigma_\delta^2)\)</span>.</p>
 <p>Here <span class="math inline">\(\beta\)</span> is the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>, <span class="math inline">\(\gamma\)</span> is the direct effect of <span class="math inline">\(U\)</span> on <span class="math inline">\(Y\)</span>, and <span class="math inline">\(\alpha\)</span> is the direct effect of <span class="math inline">\(U\)</span> on <span class="math inline">\(T\)</span>.</p>
 </div>
 </div>
@@ -634,8 +634,8 @@ Figure&nbsp;1.3: Graph surgery on the Gaussian confounded model. The faded arrow
 <section id="two-explicit-densities" class="level3" data-number="1.4.2">
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="two-explicit-densities"><span class="header-section-number">1.4.2</span> Two Explicit Densities</h3>
 <p>Write <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span> for the marginal variance of <span class="math inline">\(T\)</span>.</p>
-<p><strong>Interventional density.</strong> Set <span class="math inline">\(T = t\)</span> externally. <span class="math inline">\(U\)</span> is drawn from its marginal <span class="math inline">\(\mathcal{N}(0,\sigma_U^2)\)</span> independently. Hence <span id="eq-int"><span class="math display">\[f\!\left(y \mid \doop(T{=}t)\right) = \mathcal{N}\!\left(\beta t,\;\; \gamma^2\sigma_U^2 + \sigma_\varepsilon^2\right). \tag{1.6}\]</span></span></p>
-<p><strong>Observational density.</strong> Since <span class="math inline">\((Y, T)\)</span> is jointly normal with <span class="math inline">\(\mathrm{Cov}(Y, T) = \beta\sigma_T^2 + \gamma\alpha\sigma_U^2\)</span>, the conditional normal formula gives: <span id="eq-obs"><span class="math display">\[f\!\left(y \mid T{=}t\right) = \mathcal{N}\!\left(\left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t,\;\; \frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2} + \sigma_\varepsilon^2\right). \tag{1.7}\]</span></span></p>
+<p><strong>Interventional density.</strong> Set <span class="math inline">\(T = t\)</span> externally. <span class="math inline">\(U\)</span> is drawn from its marginal <span class="math inline">\(\mathcal{N}(0,\sigma_U^2)\)</span> independently. Hence <span id="eq-int"><span class="math display">\[f\!\left(y \mid \doop(T{=}t)\right) = \mathcal{N}\!\left(\beta t,\;\; \gamma^2\sigma_U^2 + \sigma_\varepsilon^2\right). \tag{1.5}\]</span></span></p>
+<p><strong>Observational density.</strong> Since <span class="math inline">\((Y, T)\)</span> is jointly normal with <span class="math inline">\(\mathrm{Cov}(Y, T) = \beta\sigma_T^2 + \gamma\alpha\sigma_U^2\)</span>, the conditional normal formula gives: <span id="eq-obs"><span class="math display">\[f\!\left(y \mid T{=}t\right) = \mathcal{N}\!\left(\left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t,\;\; \frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2} + \sigma_\varepsilon^2\right). \tag{1.6}\]</span></span></p>
 </section>
 <section id="the-endogeneity-gap" class="level3" data-number="1.4.3">
 <h3 data-number="1.4.3" class="anchored" data-anchor-id="the-endogeneity-gap"><span class="header-section-number">1.4.3</span> The Endogeneity Gap</h3>
@@ -901,7 +901,7 @@ Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the 
 </tbody>
 </table>
 <p>Within every stratum the vaccine reduces infection. The reversal occurs because the vaccinated group is disproportionately elderly (86% vs.&nbsp;7%).</p>
-<p><strong>Step 1: Identification.</strong> The set <span class="math inline">\(\{X\}\)</span> satisfies the back-door criterion. By the back-door formula: <span id="eq-backdoor"><span class="math display">\[P\!\left(Y{=}1 \mid \doop(T{=}t)\right) = \sum_{x \in \{E,Y\}} P(Y{=}1 \mid T{=}t, X{=}x)\,P(X{=}x). \tag{1.8}\]</span></span></p>
+<p><strong>Step 1: Identification.</strong> The set <span class="math inline">\(\{X\}\)</span> satisfies the back-door criterion. By the back-door formula: <span id="eq-backdoor"><span class="math display">\[P\!\left(Y{=}1 \mid \doop(T{=}t)\right) = \sum_{x \in \{E,Y\}} P(Y{=}1 \mid T{=}t, X{=}x)\,P(X{=}x). \tag{1.7}\]</span></span></p>
 <p><strong>Step 2: Estimation.</strong> <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}1)) = 0.30 \times 0.4 + 0.05 \times 0.6 = 0.15,\]</span> <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}0)) = 0.50 \times 0.4 + 0.10 \times 0.6 = 0.26.\]</span> The estimated causal risk difference is <span class="math inline">\(\hat{\Delta}_{\mathrm{causal}} = 0.15 - 0.26 = -0.11\)</span>: the vaccine causally reduces infection probability by 11 percentage points.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">

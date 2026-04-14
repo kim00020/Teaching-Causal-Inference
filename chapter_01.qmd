@@ -243,7 +243,7 @@ $$p(T{=}t \mid X{=}x,\, U{=}u) \;>\; 0.$$
 ## Proposition: Back-Door Adjustment Formula
 
 Under conditional exchangeability and positivity,
-$$f(y \mid x,\, \doop(T{=}t)) \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.$$ {#eq-backdoor-formula}
+$$f(y \mid x,\, \doop(T{=}t)) \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.$$
 :::
 
 ::: {.callout-note collapse=true icon=false}
@@ -259,7 +259,7 @@ The weight is $p(u \mid x)$, not $p(u \mid x, T{=}t)$, because under $\doop(T{=}
 
 What OLS estimates is the observational density, not the interventional density:
 $$f(y \mid x,\, T{=}t) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.$$
-The kernel is the same as in @eq-backdoor-formula, but averaged over the *selection-distorted* weight $p(u \mid x, T{=}t)$. Because $U$ and $T$ are dependent through the back-door path, $p(u \mid x, T{=}t) \neq p(u \mid x)$, and the gap is non-zero whenever $T$ is endogenous.
+The kernel is the same as in @eq-backdoor-cont, but averaged over the *selection-distorted* weight $p(u \mid x, T{=}t)$. Because $U$ and $T$ are dependent through the back-door path, $p(u \mid x, T{=}t) \neq p(u \mid x)$, and the gap is non-zero whenever $T$ is endogenous.
 :::
 
 ### Two Scenarios: Observed vs. Unobserved Confounder
@@ -272,7 +272,7 @@ The kernel is the same as in @eq-backdoor-formula, but averaged over the *select
 | Key assumption | Unconfoundedness: $U \indep T \mid X$ | Exclusion restriction, monotonicity, ... |
 | Chapters in this course | Chapters 2--6 | Chapter 7 |
 
-**Scenario 1: $U$ is observed.** The back-door adjustment formula @eq-backdoor-formula is usable from data:
+**Scenario 1: $U$ is observed.** The back-door adjustment formula @eq-backdoor-cont is usable from data:
 $$f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.$$ {#eq-backdoor-cont}
 A special case is *unconfoundedness*: if $U \indep T \mid X$ already holds observationally, @eq-backdoor-cont reduces to the familiar regression $\E[Y \mid X{=}x, T{=}t]$.
 
