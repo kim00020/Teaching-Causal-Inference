@@ -343,7 +343,7 @@ window.Quarto = {
 </div>
 </div>
 <p><strong>Mnemonic.</strong> <span class="math display">\[\Gcal_{\overline{X}}: \text{cut \emph{incoming} arrows into } X, \qquad \Gcal_{\underline{X}}: \text{cut \emph{outgoing} arrows from } X.\]</span></p>
-<p><a href="#fig-mutilations" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-mutilations</span></a> illustrates both operations on the IV DAG <span class="math inline">\(\{Z \to T,\; T \to Y,\; U \to T,\; U \to Y\}\)</span>.</p>
+<p><a href="#fig-mutilations" class="quarto-xref">Figure&nbsp;<span>3.1</span></a> illustrates both operations on the IV DAG <span class="math inline">\(\{Z \to T,\; T \to Y,\; U \to T,\; U \to Y\}\)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-mutilations" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -421,7 +421,7 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The terminology reflects the geometry of the graph relative to <span class="math inline">\(T\)</span>. A <em>back-door path</em> enters <span class="math inline">\(T\)</span> from behind — it begins with an arrow pointing <em>into</em> <span class="math inline">\(T\)</span> — and represents a confounding route through which <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> become spuriously associated without any causal mechanism from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. The front-door criterion (Section <a href="#sec-frontdoor" class="quarto-xref"><span class="quarto-unresolved-ref">sec-frontdoor</span></a>) is named for the complementary idea: it identifies the causal effect by intercepting the <em>front-door</em> (causal) paths at a mediator <span class="math inline">\(M\)</span>, rather than blocking the back-door (confounding) paths directly.</p>
+<p>The terminology reflects the geometry of the graph relative to <span class="math inline">\(T\)</span>. A <em>back-door path</em> enters <span class="math inline">\(T\)</span> from behind — it begins with an arrow pointing <em>into</em> <span class="math inline">\(T\)</span> — and represents a confounding route through which <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> become spuriously associated without any causal mechanism from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. The front-door criterion (Section <a href="#sec-frontdoor" class="quarto-xref"><span>Section 3.3</span></a>) is named for the complementary idea: it identifies the causal effect by intercepting the <em>front-door</em> (causal) paths at a mediator <span class="math inline">\(M\)</span>, rather than blocking the back-door (confounding) paths directly.</p>
 <p>Condition 2 is equivalent to requiring <span class="math inline">\((Y \indep T \mid \mathbf{S})_{\Gcal_{\underline{T}}}\)</span>: <span class="math inline">\(\mathbf{S}\)</span> d-separates <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> in the graph <span class="math inline">\(\Gcal_{\underline{T}}\)</span>, obtained by <em>deleting all arrows out of</em> <span class="math inline">\(T\)</span>.</p>
 </div>
 </div>
@@ -525,11 +525,11 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 </section>
 <section id="the-adjustment-formula-standardization" class="level3" data-number="3.2.3">
 <h3 data-number="3.2.3" class="anchored" data-anchor-id="the-adjustment-formula-standardization"><span class="header-section-number">3.2.3</span> The Adjustment Formula: Standardization</h3>
-<p>Equation <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor</span></a> is also known as the <em>standardization formula</em> or, in the epidemiological literature, the <em>g-formula</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span>. The interpretation is important:</p>
+<p>Equation <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> is also known as the <em>standardization formula</em> or, in the epidemiological literature, the <em>g-formula</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span>. The interpretation is important:</p>
 <ul>
 <li><span class="math inline">\(P(y \mid t, \mathbf{s})\)</span> is the stratum-specific conditional distribution of <span class="math inline">\(Y\)</span> given <span class="math inline">\(T{=}t\)</span> and <span class="math inline">\(\mathbf{S}{=}\mathbf{s}\)</span>. Within each stratum, <span class="math inline">\(T\)</span> is not confounded, so this conditional distribution <em>is</em> causal.</li>
 <li>The outer integration <span class="math inline">\(\int \cdots\, dP(\mathbf{s})\)</span> weights the strata by the <em>population marginal</em> distribution of <span class="math inline">\(\mathbf{S}\)</span>, rather than the treatment-conditional distribution.</li>
-<li>In a randomized experiment, <span class="math inline">\(\mathbf{S} = \varnothing\)</span> satisfies the back-door criterion, and <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor</span></a> reduces to <span class="math inline">\(P(y \mid \doop(t)) = P(y \mid t)\)</span>.</li>
+<li>In a randomized experiment, <span class="math inline">\(\mathbf{S} = \varnothing\)</span> satisfies the back-door criterion, and <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> reduces to <span class="math inline">\(P(y \mid \doop(t)) = P(y \mid t)\)</span>.</li>
 </ul>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1056,7 +1056,7 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 <section id="sec-completeness" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="sec-completeness"><span class="header-section-number">3.5</span> The Do-Calculus is Complete</h2>
 <p>A natural question after seeing the three rules is: are they enough? Could there be a graph where the causal effect is identifiable in principle, but none of the rules can derive a purely observational expression? <span class="citation" data-cites="shpitser2006identification">Shpitser and Pearl (2006)</span> answered this definitively.</p>
-<p>Throughout Sections <a href="#sec-mutilated" class="quarto-xref"><span class="quarto-unresolved-ref">sec-mutilated</span></a>–<a href="#sec-rules" class="quarto-xref"><span class="quarto-unresolved-ref">sec-rules</span></a> we have represented latent common causes as explicit unobserved nodes. The completeness theorem uses a more general graph class that encodes latent common causes compactly as <em>bidirected edges</em>: a bidirected edge <span class="math inline">\(X \leftrightarrow Y\)</span> stands for an unobserved variable <span class="math inline">\(U\)</span> with <span class="math inline">\(U \to X\)</span> and <span class="math inline">\(U \to Y\)</span>. A DAG augmented with such bidirected edges is called a <em>semi-Markovian DAG</em>.</p>
+<p>Throughout Sections <a href="#sec-mutilated" class="quarto-xref"><span>Section 3.1</span></a>–<a href="#sec-rules" class="quarto-xref"><span>Section 3.4</span></a> we have represented latent common causes as explicit unobserved nodes. The completeness theorem uses a more general graph class that encodes latent common causes compactly as <em>bidirected edges</em>: a bidirected edge <span class="math inline">\(X \leftrightarrow Y\)</span> stands for an unobserved variable <span class="math inline">\(U\)</span> with <span class="math inline">\(U \to X\)</span> and <span class="math inline">\(U \to Y\)</span>. A DAG augmented with such bidirected edges is called a <em>semi-Markovian DAG</em>.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1147,7 +1147,7 @@ Figure&nbsp;3.2: The six-level pipeline from causal assumptions to estimation.
 </div>
 </div>
 </div>
-<p>The completeness theorem (Section <a href="#sec-completeness" class="quarto-xref"><span class="quarto-unresolved-ref">sec-completeness</span></a>) closes the loop: every causal effect that is identifiable from the observational distribution relative to the assumed graph can be derived by the do-calculus, and every effect that is not identifiable cannot be recovered by any observational method without additional assumptions or new data.</p>
+<p>The completeness theorem (Section <a href="#sec-completeness" class="quarto-xref"><span>Section 3.5</span></a>) closes the loop: every causal effect that is identifiable from the observational distribution relative to the assumed graph can be derived by the do-calculus, and every effect that is not identifiable cannot be recovered by any observational method without additional assumptions or new data.</p>
 </section>
 <section id="summary" class="level2" data-number="3.7">
 <h2 data-number="3.7" class="anchored" data-anchor-id="summary"><span class="header-section-number">3.7</span> Summary</h2>

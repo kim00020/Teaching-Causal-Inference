@@ -374,7 +374,7 @@ window.Quarto = {
 </section>
 <section id="the-causal-trinity-three-languages-for-one-idea" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="the-causal-trinity-three-languages-for-one-idea"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</h2>
-<p>The same causal question — what happens when we set <span class="math inline">\(T = t\)</span>? — can be expressed in three distinct but equivalent languages. Collectively, we call these the <strong>causal trinity</strong>: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. <a href="#fig-trinity" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-trinity</span></a> depicts their relationships.</p>
+<p>The same causal question — what happens when we set <span class="math inline">\(T = t\)</span>? — can be expressed in three distinct but equivalent languages. Collectively, we call these the <strong>causal trinity</strong>: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. <a href="#fig-trinity" class="quarto-xref">Figure&nbsp;<span>1.1</span></a> depicts their relationships.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-trinity" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -419,7 +419,7 @@ Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that expre
 </div>
 </div>
 <p><strong>Observational regime.</strong> <span class="math inline">\(T\)</span> is determined by <span class="math inline">\(f_T\)</span>; because <span class="math inline">\(U\)</span> enters both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, we have <span class="math inline">\(\mathrm{Cov}(T,\varepsilon) \neq 0\)</span> in general: this is endogeneity.</p>
-<p><strong>Interventional regime.</strong> The do-operator replaces the equation for <span class="math inline">\(T\)</span> with a constant <span class="math inline">\(t\)</span>, yielding the <em>mutilated system</em>: <span class="math display">\[U \sim p(u), \qquad T = t \text{ (fixed)}, \qquad Y = f_Y(t, U, \varepsilon).\]</span> We define the <em>potential outcome</em> as <span class="math inline">\(Y(t) \coloneqq f_Y(t, U, \varepsilon)\)</span>; by construction, <span class="math inline">\(Y(t) \sim f(y \mid \doop(T{=}t))\)</span>.</p>
+<p><strong>Interventional regime.</strong> The do-operator replaces the equation for <span class="math inline">\(T\)</span> with a constant <span class="math inline">\(t\)</span>, yielding the <em>mutilated system</em>: <span class="math display">\[U \sim p(u), \qquad T = t \text{ (fixed)}, \qquad Y = f_Y(t, U, \varepsilon).\]</span> We define the <em>potential outcome</em> as <span class="math inline">\(Y(t) := f_Y(t, U, \varepsilon)\)</span>; by construction, <span class="math inline">\(Y(t) \sim f(y \mid \doop(T{=}t))\)</span>.</p>
 </section>
 <section id="language-2-directed-acyclic-graphs" class="level3" data-number="1.2.2">
 <h3 data-number="1.2.2" class="anchored" data-anchor-id="language-2-directed-acyclic-graphs"><span class="header-section-number">1.2.2</span> Language 2: Directed Acyclic Graphs</h3>
@@ -549,7 +549,7 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>What OLS estimates is the observational density, not the interventional density: <span class="math display">\[f(y \mid x,\, T{=}t) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.\]</span> The kernel is the same as in <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a>, but averaged over the <em>selection-distorted</em> weight <span class="math inline">\(p(u \mid x, T{=}t)\)</span>. Because <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> are dependent through the back-door path, <span class="math inline">\(p(u \mid x, T{=}t) \neq p(u \mid x)\)</span>, and the gap is non-zero whenever <span class="math inline">\(T\)</span> is endogenous.</p>
+<p>What OLS estimates is the observational density, not the interventional density: <span class="math display">\[f(y \mid x,\, T{=}t) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.\]</span> The kernel is the same as in <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a>, but averaged over the <em>selection-distorted</em> weight <span class="math inline">\(p(u \mid x, T{=}t)\)</span>. Because <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> are dependent through the back-door path, <span class="math inline">\(p(u \mid x, T{=}t) \neq p(u \mid x)\)</span>, and the gap is non-zero whenever <span class="math inline">\(T\)</span> is endogenous.</p>
 </div>
 </div>
 <section id="two-scenarios-observed-vs.-unobserved-confounder" class="level3" data-number="1.3.1">
@@ -595,10 +595,10 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </tr>
 </tbody>
 </table>
-<p><strong>Scenario 1: <span class="math inline">\(U\)</span> is observed.</strong> The back-door adjustment formula <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a> is usable from data:</p>
+<p><strong>Scenario 1: <span class="math inline">\(U\)</span> is observed.</strong> The back-door adjustment formula <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> is usable from data:</p>
 <p><span id="eq-backdoor-cont"><span class="math display">\[f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du. \tag{1.3}\]</span></span></p>
-<p>A special case is <em>unconfoundedness</em>: if <span class="math inline">\(U \indep T \mid X\)</span> already holds observationally, <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a> reduces to the familiar regression <span class="math inline">\(\E[Y \mid X{=}x, T{=}t]\)</span>.</p>
-<p><strong>Scenario 2: <span class="math inline">\(U\)</span> is unobserved.</strong> <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor-cont</span></a> is not usable. Additional structure beyond <span class="math inline">\((Y, T, X)\)</span> must be imposed: <strong>instrumental variables</strong> (Chapter 7), the <strong>front-door criterion</strong> (Chapter 3), or <strong>sensitivity analysis</strong>.</p>
+<p>A special case is <em>unconfoundedness</em>: if <span class="math inline">\(U \indep T \mid X\)</span> already holds observationally, <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> reduces to the familiar regression <span class="math inline">\(\E[Y \mid X{=}x, T{=}t]\)</span>.</p>
+<p><strong>Scenario 2: <span class="math inline">\(U\)</span> is unobserved.</strong> <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> is not usable. Additional structure beyond <span class="math inline">\((Y, T, X)\)</span> must be imposed: <strong>instrumental variables</strong> (Chapter 7), the <strong>front-door criterion</strong> (Chapter 3), or <strong>sensitivity analysis</strong>.</p>
 </section>
 </section>
 <section id="sec-gaussian" class="level2" data-number="1.4">
@@ -760,7 +760,7 @@ Figure&nbsp;1.3: Graph surgery on the Gaussian confounded model. The faded arrow
 </tr>
 </tbody>
 </table>
-<p><strong>Experiment 3: Density overlay for varying <span class="math inline">\(\alpha\)</span>.</strong> <a href="#fig-density" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-density</span></a> shows the interventional density (solid) and the observational density <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-obs</span></a> (dashed), both evaluated at <span class="math inline">\(t_0 = 1\)</span>, for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span>.</p>
+<p><strong>Experiment 3: Density overlay for varying <span class="math inline">\(\alpha\)</span>.</strong> <a href="#fig-density" class="quarto-xref">Figure&nbsp;<span>1.4</span></a> shows the interventional density (solid) and the observational density <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> (dashed), both evaluated at <span class="math inline">\(t_0 = 1\)</span>, for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-density" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -922,7 +922,7 @@ Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the 
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Step 1 (identification)</strong> established — from the DAG alone — that the back-door formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-backdoor</span></a> expresses the causal quantity as a functional of observable data. <strong>Step 2 (estimation)</strong> replaced the population probabilities with sample proportions.</p>
+<p><strong>Step 1 (identification)</strong> established — from the DAG alone — that the back-door formula <a href="chapter_03.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> expresses the causal quantity as a functional of observable data. <strong>Step 2 (estimation)</strong> replaced the population probabilities with sample proportions.</p>
 <p>These two steps are logically separate: Step 1 is a mathematical argument about the causal model that does not depend on sample size; Step 2 is a statistical argument about finite-sample estimation that does not depend on the causal model.</p>
 </div>
 </div>
@@ -947,11 +947,11 @@ Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the 
 <li>“Among students who attended tutoring, the average exam score was 85.”</li>
 <li>“If we enrolled all students in tutoring, the average exam score would be 85.”</li>
 </ol>
-<p><strong>2. Deriving the observational density.</strong> In the Gaussian confounded model, verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-obs</span></a> by carrying out the following steps. Let <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span>.</p>
+<p><strong>2. Deriving the observational density.</strong> In the Gaussian confounded model, verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> by carrying out the following steps. Let <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span>.</p>
 <ol type="a">
 <li>Show that <span class="math inline">\((Y, T)\)</span> is jointly normal by writing both as linear combinations of the independent normals <span class="math inline">\((U, \varepsilon, \delta)\)</span>.</li>
 <li>Compute <span class="math inline">\(\mathrm{Cov}(Y, T)\)</span> and <span class="math inline">\(\mathrm{Var}(T)\)</span>.</li>
-<li>Apply the conditional normal formula to derive <span class="math inline">\(\E[Y \mid T{=}t]\)</span> and <span class="math inline">\(\mathrm{Var}[Y \mid T{=}t]\)</span>, and hence verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-obs</span></a>.</li>
+<li>Apply the conditional normal formula to derive <span class="math inline">\(\E[Y \mid T{=}t]\)</span> and <span class="math inline">\(\mathrm{Var}[Y \mid T{=}t]\)</span>, and hence verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a>.</li>
 <li>Show that the OLS probability limit is <span class="math inline">\(\beta + \gamma\alpha\sigma_U^2/\sigma_T^2\)</span>, and interpret this as an omitted-variable bias formula.</li>
 </ol>
 <p><strong>3. The causal trinity.</strong> Consider the following verbal causal claim: “Aspirin (<span class="math inline">\(T\)</span>) reduces the risk of heart attack (<span class="math inline">\(Y\)</span>) because it inhibits platelet aggregation (<span class="math inline">\(M\)</span>), but patients with pre-existing cardiovascular disease (<span class="math inline">\(U\)</span>, unobserved) are both more likely to take aspirin and more likely to have a heart attack.”</p>
