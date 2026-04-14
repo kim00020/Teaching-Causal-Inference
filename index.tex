@@ -587,9 +587,11 @@ econometrics; PO (middle, purple) in experimental statistics; DAG
 
 We work within the SEM, now augmented with an observed exogenous
 variable \(X\):
+
 \begin{equation}\protect\phantomsection\label{eq-sem-core}{T = f_T(X, U, \delta), \qquad Y = f_Y(T, X, U, \varepsilon).}\end{equation}
 
 The single most important inequality of this course is:
+
 \begin{equation}\protect\phantomsection\label{eq-core}{\underbrace{f\!\left(y \mid x,\, \doop(T{=}t)\right)}_{\text{interventional}} \;\neq\; \underbrace{f\!\left(y \mid x,\, T{=}t\right)}_{\text{observational}} \qquad \text{whenever } T \text{ is endogenous.}}\end{equation}
 
 \begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title={Definition: Conditional Exchangeability}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
@@ -676,7 +678,9 @@ Chapters in this course & Chapters 2--6 & Chapter 7 \\
 
 \textbf{Scenario 1: \(U\) is observed.} The back-door adjustment formula
 Equation~\ref{eq-backdoor-cont} is usable from data:
+
 \begin{equation}\protect\phantomsection\label{eq-backdoor-cont}{f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.}\end{equation}
+
 A special case is \emph{unconfoundedness}: if \(U \indep T \mid X\)
 already holds observationally, Equation~\ref{eq-backdoor-cont} reduces
 to the familiar regression \(\E[Y \mid X{=}x, T{=}t]\).
@@ -694,7 +698,9 @@ beyond \((Y, T, X)\) must be imposed: \textbf{instrumental variables}
 \begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title={Example: Gaussian Linear Confounded Model}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
 
 The structural equations are
+
 \begin{equation}\protect\phantomsection\label{eq-iv}{Y = \beta T + \gamma U + \varepsilon, \qquad T = \alpha U + \delta,}\end{equation}
+
 where \(U\) is an unobserved confounder and the three primitive
 variables are mutually independent:
 \(U \sim \mathcal{N}(0,\sigma_U^2)\),
@@ -736,11 +742,13 @@ marginal variance of \(T\).
 \textbf{Interventional density.} Set \(T = t\) externally. \(U\) is
 drawn from its marginal \(\mathcal{N}(0,\sigma_U^2)\) independently.
 Hence
+
 \begin{equation}\protect\phantomsection\label{eq-int}{f\!\left(y \mid \doop(T{=}t)\right) = \mathcal{N}\!\left(\beta t,\;\; \gamma^2\sigma_U^2 + \sigma_\varepsilon^2\right).}\end{equation}
 
 \textbf{Observational density.} Since \((Y, T)\) is jointly normal with
 \(\mathrm{Cov}(Y, T) = \beta\sigma_T^2 + \gamma\alpha\sigma_U^2\), the
 conditional normal formula gives:
+
 \begin{equation}\protect\phantomsection\label{eq-obs}{f\!\left(y \mid T{=}t\right) = \mathcal{N}\!\left(\left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t,\;\; \frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2} + \sigma_\varepsilon^2\right).}\end{equation}
 
 \subsection{The Endogeneity Gap}\label{the-endogeneity-gap}
@@ -976,6 +984,7 @@ vs.~7\%).
 
 \textbf{Step 1: Identification.} The set \(\{X\}\) satisfies the
 back-door criterion. By the back-door formula:
+
 \begin{equation}\protect\phantomsection\label{eq-backdoor}{P\!\left(Y{=}1 \mid \doop(T{=}t)\right) = \sum_{x \in \{E,Y\}} P(Y{=}1 \mid T{=}t, X{=}x)\,P(X{=}x).}\end{equation}
 
 \textbf{Step 2: Estimation.}
