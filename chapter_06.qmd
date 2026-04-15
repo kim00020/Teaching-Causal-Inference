@@ -1,0 +1,362 @@
+---
+engine: knitr
+suppress-bibliography: true
+---
+
+# Propensity Score Methods
+
+::: {.callout-note icon=false}
+## Learning Objectives
+
+By the end of this chapter, students should be able to:
+
+1. Define the propensity score $\pi(X) = P(T{=}1 \mid X)$ and explain why it is a *balancing score*.
+2. State and prove the Balancing Property ($T \indep X \mid \pi(X)$) and the Propensity Score Theorem (strong ignorability given $X$ implies strong ignorability given $\pi(X)$).
+3. Describe standard methods for estimating the propensity score (logistic regression, machine learning) and the practical pitfalls of each.
+4. Derive the IPW identification formula for the ATE and explain the role of the Horvitz--Thompson representation.
+5. Distinguish the IPW estimator (targets ATE) from the nearest-neighbor matching estimator presented in this chapter (designed to target ATT).
+6. Define strict overlap, describe the practical consequences of near-violations, and apply trimming strategies.
+7. Articulate the fundamental limitation of propensity-score methods --- the unconfoundedness assumption --- and explain why this motivates instrumental variables (Chapter 7).
+:::
+
+## Motivation: The Curse of Dimensionality {#sec-curse}
+
+Chapter 5 established that under strong ignorability, the ATE is identified by the back-door adjustment formula, and developed three estimation strategies: regression adjustment, standardization, and stratification. All three require, in practice, that we condition on a covariate vector $X$. When $X$ is low-dimensional, this is feasible. When $X$ has many components, it is not.
+
+**The problem.** Stratification requires cells $\{X = x\}$ to contain both treated and control units. With $p$ binary covariates, there are $2^p$ cells. With $p = 20$, that is over one million cells --- most empty in any realistic sample. Regression adjustment imposes parametric structure to interpolate across cells, but extrapolation bias grows with dimension. The propensity score provides an elegant solution: rather than conditioning on the full vector $X$, it is sufficient to condition on the scalar $\pi(X) = P(T{=}1 \mid X)$.
+
+## The Propensity Score {#sec-ps}
+
+### Definition
+
+::: {.callout-note icon=false}
+## Definition: Propensity Score
+
+The *propensity score* is the conditional probability of receiving treatment given the observed covariates:
+$$\pi(X) \;=\; P(T{=}1 \mid X).$$
+:::
+
+In a randomized experiment, $\pi(X) = p$ is constant (equal to the allocation probability), so there is nothing to estimate. In an observational study, $\pi(X)$ varies with $X$ and must be estimated from data.
+
+**Connection to strong ignorability.** Under strong ignorability $(Y(0),Y(1)) \indep T \mid X$, the potential outcomes carry no further information about treatment assignment once $X$ is given:
+$$P\bigl(T{=}1 \mid X,\, Y(0),\, Y(1)\bigr) = P(T{=}1 \mid X) = \pi(X).$$
+This equality is a *consequence* of the ignorability assumption, not part of the definition of $\pi(X)$.
+
+### The Balancing Property
+
+::: {.callout-tip icon=false}
+## Theorem: The Propensity Score is a Balancing Score
+
+[@rosenbaum1983central] $T \indep X \mid \pi(X)$.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+It suffices to show $P(T{=}1 \mid X, \pi(X)) = P(T{=}1 \mid \pi(X))$. Since $\pi(X)$ is a deterministic function of $X$, conditioning on both $X$ and $\pi(X)$ is the same as conditioning on $X$ alone:
+$$P\bigl(T{=}1 \mid X, \pi(X)\bigr) = P(T{=}1 \mid X) = \pi(X) = P\bigl(T{=}1 \mid \pi(X)\bigr). \quad\square$$
+:::
+
+::: {.callout-note icon=false}
+## Remark: Covariate Balance and Design-Before-Analysis
+
+The balancing property implies $f(X \mid T{=}1,\, \pi(x)) = f(X \mid T{=}0,\, \pi(x))$. Stratifying on a discretized $\hat\pi(X)$ and comparing covariate distributions within strata via standardized mean differences diagnoses whether the propensity score model achieves adequate balance, *without ever looking at $Y$*. Because the diagnostic does not involve the outcome, it cannot be used to "fish" for a preferred model specification, making the analysis more objective [@imbens2015causal].
+:::
+
+::: {.callout-note icon=false}
+## Remark
+
+The Balancing Property is a statement about the *observed* covariate distribution. It says that within strata of $\pi(X)$, the distribution of $X$ is the same in the treated and control groups. It does *not* say anything about unobserved confounders $U$: if $U$ affects both $T$ and $Y$ and is not captured by $X$, the balancing property fails to close the back-door path through $U$.
+:::
+
+### The Propensity Score Theorem
+
+::: {.callout-tip icon=false}
+## Theorem: Propensity Score Theorem
+
+[@rosenbaum1983central] Suppose $(Y(0), Y(1)) \indep T \mid X$. Then for any balancing score $b(X)$,
+$$\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \;\Big|\; b(X).$$
+In particular, taking $b(X) = \pi(X)$: strong ignorability given $X$ implies strong ignorability given $\pi(X)$ alone, provided $0 < \pi(X) < 1$ almost surely.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+We prove the result for $b(X) = \pi(X)$. By the law of iterated expectations, for any $t \in \{0,1\}$:
+$$P\bigl(T{=}1 \mid Y(t),\, \pi(X)\bigr) = \E\bigl[P(T{=}1 \mid Y(t), X) \mid Y(t), \pi(X)\bigr].$$
+By ignorability, $T \indep Y(t) \mid X$, so $P(T{=}1 \mid Y(t), X) = P(T{=}1 \mid X) = \pi(X)$. Therefore:
+$$P\bigl(T{=}1 \mid Y(t),\, \pi(X)\bigr) = \E\bigl[\pi(X) \mid Y(t), \pi(X)\bigr] = \pi(X) = P(T{=}1 \mid \pi(X)).$$
+Hence $T \indep Y(t) \mid \pi(X)$. $\square$
+:::
+
+::: {.callout-note icon=false}
+## Remark
+
+The theorem gives an alternative identification formula:
+$$\E[Y(t)] = \E\bigl[\E[Y \mid \pi(X),\, T{=}t]\bigr].$$
+A common misconception is that the two conditional regressions $\E[Y \mid \pi(X), T{=}t]$ and $\E[Y \mid X, T{=}t]$ are equal. They are not: they are different functions and their pointwise values generally differ. The theorem guarantees only that their marginal expectations agree:
+$$\E\bigl[\E[Y \mid \pi(X),\, T{=}t]\bigr] = \E\bigl[\E[Y \mid X,\, T{=}t]\bigr] = \E[Y(t)].$$
+:::
+
+### The Propensity Score is the Coarsest Balancing Score
+
+::: {.callout-tip icon=false}
+## Lemma: The Propensity Score is the Coarsest Balancing Score
+
+[@rosenbaum1983central] If $b(X)$ is any balancing score --- that is, $T \indep X \mid b(X)$ --- then $\pi(X)$ is a function of $b(X)$: $\pi(X) = g(b(X))$ for some measurable function $g$.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+Since $b(X)$ is a balancing score, $T \indep X \mid b(X)$, so $P(T{=}1 \mid X,\, b(X)) = P(T{=}1 \mid b(X))$. But $b(X)$ is a function of $X$:
+$$\pi(X) = P(T{=}1 \mid X) = P\bigl(T{=}1 \mid X,\, b(X)\bigr) = P\bigl(T{=}1 \mid b(X)\bigr).$$
+Hence $\pi(X)$ is a measurable function of $b(X)$ alone. $\square$
+:::
+
+The lemma says that $\pi(X)$ is the *smallest* sufficient statistic for $T$ among all functions of $X$: any other balancing score retains at least as much information about $X$ as the propensity score does.
+
+::: {.callout-note icon=false}
+## The Dimension Reduction
+
+The Propensity Score Theorem says that instead of adjusting for the full high-dimensional vector $X$, it is sufficient to adjust for the scalar $\pi(X)$. Identification of the ATE follows immediately:
+$$\tau_{\mathrm{ATE}} = \E\bigl[\E[Y \mid T{=}1, \pi(X)] - \E[Y \mid T{=}0, \pi(X)]\bigr].$$
+:::
+
+## Estimation of the Propensity Score {#sec-ps-estimation}
+
+The true propensity score $\pi(X) = P(T{=}1 \mid X)$ is *unknown* in observational studies and must be estimated from the data.
+
+**Logistic regression.** The classical approach models $\mathrm{logit}(\pi(X)) = X^\top \beta$ and estimates $\beta$ by maximum likelihood. The fitted values $\hat\pi(X_i) = \sigma(X_i^\top \hat\beta)$ are used in place of the true propensity score.
+
+**Machine learning estimators.** When $X$ is high-dimensional or the true propensity score is nonlinear, machine learning methods --- gradient boosted trees, random forests, regularized logistic regression (LASSO, ridge) --- can estimate $\pi(X)$ more flexibly. A critical issue is *overfitting*: an estimator that perfectly separates treated and control units in-sample will produce estimated propensity scores near 0 or 1 everywhere, destroying overlap. Cross-fitting (Chapter 11) addresses this by estimating nuisance functions on held-out folds.
+
+::: {.callout-warning icon=false}
+## Propensity Score Estimation Is a Nuisance, Not the Goal
+
+The propensity score is estimated in order to construct a good estimator of $\tau_{\mathrm{ATE}}$. Balancing tests diagnose whether the estimated score has achieved covariate balance, but they do *not* test whether unobserved confounders are balanced.
+:::
+
+## Matching on the Propensity Score {#sec-matching}
+
+The propensity score also motivates *matching*: for each treated unit $i$, find a control unit $j$ with $\hat\pi(X_j) \approx \hat\pi(X_i)$, and use $Y_j$ as a proxy for $Y_i(0)$ [@abadie2006large; @abadie2016matching]. The resulting estimator of the ATT is:
+$$\hat\tau_{\mathrm{ATT}} = \frac{1}{n_1}\sum_{i:\, T_i=1} \Bigl[Y_i - Y_{\hat\jmath(i)}\Bigr],$$
+where $\hat\jmath(i)$ is the index of the matched control unit.
+
+**One-to-one nearest neighbor matching.** For each treated unit $i$, find:
+$$\hat\jmath(i) = \arg\min_{j:\, T_j=0} \bigl|\hat\pi(X_i) - \hat\pi(X_j)\bigr|.$$
+Matching with replacement reduces bias (each control unit is available to every treated unit) but increases variance.
+
+**Caliper matching.** Restricts matches to pairs within a maximum distance $\delta$ on the propensity score scale. Treated units with no control match within the caliper are discarded, restricting the estimand to the subset of treated units with good overlap.
+
+::: {.callout-note icon=false}
+## Remark
+
+Propensity score matching implicitly fits a nonparametric regression of $Y$ on $\pi(X)$ separately within each treatment arm. By the Propensity Score Theorem, $(Y(0), Y(1)) \indep T \mid \pi(X)$, so the conditional mean $\E[Y(t) \mid \pi(X) = p]$ is identified from observed data. Nearest-neighbor matching approximates this conditional mean at each observed $\hat\pi(X_i)$ by local constant regression on the scalar propensity score --- feasible precisely because of the dimension reduction from $X$ to $\pi(X)$.
+:::
+
+## Inverse Probability Weighting {#sec-ipw}
+
+### The IPW Identification Formula
+
+Under strong ignorability, the ATE admits an alternative representation as an *inverse probability weighting* (IPW) formula:
+$$\tau_{\mathrm{ATE}} = \E\!\left[\frac{T \cdot Y}{\pi(X)}\right] - \E\!\left[\frac{(1-T)\cdot Y}{1-\pi(X)}\right].$$
+
+::: {.callout-tip icon=false}
+## Theorem: IPW Identification
+
+Under strong ignorability ($(Y(0), Y(1)) \indep T \mid X$ and $0 < \pi(X) < 1$):
+$$\E\!\left[\frac{T \cdot Y}{\pi(X)}\right] = \E[Y(1)].$$
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+$$\E\!\left[\frac{TY}{\pi(X)}\right] = \E\!\left[\frac{TY(1)}{\pi(X)}\right] = \E\!\left[\E\!\left[\frac{TY(1)}{\pi(X)} \;\Big|\; X\right]\right] = \E\!\left[\frac{Y(1)}{\pi(X)}\, \E[T \mid X]\right] = \E\!\left[\frac{Y(1)}{\pi(X)}\, \pi(X)\right] = \E[Y(1)].$$
+The first equality uses consistency ($Y = Y(1)$ when $T{=}1$); the third uses ignorability ($Y(1) \indep T \mid X$). $\square$
+:::
+
+### The Horvitz--Thompson and Hájek Estimators
+
+The *Horvitz--Thompson* (HT) IPW estimator:
+$$\hat\tau_{\mathrm{IPW}} = \frac{1}{n}\sum_{i=1}^n \left[\frac{T_i Y_i}{\hat\pi(X_i)} - \frac{(1-T_i) Y_i}{1-\hat\pi(X_i)}\right].$$
+
+This estimator is consistent when $\hat\pi(X)$ converges to $\pi(X)$, but can be *inefficient* due to extreme weights. The *normalized* (Hájek) estimator divides by the sum of weights within each group and is often more stable:
+$$\hat\tau_{\mathrm{HJ}} = \frac{\sum_i T_i Y_i / \hat\pi(X_i)}{\sum_i T_i / \hat\pi(X_i)} - \frac{\sum_i (1-T_i) Y_i / (1-\hat\pi(X_i))}{\sum_i (1-T_i) / (1-\hat\pi(X_i))}.$$
+
+The efficient doubly-robust estimator (AIPW) of Chapter 10 combines the outcome model and the propensity score; under correct nuisance specification it achieves higher efficiency than either pure IPW or pure outcome regression alone.
+
+## Overlap and Positivity {#sec-overlap}
+
+### The Strict Overlap Condition
+
+::: {.callout-note icon=false}
+## Definition: Strict Overlap (Positivity)
+
+The *strict overlap condition* requires:
+$$0 < \pi(X) < 1 \quad \text{almost surely.}$$
+Every unit has a positive probability of receiving either treatment or control, regardless of its covariate values.
+:::
+
+Together with unconfoundedness, strict overlap constitutes *strong ignorability* [@rosenbaum1983central].
+
+**Why overlap is necessary.** The identification formula requires that both $\E[Y \mid T{=}1, X{=}x]$ and $\E[Y \mid T{=}0, X{=}x]$ be defined for all $x$ in the support of $X$. If $\pi(x) = 0$ for some $x$, then no treated units exist with $X = x$, so $\E[Y \mid T{=}1, X{=}x]$ is not estimable.
+
+### Practical Consequences of Near-Violations
+
+::: {.callout-warning icon=false}
+## Near-Overlap Problems
+
+When $\hat\pi(X_i)$ is close to 0 or 1, the IPW weight $1/\hat\pi(X_i)$ or $1/(1 - \hat\pi(X_i))$ is very large. A small number of units with extreme weights can dominate the estimator, increasing variance dramatically.
+:::
+
+### Trimming Strategies
+
+**Trimming by propensity score.** Restrict the analysis to units with estimated propensity scores in $[\eta, 1-\eta]$ for some small $\eta > 0$. The estimand changes to $\tau_{\mathrm{trim}} = \E[Y(1) - Y(0) \mid \eta \le \pi(X) \le 1-\eta]$.
+
+**Crump et al. (2009) rule.** @crump2009dealing derive the optimal trimming threshold minimizing the asymptotic variance of the trimmed ATE estimator. The rule $\eta = 0.1$ --- trimming units with $\pi(X) < 0.1$ or $\pi(X) > 0.9$ --- is a common default.
+
+**ATT instead of ATE.** When overlap fails at covariate values where $\pi(X)$ is near 1, re-targeting the estimand to $\tau_{\mathrm{ATT}}$ avoids the problem, since the ATT requires only $\pi(X) < 1$ on the support of $X$ among the treated.
+
+## Lab: Simulation Study of IPW and Matching Estimators {#sec-lab}
+
+This lab compares five estimators on a five-covariate data-generating process with treatment-effect heterogeneity. With five continuous confounders, direct stratification is infeasible, making propensity-score methods the natural choice. The estimators span two estimands: the ATE (HT-ATE, HJ-ATE) and the ATT (HT-ATT, HJ-ATT, NNM).
+
+### Part 1: Correctly Specified Propensity Score
+
+::: {.callout-note icon=false}
+## DGP for Lab 6
+
+Let $X_j \overset{\mathrm{i.i.d.}}{\sim} \mathrm{Normal}(0,1)$ for $j = 1, \ldots, 5$. The true propensity score is:
+$$\pi(X) = \mathrm{expit}(-0.5 + 0.8X_1 + 0.5X_2 - 0.3X_3 + 0.2X_4 + 0.1X_5),$$ {#eq-dgp-ps}
+giving $P(T{=}1) \approx 0.40$. The potential outcomes are:
+$$Y(t) = (1 + 0.5X_1)\cdot t + 8 + 0.8X_1 + 0.5X_2 + 0.4X_3 + 0.3X_4 + 0.2X_5 + \varepsilon, \quad \varepsilon \sim \mathrm{N}(0,1).$$ {#eq-dgp-po}
+
+The CATE is $\tau(X) = 1 + 0.5X_1$. Because $\E[X_1] = 0$: $\tau_{\mathrm{ATE}} = 1.000$ (exact). Because $\pi(X)$ is increasing in $X_1$, treated units have higher $X_1$ on average: $\tau_{\mathrm{ATT}} \approx 1.199$ (oracle run, $n = 10^7$). The gap $\approx 0.199$ reflects a selection effect: units most likely to be treated also tend to have larger individual treatment effects. Strong ignorability holds by construction.
+:::
+
+**Five estimators** are compared under both true and estimated propensity scores. Under the estimated score, $\hat\pi(X)$ is obtained by correctly specified logistic regression of $T$ on $(X_1, \ldots, X_5)$.
+
+| **Estimator** | **Formula** | **Estimand** |
+|---|---|---|
+| HT-ATE | $\frac{1}{n}\sum_i \left[\frac{T_i Y_i}{\hat\pi(X_i)} - \frac{(1-T_i) Y_i}{1-\hat\pi(X_i)}\right]$ | ATE |
+| HJ-ATE | Hájek-normalized HT | ATE |
+| HT-ATT | $\frac{1}{n_1}\sum_{T_i=1} Y_i - \frac{1}{n_1}\sum_{T_i=0}\frac{\hat\pi(X_i)}{1-\hat\pi(X_i)} Y_i$ | ATT |
+| HJ-ATT | Self-normalized version of HT-ATT (control arm only) | ATT |
+| NNM | $\frac{1}{n_1}\sum_{T_i=1}[Y_i - Y_{\hat\jmath(i)}]$, 1:1 with replacement | ATT |
+
+**Results.** $n = 1{,}000$, $B = 2{,}000$ replications, seed 42.
+
+| **PS** | **Estimator** | **Estimand** | **Mean** | **Bias** | **SD** | **RMSE** |
+|---|---|---|---|---|---|---|
+| Known | HT-ATE | ATE | 1.008 | +0.008 | 0.626 | 0.626 |
+| Known | HJ-ATE | ATE | 1.003 | +0.003 | 0.145 | 0.145 |
+| Known | HT-ATT | ATT | 1.184 | −0.016 | 0.725 | 0.725 |
+| Known | HJ-ATT | ATT | 1.203 | +0.003 | 0.131 | 0.131 |
+| Known | NNM | ATT | 1.207 | +0.008 | 0.130 | 0.130 |
+| Estimated | HT-ATE | ATE | 0.998 | −0.002 | 0.194 | 0.194 |
+| Estimated | HJ-ATE | ATE | 1.002 | +0.002 | 0.102 | 0.103 |
+| Estimated | HT-ATT | ATT | 1.202 | +0.002 | 0.251 | 0.251 |
+| Estimated | HJ-ATT | ATT | 1.202 | +0.002 | 0.101 | 0.101 |
+| Estimated | NNM | ATT | 1.205 | +0.006 | 0.121 | 0.121 |
+
+Five lessons stand out. **1.** Hájek normalization is essential when outcomes are non-centered: HT-ATE achieves SD $= 0.626$ vs. HJ-ATE SD $= 0.145$ --- a 4.3-fold reduction. **2.** The same problem afflicts ATT: HT-ATT SD $= 0.725$ vs. HJ-ATT SD $= 0.131$ --- a 5.5-fold reduction. **3.** HJ-ATT and NNM converge to the same ATT target with nearly identical efficiency (SD 0.131 vs. 0.130 under known PS). **4.** The ATE--ATT gap of $\approx 0.199$ is a real difference in estimands, not a bias --- declaring the estimand before looking at results is non-negotiable. **5.** Estimated PS collapses HT variance; HJ-ATT with estimated PS (SD $= 0.101$) beats NNM (SD $= 0.121$), illustrating the efficiency gain of a well-estimated score.
+
+::: {.callout-warning icon=false}
+## The Estimand Must Be Chosen Before the Estimator
+
+In this DGP, $\tau_{\mathrm{ATE}} = 1.000$ and $\tau_{\mathrm{ATT}} \approx 1.199$. The gap arises because treatment-effect heterogeneity is correlated with propensity for treatment [@imbens2015causal] --- individuals often select into treatment partly because they anticipate larger benefits. A researcher who applies NNM and reports its output against the ATE benchmark of $1.000$ would conclude the estimator has $20\%$ bias; in fact it is unbiased for the correct target.
+:::
+
+### Part 2: Robustness to PS Model Misspecification
+
+Part 1 used a correctly specified logistic propensity model. Part 2 introduces a *nonlinear* true propensity score:
+$$\pi^*(X) = \mathrm{expit}(-0.5 + 0.8X_1 + 0.5X_1^2 + 0.2X_4 + 0.1X_5),$$ {#eq-dgp-ps2}
+with a U-shaped surface in $X_1$. The true ATE remains $1.000$ (exact); the ATT changes to $\approx 1.152$. The *estimated* PS is still a linear logistic regression that omits $X_1^2$ --- misspecified.
+
+**Results.** True ATE $= 1.000$; true ATT $\approx 1.152$. $n = 1{,}000$, $B = 2{,}000$ replications.
+
+| **PS** | **Estimator** | **Estimand** | **Mean** | **Bias** | **SD** | **RMSE** |
+|---|---|---|---|---|---|---|
+| True | HT-ATE | ATE | 1.028 | +0.028 | 0.824 | 0.825 |
+| True | HJ-ATE | ATE | 1.013 | +0.013 | 0.152 | 0.152 |
+| True | HT-ATT | ATT | 1.186 | +0.034 | 1.333 | 1.333 |
+| True | HJ-ATT | ATT | 1.183 | +0.031 | 0.212 | 0.215 |
+| True | NNM | ATT | 1.178 | +0.026 | 0.175 | 0.177 |
+| Misspecified | HT-ATE | ATE | 1.478 | +0.478 | 0.147 | 0.501 |
+| Misspecified | HJ-ATE | ATE | 0.861 | −0.139 | 0.087 | 0.164 |
+| Misspecified | HT-ATT | ATT | 1.780 | +0.628 | 0.162 | 0.649 |
+| Misspecified | HJ-ATT | ATT | 1.306 | +0.154 | 0.081 | 0.174 |
+| Misspecified | NNM | ATT | 1.172 | +0.020 | 0.138 | 0.139 |
+
+Three lessons complete the picture. **6.** PS misspecification makes all IPW estimators inconsistent; Hájek normalization is a variance correction only --- it cannot fix a structurally wrong model. Note also that HJ-ATE and HT-ATE have biases in *opposite directions* ($-0.139$ vs. $+0.478$) because the two estimators respond differently to the systematic over/underestimation of the U-shaped score. **7.** NNM is substantially more robust: its bias under misspecification ($+0.020$) is far smaller than any IPW estimator, because matching relies on local covariate similarity rather than a globally correct weighting function.
+
+::: {.callout-warning icon=false}
+## IPW Needs a Correct PS Model; Matching Needs Covariate Balance
+
+IPW is a *model-dependent* estimator: consistency relies on correct PS specification. Matching is a *design-dependent* estimator: consistency relies on matched pairs being approximately balanced. This condition can hold even when the PS model is wrong, provided the estimated score still separates units well enough that close matches imply closeness on the full covariate vector. The cost is efficiency: when the PS model is correct, matching leaves variance on the table relative to IPW. Neither dominates unconditionally [@yang2016multilevel; @yang2023multiply].
+:::
+
+**Head-to-head comparison of HJ-ATT and NNM:**
+
+| **Estimator** | **Bias (Correct PS)** | **RMSE (Correct PS)** | **Bias (Misspecified PS)** | **RMSE (Misspecified PS)** |
+|---|---|---|---|---|
+| HJ-ATT | +0.002 | 0.101 | +0.154 | 0.174 |
+| NNM | +0.006 | 0.121 | +0.020 | 0.139 |
+
+## The Limits of Propensity Score Methods {#sec-limits}
+
+Every result in this chapter --- the Propensity Score Theorem, the IPW identification formula, the matching estimator --- rests on the unconfoundedness assumption:
+$$(Y(0),\, Y(1)) \;\indep\; T \;\Big|\; X.$$
+
+::: {.callout-note icon=false}
+## Design-Based vs. Model-Based Identification
+
+Randomization *guarantees* ignorability: by construction, no back-door paths exist. Propensity-score adjustment *assumes* ignorability: the analyst must argue from subject-matter knowledge that all confounders have been measured. This distinction is fundamental. No statistical test can confirm unconfoundedness from observed data alone (Chapter 5). Sensitivity analysis can quantify how large an unobserved confounder would have to be to overturn a conclusion, but cannot confirm the assumption.
+:::
+
+When unobserved confounders are present, propensity score adjustment fails and an instrumental variable is needed to identify the causal effect. Instrumental variables take a different approach: instead of blocking the confounding path $T \leftarrow U \to Y$, they isolate variation in $T$ induced by an external source $Z$ independent of $U$. This is derived formally in Chapter 7.
+
+## Summary
+
+1. **The propensity score reduces dimension.** Under unconfoundedness, $\pi(X) = P(T{=}1 \mid X)$ is a *balancing score*: $T \indep X \mid \pi(X)$. Consequently, $(Y(0),Y(1)) \indep T \mid \pi(X)$, so identification requires adjustment for the scalar $\pi(X)$ alone.
+
+2. **IPW identification.** The ATE is identified as $\E[TY/\pi(X)] - \E[(1-T)Y/(1-\pi(X))]$ under strong ignorability. The Horvitz--Thompson IPW estimator is consistent but sensitive to extreme weights; the Hájek variant is often more stable. AIPW (Chapter 10) achieves higher efficiency under correct nuisance specification.
+
+3. **The matching procedure in this chapter targets the ATT.** The nearest-neighbor matching estimator finds control units with similar propensity scores to each treated unit. It differs fundamentally from IPW weighting in estimand and methodology, and is more robust to PS misspecification.
+
+4. **Strict overlap is non-negotiable.** The condition $0 < \pi(X) < 1$ a.s. is necessary for identification of the ATE. Near-violations create extreme IPW weights and large variance; trimming strategies address this at the cost of restricting the estimand.
+
+5. **The fundamental limitation.** Unconfoundedness $(Y(0),Y(1)) \indep T \mid X$ is a strong, untestable assumption. When unobserved confounders are present, propensity score adjustment fails and an instrumental variable is needed.
+
+| **Design** | **Key assumption** | **Identified estimand** |
+|---|---|---|
+| Randomized experiment | $(Y(0),Y(1)) \indep T$ (by design) | ATE |
+| Propensity-score adjustment | $(Y(0),Y(1)) \indep T \mid X$ (unconfoundedness) | ATE or ATT |
+| Instrumental variables | Relevance, exogeneity, exclusion | LATE (compliers) |
+
+## Problems
+
+**1. Propensity score and balancing.** Suppose $X = (X_1, X_2)$, where $X_1$ is binary and $X_2$ is continuous. The propensity score model is correctly specified as $\mathrm{logit}(\pi(X)) = \beta_0 + \beta_1 X_1 + \beta_2 X_2$.
+
+(a) State and prove the Balancing Property $T \indep X \mid \pi(X)$.
+(b) Two units $i$ and $j$ have $X_i = (1, 2.3)$ and $X_j = (0, 3.5)$ but $\hat\pi(X_i) = \hat\pi(X_j) = 0.4$. If $i$ is treated and $j$ is control, explain why comparing $Y_i$ and $Y_j$ is a valid approximation to the counterfactual comparison, and what assumption is required.
+(c) Explain why matching on $\hat\pi(X)$ is *not* the same as matching on $X$ directly. Under what conditions do they give the same answer?
+
+**2. ATE, ATT, and propensity score weighting.** A dataset has $n = 1000$ observations with estimated propensity scores $\hat\pi(X_i)$ and $n_1 = 400$ treated units.
+
+(a) Write the Horvitz--Thompson IPW estimator of the ATE as a weighted sum of observed outcomes $Y_i$. What weights do treated units receive? What weights do control units receive?
+(b) Derive an analogous IPW estimator for the ATT. (*Hint*: the ATT averages over the treated distribution; the denominator of the weight for control units should reflect this.)
+(c) Show that when the propensity score is constant ($\pi(X) = p$ for all units), the IPW estimator of the ATE reduces to the difference-in-means estimator. Under what experimental design does $\pi(X) = 0.5$ exactly?
+
+**3. Overlap.** Let $\pi(X)$ be the true propensity score and suppose overlap fails at $X = x_0$: $\pi(x_0) = 1$.
+
+(a) For each of $\tau_{\mathrm{ATE}}$ and $\tau_{\mathrm{ATT}}$, identify the exact formula that fails to be identified when $\pi(x_0) = 1$, and explain why.
+(b) Suppose overlap fails only on a set $\mathcal{S}$ with $P(X \in \mathcal{S}) = 0.15$. Define the *trimmed ATE* estimand. How does it differ from the ATE?
+(c) A researcher applies the Crump et al. (2009) rule with $\eta = 0.1$, removing all units with $\hat\pi(X_i) < 0.1$ or $\hat\pi(X_i) > 0.9$, removing 8% of the sample. (i) List two reasons the trimmed estimator may have lower variance than the untrimmed IPW estimator. (ii) What is the cost in terms of external validity?
+
+**4. Sensitivity analysis (conceptual).** Suppose you estimate $\hat\tau_{\mathrm{ATE}} = 3.2$ using propensity-score methods, and a referee questions whether unconfoundedness holds.
+
+(a) Define what it means for $U$ to be a "hidden confounder" in the context of the DAG, and explain why its presence invalidates the IPW identification formula.
+(b) Explain in one paragraph what Rosenbaum-style sensitivity analysis would tell you about the robustness of your estimate to hidden confounding.
+(c) Suppose a sensitivity analysis shows that a confounder with an odds ratio of 2 for both treatment and outcome selection would be required to explain away your result. How would you interpret this finding? Does it confirm unconfoundedness?
