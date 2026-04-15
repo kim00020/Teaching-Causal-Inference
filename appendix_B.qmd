@@ -1,0 +1,210 @@
+---
+engine: knitr
+suppress-bibliography: true
+---
+
+# Single World Intervention Graphs {#sec-appendix-b}
+
+This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by @richardson2014ace and given an accessible practical treatment by @bezuidenhout2025swigs. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram. A reader familiar with Chapters 2--4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.
+
+Chapter 4 used the back-door criterion and the adjustment formula to identify causal effects. SWIGs make that identification argument graphically explicit: potential outcomes appear as labeled nodes inside the graph, so ignorability becomes a routine d-separation statement rather than a free-standing probabilistic assumption. @sec-biconditional completes the picture by establishing the biconditional equivalence between ignorability and the back-door criterion that was only stated in one direction in Chapter 4.
+
+## The SWIG Construction {#sec-swig-def}
+
+In the original DAG $\Gcal$, the node $T$ represents the treatment as it naturally occurs. Under $\doop(T{=}t)$, however, the treatment is externally fixed. The SWIG separates these two roles by *splitting* $T$ into two pieces displayed side by side in the graph:
+
+- a **random half** (left side, capital letter $T$): represents the treatment value that would naturally occur, and retains all incoming edges from $T$'s causal parents;
+- a **fixed half** (right side, lowercase letter $t$): represents the externally imposed intervention value, carries all outgoing edges that formerly left $T$, and has *no* edge to or from the random half.
+
+::: {.callout-note icon=false}
+## Definition: Single World Intervention Graph
+
+[@richardson2014ace] The *SWIG* $\Gcal(t)$ is constructed from $\Gcal$ by:
+
+1. Replacing $T$ with two nodes: random half $T$ (all incoming edges retained) and fixed half $t$ (all outgoing edges retained).
+2. Severing the direct connection between the two halves.
+3. Redrawing causal arrows at the split node: *all arrows into the split node land on the random half*; *all arrows departing the split node leave from the fixed half*.
+4. Relabeling every descendant $V$ of $T$ in $\Gcal$ as $V(t)$, indicating it is a potential outcome under $\doop(T{=}t)$.
+:::
+
+@fig-swig illustrates the construction for the simple confounded-treatment graph.
+
+```{tikz}
+#| label: fig-swig
+#| fig-cap: "Converting the confounded-treatment DAG ($L$ is a confounder) into the SWIG for $\\doop(A{=}a)$. The treatment node splits: the random half $A$ (circle) retains the incoming arrow from $L$; the fixed half $a$ (square) carries the outgoing arrow to $Y(a)$. D-separation in the SWIG gives $A \\indep Y(a) \\mid L$ (conditional ignorability)."
+#| echo: false
+#| fig-width: 5
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\tikzset{
+  rnd/.style={circle, draw=isublue, fill=defbg, thick, minimum size=9mm, font=\small\bfseries},
+  fix/.style={rectangle, draw=isublue, fill=gray!15, thick, minimum size=9mm, font=\small\bfseries}
+}
+\begin{tikzpicture}[>=stealth]
+  \begin{scope}[xshift=0cm]
+    \node[rnd] (L)  at (1.4, 1.5) {$L$};
+    \node[rnd] (A)  at (0,   0)   {$A$};
+    \node[rnd] (Y)  at (2.8, 0)   {$Y$};
+    \draw[->,thick,color=isublue](L)--(A);
+    \draw[->,thick,color=isublue](L)--(Y);
+    \draw[->,thick,color=isublue](A)--(Y);
+    \node[font=\small\itshape\color{darkgrey}] at (1.4,-0.85) {DAG};
+  \end{scope}
+  \node[font=\large] at (3.9, 0.4) {$\Rightarrow$};
+  \begin{scope}[xshift=4.9cm]
+    \node[rnd] (Lr)  at (1.9, 1.5) {$L$};
+    \node[rnd] (Ar)  at (0.4, 0)   {$A$};
+    \node[fix] (af)  at (1.5, 0)   {$a$};
+    \node[rnd] (Ya)  at (3.5, 0)   {$Y(a)$};
+    \draw[->,thick,color=isublue](Lr)--(Ar);
+    \draw[->,thick,color=isublue](Lr)--(Ya);
+    \draw[->,thick,color=isublue](af)--(Ya);
+    \node[font=\small\itshape\color{darkgrey}] at (1.9,-0.85) {SWIG $\mathcal{G}(a)$};
+  \end{scope}
+\end{tikzpicture}
+```
+
+## The Fixed Half as a Source Node {#sec-fixed-half}
+
+After the SWIG $\Gcal(t)$ is constructed, d-separation among its nodes is evaluated using the standard rules of Chapter 2. The key structural fact that governs all path analysis in a SWIG is:
+
+::: {.callout-note icon=false}
+## The Fixed Half Is a Source Node
+
+In $\Gcal(t)$, the fixed half $t$ has **no incoming edges**. Step 2 of the construction severs the connection from the random half $T$, and no other node in $\Gcal$ has a direct arrow into $t$. Three consequences follow immediately.
+
+1. **No path arrives at $t$ from another node.** The edge $T \to t$ does not exist in $\Gcal(t)$. In particular, the path $T \to t \to Y(t)$ *cannot be formed*: it is not "blocked" by a d-separation rule --- it simply does not exist as a path in the graph.
+2. **$t$ cannot lie strictly between two other nodes on a path.** Because $t$ has no parents, it is never a transit node; it can only be an *origin* of paths leading to descendants $V(t)$.
+3. **The random half $T$ and the fixed half $t$ are d-separated by the empty set.** With no edge between them and no common ancestor, $T \indep t$ holds unconditionally in $\Gcal(t)$.
+
+This is not an additional d-separation rule: it is a direct consequence of the SWIG construction. The fixed half $t$ represents an externally stipulated intervention --- it is not *caused* by anything within the system, so it has no parents.
+:::
+
+**Path analysis in $\Gcal(t)$.** With $t$ as a source node, every path from the random half $T$ to a potential outcome $V(t)$ must travel *away* from $T$ through $T$'s parents in $\Gcal$ --- that is, every such path is a back-door path. This is the structural fact that makes the back-door criterion readable directly from the SWIG.
+
+**Recovering ignorability from the SWIG.** In @fig-swig, the only paths from the random half $A$ to $Y(a)$ are back-door paths through $A$'s parents. The path $A \leftarrow L \to Y(a)$ is open, but blocked by conditioning on $L$. No other path connects $A$ to $Y(a)$. Conditioning on $L$ achieves d-separation:
+$$A \;\indep\; Y(a) \;\big|\; L \quad \text{in } \Gcal(a),$$
+which is exactly the conditional ignorability of the Strong Ignorability definition in Chapter 4, now *derived* as a graph-structural consequence rather than asserted as an assumption.
+
+## When Ignorability Fails: Hidden Confounding {#sec-hidden}
+
+The SWIG is equally useful for diagnosing *failures* of ignorability. @fig-swig-hidden shows the SWIG when a hidden common cause $U$ affects both $A$ and $Y$.
+
+```{tikz}
+#| label: fig-swig-hidden
+#| fig-cap: "Adding a hidden confounder $U$ (dashed circle) to the confounded-treatment DAG and its SWIG. In $\\mathcal{G}(a)$, two back-door paths connect $A$ to $Y(a)$: the observed path $A \\leftarrow L \\to Y(a)$, which can be blocked by conditioning on $L$, and the hidden path $A \\leftarrow U \\to Y(a)$, which cannot. Ignorability fails."
+#| echo: false
+#| fig-width: 5.5
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\tikzset{
+  rnd/.style={circle, draw=isublue, fill=defbg, thick, minimum size=9mm, font=\small\bfseries},
+  fix/.style={rectangle, draw=isublue, fill=gray!15, thick, minimum size=9mm, font=\small\bfseries},
+  hid/.style={circle, draw=isublue, fill=white, thick, dashed, minimum size=9mm, font=\small\bfseries}
+}
+\begin{tikzpicture}[>=stealth]
+  \begin{scope}[xshift=0cm]
+    \node[rnd] (L)  at (1.4, 1.5)  {$L$};
+    \node[rnd] (A)  at (0,   0)    {$A$};
+    \node[rnd] (Y)  at (2.8, 0)    {$Y$};
+    \node[hid] (U)  at (1.4,-1.2)  {$U$};
+    \draw[->,thick,color=isublue](L)--(A);
+    \draw[->,thick,color=isublue](L)--(Y);
+    \draw[->,thick,color=isublue](A)--(Y);
+    \draw[->,thick,dashed,color=isublue](U)--(A);
+    \draw[->,thick,dashed,color=isublue](U)--(Y);
+    \node[font=\small\itshape\color{darkgrey}] at (1.4,-2.15) {DAG (with hidden $U$)};
+  \end{scope}
+  \node[font=\large] at (4.1, 0.15) {$\Rightarrow$};
+  \begin{scope}[xshift=5.1cm]
+    \node[rnd] (Lr)  at (1.9, 1.5)  {$L$};
+    \node[rnd] (Ar)  at (0.4, 0)    {$A$};
+    \node[fix] (af)  at (1.5, 0)    {$a$};
+    \node[rnd] (Ya)  at (3.5, 0)    {$Y(a)$};
+    \node[hid] (Ur)  at (1.9,-1.2)  {$U$};
+    \draw[->,thick,color=isublue](Lr)--(Ar);
+    \draw[->,thick,color=isublue](Lr)--(Ya);
+    \draw[->,thick,color=isublue](af)--(Ya);
+    \draw[->,thick,dashed,color=isublue](Ur)--(Ar);
+    \draw[->,thick,dashed,color=isublue](Ur)--(Ya);
+    \node[font=\small\itshape\color{darkgrey}] at (1.9,-2.15) {SWIG $\mathcal{G}(a)$ (with hidden $U$)};
+  \end{scope}
+\end{tikzpicture}
+```
+
+In the SWIG $\Gcal(a)$ with hidden $U$, the paths from $A$ to $Y(a)$ are: (1) $A \leftarrow L \to Y(a)$: blocked by conditioning on $L$; (2) $A \leftarrow U \to Y(a)$: open regardless of $L$, since $U$ is unobserved. Even after conditioning on $L$, the path through $U$ remains open, so $A \nindep Y(a) \mid L$ in $\Gcal(a)$, and ignorability fails. The failure is *immediately visible* from the SWIG: an unblocked dashed arrow entering the random half $A$ signals that selection into treatment carries information about the potential outcome that no set of observed covariates can remove.
+
+::: {.callout-note icon=false}
+## Remark
+
+This failure motivates the instrumental variable designs of Chapter 7. When a valid instrument $Z$ is available --- one that affects $A$ but has no direct effect on $Y$ and is independent of $U$ --- the IV strategy sidesteps the unblocked $U$-path rather than attempting to block it by covariate adjustment.
+:::
+
+## What SWIGs Achieve {#sec-swig-achieve}
+
+**1. Potential outcomes as random variables in a DAG.** In $\Gcal(t)$, the variable $Y(t)$ is an ordinary node with well-defined parents: the fixed half $t$ and any other causes of $Y$ retained from $\Gcal$. Its marginal distribution equals the interventional distribution $f(y \mid \doop(T{=}t))$. $Y(t)$ is the counterfactual random variable, and $f(y \mid \doop(T{=}t))$ is its induced interventional distribution; the SWIG makes both explicit in the same graph.
+
+**2. The mutilated graph as a special case.** Removing the random half $T$ from $\Gcal(t)$ yields exactly the mutilated graph $\Gcal_{\overline{T}}$ of Chapter 1. The SWIG is a more informative version that retains the random half alongside the fixed half, making it possible to ask --- and answer by d-separation --- questions about the relationship between the natural treatment $T$ and the potential outcomes $V(t)$.
+
+**3. Unconfoundedness as a d-separation statement.** The ignorability condition $(Y(t) \indep T \mid X)$ is a standard d-separation statement *in the SWIG* $\Gcal(t)$, verifiable by path-tracing. This gives the analyst a concrete graphical check: draw the SWIG, identify all paths from the random half $T$ to $Y(t)$, and verify that $X$ blocks all of them.
+
+**4. A single graph for both frameworks.** The SWIG simultaneously hosts the natural treatment $T$ (random half), the intervention value $t$ (fixed half), the potential outcomes $V(t)$, and all d-separation relationships among them.
+
+::: {.callout-warning icon=false}
+## Cross-World Independence and Its Limits
+
+Consider $Y(1) \indep Y(0)$: $Y(1)$ lives in SWIG $\Gcal(1)$ and $Y(0)$ lives in SWIG $\Gcal(0)$. No unit is ever observed in both worlds simultaneously, so no data can directly test this independence. More generally, statements such as $Y(t) \indep T(t') \mid X$ for $t \neq t'$ involve variables from *different SWIGs*. SWIGs make such assumptions explicit: the analyst must specify a joint distribution across multiple SWIGs --- a commitment that potential-outcome notation alone does not force.
+:::
+
+::: {.callout-note icon=false}
+## Remark
+
+More than one node may be split in a single SWIG. In longitudinal settings with time-varying treatments $(A_0, A_1)$, splitting both nodes yields the sequential-randomization SWIG, from which the two *sequential exchangeability* conditions needed to identify the g-formula follow directly by d-separation.
+:::
+
+## Biconditional Equivalence under Faithfulness {#sec-biconditional}
+
+Proposition 4.1 in Chapter 4 established the practically important direction: if $X$ satisfies the back-door criterion, then unconfoundedness holds. That proof required only the Markov property. The converse --- that every ignorability statement corresponds to a back-door condition --- additionally requires faithfulness and follows naturally from the SWIG construction.
+
+::: {.callout-note icon=false}
+## Definition: Faithfulness
+
+A distribution $P$ is **faithful** to a DAG $\Gcal$ if every conditional independence that holds in $P$ is entailed by d-separation in $\Gcal$: that is, $X \indep Y \mid \mathbf{Z}$ in $P$ only if $X$ and $Y$ are d-separated by $\mathbf{Z}$ in $\Gcal$.
+
+Equivalently, faithfulness rules out *accidental* cancellations of causal paths. Together, the Markov property and faithfulness make d-separation a *complete* characterization of the conditional independence structure of $P$. Faithfulness fails only on a measure-zero set of parameter values, so it is considered a mild regularity condition in practice.
+:::
+
+::: {.callout-tip icon=false}
+## Theorem: Ignorability and the Back-Door Criterion Are Equivalent
+
+Under the Markov and faithfulness assumptions for $\Gcal$, unconfoundedness $(Y(0), Y(1)) \indep T \mid X$ holds if and only if $X$ satisfies the back-door criterion for the effect of $T$ on $Y$ in $\Gcal$.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+$(\Rightarrow)$ This is Proposition 4.1 in Chapter 4, which uses only the Markov property.
+
+$(\Leftarrow)$ Suppose $(Y(0), Y(1)) \indep T \mid X$ holds. By faithfulness, every conditional independence in $P$ corresponds to a d-separation in $\Gcal$. Consider the SWIG $\Gcal(t)$. Because the fixed half $t$ has no incoming edges (@sec-fixed-half), every path from the random half $T$ to a potential outcome $Y(t)$ must pass through $T$'s parents in $\Gcal$ --- that is, every such path is a back-door path. The d-separation $(Y(t) \indep T \mid X)_{\Gcal(t)}$ therefore requires $X$ to block all back-door paths from $T$ to $Y$. If any member of $X$ were a descendant of $T$, conditioning on it could open a previously blocked collider path, contradicting the assumed independence; hence no node in $X$ is a descendant of $T$. Both conditions of the back-door criterion are therefore satisfied. $\square$
+:::
+
+The SWIG thus provides a *unified* perspective: ignorability is neither an assumption of the potential outcomes framework alone nor of the do-calculus in isolation, but a graph-structural property that both frameworks share. The back-door criterion and conditional exchangeability are two names for the same identifying condition, seen from two different representational languages.
+
+## Problems
+
+**1. SWIG construction.** Consider the DAG: $X \to T$, $X \to Y$, $T \to Y$, with $X$ fully observed.
+
+(a) Construct the SWIG $\Gcal(t)$ by splitting $T$ into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome $Y(t)$.
+(b) In $\Gcal(t)$, identify all paths between the random half $T$ and $Y(t)$. Apply d-separation to determine which are blocked and which are open before conditioning.
+(c) Use d-separation in $\Gcal(t)$ to verify that $(Y(t) \indep T \mid X)_{\Gcal(t)}$ holds. Conclude that $X$ satisfies the back-door criterion, confirming Theorem B.1 above.
+(d) Now add a hidden common cause $U \to T$, $U \to Y$. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure (if any) would be needed for identification.
+
+**2. Sequential exchangeability in a longitudinal SWIG.** Suppose the treatment is time-varying: $T_0$ is assigned at baseline and $T_1$ at a second time point. The DAG has edges $X \to T_0 \to T_1 \to Y$, $X \to Y$, and $T_0 \to Y$.
+
+(a) Construct the SWIG $\Gcal(t_0, t_1)$ by splitting both $T_0$ and $T_1$. Label all random halves, fixed halves, and potential outcomes.
+(b) List all back-door paths from the random half $T_0$ to $Y(t_0,t_1)$ and from $T_1$ to $Y(t_0,t_1)$. For each, determine whether conditioning on $X$ and the history up to that point is sufficient to achieve d-separation.
+(c) State the two sequential exchangeability conditions that the SWIG makes graphically transparent, and explain what they say about treatment assignment at each time point.

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Appendix B — Single World Intervention Graphs – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./appendix_A.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./appendix_A.html">Appendices</a></li><li class="breadcrumb-item"><a href="./appendix_B.html"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-swig-def" id="toc-sec-swig-def" class="nav-link active" data-scroll-target="#sec-swig-def"><span class="header-section-number">B.1</span> The SWIG Construction</a></li>
+  <li><a href="#sec-fixed-half" id="toc-sec-fixed-half" class="nav-link" data-scroll-target="#sec-fixed-half"><span class="header-section-number">B.2</span> The Fixed Half as a Source Node</a></li>
+  <li><a href="#sec-hidden" id="toc-sec-hidden" class="nav-link" data-scroll-target="#sec-hidden"><span class="header-section-number">B.3</span> When Ignorability Fails: Hidden Confounding</a></li>
+  <li><a href="#sec-swig-achieve" id="toc-sec-swig-achieve" class="nav-link" data-scroll-target="#sec-swig-achieve"><span class="header-section-number">B.4</span> What SWIGs Achieve</a></li>
+  <li><a href="#sec-biconditional" id="toc-sec-biconditional" class="nav-link" data-scroll-target="#sec-biconditional"><span class="header-section-number">B.5</span> Biconditional Equivalence under Faithfulness</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">B.6</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./appendix_A.html">Appendices</a></li><li class="breadcrumb-item"><a href="./appendix_B.html"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-appendix-b" class="quarto-section-identifier">Appendix B — Single World Intervention Graphs</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by <span class="citation" data-cites="richardson2014ace">Richardson and Robins (2014)</span> and given an accessible practical treatment by <span class="citation" data-cites="bezuidenhout2025swigs">Bezuidenhout et al. (2025)</span>. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram. A reader familiar with Chapters 2–4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.</p>
+<p>Chapter 4 used the back-door criterion and the adjustment formula to identify causal effects. SWIGs make that identification argument graphically explicit: potential outcomes appear as labeled nodes inside the graph, so ignorability becomes a routine d-separation statement rather than a free-standing probabilistic assumption. <a href="#sec-biconditional" class="quarto-xref"><span>Section B.5</span></a> completes the picture by establishing the biconditional equivalence between ignorability and the back-door criterion that was only stated in one direction in Chapter 4.</p>
+<section id="sec-swig-def" class="level2" data-number="B.1">
+<h2 data-number="B.1" class="anchored" data-anchor-id="sec-swig-def"><span class="header-section-number">B.1</span> The SWIG Construction</h2>
+<p>In the original DAG <span class="math inline">\(\Gcal\)</span>, the node <span class="math inline">\(T\)</span> represents the treatment as it naturally occurs. Under <span class="math inline">\(\doop(T{=}t)\)</span>, however, the treatment is externally fixed. The SWIG separates these two roles by <em>splitting</em> <span class="math inline">\(T\)</span> into two pieces displayed side by side in the graph:</p>
+<ul>
+<li>a <strong>random half</strong> (left side, capital letter <span class="math inline">\(T\)</span>): represents the treatment value that would naturally occur, and retains all incoming edges from <span class="math inline">\(T\)</span>’s causal parents;</li>
+<li>a <strong>fixed half</strong> (right side, lowercase letter <span class="math inline">\(t\)</span>): represents the externally imposed intervention value, carries all outgoing edges that formerly left <span class="math inline">\(T\)</span>, and has <em>no</em> edge to or from the random half.</li>
+</ul>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Single World Intervention Graph
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="richardson2014ace">(Richardson and Robins 2014)</span> The <em>SWIG</em> <span class="math inline">\(\Gcal(t)\)</span> is constructed from <span class="math inline">\(\Gcal\)</span> by:</p>
+<ol type="1">
+<li>Replacing <span class="math inline">\(T\)</span> with two nodes: random half <span class="math inline">\(T\)</span> (all incoming edges retained) and fixed half <span class="math inline">\(t\)</span> (all outgoing edges retained).</li>
+<li>Severing the direct connection between the two halves.</li>
+<li>Redrawing causal arrows at the split node: <em>all arrows into the split node land on the random half</em>; <em>all arrows departing the split node leave from the fixed half</em>.</li>
+<li>Relabeling every descendant <span class="math inline">\(V\)</span> of <span class="math inline">\(T\)</span> in <span class="math inline">\(\Gcal\)</span> as <span class="math inline">\(V(t)\)</span>, indicating it is a potential outcome under <span class="math inline">\(\doop(T{=}t)\)</span>.</li>
+</ol>
+</div>
+</div>
+<p><a href="#fig-swig" class="quarto-xref">Figure&nbsp;<span>B.1</span></a> illustrates the construction for the simple confounded-treatment graph.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-swig" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-swig-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="appendix_B_files/figure-html/fig-swig-1.pdf" class="img-fluid" width="480">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-swig-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;B.1: Converting the confounded-treatment DAG (<span class="math inline">\(L\)</span> is a confounder) into the SWIG for <span class="math inline">\(\doop(A{=}a)\)</span>. The treatment node splits: the random half <span class="math inline">\(A\)</span> (circle) retains the incoming arrow from <span class="math inline">\(L\)</span>; the fixed half <span class="math inline">\(a\)</span> (square) carries the outgoing arrow to <span class="math inline">\(Y(a)\)</span>. D-separation in the SWIG gives <span class="math inline">\(A \indep Y(a) \mid L\)</span> (conditional ignorability).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-fixed-half" class="level2" data-number="B.2">
+<h2 data-number="B.2" class="anchored" data-anchor-id="sec-fixed-half"><span class="header-section-number">B.2</span> The Fixed Half as a Source Node</h2>
+<p>After the SWIG <span class="math inline">\(\Gcal(t)\)</span> is constructed, d-separation among its nodes is evaluated using the standard rules of Chapter 2. The key structural fact that governs all path analysis in a SWIG is:</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Fixed Half Is a Source Node
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In <span class="math inline">\(\Gcal(t)\)</span>, the fixed half <span class="math inline">\(t\)</span> has <strong>no incoming edges</strong>. Step 2 of the construction severs the connection from the random half <span class="math inline">\(T\)</span>, and no other node in <span class="math inline">\(\Gcal\)</span> has a direct arrow into <span class="math inline">\(t\)</span>. Three consequences follow immediately.</p>
+<ol type="1">
+<li><strong>No path arrives at <span class="math inline">\(t\)</span> from another node.</strong> The edge <span class="math inline">\(T \to t\)</span> does not exist in <span class="math inline">\(\Gcal(t)\)</span>. In particular, the path <span class="math inline">\(T \to t \to Y(t)\)</span> <em>cannot be formed</em>: it is not “blocked” by a d-separation rule — it simply does not exist as a path in the graph.</li>
+<li><strong><span class="math inline">\(t\)</span> cannot lie strictly between two other nodes on a path.</strong> Because <span class="math inline">\(t\)</span> has no parents, it is never a transit node; it can only be an <em>origin</em> of paths leading to descendants <span class="math inline">\(V(t)\)</span>.</li>
+<li><strong>The random half <span class="math inline">\(T\)</span> and the fixed half <span class="math inline">\(t\)</span> are d-separated by the empty set.</strong> With no edge between them and no common ancestor, <span class="math inline">\(T \indep t\)</span> holds unconditionally in <span class="math inline">\(\Gcal(t)\)</span>.</li>
+</ol>
+<p>This is not an additional d-separation rule: it is a direct consequence of the SWIG construction. The fixed half <span class="math inline">\(t\)</span> represents an externally stipulated intervention — it is not <em>caused</em> by anything within the system, so it has no parents.</p>
+</div>
+</div>
+<p><strong>Path analysis in <span class="math inline">\(\Gcal(t)\)</span>.</strong> With <span class="math inline">\(t\)</span> as a source node, every path from the random half <span class="math inline">\(T\)</span> to a potential outcome <span class="math inline">\(V(t)\)</span> must travel <em>away</em> from <span class="math inline">\(T\)</span> through <span class="math inline">\(T\)</span>’s parents in <span class="math inline">\(\Gcal\)</span> — that is, every such path is a back-door path. This is the structural fact that makes the back-door criterion readable directly from the SWIG.</p>
+<p><strong>Recovering ignorability from the SWIG.</strong> In <a href="#fig-swig" class="quarto-xref">Figure&nbsp;<span>B.1</span></a>, the only paths from the random half <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span> are back-door paths through <span class="math inline">\(A\)</span>’s parents. The path <span class="math inline">\(A \leftarrow L \to Y(a)\)</span> is open, but blocked by conditioning on <span class="math inline">\(L\)</span>. No other path connects <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span>. Conditioning on <span class="math inline">\(L\)</span> achieves d-separation: <span class="math display">\[A \;\indep\; Y(a) \;\big|\; L \quad \text{in } \Gcal(a),\]</span> which is exactly the conditional ignorability of the Strong Ignorability definition in Chapter 4, now <em>derived</em> as a graph-structural consequence rather than asserted as an assumption.</p>
+</section>
+<section id="sec-hidden" class="level2" data-number="B.3">
+<h2 data-number="B.3" class="anchored" data-anchor-id="sec-hidden"><span class="header-section-number">B.3</span> When Ignorability Fails: Hidden Confounding</h2>
+<p>The SWIG is equally useful for diagnosing <em>failures</em> of ignorability. <a href="#fig-swig-hidden" class="quarto-xref">Figure&nbsp;<span>B.2</span></a> shows the SWIG when a hidden common cause <span class="math inline">\(U\)</span> affects both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-swig-hidden" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-swig-hidden-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="appendix_B_files/figure-html/fig-swig-hidden-1.pdf" class="img-fluid" width="528">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-swig-hidden-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;B.2: Adding a hidden confounder <span class="math inline">\(U\)</span> (dashed circle) to the confounded-treatment DAG and its SWIG. In <span class="math inline">\(\mathcal{G}(a)\)</span>, two back-door paths connect <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span>: the observed path <span class="math inline">\(A \leftarrow L \to Y(a)\)</span>, which can be blocked by conditioning on <span class="math inline">\(L\)</span>, and the hidden path <span class="math inline">\(A \leftarrow U \to Y(a)\)</span>, which cannot. Ignorability fails.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the SWIG <span class="math inline">\(\Gcal(a)\)</span> with hidden <span class="math inline">\(U\)</span>, the paths from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span> are: (1) <span class="math inline">\(A \leftarrow L \to Y(a)\)</span>: blocked by conditioning on <span class="math inline">\(L\)</span>; (2) <span class="math inline">\(A \leftarrow U \to Y(a)\)</span>: open regardless of <span class="math inline">\(L\)</span>, since <span class="math inline">\(U\)</span> is unobserved. Even after conditioning on <span class="math inline">\(L\)</span>, the path through <span class="math inline">\(U\)</span> remains open, so <span class="math inline">\(A \nindep Y(a) \mid L\)</span> in <span class="math inline">\(\Gcal(a)\)</span>, and ignorability fails. The failure is <em>immediately visible</em> from the SWIG: an unblocked dashed arrow entering the random half <span class="math inline">\(A\)</span> signals that selection into treatment carries information about the potential outcome that no set of observed covariates can remove.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This failure motivates the instrumental variable designs of Chapter 7. When a valid instrument <span class="math inline">\(Z\)</span> is available — one that affects <span class="math inline">\(A\)</span> but has no direct effect on <span class="math inline">\(Y\)</span> and is independent of <span class="math inline">\(U\)</span> — the IV strategy sidesteps the unblocked <span class="math inline">\(U\)</span>-path rather than attempting to block it by covariate adjustment.</p>
+</div>
+</div>
+</section>
+<section id="sec-swig-achieve" class="level2" data-number="B.4">
+<h2 data-number="B.4" class="anchored" data-anchor-id="sec-swig-achieve"><span class="header-section-number">B.4</span> What SWIGs Achieve</h2>
+<p><strong>1. Potential outcomes as random variables in a DAG.</strong> In <span class="math inline">\(\Gcal(t)\)</span>, the variable <span class="math inline">\(Y(t)\)</span> is an ordinary node with well-defined parents: the fixed half <span class="math inline">\(t\)</span> and any other causes of <span class="math inline">\(Y\)</span> retained from <span class="math inline">\(\Gcal\)</span>. Its marginal distribution equals the interventional distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>. <span class="math inline">\(Y(t)\)</span> is the counterfactual random variable, and <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> is its induced interventional distribution; the SWIG makes both explicit in the same graph.</p>
+<p><strong>2. The mutilated graph as a special case.</strong> Removing the random half <span class="math inline">\(T\)</span> from <span class="math inline">\(\Gcal(t)\)</span> yields exactly the mutilated graph <span class="math inline">\(\Gcal_{\overline{T}}\)</span> of Chapter 1. The SWIG is a more informative version that retains the random half alongside the fixed half, making it possible to ask — and answer by d-separation — questions about the relationship between the natural treatment <span class="math inline">\(T\)</span> and the potential outcomes <span class="math inline">\(V(t)\)</span>.</p>
+<p><strong>3. Unconfoundedness as a d-separation statement.</strong> The ignorability condition <span class="math inline">\((Y(t) \indep T \mid X)\)</span> is a standard d-separation statement <em>in the SWIG</em> <span class="math inline">\(\Gcal(t)\)</span>, verifiable by path-tracing. This gives the analyst a concrete graphical check: draw the SWIG, identify all paths from the random half <span class="math inline">\(T\)</span> to <span class="math inline">\(Y(t)\)</span>, and verify that <span class="math inline">\(X\)</span> blocks all of them.</p>
+<p><strong>4. A single graph for both frameworks.</strong> The SWIG simultaneously hosts the natural treatment <span class="math inline">\(T\)</span> (random half), the intervention value <span class="math inline">\(t\)</span> (fixed half), the potential outcomes <span class="math inline">\(V(t)\)</span>, and all d-separation relationships among them.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Cross-World Independence and Its Limits
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider <span class="math inline">\(Y(1) \indep Y(0)\)</span>: <span class="math inline">\(Y(1)\)</span> lives in SWIG <span class="math inline">\(\Gcal(1)\)</span> and <span class="math inline">\(Y(0)\)</span> lives in SWIG <span class="math inline">\(\Gcal(0)\)</span>. No unit is ever observed in both worlds simultaneously, so no data can directly test this independence. More generally, statements such as <span class="math inline">\(Y(t) \indep T(t') \mid X\)</span> for <span class="math inline">\(t \neq t'\)</span> involve variables from <em>different SWIGs</em>. SWIGs make such assumptions explicit: the analyst must specify a joint distribution across multiple SWIGs — a commitment that potential-outcome notation alone does not force.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>More than one node may be split in a single SWIG. In longitudinal settings with time-varying treatments <span class="math inline">\((A_0, A_1)\)</span>, splitting both nodes yields the sequential-randomization SWIG, from which the two <em>sequential exchangeability</em> conditions needed to identify the g-formula follow directly by d-separation.</p>
+</div>
+</div>
+</section>
+<section id="sec-biconditional" class="level2" data-number="B.5">
+<h2 data-number="B.5" class="anchored" data-anchor-id="sec-biconditional"><span class="header-section-number">B.5</span> Biconditional Equivalence under Faithfulness</h2>
+<p>Proposition 4.1 in Chapter 4 established the practically important direction: if <span class="math inline">\(X\)</span> satisfies the back-door criterion, then unconfoundedness holds. That proof required only the Markov property. The converse — that every ignorability statement corresponds to a back-door condition — additionally requires faithfulness and follows naturally from the SWIG construction.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Faithfulness
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A distribution <span class="math inline">\(P\)</span> is <strong>faithful</strong> to a DAG <span class="math inline">\(\Gcal\)</span> if every conditional independence that holds in <span class="math inline">\(P\)</span> is entailed by d-separation in <span class="math inline">\(\Gcal\)</span>: that is, <span class="math inline">\(X \indep Y \mid \mathbf{Z}\)</span> in <span class="math inline">\(P\)</span> only if <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are d-separated by <span class="math inline">\(\mathbf{Z}\)</span> in <span class="math inline">\(\Gcal\)</span>.</p>
+<p>Equivalently, faithfulness rules out <em>accidental</em> cancellations of causal paths. Together, the Markov property and faithfulness make d-separation a <em>complete</em> characterization of the conditional independence structure of <span class="math inline">\(P\)</span>. Faithfulness fails only on a measure-zero set of parameter values, so it is considered a mild regularity condition in practice.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Ignorability and the Back-Door Criterion Are Equivalent
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the Markov and faithfulness assumptions for <span class="math inline">\(\Gcal\)</span>, unconfoundedness <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> holds if and only if <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\((\Rightarrow)\)</span> This is Proposition 4.1 in Chapter 4, which uses only the Markov property.</p>
+<p><span class="math inline">\((\Leftarrow)\)</span> Suppose <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> holds. By faithfulness, every conditional independence in <span class="math inline">\(P\)</span> corresponds to a d-separation in <span class="math inline">\(\Gcal\)</span>. Consider the SWIG <span class="math inline">\(\Gcal(t)\)</span>. Because the fixed half <span class="math inline">\(t\)</span> has no incoming edges (<a href="#sec-fixed-half" class="quarto-xref"><span>Section B.2</span></a>), every path from the random half <span class="math inline">\(T\)</span> to a potential outcome <span class="math inline">\(Y(t)\)</span> must pass through <span class="math inline">\(T\)</span>’s parents in <span class="math inline">\(\Gcal\)</span> — that is, every such path is a back-door path. The d-separation <span class="math inline">\((Y(t) \indep T \mid X)_{\Gcal(t)}\)</span> therefore requires <span class="math inline">\(X\)</span> to block all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. If any member of <span class="math inline">\(X\)</span> were a descendant of <span class="math inline">\(T\)</span>, conditioning on it could open a previously blocked collider path, contradicting the assumed independence; hence no node in <span class="math inline">\(X\)</span> is a descendant of <span class="math inline">\(T\)</span>. Both conditions of the back-door criterion are therefore satisfied. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<p>The SWIG thus provides a <em>unified</em> perspective: ignorability is neither an assumption of the potential outcomes framework alone nor of the do-calculus in isolation, but a graph-structural property that both frameworks share. The back-door criterion and conditional exchangeability are two names for the same identifying condition, seen from two different representational languages.</p>
+</section>
+<section id="problems" class="level2" data-number="B.6">
+<h2 data-number="B.6" class="anchored" data-anchor-id="problems"><span class="header-section-number">B.6</span> Problems</h2>
+<p><strong>1. SWIG construction.</strong> Consider the DAG: <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(T \to Y\)</span>, with <span class="math inline">\(X\)</span> fully observed.</p>
+<ol type="a">
+<li>Construct the SWIG <span class="math inline">\(\Gcal(t)\)</span> by splitting <span class="math inline">\(T\)</span> into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome <span class="math inline">\(Y(t)\)</span>.</li>
+<li>In <span class="math inline">\(\Gcal(t)\)</span>, identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>. Apply d-separation to determine which are blocked and which are open before conditioning.</li>
+<li>Use d-separation in <span class="math inline">\(\Gcal(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\Gcal(t)}\)</span> holds. Conclude that <span class="math inline">\(X\)</span> satisfies the back-door criterion, confirming Theorem B.1 above.</li>
+<li>Now add a hidden common cause <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure (if any) would be needed for identification.</li>
+</ol>
+<p><strong>2. Sequential exchangeability in a longitudinal SWIG.</strong> Suppose the treatment is time-varying: <span class="math inline">\(T_0\)</span> is assigned at baseline and <span class="math inline">\(T_1\)</span> at a second time point. The DAG has edges <span class="math inline">\(X \to T_0 \to T_1 \to Y\)</span>, <span class="math inline">\(X \to Y\)</span>, and <span class="math inline">\(T_0 \to Y\)</span>.</p>
+<ol type="a">
+<li>Construct the SWIG <span class="math inline">\(\Gcal(t_0, t_1)\)</span> by splitting both <span class="math inline">\(T_0\)</span> and <span class="math inline">\(T_1\)</span>. Label all random halves, fixed halves, and potential outcomes.</li>
+<li>List all back-door paths from the random half <span class="math inline">\(T_0\)</span> to <span class="math inline">\(Y(t_0,t_1)\)</span> and from <span class="math inline">\(T_1\)</span> to <span class="math inline">\(Y(t_0,t_1)\)</span>. For each, determine whether conditioning on <span class="math inline">\(X\)</span> and the history up to that point is sufficient to achieve d-separation.</li>
+<li>State the two sequential exchangeability conditions that the SWIG makes graphically transparent, and explain what they say about treatment assignment at each time point.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./appendix_A.html" class="pagination-link" aria-label="Graphical Intuition for Conditional Independence and d-Separation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
