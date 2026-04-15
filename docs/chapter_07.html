@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Instrumental Variables – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./chapter_06.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_07.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-why" id="toc-sec-why" class="nav-link active" data-scroll-target="#sec-why"><span class="header-section-number">7.1</span> Why Instrumental Variables?</a>
+  <ul class="collapse">
+  <li><a href="#the-endogeneity-problem" id="toc-the-endogeneity-problem" class="nav-link" data-scroll-target="#the-endogeneity-problem"><span class="header-section-number">7.1.1</span> The Endogeneity Problem</a></li>
+  <li><a href="#the-iv-idea" id="toc-the-iv-idea" class="nav-link" data-scroll-target="#the-iv-idea"><span class="header-section-number">7.1.2</span> The IV Idea</a></li>
+  </ul></li>
+  <li><a href="#sec-assumptions" id="toc-sec-assumptions" class="nav-link" data-scroll-target="#sec-assumptions"><span class="header-section-number">7.2</span> Graphical Setup and Core Assumptions</a>
+  <ul class="collapse">
+  <li><a href="#the-iv-dag" id="toc-the-iv-dag" class="nav-link" data-scroll-target="#the-iv-dag"><span class="header-section-number">7.2.1</span> The IV DAG</a></li>
+  <li><a href="#the-three-assumptions-in-three-languages" id="toc-the-three-assumptions-in-three-languages" class="nav-link" data-scroll-target="#the-three-assumptions-in-three-languages"><span class="header-section-number">7.2.2</span> The Three Assumptions in Three Languages</a></li>
+  <li><a href="#relevance" id="toc-relevance" class="nav-link" data-scroll-target="#relevance"><span class="header-section-number">7.2.3</span> Relevance</a></li>
+  <li><a href="#exogeneity" id="toc-exogeneity" class="nav-link" data-scroll-target="#exogeneity"><span class="header-section-number">7.2.4</span> Exogeneity</a></li>
+  <li><a href="#exclusion" id="toc-exclusion" class="nav-link" data-scroll-target="#exclusion"><span class="header-section-number">7.2.5</span> Exclusion</a></li>
+  </ul></li>
+  <li><a href="#sec-linear" id="toc-sec-linear" class="nav-link" data-scroll-target="#sec-linear"><span class="header-section-number">7.3</span> Identification in the Linear Homogeneous-Effect Model</a>
+  <ul class="collapse">
+  <li><a href="#the-linear-structural-model" id="toc-the-linear-structural-model" class="nav-link" data-scroll-target="#the-linear-structural-model"><span class="header-section-number">7.3.1</span> The Linear Structural Model</a></li>
+  <li><a href="#the-ols-bias" id="toc-the-ols-bias" class="nav-link" data-scroll-target="#the-ols-bias"><span class="header-section-number">7.3.2</span> The OLS Bias</a></li>
+  <li><a href="#derivation-of-the-wald-estimand" id="toc-derivation-of-the-wald-estimand" class="nav-link" data-scroll-target="#derivation-of-the-wald-estimand"><span class="header-section-number">7.3.3</span> Derivation of the Wald Estimand</a></li>
+  </ul></li>
+  <li><a href="#sec-why-matter" id="toc-sec-why-matter" class="nav-link" data-scroll-target="#sec-why-matter"><span class="header-section-number">7.4</span> Why the IV Assumptions Matter</a></li>
+  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">7.5</span> Lab: OLS vs.&nbsp;IV Across Instrument Strengths</a></li>
+  <li><a href="#sec-overid" id="toc-sec-overid" class="nav-link" data-scroll-target="#sec-overid"><span class="header-section-number">7.6</span> Multiple Instruments and Overidentification</a></li>
+  <li><a href="#sec-late" id="toc-sec-late" class="nav-link" data-scroll-target="#sec-late"><span class="header-section-number">7.7</span> Heterogeneous Treatment Effects and the LATE Framework</a>
+  <ul class="collapse">
+  <li><a href="#compliance-types" id="toc-compliance-types" class="nav-link" data-scroll-target="#compliance-types"><span class="header-section-number">7.7.1</span> Compliance Types</a></li>
+  <li><a href="#the-monotonicity-assumption" id="toc-the-monotonicity-assumption" class="nav-link" data-scroll-target="#the-monotonicity-assumption"><span class="header-section-number">7.7.2</span> The Monotonicity Assumption</a></li>
+  <li><a href="#the-late-theorem" id="toc-the-late-theorem" class="nav-link" data-scroll-target="#the-late-theorem"><span class="header-section-number">7.7.3</span> The LATE Theorem</a></li>
+  </ul></li>
+  <li><a href="#sec-interpret" id="toc-sec-interpret" class="nav-link" data-scroll-target="#sec-interpret"><span class="header-section-number">7.8</span> Interpreting IV Estimands</a>
+  <ul class="collapse">
+  <li><a href="#when-does-late-equal-ate" id="toc-when-does-late-equal-ate" class="nav-link" data-scroll-target="#when-does-late-equal-ate"><span class="header-section-number">7.8.1</span> When Does LATE Equal ATE?</a></li>
+  <li><a href="#sec-diff-instr" id="toc-sec-diff-instr" class="nav-link" data-scroll-target="#sec-diff-instr"><span class="header-section-number">7.8.2</span> Different Instruments, Different Estimands</a></li>
+  <li><a href="#the-policy-relevance-of-late" id="toc-the-policy-relevance-of-late" class="nav-link" data-scroll-target="#the-policy-relevance-of-late"><span class="header-section-number">7.8.3</span> The Policy Relevance of LATE</a></li>
+  </ul></li>
+  <li><a href="#sec-compare" id="toc-sec-compare" class="nav-link" data-scroll-target="#sec-compare"><span class="header-section-number">7.9</span> IV versus Back-Door Adjustment</a></li>
+  <li><a href="#sec-kipp" id="toc-sec-kipp" class="nav-link" data-scroll-target="#sec-kipp"><span class="header-section-number">7.10</span> Applied Example: Charter School Lotteries and the KIPP Lynn Study</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">7.11</span> Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">7.12</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Diagnose the endogeneity problem: explain why an unobserved confounder makes back-door adjustment fail, and describe how an instrumental variable provides an alternative identification route.</li>
+<li>State the three IV assumptions — relevance, exogeneity, and exclusion — in the DAG/do-calculus, structural-equation, and potential-outcomes languages, and explain which are testable and which require institutional justification.</li>
+<li>Follow how the IV assumptions identify the Wald estimand, and interpret the reduced form and first stage as its two observable components.</li>
+<li>Explain what the Wald estimand identifies when treatment effects are heterogeneous — the Local Average Treatment Effect for compliers — why that estimand depends on the choice of instrument, and when it coincides with the ATE.</li>
+<li>Compare IV and back-door adjustment on the assumptions each requires, the estimand each identifies, and the ways each can fail.</li>
+</ol>
+</div>
+</div>
+<section id="sec-why" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="sec-why"><span class="header-section-number">7.1</span> Why Instrumental Variables?</h2>
+<p>Chapter 6 showed how causal effects can be identified when all confounders are observed and can be blocked by conditioning on <span class="math inline">\(X\)</span>. When some confounders are unobserved, back-door adjustment fails. This chapter develops instrumental variables (IV) as an alternative identification strategy: rather than blocking the confounding path <span class="math inline">\(T \leftarrow U \to Y\)</span>, IV exploits an external variable <span class="math inline">\(Z\)</span> whose effect on <span class="math inline">\(T\)</span> is free of confounding by <span class="math inline">\(U\)</span>. This chapter asks what IV identifies and under what assumptions; Chapter 12 asks how that estimand is computed and tested in practice.</p>
+<section id="the-endogeneity-problem" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="the-endogeneity-problem"><span class="header-section-number">7.1.1</span> The Endogeneity Problem</h3>
+<p>Chapter 6 established that the propensity score provides a powerful surrogate for randomization, but only under <em>unconfoundedness</em>: <span class="math inline">\((Y(0),\, Y(1)) \indep T \mid X\)</span>. This requires that every variable affecting both treatment and outcome is observed. In many empirical settings this is implausible:</p>
+<ul>
+<li>In labor economics, unobserved ability or motivation affects both schooling decisions and wages.</li>
+<li>In epidemiology, unobserved health behaviors affect both treatment uptake and outcomes.</li>
+<li>In survey sampling, voluntary participation is driven by factors that also affect the variables of interest.</li>
+</ul>
+<p>Whenever an unobserved confounder <span class="math inline">\(U\)</span> creates a back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span>, the adjustment formula fails. The gap is the <em>endogeneity bias</em>.</p>
+</section>
+<section id="the-iv-idea" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="the-iv-idea"><span class="header-section-number">7.1.2</span> The IV Idea</h3>
+<p>An <em>instrumental variable</em> <span class="math inline">\(Z\)</span> is an observed variable that: (1) <em>moves</em> treatment <span class="math inline">\(T\)</span> (relevance); (2) <em>does so exogenously</em> — <span class="math inline">\(Z\)</span> is unrelated to the unobserved confounder <span class="math inline">\(U\)</span> (exogeneity); (3) <em>affects <span class="math inline">\(Y\)</span> only through <span class="math inline">\(T\)</span></em> — <span class="math inline">\(Z\)</span> has no direct path to <span class="math inline">\(Y\)</span> (exclusion).</p>
+<p>Under these three conditions, the variation in <span class="math inline">\(T\)</span> induced by <span class="math inline">\(Z\)</span> is free of confounding by <span class="math inline">\(U\)</span>. The ratio of the <span class="math inline">\(Z\)</span>-induced variation in <span class="math inline">\(Y\)</span> to the <span class="math inline">\(Z\)</span>-induced variation in <span class="math inline">\(T\)</span> identifies the causal effect.</p>
+<p>IV does not eliminate the confounding path — it identifies causal effects by isolating a component of treatment variation that is induced by <span class="math inline">\(Z\)</span> and is therefore exogenous. IV <em>avoids</em> confounding rather than controlling for it. This distinction matters: IV identifies the LATE for compliers, not the ATE, and the exclusion restriction does the heaviest lifting.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Returns to Schooling
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A researcher wants to estimate the causal effect of years of schooling <span class="math inline">\(T\)</span> on log wages <span class="math inline">\(Y\)</span>. Unobserved ability <span class="math inline">\(U\)</span> raises both schooling and wages, so OLS is biased upward. An instrumental variable <span class="math inline">\(Z\)</span> that shifts schooling for reasons unrelated to ability — such as proximity to a school or a policy change in compulsory attendance laws — provides a way to isolate the causal effect of schooling on wages <span class="citation" data-cites="angrist1991does">(Angrist and Krueger 1991)</span>.</p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-bd-vs-iv" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bd-vs-iv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_07_files/figure-html/fig-bd-vs-iv-1.pdf" class="img-fluid" width="528">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bd-vs-iv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: Two strategies for identification. <strong>Left</strong>: back-door adjustment conditions on the observed <span class="math inline">\(X\)</span> (green) to block the confounding path. <strong>Right</strong>: IV uses only <span class="math inline">\(Z\)</span>-induced variation in <span class="math inline">\(T\)</span>, which is free of <span class="math inline">\(U\)</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-assumptions" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-assumptions"><span class="header-section-number">7.2</span> Graphical Setup and Core Assumptions</h2>
+<section id="the-iv-dag" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="the-iv-dag"><span class="header-section-number">7.2.1</span> The IV DAG</h3>
+<p>The causal structure for a basic IV model with covariates <span class="math inline">\(X\)</span> has nodes <span class="math inline">\(Z, T, Y, X, U\)</span> with edges <span class="math inline">\(Z \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(X \to Z\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span> (<span class="math inline">\(U\)</span> unobserved). The three IV assumptions correspond to: (1) <strong>Relevance</strong>: directed path <span class="math inline">\(Z \to T\)</span>; (2) <strong>Exogeneity</strong>: <span class="math inline">\(Z \indep U \mid X\)</span> by d-separation; (3) <strong>Exclusion</strong>: no direct arrow <span class="math inline">\(Z \to Y\)</span>.</p>
+<p>The distinction between exogeneity and exclusion is fundamental. Exogeneity says the instrument is not confounded with latent causes of the outcome. Exclusion says it has no causal channel to the outcome except through treatment. A randomized encouragement may be exogenous by design, yet still violate exclusion if the encouragement changes outcomes through information, motivation, or stigma apart from the treatment itself.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-iv-failures" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-iv-failures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_07_files/figure-html/fig-iv-failures-1.pdf" class="img-fluid" width="480">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-iv-failures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.2: The two main IV assumption failures. <strong>Left</strong>: exogeneity fails when <span class="math inline">\(U\)</span> is a common cause of <span class="math inline">\(Z\)</span> and <span class="math inline">\(Y\)</span>. <strong>Right</strong>: exclusion fails when <span class="math inline">\(Z\)</span> has a direct causal path to <span class="math inline">\(Y\)</span>. The two failures are logically independent.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-three-assumptions-in-three-languages" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="the-three-assumptions-in-three-languages"><span class="header-section-number">7.2.2</span> The Three Assumptions in Three Languages</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Assumption</strong></th>
+<th><strong>Potential outcomes</strong></th>
+<th><strong>Structural / econometric</strong></th>
+<th><strong>Do-calculus / DAG</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Relevance</strong></td>
+<td><span class="math inline">\(Z \nindep T\)</span></td>
+<td><span class="math inline">\(\mathrm{Cov}(Z, T) \neq 0\)</span></td>
+<td>No d-separation of <span class="math inline">\(Z\)</span> and <span class="math inline">\(T\)</span> in <span class="math inline">\(\Gcal\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Exogeneity</strong></td>
+<td><span class="math inline">\(Z \indep (Y(0), Y(1), T(0), T(1)) \mid X\)</span></td>
+<td><span class="math inline">\(\E[\varepsilon \mid Z, X] = 0\)</span></td>
+<td><span class="math inline">\(Z \indep U \mid X\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Exclusion</strong></td>
+<td><span class="math inline">\(Y_i(t, z) = Y_i(t, z')\)</span> for all <span class="math inline">\(z, z'\)</span></td>
+<td><span class="math inline">\(Z\)</span> absent from structural equation for <span class="math inline">\(Y\)</span></td>
+<td><span class="math inline">\(f(y \mid x, \doop(T{=}t), z) = f(y \mid x, \doop(T{=}t))\)</span></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Three Languages, One Identification Argument
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The graphical statement encodes causal structure (which arrows are present). The potential-outcomes statement encodes counterfactual independence. The structural formulation encodes moment orthogonality. They support the same identification argument in a well-specified model, but are not literally the same statement.</p>
+<p>The do-calculus column is preferred throughout this course because the exclusion restriction in that language is a statement about the <em>interventional</em> density. It makes it impossible to confuse exclusion with the much weaker observational statement <span class="math inline">\(f(y \mid x, T{=}t, z) = f(y \mid x, T{=}t)\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="relevance" class="level3" data-number="7.2.3">
+<h3 data-number="7.2.3" class="anchored" data-anchor-id="relevance"><span class="header-section-number">7.2.3</span> Relevance</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Relevance
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The instrument <span class="math inline">\(Z\)</span> is <strong>relevant</strong> if it has a non-zero causal effect on the treatment <span class="math inline">\(T\)</span>, possibly after conditioning on covariates <span class="math inline">\(X\)</span>: <span class="math inline">\(\mathrm{Cov}(Z, T \mid X) \neq 0\)</span>.</p>
+</div>
+</div>
+<p>Relevance is the population condition that the instrument changes treatment status. The first-stage <span class="math inline">\(F\)</span>-statistic is a sample diagnostic for whether this link is strong enough; it is evidence about instrument strength, not the assumption itself.</p>
+</section>
+<section id="exogeneity" class="level3" data-number="7.2.4">
+<h3 data-number="7.2.4" class="anchored" data-anchor-id="exogeneity"><span class="header-section-number">7.2.4</span> Exogeneity</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Exogeneity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The instrument <span class="math inline">\(Z\)</span> is <strong>exogenous</strong> given covariates <span class="math inline">\(X\)</span> if there is no open back-door path from <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span> through unobserved causes: <span class="math inline">\(Z \indep U \mid X\)</span> in <span class="math inline">\(\Gcal\)</span> by d-separation.</p>
+</div>
+</div>
+<p>Exogeneity means the instrument carries no information about latent determinants of the outcome other than through treatment. The moment condition <span class="math inline">\(\E[\varepsilon Z \mid X] = 0\)</span> is a <em>consequence</em> of this graphical assumption, not a definition. All versions of exogeneity are untestable from observed data alone.</p>
+</section>
+<section id="exclusion" class="level3" data-number="7.2.5">
+<h3 data-number="7.2.5" class="anchored" data-anchor-id="exclusion"><span class="header-section-number">7.2.5</span> Exclusion</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Exclusion Restriction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The instrument <span class="math inline">\(Z\)</span> satisfies the <strong>exclusion restriction</strong> if it affects the outcome <span class="math inline">\(Y\)</span> <em>only</em> through its effect on treatment <span class="math inline">\(T\)</span>. In do-calculus terms: <span class="math display">\[f\!\bigl(y \mid x,\, \doop(T{=}t),\, z\bigr) = f\!\bigl(y \mid x,\, \doop(T{=}t)\bigr) \quad \text{for all } z.\]</span> In potential outcomes terms: <span class="math inline">\(Y_i(t, z) = Y_i(t, z')\)</span> for all <span class="math inline">\(z \neq z'\)</span>.</p>
+</div>
+</div>
+<p>Exclusion is a <em>causal</em> restriction, not a conditional-correlation restriction. Adding a direct arrow <span class="math inline">\(Z \to Y\)</span> to the DAG is the formal counterpart of exclusion failing: in the mutilated graph <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, the path <span class="math inline">\(Z \to Y\)</span> remains open and Rule 1 of the do-calculus can no longer remove <span class="math inline">\(Z\)</span>.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Why Exclusion Is the Hardest Assumption
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Relevance can be tested. Exogeneity can sometimes be defended by design. But exclusion — that <span class="math inline">\(Z\)</span> has <em>no direct effect</em> on <span class="math inline">\(Y\)</span> whatsoever — is: <strong>untestable</strong> in just-identified models; <strong>easy to violate in practice</strong> (an instrument that moves treatment often also moves other inputs); and <strong>consequential</strong> — the Wald estimand converges to <span class="math inline">\(\beta + \delta/\pi\)</span>, so even a small direct effect <span class="math inline">\(\delta\)</span> combined with a weak instrument <span class="math inline">\(\pi\)</span> can produce large bias.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Three Assumptions Are Necessary but Not Sufficient
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="hernan2006instruments levis2024nonparametric">(Hernán and Robins 2006; Levis et al. 2024)</span> The three IV assumptions alone do not yield point identification. A fourth structural assumption is required. Two leading choices: <strong>constant treatment effects</strong> (Framework 1, <a href="#sec-linear" class="quarto-xref"><span>Section 7.3</span></a>) under which Wald identifies the ATE; and <strong>monotonicity</strong> (Framework 2, <a href="#sec-late" class="quarto-xref"><span>Section 7.7</span></a>) under which Wald identifies the LATE for compliers. An <strong>additive structural mean model (SMM)</strong> identifies the ATT without either. Strikingly, across many fourth assumptions the same conditional Wald formula <span class="math inline">\(\mathrm{Cov}(Z, Y \mid X)/\mathrm{Cov}(Z, T \mid X)\)</span> serves as the identifying expression — but the causal target changes.</p>
+<p>The fourth assumption lies <em>outside</em> the graphical language in every case. Monotonicity (<span class="math inline">\(T_i(1) \geq T_i(0)\)</span>) is a cross-world statement that cannot be encoded by any arrow in the DAG. IV identification cannot be completed by causal graph analysis alone.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-linear" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-linear"><span class="header-section-number">7.3</span> Identification in the Linear Homogeneous-Effect Model</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Framework 1: Constant Treatment Effect and Linear Structure
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This section works within a linear structural model in which the treatment effect is the <em>same</em> for every unit: <span class="math inline">\(Y_i(t) - Y_i(t') = \beta(t - t')\)</span> for all <span class="math inline">\(i, t, t'\)</span>. Under this assumption, <span class="math inline">\(\beta = \mathrm{ATE} = \mathrm{ATT} = \mathrm{LATE}\)</span>.</p>
+</div>
+</div>
+<section id="the-linear-structural-model" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="the-linear-structural-model"><span class="header-section-number">7.3.1</span> The Linear Structural Model</h3>
+<p>Consider the linear structural model: <span id="eq-outcome"><span class="math display">\[Y = \alpha + \beta T + \gamma^\top X + \varepsilon, \tag{7.1}\]</span></span> <span id="eq-firststage"><span class="math display">\[T = \pi Z + \delta^\top X + \eta, \tag{7.2}\]</span></span></p>
+<p>where <span class="math inline">\(\mathrm{Cov}(\varepsilon, \eta) = \rho\sigma\tau \neq 0\)</span>. The <em>reduced form</em> substitutes <a href="#eq-firststage" class="quarto-xref">Equation&nbsp;<span>7.2</span></a> into <a href="#eq-outcome" class="quarto-xref">Equation&nbsp;<span>7.1</span></a>: the reduced-form coefficient on <span class="math inline">\(Z\)</span> is <span class="math inline">\(\beta\pi\)</span>.</p>
+</section>
+<section id="the-ols-bias" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="the-ols-bias"><span class="header-section-number">7.3.2</span> The OLS Bias</h3>
+<p><span class="math display">\[\mathrm{plim}\; \hat\beta_{\mathrm{OLS}} = \beta + \frac{\rho\sigma\tau}{\pi^2 \mathrm{Var}(Z) + \tau^2}.\]</span></p>
+<p>The bias is zero only if <span class="math inline">\(\rho = 0\)</span> (no unobserved confounding). The direction depends on the sign of <span class="math inline">\(\rho\)</span>.</p>
+</section>
+<section id="derivation-of-the-wald-estimand" class="level3" data-number="7.3.3">
+<h3 data-number="7.3.3" class="anchored" data-anchor-id="derivation-of-the-wald-estimand"><span class="header-section-number">7.3.3</span> Derivation of the Wald Estimand</h3>
+<p>The derivation has three ingredients: exogeneity, exclusion, and relevance.</p>
+<ol type="1">
+<li><strong>Exogeneity</strong> implies <span class="math inline">\(\E[\varepsilon \mid Z, X] = 0\)</span>.</li>
+<li><strong>Exclusion</strong> (<span class="math inline">\(Z\)</span> absent from the structural equation for <span class="math inline">\(Y\)</span>) combined with exogeneity gives <span class="math inline">\(\E[\varepsilon \cdot Z \mid X] = 0\)</span>. In do-calculus terms: Rule 1 removes <span class="math inline">\(Z\)</span> from <span class="math inline">\(f(y \mid x, \doop(T{=}t), z)\)</span> because <span class="math inline">\(Y \indep Z \mid T, X\)</span> in <span class="math inline">\(\Gcal_{\overline{T}}\)</span>.</li>
+<li>Multiplying <a href="#eq-outcome" class="quarto-xref">Equation&nbsp;<span>7.1</span></a> by <span class="math inline">\((Z - \E[Z \mid X])\)</span> and applying step 2 gives the <strong>reduced-form decomposition</strong> (no-covariate case): <span class="math display">\[\mathrm{Cov}(Y, Z) = \beta\, \mathrm{Cov}(T, Z).\]</span></li>
+<li><strong>Relevance</strong> ensures the denominator is non-zero: <span class="math display">\[\beta = \frac{\mathrm{Cov}(Y,\, Z \mid X)}{\mathrm{Cov}(T,\, Z \mid X)}.\]</span></li>
+</ol>
+<p>For binary <span class="math inline">\(Z \in \{0,1\}\)</span> without covariates, this is the <strong>Wald estimand</strong>:</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Wald Estimand
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math display">\[\beta = \frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}{\E[T \mid Z{=}1] - \E[T \mid Z{=}0]}.\]</span></p>
+<p>The numerator is the <em>reduced form</em>: the total effect of <span class="math inline">\(Z\)</span> on <span class="math inline">\(Y\)</span>. The denominator is the <em>first stage</em>: the effect of <span class="math inline">\(Z\)</span> on <span class="math inline">\(T\)</span>.</p>
+</div>
+</div>
+<p>The key lesson is that the Wald ratio identifies <span class="math inline">\(\beta\)</span> in this section <em>only</em> because treatment effects are assumed to be constant across units. In <a href="#sec-late" class="quarto-xref"><span>Section 7.7</span></a>, the same ratio will survive, but its interpretation changes from a common causal effect to a complier-specific average effect.</p>
+</section>
+</section>
+<section id="sec-why-matter" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="sec-why-matter"><span class="header-section-number">7.4</span> Why the IV Assumptions Matter</h2>
+<p>Each assumption failure produces a distinct, quantifiable distortion in the Wald estimand, amplified by a weak first stage.</p>
+<p><strong>When relevance fails.</strong> If <span class="math inline">\(\pi = 0\)</span>, the Wald estimand is undefined. When <span class="math inline">\(\pi\)</span> is small, IV variance diverges and finite-sample bias pulls the estimate toward OLS at a rate <span class="math inline">\(\propto 1/F\)</span>.</p>
+<p><strong>When exclusion fails.</strong> If <span class="math inline">\(Y = \alpha + \beta T + \delta Z + \gamma^\top X + \varepsilon\)</span>, the Wald estimand converges to <span class="math inline">\(\beta + \delta/\pi\)</span>. A small direct effect combined with a weak instrument can produce large bias.</p>
+<p><strong>When exogeneity fails.</strong> If <span class="math inline">\(\mathrm{Cov}(Z, \varepsilon \mid X) \neq 0\)</span>, the Wald estimand converges to <span class="math inline">\(\beta + \mathrm{Cov}(\varepsilon, Z)/\mathrm{Cov}(T, Z)\)</span> — amplified by a weak first stage.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Assumption</strong></th>
+<th><strong>Directly testable?</strong></th>
+<th><strong>Basis for assessment</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Relevance</td>
+<td>Yes</td>
+<td>First-stage <span class="math inline">\(F\)</span>-statistic</td>
+</tr>
+<tr class="even">
+<td>Exogeneity</td>
+<td>No</td>
+<td>Institutional knowledge; randomization; placebo regressions</td>
+</tr>
+<tr class="odd">
+<td>Exclusion</td>
+<td>No (just-ID); partially (overID)</td>
+<td>Institutional argument; <span class="math inline">\(J\)</span>-test checks consistency</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sec-lab" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">7.5</span> Lab: OLS vs.&nbsp;IV Across Instrument Strengths</h2>
+<p>This lab verifies the OLS bias formula numerically and traces the bias–variance tradeoff across the full range of instrument strength.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>DGP for Lab 7
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(Y_i = \beta T_i + \varepsilon_i\)</span>, <span class="math inline">\(T_i = \pi Z_i + \eta_i\)</span>, with <span class="math inline">\(Z_i \sim \mathrm{N}(0,1)\)</span>, <span class="math inline">\(\eta_i = U_i\)</span>, <span class="math inline">\(\varepsilon_i = \rho U_i + \sqrt{1-\rho^2}\,\xi_i\)</span>, <span class="math inline">\(U_i, \xi_i \sim \mathrm{N}(0,1)\)</span> i.i.d. Fixed parameters: <span class="math inline">\(\beta = 1\)</span>, <span class="math inline">\(\rho = 0.8\)</span>. Grid: <span class="math inline">\(\pi \in \{0, 0.10, 0.15, 0.20, 0.30, 0.50, 1.00, 2.00\}\)</span>. Expected <span class="math inline">\(F \approx 500\pi^2\)</span>. All three IV assumptions hold by construction.</p>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\pi\)</span></th>
+<th><span class="math inline">\(F\)</span></th>
+<th>Theory bias</th>
+<th>OLS Bias</th>
+<th>OLS RMSE</th>
+<th>IV Bias</th>
+<th>IV SD</th>
+<th>IV RMSE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.00</td>
+<td>1</td>
+<td>+0.800</td>
+<td>+0.801</td>
+<td>0.802</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>0.10</td>
+<td>6</td>
+<td>+0.792</td>
+<td>+0.791</td>
+<td>0.792</td>
+<td>−0.128</td>
+<td>4.391</td>
+<td>4.392</td>
+</tr>
+<tr class="odd">
+<td>0.15</td>
+<td>13</td>
+<td>+0.782</td>
+<td>+0.782</td>
+<td>0.783</td>
+<td>−0.236</td>
+<td>6.487</td>
+<td>6.491</td>
+</tr>
+<tr class="even">
+<td>0.20</td>
+<td>21</td>
+<td>+0.769</td>
+<td>+0.769</td>
+<td>0.770</td>
+<td>−0.060</td>
+<td>0.380</td>
+<td>0.385</td>
+</tr>
+<tr class="odd">
+<td>0.30</td>
+<td>46</td>
+<td>+0.734</td>
+<td>+0.735</td>
+<td>0.735</td>
+<td>−0.025</td>
+<td>0.163</td>
+<td>0.165</td>
+</tr>
+<tr class="even">
+<td>0.50</td>
+<td>127</td>
+<td>+0.640</td>
+<td>+0.640</td>
+<td>0.640</td>
+<td>−0.004</td>
+<td>0.091</td>
+<td>0.091</td>
+</tr>
+<tr class="odd">
+<td>1.00</td>
+<td>500</td>
+<td>+0.400</td>
+<td>+0.401</td>
+<td>0.402</td>
+<td>−0.001</td>
+<td>0.045</td>
+<td>0.045</td>
+</tr>
+<tr class="even">
+<td>2.00</td>
+<td>2006</td>
+<td>+0.160</td>
+<td>+0.160</td>
+<td>0.161</td>
+<td>0.000</td>
+<td>0.022</td>
+<td>0.022</td>
+</tr>
+</tbody>
+</table>
+<p><em>True <span class="math inline">\(\beta = 1.000\)</span>. <span class="math inline">\(n = 500\)</span>, <span class="math inline">\(B = 2{,}000\)</span> replications. IV mean and SD at <span class="math inline">\(\pi = 0.10\)</span> and <span class="math inline">\(0.15\)</span> are dominated by extreme outliers; the IV median is <span class="math inline">\(\approx 1.01\)</span> at both values.</em></p>
+<p>Four lessons stand out.</p>
+<p><strong>1. The OLS bias formula is exact.</strong> The theory bias column (<span class="math inline">\(0.8/(\pi^2 + 1)\)</span>) matches the simulated OLS bias to four decimal places. OLS bias decreases as <span class="math inline">\(\pi\)</span> grows but is never zero.</p>
+<p><strong>2. IV is consistent but has catastrophically heavy tails when the instrument is weak.</strong> At <span class="math inline">\(F \approx 6\)</span>–<span class="math inline">\(13\)</span>, the IV <em>median</em> is <span class="math inline">\(\approx 1.01\)</span> (confirming consistency), but a small fraction of replications in which the first stage happens to be near zero inflates the SD to <span class="math inline">\(4.4\)</span>–<span class="math inline">\(6.5\)</span>. The weak instrument problem is uncontrolled tail behavior, not inconsistency.</p>
+<p><strong>3. The RMSE crossover occurs near <span class="math inline">\(F \approx 20\)</span>.</strong> IV first beats OLS at <span class="math inline">\(\pi = 0.20\)</span> (<span class="math inline">\(F \approx 21\)</span>): IV RMSE <span class="math inline">\(= 0.385 &lt;\)</span> OLS RMSE <span class="math inline">\(= 0.770\)</span>. The Staiger–Stock rule of thumb (<span class="math inline">\(F \geq 10\)</span>) is therefore slightly too lenient; <span class="math inline">\(F \geq 20\)</span>–<span class="math inline">\(25\)</span> is more appropriate in this DGP.</p>
+<p><strong>4. A strong instrument eliminates both problems.</strong> At <span class="math inline">\(\pi = 1.00\)</span> (<span class="math inline">\(F \approx 500\)</span>): IV RMSE <span class="math inline">\(= 0.045\)</span> vs.&nbsp;OLS RMSE <span class="math inline">\(= 0.402\)</span> — a 9-fold improvement from IV.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>RMSE Cannot Be the Only Criterion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>OLS has lower RMSE than IV for <span class="math inline">\(\pi &lt; 0.20\)</span> in this DGP. This does not vindicate OLS. An estimator with RMSE <span class="math inline">\(= 0.78\)</span> because it is biased by <span class="math inline">\(0.80\)</span> is useless for causal inference: the bias is systematic and does not shrink with sample size. As <span class="math inline">\(n \to \infty\)</span>, IV RMSE shrinks to zero while OLS RMSE stays at <span class="math inline">\(0.80\)</span>. The RMSE comparison is meaningful only in finite samples; it quantifies when a weak instrument is not yet practically useful, not when OLS is acceptable.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: The First-Stage <span class="math inline">\(F\)</span>-Statistic as a Diagnostic
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="bound1995problems">(Bound et al. 1995)</span> The Staiger–Stock threshold <span class="math inline">\(F \geq 10\)</span> corresponds to IV RMSE within a factor of roughly two of the strong-instrument limit. The simulation here suggests this threshold may understate the problem when endogeneity is strong (<span class="math inline">\(\rho = 0.8\)</span>): at <span class="math inline">\(F = 13\)</span> the IV RMSE is <span class="math inline">\(6.5\)</span>, far above any useful threshold. A researcher should report the first-stage <span class="math inline">\(F\)</span> alongside any IV estimate, and treat values below <span class="math inline">\(20\)</span>–<span class="math inline">\(25\)</span> with particular caution.</p>
+</div>
+</div>
+</section>
+<section id="sec-overid" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="sec-overid"><span class="header-section-number">7.6</span> Multiple Instruments and Overidentification</h2>
+<p>When there are exactly as many instruments as endogenous variables (<span class="math inline">\(q = p\)</span>), the model is <em>just-identified</em>. When <span class="math inline">\(q &gt; p\)</span>, the model is <em>overidentified</em>: the extra instruments impose testable moment restrictions. The Sargan–Hansen <span class="math inline">\(J\)</span>-test <span class="citation" data-cites="sargan1958estimation hansen1982large">(Sargan 1958; Hansen 1982)</span> checks mutual consistency of instruments; rejection indicates at least one instrument violates exogeneity or exclusion, but does not identify which one. The test statistic and distribution are derived in Chapter 12.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>What Overidentification Does Not Do
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Passing the <span class="math inline">\(J\)</span>-test does not confirm any instrument is valid — only that sample moment conditions are mutually compatible. Multiple invalid instruments can agree if they share the same violation. Overidentification is an opportunity for a consistency check, not a substitute for the institutional argument.</p>
+</div>
+</div>
+</section>
+<section id="sec-late" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="sec-late"><span class="header-section-number">7.7</span> Heterogeneous Treatment Effects and the LATE Framework</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Framework 2: Heterogeneous Treatment Effects
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We now drop homogeneity and allow <span class="math inline">\(\tau_i = Y_i(1) - Y_i(0)\)</span> to vary across units, in the binary instrument, binary treatment setting (<span class="math inline">\(Z, T \in \{0,1\}\)</span>). Under an additional assumption of monotonicity, the Wald ratio identifies the <em>Local Average Treatment Effect</em> (LATE): the average treatment effect for the subpopulation whose treatment status is changed by the instrument.</p>
+</div>
+</div>
+<section id="compliance-types" class="level3" data-number="7.7.1">
+<h3 data-number="7.7.1" class="anchored" data-anchor-id="compliance-types"><span class="header-section-number">7.7.1</span> Compliance Types</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Compliance Types
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="angrist1996identification">(Angrist et al. 1996)</span> For binary <span class="math inline">\(Z, T \in \{0,1\}\)</span>, define <span class="math inline">\(T_i(z)\)</span> as the treatment unit <span class="math inline">\(i\)</span> would take under instrument value <span class="math inline">\(z\)</span>. The four compliance types are:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Type</strong></th>
+<th><span class="math inline">\(T_i(0)\)</span></th>
+<th><span class="math inline">\(T_i(1)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Complier</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>Always-taker</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>Never-taker</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Defier</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The instrument <span class="math inline">\(Z\)</span> only shifts treatment for <em>compliers</em>: always-takers and never-takers have the same treatment status regardless of <span class="math inline">\(Z\)</span>, contributing nothing to the denominator.</p>
+</section>
+<section id="the-monotonicity-assumption" class="level3" data-number="7.7.2">
+<h3 data-number="7.7.2" class="anchored" data-anchor-id="the-monotonicity-assumption"><span class="header-section-number">7.7.2</span> The Monotonicity Assumption</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Monotonicity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="imbens1994identification">(Angrist and Imbens 1994)</span> The treatment assignment is <strong>monotone in <span class="math inline">\(Z\)</span></strong> if: <span class="math inline">\(T_i(1) \;\geq\; T_i(0)\)</span> for all <span class="math inline">\(i\)</span> (no defiers).</p>
+</div>
+</div>
+</section>
+<section id="the-late-theorem" class="level3" data-number="7.7.3">
+<h3 data-number="7.7.3" class="anchored" data-anchor-id="the-late-theorem"><span class="header-section-number">7.7.3</span> The LATE Theorem</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: LATE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="imbens1994identification">(Angrist and Imbens 1994)</span> Under the three core IV assumptions and monotonicity, the Wald estimand identifies the <strong>Local Average Treatment Effect</strong>: <span class="math display">\[\frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}{\E[T \mid Z{=}1] - \E[T \mid Z{=}0]} = \E\!\bigl[Y(1) - Y(0) \mid T_i(1) &gt; T_i(0)\bigr] \equiv \tau_{\mathrm{LATE}}.\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Denominator.</strong> By exogeneity (<span class="math inline">\(Z \indep T(0), T(1)\)</span>): <span class="math display">\[\E[T \mid Z{=}1] - \E[T \mid Z{=}0] = \E[T(1) - T(0)] = P(\text{complier}),\]</span> since always-takers contribute <span class="math inline">\(1-1=0\)</span>, never-takers <span class="math inline">\(0-0=0\)</span>, and no defiers exist.</p>
+<p><strong>Numerator.</strong> By exogeneity and law of total expectation over compliance types: <span class="math display">\[\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] = \E[Y(T(1))] - \E[Y(T(0))].\]</span> Always-takers and never-takers contribute 0; compliers contribute <span class="math inline">\(Y(1)-Y(0)\)</span>. Therefore: <span class="math display">\[\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] = P(\text{complier})\,\E[Y(1)-Y(0) \mid \text{complier}].\]</span></p>
+<p><strong>Ratio:</strong> Dividing numerator by denominator yields <span class="math inline">\(\tau_{\mathrm{LATE}}\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-interpret" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="sec-interpret"><span class="header-section-number">7.8</span> Interpreting IV Estimands</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Framework 1</strong> (homogeneous)</th>
+<th><strong>Framework 2</strong> (heterogeneous)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Key assumption</td>
+<td><span class="math inline">\(\tau_i = \beta\)</span> for all <span class="math inline">\(i\)</span></td>
+<td>Monotonicity; no defiers</td>
+</tr>
+<tr class="even">
+<td>What IV identifies</td>
+<td><span class="math inline">\(\beta = \mathrm{ATE} = \mathrm{ATT} = \mathrm{LATE}\)</span></td>
+<td><span class="math inline">\(\tau_{\mathrm{LATE}} = \E[\tau_i \mid \text{complier}]\)</span></td>
+</tr>
+<tr class="odd">
+<td>Estimand depends on <span class="math inline">\(Z\)</span>?</td>
+<td>No</td>
+<td>Yes (different <span class="math inline">\(Z \Rightarrow\)</span> different compliers <span class="math inline">\(\Rightarrow\)</span> different LATE)</td>
+</tr>
+<tr class="even">
+<td>Identifies ATE?</td>
+<td>Yes</td>
+<td>Only under additional homogeneity</td>
+</tr>
+</tbody>
+</table>
+<section id="when-does-late-equal-ate" class="level3" data-number="7.8.1">
+<h3 data-number="7.8.1" class="anchored" data-anchor-id="when-does-late-equal-ate"><span class="header-section-number">7.8.1</span> When Does LATE Equal ATE?</h3>
+<p>ATE decomposes by compliance type: <span class="math display">\[\mathrm{ATE} = P(\mathrm{co})\,\E[\tau_i \mid \mathrm{co}] + P(\mathrm{at})\,\E[\tau_i \mid \mathrm{at}] + P(\mathrm{nt})\,\E[\tau_i \mid \mathrm{nt}].\]</span> LATE equals only the first term divided by its probability weight. ATE and LATE coincide if and only if: (1) effects are homogeneous, or (2) everyone is a complier, or (3) effects for always-takers and never-takers happen to equal the LATE. In practice, none of these is likely to hold exactly.</p>
+</section>
+<section id="sec-diff-instr" class="level3" data-number="7.8.2">
+<h3 data-number="7.8.2" class="anchored" data-anchor-id="sec-diff-instr"><span class="header-section-number">7.8.2</span> Different Instruments, Different Estimands</h3>
+<p>Because the LATE is specific to the complier population, two valid instruments for the same treatment can legitimately identify different LATEs. This is informative about treatment effect heterogeneity, not a contradiction.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Compulsory Schooling Laws vs.&nbsp;Distance to College
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Two classic instruments for years of schooling: compulsory schooling laws <span class="citation" data-cites="angrist1991does">(Angrist and Krueger 1991)</span> select compliers at the margin of dropping out (typically lower-income students); distance to the nearest college <span class="citation" data-cites="card1995using">(Card 1995)</span> selects students deterred by geography. Both identify the return to schooling for their respective complier populations, and the LATEs can legitimately differ even if both instruments are valid.</p>
+</div>
+</div>
+</section>
+<section id="the-policy-relevance-of-late" class="level3" data-number="7.8.3">
+<h3 data-number="7.8.3" class="anchored" data-anchor-id="the-policy-relevance-of-late"><span class="header-section-number">7.8.3</span> The Policy Relevance of LATE</h3>
+<p>For many policy questions, the LATE is exactly the right estimand — when the contemplated intervention resembles the instrument, the complier population under the study design is close to the policy-relevant margin. When the ATE over the full population is required, IV alone is insufficient under heterogeneous effects; additional structure or a second instrument is needed.</p>
+</section>
+</section>
+<section id="sec-compare" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="sec-compare"><span class="header-section-number">7.9</span> IV versus Back-Door Adjustment</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Dimension</strong></th>
+<th><strong>Back-door / propensity score</strong></th>
+<th><strong>Instrumental variables</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Core assumption</td>
+<td>All confounders observed</td>
+<td>Valid instrument: relevance, exogeneity, exclusion</td>
+</tr>
+<tr class="even">
+<td>Unobserved confounders</td>
+<td>Fatal</td>
+<td>Permitted</td>
+</tr>
+<tr class="odd">
+<td>Estimand</td>
+<td>ATE, ATT, or ATC</td>
+<td>LATE (compliers only)</td>
+</tr>
+<tr class="even">
+<td>Testability</td>
+<td>Unconfoundedness untestable; overlap testable</td>
+<td>Relevance testable; exogeneity/exclusion untestable (just-ID)</td>
+</tr>
+<tr class="odd">
+<td>Main threat</td>
+<td>Unmeasured confounder</td>
+<td>Exclusion restriction violation</td>
+</tr>
+<tr class="even">
+<td>Identifies ATE?</td>
+<td>Yes, under strong ignorability</td>
+<td>Only under homogeneous effects</td>
+</tr>
+</tbody>
+</table>
+<p>The two strategies have complementary failure modes. Back-door adjustment fails when <span class="math inline">\(X\)</span> does not capture all confounders. IV fails when the exclusion restriction is violated, with bias <span class="math inline">\(\delta/\pi\)</span> amplified by a weak first stage. They are tools for different identification problems, not competitors.</p>
+<p><strong>Five questions for any IV application:</strong> (1) What exactly is the instrument? (2) Why does it shift treatment? (3) Why is it as-if random relative to latent outcome determinants? (4) Why can it affect the outcome only through treatment? (5) What population margin does it shift?</p>
+</section>
+<section id="sec-kipp" class="level2" data-number="7.10">
+<h2 data-number="7.10" class="anchored" data-anchor-id="sec-kipp"><span class="header-section-number">7.10</span> Applied Example: Charter School Lotteries and the KIPP Lynn Study</h2>
+<p>This example illustrates a canonical randomized-encouragement IV design <span class="citation" data-cites="angrist2012benefits">(Angrist et al. 2012)</span>. The lottery randomizes <em>offer status</em>, not actual treatment. <span class="math inline">\(Z\)</span> = lottery offer; <span class="math inline">\(S\)</span> = years of KIPP attendance (endogenous); <span class="math inline">\(Y\)</span> = standardized MCAS test score.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-kipp-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-kipp-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_07_files/figure-html/fig-kipp-dag-1.pdf" class="img-fluid" width="384">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-kipp-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.3: Causal DAG for the KIPP Lynn lottery IV design. Exogeneity is guaranteed by the randomization protocol; exclusion rests on the institutional argument that the lottery offer affects achievement only through attendance.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Relevance.</strong> First-stage coefficient <span class="math inline">\(\approx 1.2\)</span>: lottery winners had spent <span class="math inline">\(1.2\)</span> more years at KIPP at the time of each MCAS exam. First-stage <span class="math inline">\(F\)</span> is far above conventional thresholds.</p>
+<p><strong>Exogeneity.</strong> Guaranteed by the randomization protocol. Balance test: <span class="math inline">\(p\)</span>-value <span class="math inline">\(= 0.615\)</span> for demographic characteristics and baseline test scores.</p>
+<p><strong>Exclusion.</strong> The lottery offer merely provides access — it does not deliver instruction. One potential violation is a discouragement effect on losers; the authors note that lottery losers’ scores are typical of demographically comparable students in Lynn.</p>
+<p><strong>Results</strong> (<span class="citation" data-cites="angrist2012benefits">(Angrist et al. 2012)</span>, Table 4, specification with demographic and baseline-score controls):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Subject</th>
+<th>First stage</th>
+<th>Reduced form</th>
+<th>2SLS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Math</td>
+<td>1.221 (0.068)</td>
+<td>0.430 (0.067)</td>
+<td>0.352 (0.053)</td>
+</tr>
+<tr class="even">
+<td>ELA</td>
+<td>1.228 (0.068)</td>
+<td>0.164 (0.073)</td>
+<td>0.133 (0.059)</td>
+</tr>
+</tbody>
+</table>
+<p><em>SE clustered at the student level. <span class="math inline">\(N = 833\)</span> student-by-test observations.</em></p>
+<p>Each year at KIPP raises math scores by approximately <span class="math inline">\(0.35\sigma\)</span> and ELA scores by approximately <span class="math inline">\(0.13\sigma\)</span>. The 2SLS estimand identifies the LATE for <em>lottery compliers</em> only. Reading gains are driven almost entirely by LEP students (<span class="math inline">\(\approx 0.43\sigma\)</span>) and SPED students (<span class="math inline">\(\approx 0.27\sigma\)</span>).</p>
+</section>
+<section id="summary" class="level2" data-number="7.11">
+<h2 data-number="7.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">7.11</span> Summary</h2>
+<ol type="1">
+<li><p><strong>IV identifies effects from exogenous treatment variation.</strong> When back-door adjustment fails because <span class="math inline">\(U\)</span> creates a path <span class="math inline">\(T \leftarrow U \to Y\)</span>, a valid instrument <span class="math inline">\(Z\)</span> identifies the causal effect by exploiting only the component of treatment variation that <span class="math inline">\(Z\)</span> induces. IV avoids confounding rather than controlling for it.</p></li>
+<li><p><strong>Three assumptions, ordered by testability.</strong> Relevance is assessable with the first-stage <span class="math inline">\(F\)</span>. Exogeneity and exclusion must be defended by institutional knowledge and causal structure. Each violated assumption produces a distinct, quantifiable bias in the Wald estimand, amplified by weak instruments.</p></li>
+<li><p><strong>Framework 1 (homogeneous effects):</strong> Under constant treatment effects and the linear structural model, the Wald estimand identifies <span class="math inline">\(\beta = \mathrm{ATE} = \mathrm{ATT} = \mathrm{LATE}\)</span>.</p></li>
+<li><p><strong>Framework 2 (heterogeneous effects + monotonicity):</strong> The Wald estimand identifies <span class="math inline">\(\tau_{\mathrm{LATE}} = \E[\tau_i \mid \text{complier}]\)</span> — the effect for the subpopulation whose treatment status is changed by the instrument.</p></li>
+<li><p><strong>Different instruments identify different effects.</strong> The LATE depends on the instrument through the complier population it selects. LATE equals ATE only under additional structure, most notably treatment-effect homogeneity.</p></li>
+<li><p><strong>IV versus back-door adjustment.</strong> Complementary failure modes: back-door fails when confounders are unobserved; IV fails when exclusion is violated. They are tools for different identification problems.</p></li>
+<li><p><strong>Applied example: KIPP Lynn lottery.</strong> The lottery guarantees exogeneity by design; exclusion is defended institutionally; first-stage coefficient <span class="math inline">\(\approx 1.2\)</span>. Estimates identify the LATE for lottery compliers: <span class="math inline">\(0.35\sigma\)</span> per year in math, <span class="math inline">\(0.13\sigma\)</span> in ELA.</p></li>
+<li><p><strong>Estimation deferred to Chapter 12.</strong> This chapter establishes what IV identifies and under what assumptions. How the Wald ratio is estimated — 2SLS, asymptotic inference, overidentification tests — is the subject of Chapter 12.</p></li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="7.12">
+<h2 data-number="7.12" class="anchored" data-anchor-id="problems"><span class="header-section-number">7.12</span> Problems</h2>
+<p><strong>1. The three IV assumptions in three languages.</strong> Consider the DAG <span class="math inline">\(\{Z \to T,\; T \to Y,\; U \to T,\; U \to Y,\; X \to T,\; X \to Y,\; X \to Z\}\)</span> with <span class="math inline">\(U\)</span> unobserved.</p>
+<ol type="a">
+<li>List all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. Does <span class="math inline">\(X\)</span> alone satisfy the back-door criterion? Explain.</li>
+<li>Verify the three IV assumptions using d-separation: (i) Relevance: show <span class="math inline">\(Z\)</span> and <span class="math inline">\(T\)</span> are not d-separated in <span class="math inline">\(\Gcal\)</span>. (ii) Exogeneity: show <span class="math inline">\(Z \indep U \mid X\)</span> in <span class="math inline">\(\Gcal\)</span>. (iii) Exclusion: show <span class="math inline">\(Y \indep Z \mid T, X\)</span> in <span class="math inline">\(\Gcal_{\overline{T}}\)</span>.</li>
+<li>Now add the arrow <span class="math inline">\(Z \to Y\)</span> to the DAG. Which IV assumption is violated? Show explicitly which step of the Wald derivation breaks down.</li>
+<li>Translate each of the three IV assumptions into the structural language: write the equations for <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> and identify which coefficient restriction corresponds to each assumption.</li>
+</ol>
+<p><strong>2. Bias under assumption violations.</strong> Let <span class="math inline">\(Y = \beta T + \varepsilon\)</span> and <span class="math inline">\(T = \pi Z + \eta\)</span> with <span class="math inline">\(\E[\varepsilon \mid Z] = 0\)</span> and <span class="math inline">\(\pi \neq 0\)</span>.</p>
+<ol type="a">
+<li>Starting from <span class="math inline">\(\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]\)</span>, substitute the structural equation for <span class="math inline">\(Y\)</span> and simplify. What role does exogeneity play?</li>
+<li>Show that <span class="math inline">\(\E[T \mid Z{=}1] - \E[T \mid Z{=}0] = \pi\)</span> in the linear first-stage model.</li>
+<li>Derive the Wald estimand and confirm it equals <span class="math inline">\(\beta\)</span>.</li>
+<li>Now suppose exclusion fails: <span class="math inline">\(Y = \beta T + \delta Z + \varepsilon\)</span> with <span class="math inline">\(\delta \neq 0\)</span>. Derive the probability limit of the Wald estimator and confirm the bias formula from <a href="#sec-why-matter" class="quarto-xref"><span>Section 7.4</span></a>.</li>
+<li>Suppose instead exogeneity fails: <span class="math inline">\(\E[\varepsilon \mid Z] = cZ\)</span> for some constant <span class="math inline">\(c \neq 0\)</span>. Derive the probability limit of the Wald estimator and express the bias in terms of <span class="math inline">\(c\)</span> and <span class="math inline">\(\pi\)</span>.</li>
+</ol>
+<p><strong>3. Order, rank, and the limits of overidentification.</strong> Consider a model with one endogenous variable <span class="math inline">\(T\)</span> and two instruments <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Z_2\)</span>, both satisfying exogeneity and exclusion.</p>
+<ol type="a">
+<li>State the order condition and verify it is satisfied.</li>
+<li>State the rank condition. What would it mean geometrically if <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Z_2\)</span> were perfectly collinear in the first-stage regression?</li>
+<li>Explain intuitively why having two valid instruments rather than one should improve estimation precision.</li>
+<li>Now suppose <span class="math inline">\(Z_1\)</span> is valid but <span class="math inline">\(Z_2\)</span> violates exclusion. Under what conditions does the Sargan–Hansen <span class="math inline">\(J\)</span>-test have power to detect <span class="math inline">\(Z_2\)</span>’s invalidity? Under what conditions does the test fail?</li>
+<li>Why does passing the <span class="math inline">\(J\)</span>-test not confirm that both instruments are valid? Give a concrete example where both are invalid and the <span class="math inline">\(J\)</span>-test has no power.</li>
+</ol>
+<p><strong>4. Compliance types and the LATE.</strong> In a binary instrument, binary treatment study: 30% compliers with <span class="math inline">\(\tau_c = 6\)</span>; 25% always-takers with <span class="math inline">\(\tau_a = 3\)</span>; 45% never-takers with <span class="math inline">\(\tau_n = 1\)</span>; no defiers.</p>
+<ol type="a">
+<li>Compute <span class="math inline">\(P(\text{complier}) = \E[T \mid Z{=}1] - \E[T \mid Z{=}0]\)</span>.</li>
+<li>Compute the ATE as a weighted average of <span class="math inline">\(\tau_c\)</span>, <span class="math inline">\(\tau_a\)</span>, <span class="math inline">\(\tau_n\)</span> with appropriate weights.</li>
+<li>The Wald estimand equals <span class="math inline">\(\tau_c = 6\)</span>. By how much does this overstate the ATE, and why?</li>
+<li>A second study uses a different binary instrument <span class="math inline">\(Z'\)</span> with a complier population of 50% and a LATE of 2. Is this contradictory? What can you infer about relative treatment effects in the two complier populations?</li>
+<li>Explain, using compliance type language, why the denominator of the Wald estimand equals <span class="math inline">\(P(\text{complier})\)</span>.</li>
+</ol>
+<p><strong>5. The exclusion restriction: plausibility and violations.</strong> For each proposed instrument, (i) state whether the restriction is plausible and why; (ii) describe a specific mechanism by which it could be violated; (iii) assess whether the violation would bias the IV estimate upward or downward.</p>
+<ol type="a">
+<li><strong>Instrument</strong>: rainfall in the home region of a politician, used as an instrument for government infrastructure spending. <strong>Outcome</strong>: local economic growth.</li>
+<li><strong>Instrument</strong>: distance to the nearest hospital, used as an instrument for hospital admission. <strong>Outcome</strong>: 30-day mortality.</li>
+<li><strong>Instrument</strong>: a randomly assigned financial incentive to enroll in a health screening program. <strong>Outcome</strong>: health status two years later.</li>
+<li><strong>Instrument</strong>: lottery number in the Vietnam-era draft lottery, used as an instrument for military service. <strong>Outcome</strong>: lifetime earnings. <em>(This is the <span class="citation" data-cites="angrist1990lifetime">Angrist (1990)</span> study; discuss why this instrument is widely regarded as satisfying the exclusion restriction.)</em></li>
+</ol>
+<p><strong>6. IV versus back-door adjustment.</strong> A researcher studies the effect of job training (<span class="math inline">\(T\)</span>) on earnings (<span class="math inline">\(Y\)</span>). Two strategies: (A) a rich set of pre-treatment covariates <span class="math inline">\(X\)</span> and a propensity-score estimator; (B) a lottery that randomly selected units to be offered training, used as an instrument <span class="math inline">\(Z\)</span>.</p>
+<ol type="a">
+<li>Under what assumption does strategy (A) identify the ATE? What specific unobserved variable would most plausibly violate this assumption?</li>
+<li>Strategy (B) identifies a LATE. Describe the complier population in words. Is the LATE likely to be larger or smaller than the ATE in this setting?</li>
+<li>Both strategies yield estimates of $1,800 and $2,400 per year. Describe a Hausman-type test. Under what null hypothesis does the test have an approximate <span class="math inline">\(\chi^2\)</span> distribution?</li>
+<li>If the two estimates differ significantly, which strategy would you trust more and why? What additional evidence would help distinguish endogeneity bias in (A) versus LATE <span class="math inline">\(\neq\)</span> ATE in (B)?</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_06.html" class="pagination-link" aria-label="Propensity Score Methods">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
