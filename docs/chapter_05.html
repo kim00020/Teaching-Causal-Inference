@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Randomization and Back-Door Adjustment – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./chapter_04.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_05.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-rct" id="toc-sec-rct" class="nav-link active" data-scroll-target="#sec-rct"><span class="header-section-number">5.1</span> Randomized Experiments</a>
+  <ul class="collapse">
+  <li><a href="#the-do-calculus-of-randomization" id="toc-the-do-calculus-of-randomization" class="nav-link" data-scroll-target="#the-do-calculus-of-randomization"><span class="header-section-number">5.1.1</span> The Do-Calculus of Randomization</a></li>
+  <li><a href="#estimation-of-the-ate-in-a-randomized-experiment" id="toc-estimation-of-the-ate-in-a-randomized-experiment" class="nav-link" data-scroll-target="#estimation-of-the-ate-in-a-randomized-experiment"><span class="header-section-number">5.1.2</span> Estimation of the ATE in a Randomized Experiment</a></li>
+  </ul></li>
+  <li><a href="#sec-ignorability" id="toc-sec-ignorability" class="nav-link" data-scroll-target="#sec-ignorability"><span class="header-section-number">5.2</span> Ignorability and the Back-Door Formula</a>
+  <ul class="collapse">
+  <li><a href="#randomization-vs.-observational-studies" id="toc-randomization-vs.-observational-studies" class="nav-link" data-scroll-target="#randomization-vs.-observational-studies"><span class="header-section-number">5.2.1</span> Randomization vs.&nbsp;Observational Studies</a></li>
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">5.2.2</span> Definition</a></li>
+  <li><a href="#graphical-interpretation" id="toc-graphical-interpretation" class="nav-link" data-scroll-target="#graphical-interpretation"><span class="header-section-number">5.2.3</span> Graphical Interpretation</a></li>
+  <li><a href="#from-ignorability-to-identification" id="toc-from-ignorability-to-identification" class="nav-link" data-scroll-target="#from-ignorability-to-identification"><span class="header-section-number">5.2.4</span> From Ignorability to Identification</a></li>
+  </ul></li>
+  <li><a href="#sec-regression" id="toc-sec-regression" class="nav-link" data-scroll-target="#sec-regression"><span class="header-section-number">5.3</span> Regression Adjustment</a>
+  <ul class="collapse">
+  <li><a href="#the-outcome-regression-or-estimator" id="toc-the-outcome-regression-or-estimator" class="nav-link" data-scroll-target="#the-outcome-regression-or-estimator"><span class="header-section-number">5.3.1</span> The Outcome Regression (OR) Estimator</a></li>
+  <li><a href="#sec-std" id="toc-sec-std" class="nav-link" data-scroll-target="#sec-std"><span class="header-section-number">5.3.2</span> Standardization as a Special Case</a></li>
+  <li><a href="#regression-adjustment-in-randomized-experiments-lin-2013" id="toc-regression-adjustment-in-randomized-experiments-lin-2013" class="nav-link" data-scroll-target="#regression-adjustment-in-randomized-experiments-lin-2013"><span class="header-section-number">5.3.3</span> Regression Adjustment in Randomized Experiments: Lin (2013)</a></li>
+  </ul></li>
+  <li><a href="#sec-stratification" id="toc-sec-stratification" class="nav-link" data-scroll-target="#sec-stratification"><span class="header-section-number">5.4</span> Stratification</a>
+  <ul class="collapse">
+  <li><a href="#the-idea" id="toc-the-idea" class="nav-link" data-scroll-target="#the-idea"><span class="header-section-number">5.4.1</span> The Idea</a></li>
+  <li><a href="#the-stratified-estimator" id="toc-the-stratified-estimator" class="nav-link" data-scroll-target="#the-stratified-estimator"><span class="header-section-number">5.4.2</span> The Stratified Estimator</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations"><span class="header-section-number">5.4.3</span> Limitations</a></li>
+  </ul></li>
+  <li><a href="#sec-simpson" id="toc-sec-simpson" class="nav-link" data-scroll-target="#sec-simpson"><span class="header-section-number">5.5</span> Simpson’s Paradox</a>
+  <ul class="collapse">
+  <li><a href="#when-should-you-not-condition-on-x" id="toc-when-should-you-not-condition-on-x" class="nav-link" data-scroll-target="#when-should-you-not-condition-on-x"><span class="header-section-number">5.5.1</span> When Should You <em>Not</em> Condition on <span class="math inline">\(X\)</span>?</a></li>
+  </ul></li>
+  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">5.6</span> Lab: Simulation Study of the Outcome Regression Estimator</a></li>
+  <li><a href="#sec-propensity-preview" id="toc-sec-propensity-preview" class="nav-link" data-scroll-target="#sec-propensity-preview"><span class="header-section-number">5.7</span> Where the Propensity Score Fits</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.8</span> Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">5.9</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Explain in do-calculus terms why a randomized experiment makes <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span>, and identify the graphical feature that produces this equality.</li>
+<li>State the ignorability (unconfoundedness) assumption in both potential-outcomes and graphical language, and distinguish weak from strong ignorability.</li>
+<li>Apply the regression-adjusted estimator to reduce variance in a randomized experiment, and explain why consistency holds even under model misspecification.</li>
+<li>Derive and compute the standardization (g-formula) estimator of the ATE from a contingency table or regression output.</li>
+<li>Explain the method of stratification (subclassification) and describe when and why it removes confounding bias.</li>
+<li>Identify Simpson’s paradox in a numerical example and resolve it using the back-door criterion.</li>
+<li>Articulate why propensity score methods are needed when <span class="math inline">\(X\)</span> is high-dimensional, motivating Chapter 6.</li>
+</ol>
+</div>
+</div>
+<section id="sec-rct" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="sec-rct"><span class="header-section-number">5.1</span> Randomized Experiments</h2>
+<section id="the-do-calculus-of-randomization" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="the-do-calculus-of-randomization"><span class="header-section-number">5.1.1</span> The Do-Calculus of Randomization</h3>
+<p>The defining feature of a randomized experiment is that the analyst <em>sets</em> the treatment for each unit, independently of all background variables. In do-calculus terms, the observed data come from the mutilated distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> rather than the observational distribution <span class="math inline">\(f(y \mid T{=}t)\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Fundamental Equality of Randomized Experiments
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In a completely randomized experiment, <span class="math inline">\(T\)</span> is assigned independently of all pre-treatment variables. The DAG has no arrows into <span class="math inline">\(T\)</span>: every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> is severed. Consequently: <span id="eq-fund-eq"><span class="math display">\[f\!\left(y \mid \doop(T{=}t)\right) \;=\; f\!\left(y \mid T{=}t\right). \tag{5.1}\]</span></span> The interventional and observational conditional distributions coincide.</p>
+</div>
+</div>
+<p>In a completely randomized design (CRD), the treatment node <span class="math inline">\(T\)</span> has no parents in the DAG. Graphically, this means:</p>
+<ul>
+<li>No back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> exist.</li>
+<li><span class="math inline">\(T\)</span> is independent of all pre-treatment covariates: <span class="math inline">\(T \indep (X, U)\)</span>.</li>
+<li>In the mutilated graph <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, nothing changes relative to the original DAG because <span class="math inline">\(T\)</span> already had no parents.</li>
+</ul>
+<p><a href="#fig-randomization-dag" class="quarto-xref">Figure&nbsp;<span>5.1</span></a> illustrates the contrast between the observational DAG (with back-door paths) and the randomized DAG (all arrows into <span class="math inline">\(T\)</span> severed).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-randomization-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-randomization-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_05_files/figure-html/fig-randomization-dag-1.pdf" class="img-fluid" width="528">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-randomization-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the observational DAG, the unobserved confounder <span class="math inline">\(U\)</span> and observed covariate <span class="math inline">\(X\)</span> both have arrows into <span class="math inline">\(T\)</span>, creating back-door paths. <strong>Right</strong>: randomization physically severs all arrows into <span class="math inline">\(T\)</span> (marked <span class="math inline">\(\times\)</span>) and replaces them with an exogenous coin flip. The resulting graph is the mutilated graph <span class="math inline">\(\mathcal{G}_{\overline{T}}\)</span>, in which no back-door paths exist.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Potential outcomes statement.</strong> In the potential outcomes language, randomization implies <span class="math inline">\((Y(0),\, Y(1)) \;\indep\; T\)</span>. The potential outcomes are independent of assignment <em>unconditionally</em> — no covariate adjustment is needed.</p>
+</section>
+<section id="estimation-of-the-ate-in-a-randomized-experiment" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="estimation-of-the-ate-in-a-randomized-experiment"><span class="header-section-number">5.1.2</span> Estimation of the ATE in a Randomized Experiment</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Lemma: Identification under Complete Randomization
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under complete randomization, <span id="eq-rct-id"><span class="math display">\[\E\bigl[Y(t)\bigr] \;=\; \E\bigl[Y \mid T{=}t\bigr], \qquad t \in \{0,1\}. \tag{5.2}\]</span></span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>By Proposition 4.1, <span class="math inline">\(Y(t)\)</span> has the same distribution as <span class="math inline">\(Y\)</span> under <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>, so <span class="math inline">\(\E[Y(t)] = \E[Y \mid \doop(T{=}t)]\)</span>. In a completely randomized experiment, the treatment node has no parents in the DAG, so <a href="#eq-fund-eq" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> gives <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span>. Therefore <span class="math inline">\(\E[Y(t)] = \E[Y \mid T{=}t]\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<p>Under complete randomization, the ATE is estimated by the <em>difference-in-means</em> (DIM) estimator: <span class="math display">\[\hat\tau_{\mathrm{DIM}} = \bar{Y}_1 - \bar{Y}_0 = \frac{1}{n_1}\sum_{i:\, T_i=1} Y_i - \frac{1}{n_0}\sum_{i:\, T_i=0} Y_i.\]</span></p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Unbiasedness and Variance of <span class="math inline">\(\hat\tau_{\mathrm{DIM}}\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\sigma_t^2 = \mathrm{Var}(Y(t))\)</span> for <span class="math inline">\(t \in \{0,1\}\)</span>. Under complete randomization: <span class="math display">\[\E\bigl[\hat\tau_{\mathrm{DIM}}\bigr] = \tau_{\mathrm{ATE}},\]</span> <span class="math display">\[\mathrm{Var}\bigl(\hat\tau_{\mathrm{DIM}}\bigr) = \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0}.\]</span></p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-ignorability" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="sec-ignorability"><span class="header-section-number">5.2</span> Ignorability and the Back-Door Formula</h2>
+<section id="randomization-vs.-observational-studies" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="randomization-vs.-observational-studies"><span class="header-section-number">5.2.1</span> Randomization vs.&nbsp;Observational Studies</h3>
+<p>In a randomized experiment, identification is guaranteed by the design. In an observational study, the analyst has no control over treatment assignment, and back-door paths through unobserved variables may remain open. The question shifts from <em>does</em> identification hold to <em>when</em> does it hold.</p>
+<p>The two routes to identification differ in their logical structure. Randomization <em>guarantees</em> identification by design: the analyst removes all arrows into <span class="math inline">\(T\)</span>, so the fundamental equality <a href="#eq-fund-eq" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> holds automatically. The observational route requires a substantive assumption: the analyst must argue, from subject-matter knowledge encoded in a DAG, that all confounders have been measured and that the back-door criterion is satisfied.</p>
+</section>
+<section id="definition" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="definition"><span class="header-section-number">5.2.2</span> Definition</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Ignorability (Unconfoundedness)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(X\)</span> denote a vector of pre-treatment covariates. We say that treatment assignment is <strong>weakly ignorable</strong> given <span class="math inline">\(X\)</span> if: <span class="math display">\[Y(t) \;\indep\; T \;\Big|\; X, \qquad t \in \{0,1\}.\]</span> We say assignment is <strong>strongly ignorable</strong> given <span class="math inline">\(X\)</span> <span class="citation" data-cites="rosenbaum1983central">(Rosenbaum and Rubin 1983)</span> if, in addition, the overlap condition holds: <span class="math display">\[0 &lt; P(T{=}1 \mid X) &lt; 1 \quad \text{almost surely.}\]</span></p>
+</div>
+</div>
+<p>Ignorability is also called <em>unconfoundedness</em>, <em>selection on observables</em>, <em>no unmeasured confounders</em>, or <em>conditional exchangeability</em>. In a randomized experiment, weak ignorability holds <em>unconditionally</em> — <span class="math inline">\(X\)</span> is not needed, and the condition reduces to <span class="math inline">\((Y(0), Y(1)) \indep T\)</span>.</p>
+</section>
+<section id="graphical-interpretation" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="graphical-interpretation"><span class="header-section-number">5.2.3</span> Graphical Interpretation</h3>
+<p>In the DAG language, ignorability corresponds exactly to the back-door criterion. A set <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> if: (1) <span class="math inline">\(X\)</span> blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>, and (2) <span class="math inline">\(X\)</span> contains no descendant of <span class="math inline">\(T\)</span>. When <span class="math inline">\(X\)</span> satisfies the back-door criterion, <span class="math inline">\(Y(t) \indep T \mid X\)</span> holds and the back-door adjustment formula identifies the causal effect.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Three Languages for Ignorability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Language</strong></th>
+<th><strong>Statement of ignorability</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SEM</td>
+<td>The structural error <span class="math inline">\(\varepsilon_Y\)</span> in the outcome equation <span class="math inline">\(Y = f_Y(T, X, \varepsilon_Y)\)</span> is independent of <span class="math inline">\(T\)</span> given <span class="math inline">\(X\)</span>: no unobserved variable enters both the equation that determines <span class="math inline">\(T\)</span> and the equation that determines <span class="math inline">\(Y\)</span>.</td>
+</tr>
+<tr class="even">
+<td>DAG / do-calculus</td>
+<td><span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>: <span class="math inline">\(X\)</span> blocks all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> and contains no descendant of <span class="math inline">\(T\)</span>.</td>
+</tr>
+<tr class="odd">
+<td>Potential outcomes</td>
+<td><span class="math inline">\(Y(t) \indep T \mid X\)</span> for <span class="math inline">\(t \in \{0,1\}\)</span> (weak ignorability).</td>
+</tr>
+</tbody>
+</table>
+<p>The three statements are equivalent under the standard bridge assumptions between frameworks (consistency and no interference).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Ignorability Is Untestable from Observational Data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>No statistical test can confirm or refute unconfoundedness using observed data alone. If an unobserved variable <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open, and conditioning on any set of observed variables cannot close it. Sensitivity analysis can quantify how large such an unobserved confounder would have to be to overturn a conclusion, but cannot confirm the assumption itself.</p>
+</div>
+</div>
+</section>
+<section id="from-ignorability-to-identification" class="level3" data-number="5.2.4">
+<h3 data-number="5.2.4" class="anchored" data-anchor-id="from-ignorability-to-identification"><span class="header-section-number">5.2.4</span> From Ignorability to Identification</h3>
+<p>Under strong ignorability, the ATE is identified: <span id="eq-backdoor"><span class="math display">\[\tau_{\mathrm{ATE}} \;=\; \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right]. \tag{5.3}\]</span></span></p>
+<p>This is the back-door adjustment formula of Chapter 3 written in potential-outcome notation. Chapter 4 supplied the proof via the law of iterated expectations, consistency, and unconfoundedness.</p>
+</section>
+</section>
+<section id="sec-regression" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="sec-regression"><span class="header-section-number">5.3</span> Regression Adjustment</h2>
+<section id="the-outcome-regression-or-estimator" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="the-outcome-regression-or-estimator"><span class="header-section-number">5.3.1</span> The Outcome Regression (OR) Estimator</h3>
+<p>Given the identifying formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a>, the natural estimator replaces the population conditional means with their sample analogs.</p>
+<p><strong>Step 1.</strong> Fit a model <span class="math inline">\(\hat\mu(t, x) \approx \E[Y \mid T{=}t, X{=}x]\)</span> using the observed data.</p>
+<p><strong>Step 2.</strong> For each unit <span class="math inline">\(i\)</span>, impute both potential outcome predictions: <span class="math inline">\(\hat\mu(1, X_i)\)</span> and <span class="math inline">\(\hat\mu(0, X_i)\)</span>.</p>
+<p><strong>Step 3.</strong> Average the imputed treatment effects: <span id="eq-or"><span class="math display">\[\hat\tau_{\mathrm{ATE}} = \frac{1}{n}\sum_{i=1}^n \bigl[\hat\mu(1, X_i) - \hat\mu(0, X_i)\bigr]. \tag{5.4}\]</span></span></p>
+<p>This three-step recipe is also called the <em>G-formula estimator</em> or the <em>regression-adjusted estimator</em>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Worked Outcome Regression
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A study compares earnings (<span class="math inline">\(Y\)</span>, in thousands) between job-training participants (<span class="math inline">\(T{=}1\)</span>) and non-participants (<span class="math inline">\(T{=}0\)</span>), with education level <span class="math inline">\(X \in \{0, 1\}\)</span> as a confounder. Among the 200 treated and 200 control units, 70% of treated units have <span class="math inline">\(X{=}1\)</span> vs.&nbsp;30% of control units.</p>
+<p>The estimated conditional means are <span class="math inline">\(\hat\mu(1, 0) = 42\)</span>, <span class="math inline">\(\hat\mu(1, 1) = 58\)</span>, <span class="math inline">\(\hat\mu(0, 0) = 35\)</span>, <span class="math inline">\(\hat\mu(0, 1) = 50\)</span>.</p>
+<p>The within-stratum effects are <span class="math inline">\(42 - 35 = 7\)</span> (for <span class="math inline">\(X{=}0\)</span> units) and <span class="math inline">\(58 - 50 = 8\)</span> (for <span class="math inline">\(X{=}1\)</span> units). Since 50% of the full sample has <span class="math inline">\(X{=}0\)</span> and 50% has <span class="math inline">\(X{=}1\)</span>: <span class="math display">\[\hat\tau_{\mathrm{ATE}} = 7 \times 0.5 + 8 \times 0.5 = 7.5.\]</span></p>
+<p>After adjusting for <span class="math inline">\(X\)</span>, the estimated treatment effect is 7.5 — not the naïve difference-in-means, which conflates the treatment effect with the higher baseline earnings of <span class="math inline">\(X{=}1\)</span> units who happen to be treated more often.</p>
+</div>
+</div>
+</section>
+<section id="sec-std" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="sec-std"><span class="header-section-number">5.3.2</span> Standardization as a Special Case</h3>
+<p>When <span class="math inline">\(X\)</span> is categorical, no parametric model for <span class="math inline">\(\mu(t,x)\)</span> is needed: the conditional mean <span class="math inline">\(\hat\mu(t,x)\)</span> is simply the sample mean of <span class="math inline">\(Y\)</span> within each cell <span class="math inline">\((T{=}t, X{=}x)\)</span> (a fully saturated outcome model). The resulting estimator is:</p>
+<p><span id="eq-std"><span class="math display">\[\hat\tau_{\mathrm{STD}} = \sum_{x \in \mathcal{X}} \bigl[\hat\mu(1,x) - \hat\mu(0,x)\bigr]\,\hat{p}(x), \tag{5.5}\]</span></span></p>
+<p>where <span class="math inline">\(\hat\mu(t,x) = \bar{Y}_{t,x}\)</span> and <span class="math inline">\(\hat{p}(x) = n_x/n\)</span>. This is algebraically identical to <a href="#eq-or" class="quarto-xref">Equation&nbsp;<span>5.4</span></a> when <span class="math inline">\(X\)</span> is categorical. The formula is also known as the <em>g-formula</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span> or <em>direct standardization</em> in epidemiology.</p>
+</section>
+<section id="regression-adjustment-in-randomized-experiments-lin-2013" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="regression-adjustment-in-randomized-experiments-lin-2013"><span class="header-section-number">5.3.3</span> Regression Adjustment in Randomized Experiments: Lin (2013)</h3>
+<p>In a <em>randomized</em> experiment, outcome regression can be used to reduce variance even though covariate adjustment is not needed for unbiasedness. The <em>regression-adjusted estimator</em> of <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span> fits the fully interacted OLS model: <span class="math display">\[Y_i = \alpha + \beta T_i + \gamma^\top \tilde{X}_i + \delta^\top (T_i \cdot \tilde{X}_i) + \varepsilon_i,\]</span> where <span class="math inline">\(\tilde{X}_i = X_i - \bar{X}\)</span> are mean-centered covariates. The OLS coefficient <span class="math inline">\(\hat\beta\)</span> is the ATE estimator.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Design-Consistency of the Regression-Adjusted Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="lin2013agnostic">(Lin 2013)</span> Under complete randomization, <span class="math inline">\(\hat\beta\)</span> from the interacted regression is consistent for <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> regardless of whether the linear model is correctly specified.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof Sketch
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Because <span class="math inline">\(T \indep X\)</span> under randomization, the projection of <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, X, T \cdot \tilde{X})\)</span> recovers the treatment coefficient without confounding bias even if the true <span class="math inline">\(\mu\)</span> is not linear. The interaction terms ensure that the estimated treatment effect is the sample analog of the semiparametric efficient estimator. For the full proof see <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span> or <span class="citation" data-cites="freedman2008regression">Freedman (2008)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: The Role of the Regression Model in a Randomized Experiment
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In a randomized experiment the regression model serves one purpose only: <em>variance reduction</em>. Unbiasedness is guaranteed by the randomization alone, regardless of whether the outcome model is correctly specified. The plain DIM estimator is already design-consistent; the only reason to add covariates is to reduce <span class="math inline">\(\mathrm{Var}(\hat\tau)\)</span> by absorbing residual variation in <span class="math inline">\(Y\)</span> unrelated to <span class="math inline">\(T\)</span>.</p>
+<p>This stands in sharp contrast to the observational setting, where the regression model carries a <em>double</em> burden: it must both adjust for confounding (unbiasedness) and fit the outcome surface well (efficiency). Misspecification in an observational study threatens <em>both</em> properties simultaneously. In a randomized experiment, it threatens only efficiency.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Precedence in Survey Sampling
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The design-consistency result in the theorem above was established in the survey sampling literature decades before <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span>. <span class="citation" data-cites="isaki1982survey">Isaki and Fuller (1982)</span> introduced the <em>generalized regression (GREG) estimator</em> for finite-population means under general probability sampling designs and proved it is design-consistent even when the assisting regression model is misspecified. <span class="citation" data-cites="deville1992calibration">Deville and Särndal (1992)</span> extended this class to <em>calibration estimators</em>, which adjust sampling weights so that weighted sample totals match known population totals for auxiliary variables. <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span> restated and proved this result within the Neyman–Rubin potential-outcomes framework, connected it to semiparametric efficiency theory, and showed that the Huber–White sandwich variance estimator yields asymptotically valid confidence intervals under the randomization distribution.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Lin’s consistency result is specific to randomized experiments. In an observational study, <span class="math inline">\(\hat\tau_{\mathrm{OR}}\)</span> is consistent only if <span class="math inline">\(\hat\mu\)</span> converges to the true <span class="math inline">\(\mu\)</span>. The doubly-robust (AIPW) estimator of Chapter 10 achieves consistency if <em>either</em> the outcome model or the propensity score model is correctly specified.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-stratification" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="sec-stratification"><span class="header-section-number">5.4</span> Stratification</h2>
+<section id="the-idea" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="the-idea"><span class="header-section-number">5.4.1</span> The Idea</h3>
+<p>Stratification (subclassification) is a non-parametric implementation of the back-door formula. Rather than modeling <span class="math inline">\(\E[Y \mid T, X]\)</span>, the analyst divides the sample into <em>strata</em> — subgroups of units with the same or similar values of <span class="math inline">\(X\)</span> — and estimates the treatment effect within each stratum.</p>
+<p>Within a stratum <span class="math inline">\(\mathcal{S}_k = \{i : X_i \in B_k\}\)</span>, if the stratum is narrow enough, ignorability holds approximately and the within-stratum difference in means: <span class="math display">\[\hat\tau_k = \bar{Y}_{1,k} - \bar{Y}_{0,k}\]</span> is an approximately unbiased estimate of the stratum-specific ATE.</p>
+</section>
+<section id="the-stratified-estimator" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="the-stratified-estimator"><span class="header-section-number">5.4.2</span> The Stratified Estimator</h3>
+<p>The overall ATE is estimated as a weighted average of within-stratum estimates:</p>
+<p><span id="eq-strat"><span class="math display">\[\hat\tau_{\mathrm{STRAT}} = \sum_{k=1}^K \hat\tau_k \cdot \frac{n_k}{n}, \tag{5.6}\]</span></span></p>
+<p>where <span class="math inline">\(K\)</span> is the number of strata, <span class="math inline">\(n_k\)</span> is the number of units in stratum <span class="math inline">\(k\)</span>, and <span class="math inline">\(n = \sum_k n_k\)</span>. Cochran (1968) showed that with <span class="math inline">\(K = 5\)</span> strata of equal size, roughly 90% of the bias from a single continuous confounder is removed; with <span class="math inline">\(K = 10\)</span> strata, over 95%.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Stratification, Standardization, and Survey Sampling Terminology
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When <span class="math inline">\(X\)</span> is categorical, the stratified estimator <a href="#eq-strat" class="quarto-xref">Equation&nbsp;<span>5.6</span></a> and the standardization estimator <a href="#eq-std" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> are algebraically identical. The two names reflect disciplinary tradition rather than a methodological distinction.</p>
+<p>In the survey sampling literature, <em>stratification</em> is a design-stage decision while <em>post-stratification</em> is an analysis-stage adjustment. Standardization in causal inference corresponds to post-stratification: stratum membership is recorded after sampling, and the estimator is reweighted by marginal stratum counts. Standardization is therefore regression adjustment with a saturated outcome model.</p>
+</div>
+</div>
+</section>
+<section id="limitations" class="level3" data-number="5.4.3">
+<h3 data-number="5.4.3" class="anchored" data-anchor-id="limitations"><span class="header-section-number">5.4.3</span> Limitations</h3>
+<p>Stratification faces the <em>curse of dimensionality</em>: with <span class="math inline">\(p\)</span> binary covariates there are <span class="math inline">\(2^p\)</span> cells, many of which will be empty in practice. This motivates two solutions:</p>
+<ul>
+<li><strong>Regression adjustment / standardization</strong> imposes parametric structure on <span class="math inline">\(\hat\mu(t,x)\)</span>, allowing interpolation across cells.</li>
+<li><strong>Propensity score stratification</strong> (Chapter 6) collapses the multivariate <span class="math inline">\(X\)</span> to a scalar <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span> and stratifies on the scalar.</li>
+</ul>
+</section>
+</section>
+<section id="sec-simpson" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="sec-simpson"><span class="header-section-number">5.5</span> Simpson’s Paradox</h2>
+<p>Simpson’s paradox — the reversal of an association when conditioning on a third variable — was introduced in Chapter 1, where a flu-vaccination example showed that the vaccine appeared harmful in the aggregate yet beneficial within every age stratum, because elderly individuals were disproportionately vaccinated. This chapter’s development gives that example a second layer of interpretation: the back-door formula used in Chapter 1 is precisely the standardization estimator <a href="#eq-std" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> — within-stratum conditional means averaged over the <em>marginal</em> distribution of the confounder rather than its treatment-conditional distribution. The weighted average corrects the confounding; the pooled association does not, because it weights strata by <span class="math inline">\(P(X \mid T)\)</span> instead of <span class="math inline">\(P(X)\)</span>.</p>
+<section id="when-should-you-not-condition-on-x" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="when-should-you-not-condition-on-x"><span class="header-section-number">5.5.1</span> When Should You <em>Not</em> Condition on <span class="math inline">\(X\)</span>?</h3>
+<p>Simpson’s paradox also has a mirror image: conditioning on a variable can <em>create</em> a spurious association or make a true causal effect disappear. This occurs when <span class="math inline">\(X\)</span> is a <em>mediator</em> or a <em>collider</em>. The back-door criterion gives the correct prescription: include <span class="math inline">\(X\)</span> in the adjustment set only if it blocks back-door paths <em>without</em> opening collider paths.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Conditioning on a Mediator or Collider
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Adjusting for a post-treatment variable <span class="math inline">\(X\)</span> that lies on a causal pathway <span class="math inline">\(T \to X \to Y\)</span> blocks part of the causal effect of <span class="math inline">\(T\)</span>, producing a downward-biased estimate of the total effect. Adjusting for a collider <span class="math inline">\(X\)</span> with <span class="math inline">\(T \to X \leftarrow Y\)</span> opens a spurious association between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> that does not exist in the population. Neither mistake is detectable from the data alone; the DAG is essential.</p>
+</div>
+</div>
+<p>The mediator case will be revisited in detail in Chapter 8. The collider case was covered in Chapter 2.</p>
+</section>
+</section>
+<section id="sec-lab" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">5.6</span> Lab: Simulation Study of the Outcome Regression Estimator</h2>
+<p>The identification results in <a href="#sec-ignorability" class="quarto-xref"><span>Section 5.2</span></a> and the estimation recipes in <a href="#sec-regression" class="quarto-xref"><span>Section 5.3</span></a> rest on two assumptions that pull in opposite directions: the outcome model <span class="math inline">\(\hat\mu(t,x)\)</span> must be correctly specified for the linear OR estimator to be consistent in an observational study, yet a more flexible nonparametric estimator pays a variance penalty for that flexibility.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>DGP for Lab 5
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(X \sim \mathrm{Uniform}(0,1)\)</span> be a single pre-treatment covariate and <span class="math inline">\(\varepsilon \sim \mathcal{N}(0,1)\)</span> independent of <span class="math inline">\(X\)</span>. The potential outcome surfaces are: <span id="eq-dgp"><span class="math display">\[Y(t) \;=\; t \;+\; 3(1+t)X^2 \;+\; \varepsilon, \qquad t \in \{0,1\}. \tag{5.7}\]</span></span></p>
+<p>The conditional average treatment effect is <span class="math inline">\(\tau(x) = 1 + 3x^2\)</span>, so <span id="eq-tau"><span class="math display">\[\tau_{\mathrm{ATE}} = \E[1 + 3X^2] = 1 + 1 = 2. \tag{5.8}\]</span></span></p>
+<p>Two assignment mechanisms are studied:</p>
+<ul>
+<li><strong>CRD:</strong> <span class="math inline">\(T \sim \mathrm{Bern}(0.5)\)</span>, independent of <span class="math inline">\(X\)</span>.</li>
+<li><strong>Observational:</strong> <span class="math inline">\(T \mid X \sim \mathrm{Bern}(\mathrm{expit}(-2 + 5X))\)</span>, giving <span class="math inline">\(\pi(0) \approx 0.12\)</span>, <span class="math inline">\(\pi(0.5) \approx 0.62\)</span>, <span class="math inline">\(\pi(1) \approx 0.95\)</span>. Strong confounding: high-<span class="math inline">\(X\)</span> units are nearly always treated.</li>
+</ul>
+</div>
+</div>
+<p>Two outcome regression estimators of the form <a href="#eq-or" class="quarto-xref">Equation&nbsp;<span>5.4</span></a> are compared: a <strong>Linear OR</strong> (simple linear regression, misspecified because the true <span class="math inline">\(\mu\)</span> contains a quadratic term), and a <strong>Local-linear OR</strong> (local linear regression with bandwidth <span class="math inline">\(h = 0.5 \cdot n^{-1/5}\)</span>, correctly flexible).</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Key Finding: Model Misspecification Is Harmless under Randomization, Harmful under Confounding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under CRD, the linear OR estimator is consistent despite misspecification (Theorem above): the fitting and evaluation distributions coincide, so pointwise errors cancel on average.</p>
+<p>Under the observational design, the fitting and evaluation distributions diverge. High-<span class="math inline">\(X\)</span> units are almost always treated and low-<span class="math inline">\(X\)</span> units almost never. The model for arm <span class="math inline">\(t=1\)</span> is fit on a sample concentrated at high <span class="math inline">\(X\)</span>, and the model for arm <span class="math inline">\(t=0\)</span> on a sample concentrated at low <span class="math inline">\(X\)</span>. The fitted lines are tuned to different parts of the covariate space, so when both are evaluated at the full marginal of <span class="math inline">\(X\)</span>, the pointwise errors no longer cancel. Model misspecification is harmless under randomization; it becomes a source of bias precisely when confounding is present.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: What This Lab Does Not Show
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The simulation fixes the bandwidth <span class="math inline">\(h = 0.5 \cdot n^{-1/5}\)</span> and does not perform data-driven bandwidth selection. The lab also studies only a scalar <span class="math inline">\(X\)</span>; with a multivariate covariate, the curse of dimensionality would make local linear regression impractical, which is one motivation for the propensity score approach of Chapter 6.</p>
+</div>
+</div>
+</section>
+<section id="sec-propensity-preview" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="sec-propensity-preview"><span class="header-section-number">5.7</span> Where the Propensity Score Fits</h2>
+<p>The three methods — regression adjustment, standardization, and stratification — all implement the same identifying formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a>. They differ in how they deal with the conditioning on the high-dimensional covariate vector <span class="math inline">\(X\)</span>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Method</strong></th>
+<th><strong>How it handles <span class="math inline">\(X\)</span></strong></th>
+<th><strong>Key assumption</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regression / standardization</td>
+<td>Models <span class="math inline">\(\E[Y \mid T,X]\)</span> parametrically</td>
+<td>Outcome model correctly specified</td>
+</tr>
+<tr class="even">
+<td>Stratification</td>
+<td>Groups units by <span class="math inline">\(X\)</span>; estimates effect in each cell</td>
+<td>Strata narrow enough for approximate balance</td>
+</tr>
+<tr class="odd">
+<td>Propensity score (Ch. 6)</td>
+<td>Reduces <span class="math inline">\(X\)</span> to scalar <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span></td>
+<td>Propensity model correctly specified</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Bridge to Chapter 6
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Chapter 6 takes up the propensity score idea formally. It proves the balancing property (<span class="math inline">\(T \indep X \mid \pi(X)\)</span>), derives the Propensity Score Theorem (strong ignorability given <span class="math inline">\(X\)</span> implies strong ignorability given <span class="math inline">\(\pi(X)\)</span> alone), and develops three estimation strategies: inverse probability weighting (IPW), matching, and propensity score stratification. Matching need not rely on the propensity score: covariate-distance methods such as Mahalanobis-distance matching and nearest-neighbor matching on <span class="math inline">\(X\)</span> directly are equally valid.</p>
+</div>
+</div>
+</section>
+<section id="summary" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="summary"><span class="header-section-number">5.8</span> Summary</h2>
+<ol type="1">
+<li><p><strong>Randomization as graph surgery.</strong> A randomized experiment removes all arrows into <span class="math inline">\(T\)</span>, so the fundamental equality <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span> holds and the difference-in-means estimator is unbiased for the ATE without covariate adjustment.</p></li>
+<li><p><strong>Ignorability is the key assumption.</strong> Under unconfoundedness <span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span>, the back-door adjustment formula identifies the ATE. This assumption is substantive, design-determined, and untestable from observational data.</p></li>
+<li><p><strong>Three estimation strategies.</strong> Regression adjustment (G-formula), standardization, and stratification all implement the same identifying formula via different modeling choices. All require correct specification of either an outcome model (for regression/standardization) or a stratification scheme fine enough to achieve balance.</p></li>
+<li><p><strong>Simpson’s paradox.</strong> Pooled associations can reverse within subgroups when a confounder determines treatment selection. The correct causal estimate requires standardization over the marginal covariate distribution, guided by the back-door criterion.</p></li>
+<li><p><strong>The propensity score dimension reduction.</strong> When <span class="math inline">\(X\)</span> is high-dimensional, direct stratification or cell-by-cell standardization breaks down. The propensity score <span class="math inline">\(\pi(X)\)</span> provides a scalar sufficient statistic for adjustment. Chapter 6 develops the theory and estimation methods.</p></li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="problems"><span class="header-section-number">5.9</span> Problems</h2>
+<p><strong>1. Randomization and the do-calculus.</strong> Let the observational DAG be <span class="math inline">\(\{U \to T,\; U \to Y,\; X \to T,\; T \to Y\}\)</span> with <span class="math inline">\(U\)</span> unobserved.</p>
+<ol type="a">
+<li>Identify all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</li>
+<li>Does <span class="math inline">\(X\)</span> satisfy the back-door criterion? Does <span class="math inline">\(U\)</span>? Explain.</li>
+<li>Now suppose treatment is randomized. Draw the modified DAG and identify all back-door paths. Show that <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span> holds in the randomized DAG using Rule 2 of the do-calculus.</li>
+<li>Under randomization, is covariate adjustment on <span class="math inline">\(X\)</span> necessary for unbiasedness? Is it ever beneficial? Explain.</li>
+</ol>
+<p><strong>2. Ignorability and the back-door criterion.</strong> Consider the DAG <span class="math inline">\(\{X \to T,\; X \to Y,\; T \to Y,\; U \to Y\}\)</span> with <span class="math inline">\(U\)</span> unobserved.</p>
+<ol type="a">
+<li>Does <span class="math inline">\(\{X\}\)</span> satisfy the back-door criterion? Write out the identifying formula for <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span>.</li>
+<li>Now add the edge <span class="math inline">\(U \to T\)</span> to the DAG. Does <span class="math inline">\(\{X\}\)</span> still satisfy the back-door criterion? What does the back-door criterion require when both <span class="math inline">\(X\)</span> and <span class="math inline">\(U\)</span> affect <span class="math inline">\(T\)</span>?</li>
+<li>Explain in words what “unconfoundedness given <span class="math inline">\(X\)</span>” means about the role of <span class="math inline">\(U\)</span> in the data-generating process.</li>
+</ol>
+<p><strong>3. Standardization.</strong> A study of job training (<span class="math inline">\(T\)</span>) and earnings (<span class="math inline">\(Y\)</span>, in thousands) produces the following cell means, with <span class="math inline">\(P(X{=}0) = 0.4\)</span> and <span class="math inline">\(P(X{=}1) = 0.6\)</span>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(X\)</span></th>
+<th><span class="math inline">\(\hat\mu(1,x)\)</span></th>
+<th><span class="math inline">\(\hat\mu(0,x)\)</span></th>
+<th><span class="math inline">\(n_x/n\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>28</td>
+<td>22</td>
+<td>0.4</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>35</td>
+<td>31</td>
+<td>0.6</td>
+</tr>
+</tbody>
+</table>
+<ol type="a">
+<li>Compute <span class="math inline">\(\hat\tau_{\mathrm{ATE}}\)</span> using the standardization formula.</li>
+<li>Compute <span class="math inline">\(\hat\tau_{\mathrm{ATT}}\)</span>, given that all treated units come from <span class="math inline">\(X{=}1\)</span>.</li>
+<li>The unadjusted difference in means is <span class="math inline">\(33 - 25 = 8\)</span>. Compare to your answers in (a) and (b) and explain the discrepancy.</li>
+</ol>
+<p><strong>4. Stratification and Cochran’s rule.</strong> You have a binary confounder <span class="math inline">\(X \in \{0,1\}\)</span> and form two strata. Within stratum <span class="math inline">\(X{=}0\)</span>: <span class="math inline">\(n_0 = 600\)</span>, <span class="math inline">\(\bar{Y}_1 = 10\)</span>, <span class="math inline">\(\bar{Y}_0 = 8\)</span>. Within stratum <span class="math inline">\(X{=}1\)</span>: <span class="math inline">\(n_1 = 400\)</span>, <span class="math inline">\(\bar{Y}_1 = 15\)</span>, <span class="math inline">\(\bar{Y}_0 = 12\)</span>.</p>
+<ol type="a">
+<li>Compute the stratified ATE estimator <span class="math inline">\(\hat\tau_{\mathrm{STRAT}}\)</span>.</li>
+<li>Suppose an unadjusted difference-in-means gives <span class="math inline">\(\hat\tau_{\mathrm{DIM}} = 5.5\)</span>. Explain why the two estimates differ and which one is the appropriate causal estimate.</li>
+<li>Describe one limitation that would arise if <span class="math inline">\(X\)</span> were a continuous variable with 15 dimensions.</li>
+</ol>
+<p><strong>5. Simpson’s paradox.</strong> A hospital reports that patients who receive intensive care (ICU admission, <span class="math inline">\(T{=}1\)</span>) have a higher mortality rate than those who do not (<span class="math inline">\(T{=}0\)</span>): <span class="math inline">\(P(Y{=}1 \mid T{=}1) = 0.30\)</span> vs.&nbsp;<span class="math inline">\(P(Y{=}1 \mid T{=}0) = 0.10\)</span>.</p>
+<ol type="a">
+<li>Construct a numerical example (a <span class="math inline">\(2 \times 2 \times 2\)</span> table with disease severity <span class="math inline">\(X \in \{\text{mild}, \text{severe}\}\)</span> as the confounder) that is consistent with the above pooled numbers and yet shows ICU admission <em>reduces</em> mortality within both severity strata.</li>
+<li>Compute the standardized ATE using the marginal distribution of <span class="math inline">\(X\)</span>.</li>
+<li>Draw the DAG for this example. Identify the back-door path that the pooled comparison fails to block.</li>
+<li>A colleague suggests that since the hospital treats patients with both mild and severe illness, the pooled statistic is the right answer. Explain, using potential outcomes notation, why this argument is incorrect.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_04.html" class="pagination-link" aria-label="Potential Outcomes and Adjustment">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -209,6 +209,12 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
@@ -557,17 +563,17 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The positivity condition requires every value of the treatment <span class="math inline">\(T{=}t\)</span> to be observable within each stratum of <span class="math inline">\(\mathbf{S}\)</span>: if some stratum <span class="math inline">\(\mathbf{s}\)</span> never receives treatment <span class="math inline">\(t\)</span> in the data, the conditional distribution <span class="math inline">\(P(y \mid t, \mathbf{s})\)</span> is undefined and <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> cannot be computed. Positivity is a <em>data-support</em> condition, not a graphical one. When positivity fails on a set of measure zero, the formula still identifies <span class="math inline">\(P(y \mid \doop(t))\)</span> because the offending strata contribute zero mass to the outer integral.</p>
+<p>The positivity condition requires every value of the treatment <span class="math inline">\(T{=}t\)</span> to be observable within each stratum of <span class="math inline">\(\mathbf{S}\)</span>: if some stratum <span class="math inline">\(\mathbf{s}\)</span> never receives treatment <span class="math inline">\(t\)</span> in the data, the conditional distribution <span class="math inline">\(P(y \mid t, \mathbf{s})\)</span> is undefined and <a href="chapter_05.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a> cannot be computed. Positivity is a <em>data-support</em> condition, not a graphical one. When positivity fails on a set of measure zero, the formula still identifies <span class="math inline">\(P(y \mid \doop(t))\)</span> because the offending strata contribute zero mass to the outer integral.</p>
 </div>
 </div>
 </section>
 <section id="the-adjustment-formula-standardization" class="level3" data-number="3.2.3">
 <h3 data-number="3.2.3" class="anchored" data-anchor-id="the-adjustment-formula-standardization"><span class="header-section-number">3.2.3</span> The Adjustment Formula: Standardization</h3>
-<p><a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> is also known as the <em>standardization formula</em> or, in the epidemiological literature, the <em>g-formula</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span>. The interpretation is important:</p>
+<p><a href="chapter_05.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a> is also known as the <em>standardization formula</em> or, in the epidemiological literature, the <em>g-formula</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span>. The interpretation is important:</p>
 <ul>
 <li><span class="math inline">\(P(y \mid t, \mathbf{s})\)</span> is the stratum-specific conditional distribution of <span class="math inline">\(Y\)</span> given <span class="math inline">\(T{=}t\)</span> and <span class="math inline">\(\mathbf{S}{=}\mathbf{s}\)</span>. Within each stratum, <span class="math inline">\(T\)</span> is not confounded by any back-door path (all are blocked by <span class="math inline">\(\mathbf{S}\)</span>), so this conditional distribution <em>is</em> causal.</li>
 <li>The outer integration <span class="math inline">\(\int \cdots\, dP(\mathbf{s})\)</span> weights the strata by the <em>population marginal</em> distribution of <span class="math inline">\(\mathbf{S}\)</span>, rather than the treatment-conditional distribution <span class="math inline">\(dP(\mathbf{s} \mid t)\)</span> that a naïve analysis would use.</li>
-<li>In a randomized experiment, <span class="math inline">\(\mathbf{S} = \varnothing\)</span> satisfies the back-door criterion (no confounding), and <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> reduces to <span class="math inline">\(P(y \mid \doop(t)) = P(y \mid t)\)</span>: the observational and interventional distributions coincide.</li>
+<li>In a randomized experiment, <span class="math inline">\(\mathbf{S} = \varnothing\)</span> satisfies the back-door criterion (no confounding), and <a href="chapter_05.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a> reduces to <span class="math inline">\(P(y \mid \doop(t)) = P(y \mid t)\)</span>: the observational and interventional distributions coincide.</li>
 </ul>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -637,7 +643,7 @@ Figure&nbsp;3.1: The two graph operations on the IV DAG. Faded arrows have been 
 <p>This is the Education–Earnings DAG analyzed in full in Chapter 2 (Section 5). The DAG has edges <span class="math inline">\(N \to E\)</span>, <span class="math inline">\(B \to E\)</span>, <span class="math inline">\(B \to Y\)</span>, <span class="math inline">\(E \to Y\)</span>, where <span class="math inline">\(N\)</span> = neighborhood, <span class="math inline">\(B\)</span> = family background, <span class="math inline">\(E\)</span> = education, <span class="math inline">\(Y\)</span> = earnings. We wish to identify <span class="math inline">\(P(y \mid \doop(E{=}e))\)</span>.</p>
 <p>The only back-door path is <span class="math inline">\(E \leftarrow B \to Y\)</span>.</p>
 <ul>
-<li>Does <span class="math inline">\(\{B\}\)</span> satisfy the criterion? <span class="math inline">\(B\)</span> is not a descendant of <span class="math inline">\(E\)</span> ✓; <span class="math inline">\(\{B\}\)</span> blocks <span class="math inline">\(E \leftarrow B \to Y\)</span> ✓. By <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>: <span class="math inline">\(P(y \mid \doop(E{=}e)) = \sum_b P(y \mid e, b)\,P(b)\)</span>.</li>
+<li>Does <span class="math inline">\(\{B\}\)</span> satisfy the criterion? <span class="math inline">\(B\)</span> is not a descendant of <span class="math inline">\(E\)</span> ✓; <span class="math inline">\(\{B\}\)</span> blocks <span class="math inline">\(E \leftarrow B \to Y\)</span> ✓. By <a href="chapter_05.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a>: <span class="math inline">\(P(y \mid \doop(E{=}e)) = \sum_b P(y \mid e, b)\,P(b)\)</span>.</li>
 <li>Does <span class="math inline">\(\{N\}\)</span> satisfy the criterion? <span class="math inline">\(\{N\}\)</span> does <em>not</em> block <span class="math inline">\(E \leftarrow B \to Y\)</span> (the fork at <span class="math inline">\(B\)</span> remains open). Fails condition 2.</li>
 <li>Does <span class="math inline">\(\{N, B\}\)</span> satisfy the criterion? Yes: neither <span class="math inline">\(N\)</span> nor <span class="math inline">\(B\)</span> is a descendant of <span class="math inline">\(E\)</span>, and <span class="math inline">\(\{N,B\}\)</span> blocks the only back-door path.</li>
 </ul>
