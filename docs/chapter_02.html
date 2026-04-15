@@ -291,6 +291,7 @@ window.Quarto = {
 </ol>
 </div>
 </div>
+<p>Readers who want a gentler introduction to conditional independence, the three basic path motifs, and the Markov-property interpretation may consult Appendix A before or alongside this chapter.</p>
 <section id="directed-acyclic-graphs" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="directed-acyclic-graphs"><span class="header-section-number">2.1</span> Directed Acyclic Graphs</h2>
 <p>DAGs allow us to translate qualitative causal assumptions into quantitative statistical restrictions. This single idea underlies everything in this chapter: once we draw a graph encoding what we believe about the causal structure of a problem, the graph tells us exactly which variables are independent, which are confounded, and what we need to condition on to identify a causal effect.</p>
@@ -956,45 +957,51 @@ Figure&nbsp;2.2: The four-step pipeline from causal assumptions to identificatio
 <li>Does <span class="math inline">\(\{B, C\}\)</span> d-separate <span class="math inline">\(A\)</span> and <span class="math inline">\(E\)</span>?</li>
 <li>Does <span class="math inline">\(\{D\}\)</span> d-separate <span class="math inline">\(B\)</span> and <span class="math inline">\(C\)</span>? What type of node is <span class="math inline">\(D\)</span> on the path <span class="math inline">\(B \to D \leftarrow C\)</span>?</li>
 </ol>
-<p><strong>3. Markov factorization and collider activation.</strong> Consider the DAG with edges <span class="math inline">\(A \to E\)</span>, <span class="math inline">\(A \to W\)</span>, <span class="math inline">\(F \to E\)</span>, <span class="math inline">\(E \to W\)</span>, where <span class="math inline">\(A\)</span> = ability, <span class="math inline">\(F\)</span> = family income, <span class="math inline">\(E\)</span> = education, <span class="math inline">\(W\)</span> = wages.</p>
+<p><strong>3. Berkson’s bias.</strong> Suppose <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are independent standard normal variables, and let <span class="math inline">\(S = \mathbf{1}[X + Y &gt; 0]\)</span> (selected into a sample).</p>
+<ol type="a">
+<li>Verify analytically that <span class="math inline">\(\mathrm{Cov}(X, Y \mid S{=}1) &lt; 0\)</span>.</li>
+<li>Draw the DAG for <span class="math inline">\((X, Y, S)\)</span> and identify <span class="math inline">\(S\)</span> as a collider.</li>
+<li>Explain in one sentence why restricting the analysis to the subsample with <span class="math inline">\(S=1\)</span> biases estimates of any association between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, and name the type of bias this illustrates.</li>
+</ol>
+<p><strong>4. Markov factorization and collider activation.</strong> Consider the DAG with edges <span class="math inline">\(A \to E\)</span>, <span class="math inline">\(A \to W\)</span>, <span class="math inline">\(F \to E\)</span>, <span class="math inline">\(E \to W\)</span>, where <span class="math inline">\(A\)</span> = ability, <span class="math inline">\(F\)</span> = family income, <span class="math inline">\(E\)</span> = education, <span class="math inline">\(W\)</span> = wages.</p>
 <ol type="a">
 <li>Write down the Markov factorization <span class="math inline">\(p(a, f, e, w)\)</span>.</li>
 <li>Is <span class="math inline">\((F \indep W)_{\Gcal}\)</span>? List all paths between <span class="math inline">\(F\)</span> and <span class="math inline">\(W\)</span>.</li>
 <li>Is <span class="math inline">\((F \indep W \mid E)_{\Gcal}\)</span>? Identify the role of <span class="math inline">\(E\)</span> on each path.</li>
 <li>A researcher regresses <span class="math inline">\(W\)</span> on <span class="math inline">\(E\)</span> and <span class="math inline">\(F\)</span>, omitting <span class="math inline">\(A\)</span>. Is the coefficient on <span class="math inline">\(E\)</span> a causal effect?</li>
 </ol>
-<p><strong>4. Theorem for the collider.</strong> Consider the collider <span class="math inline">\(A \to M \leftarrow B\)</span> with Markov factorization <span class="math inline">\(p(a, m, b) = p(a)\,p(b)\,p(m \mid a, b)\)</span>.</p>
+<p><strong>5. Theorem for the collider.</strong> Consider the collider <span class="math inline">\(A \to M \leftarrow B\)</span> with Markov factorization <span class="math inline">\(p(a, m, b) = p(a)\,p(b)\,p(m \mid a, b)\)</span>.</p>
 <ol type="a">
 <li>By marginalizing over <span class="math inline">\(M\)</span>, show that <span class="math inline">\(A \indep B\)</span> in the joint distribution.</li>
 <li>Show that conditioning on <span class="math inline">\(M\)</span> breaks this independence.</li>
 <li>Explain why parts (a) and (b) together are consistent with Theorem 2.1 (Verma &amp; Pearl).</li>
 </ol>
-<p><strong>5. Terminology check.</strong> Consider the DAG with edges <span class="math inline">\(U \to X\)</span>, <span class="math inline">\(U \to Z\)</span>, <span class="math inline">\(X \to W\)</span>, <span class="math inline">\(Z \to W\)</span>, <span class="math inline">\(W \to Y\)</span>.</p>
+<p><strong>6. Terminology check.</strong> Consider the DAG with edges <span class="math inline">\(U \to X\)</span>, <span class="math inline">\(U \to Z\)</span>, <span class="math inline">\(X \to W\)</span>, <span class="math inline">\(Z \to W\)</span>, <span class="math inline">\(W \to Y\)</span>.</p>
 <ol type="a">
 <li>Identify the parents, children, ancestors, descendants, and non-descendants of node <span class="math inline">\(W\)</span>.</li>
 <li>List all pairs of adjacent nodes.</li>
 <li>Which pairs of nodes are connected by a directed path?</li>
 <li>Write the Markov factorization <span class="math inline">\(p(u, x, z, w, y)\)</span>.</li>
 </ol>
-<p><strong>6. Markov factorization and local Markov property.</strong> Consider the DAG with edges <span class="math inline">\(X_1 \to X_2\)</span>, <span class="math inline">\(X_1 \to X_3\)</span>, <span class="math inline">\(X_2 \to X_4\)</span>, <span class="math inline">\(X_3 \to X_4\)</span>.</p>
+<p><strong>7. Markov factorization and local Markov property.</strong> Consider the DAG with edges <span class="math inline">\(X_1 \to X_2\)</span>, <span class="math inline">\(X_1 \to X_3\)</span>, <span class="math inline">\(X_2 \to X_4\)</span>, <span class="math inline">\(X_3 \to X_4\)</span>.</p>
 <ol type="a">
 <li>Write the joint density <span class="math inline">\(p(x_1, x_2, x_3, x_4)\)</span> implied by the Markov factorization.</li>
 <li>State the local Markov property for each of the four nodes.</li>
 <li>Is <span class="math inline">\((X_2 \indep X_3)_{\Gcal}\)</span>? Is <span class="math inline">\((X_2 \indep X_3 \mid X_1)_{\Gcal}\)</span>?</li>
 </ol>
-<p><strong>7. Toy proof: conditional independence in the fork.</strong> Consider the fork <span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span> with Markov factorization <span class="math inline">\(p(x_1, x_2, x_3) = p(x_2)\,p(x_1 \mid x_2)\,p(x_3 \mid x_2)\)</span>.</p>
+<p><strong>8. Toy proof: conditional independence in the fork.</strong> Consider the fork <span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span> with Markov factorization <span class="math inline">\(p(x_1, x_2, x_3) = p(x_2)\,p(x_1 \mid x_2)\,p(x_3 \mid x_2)\)</span>.</p>
 <ol type="a">
 <li>Show directly that <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>.</li>
 <li>Is <span class="math inline">\(X_1 \indep X_3\)</span> marginally? Justify both graphically and algebraically.</li>
 <li>Explain why conditioning on the common cause <span class="math inline">\(X_2\)</span> removes the association.</li>
 </ol>
-<p><strong>8. d-Separation in the practice DAG.</strong> Refer to the eight-node DAG in the eight-node example above. For each query, state whether it is true or false and justify by listing all relevant paths.</p>
+<p><strong>9. d-Separation in the practice DAG.</strong> Refer to the eight-node DAG in the eight-node example above. For each query, state whether it is true or false and justify by listing all relevant paths.</p>
 <ol type="a">
 <li><span class="math inline">\(X_1 \indep Y\)</span></li>
 <li><span class="math inline">\(X_1 \indep Y \mid W\)</span></li>
 <li><span class="math inline">\(T \indep M_2 \mid M_1\)</span></li>
-<li>Does conditioning on <span class="math inline">\(C\)</span> induce collider bias between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span>?</li>
-<li>Does conditioning on <span class="math inline">\(D\)</span> open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>? State which clause of Definition 2.1 applies.</li>
+<li>Does conditioning on <span class="math inline">\(C\)</span> induce collider bias between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span>? Identify the specific path that is opened and explain why the induced association is spurious.</li>
+<li>Does conditioning on <span class="math inline">\(D\)</span> (a descendant of <span class="math inline">\(C\)</span>) open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>? State which clause of Definition 2.1 applies.</li>
 </ol>
 
 

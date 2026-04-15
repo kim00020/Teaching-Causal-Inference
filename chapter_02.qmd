@@ -18,6 +18,8 @@ By the end of this chapter, students should be able to:
 6. Interpret d-separation results as conditional independence assumptions on observed variables, and recognize their role as the graphical expression of causal assumptions.
 :::
 
+Readers who want a gentler introduction to conditional independence, the three basic path motifs, and the Markov-property interpretation may consult Appendix A before or alongside this chapter.
+
 ## Directed Acyclic Graphs
 
 DAGs allow us to translate qualitative causal assumptions into quantitative statistical restrictions. This single idea underlies everything in this chapter: once we draw a graph encoding what we believe about the causal structure of a problem, the graph tells us exactly which variables are independent, which are confounded, and what we need to condition on to identify a causal effect.
@@ -611,43 +613,49 @@ which expresses the joint distribution in terms of local conditional distributio
 (c) Does $\{B, C\}$ d-separate $A$ and $E$?
 (d) Does $\{D\}$ d-separate $B$ and $C$? What type of node is $D$ on the path $B \to D \leftarrow C$?
 
-**3. Markov factorization and collider activation.** Consider the DAG with edges $A \to E$, $A \to W$, $F \to E$, $E \to W$, where $A$ = ability, $F$ = family income, $E$ = education, $W$ = wages.
+**3. Berkson's bias.** Suppose $X$ and $Y$ are independent standard normal variables, and let $S = \mathbf{1}[X + Y > 0]$ (selected into a sample).
+
+(a) Verify analytically that $\mathrm{Cov}(X, Y \mid S{=}1) < 0$.
+(b) Draw the DAG for $(X, Y, S)$ and identify $S$ as a collider.
+(c) Explain in one sentence why restricting the analysis to the subsample with $S=1$ biases estimates of any association between $X$ and $Y$, and name the type of bias this illustrates.
+
+**4. Markov factorization and collider activation.** Consider the DAG with edges $A \to E$, $A \to W$, $F \to E$, $E \to W$, where $A$ = ability, $F$ = family income, $E$ = education, $W$ = wages.
 
 (a) Write down the Markov factorization $p(a, f, e, w)$.
 (b) Is $(F \indep W)_{\Gcal}$? List all paths between $F$ and $W$.
 (c) Is $(F \indep W \mid E)_{\Gcal}$? Identify the role of $E$ on each path.
 (d) A researcher regresses $W$ on $E$ and $F$, omitting $A$. Is the coefficient on $E$ a causal effect?
 
-**4. Theorem for the collider.** Consider the collider $A \to M \leftarrow B$ with Markov factorization $p(a, m, b) = p(a)\,p(b)\,p(m \mid a, b)$.
+**5. Theorem for the collider.** Consider the collider $A \to M \leftarrow B$ with Markov factorization $p(a, m, b) = p(a)\,p(b)\,p(m \mid a, b)$.
 
 (a) By marginalizing over $M$, show that $A \indep B$ in the joint distribution.
 (b) Show that conditioning on $M$ breaks this independence.
 (c) Explain why parts (a) and (b) together are consistent with Theorem 2.1 (Verma & Pearl).
 
-**5. Terminology check.** Consider the DAG with edges $U \to X$, $U \to Z$, $X \to W$, $Z \to W$, $W \to Y$.
+**6. Terminology check.** Consider the DAG with edges $U \to X$, $U \to Z$, $X \to W$, $Z \to W$, $W \to Y$.
 
 (a) Identify the parents, children, ancestors, descendants, and non-descendants of node $W$.
 (b) List all pairs of adjacent nodes.
 (c) Which pairs of nodes are connected by a directed path?
 (d) Write the Markov factorization $p(u, x, z, w, y)$.
 
-**6. Markov factorization and local Markov property.** Consider the DAG with edges $X_1 \to X_2$, $X_1 \to X_3$, $X_2 \to X_4$, $X_3 \to X_4$.
+**7. Markov factorization and local Markov property.** Consider the DAG with edges $X_1 \to X_2$, $X_1 \to X_3$, $X_2 \to X_4$, $X_3 \to X_4$.
 
 (a) Write the joint density $p(x_1, x_2, x_3, x_4)$ implied by the Markov factorization.
 (b) State the local Markov property for each of the four nodes.
 (c) Is $(X_2 \indep X_3)_{\Gcal}$? Is $(X_2 \indep X_3 \mid X_1)_{\Gcal}$?
 
-**7. Toy proof: conditional independence in the fork.** Consider the fork $X_1 \leftarrow X_2 \to X_3$ with Markov factorization $p(x_1, x_2, x_3) = p(x_2)\,p(x_1 \mid x_2)\,p(x_3 \mid x_2)$.
+**8. Toy proof: conditional independence in the fork.** Consider the fork $X_1 \leftarrow X_2 \to X_3$ with Markov factorization $p(x_1, x_2, x_3) = p(x_2)\,p(x_1 \mid x_2)\,p(x_3 \mid x_2)$.
 
 (a) Show directly that $X_1 \indep X_3 \mid X_2$.
 (b) Is $X_1 \indep X_3$ marginally? Justify both graphically and algebraically.
 (c) Explain why conditioning on the common cause $X_2$ removes the association.
 
-**8. d-Separation in the practice DAG.** Refer to the eight-node DAG in the eight-node example above. For each query, state whether it is true or false and justify by listing all relevant paths.
+**9. d-Separation in the practice DAG.** Refer to the eight-node DAG in the eight-node example above. For each query, state whether it is true or false and justify by listing all relevant paths.
 
 (a) $X_1 \indep Y$
 (b) $X_1 \indep Y \mid W$
 (c) $T \indep M_2 \mid M_1$
-(d) Does conditioning on $C$ induce collider bias between $X_1$ and $M_2$?
-(e) Does conditioning on $D$ open the path $X_1 \to C \leftarrow M_2$? State which clause of Definition 2.1 applies.
+(d) Does conditioning on $C$ induce collider bias between $X_1$ and $M_2$? Identify the specific path that is opened and explain why the induced association is spurious.
+(e) Does conditioning on $D$ (a descendant of $C$) open the path $X_1 \to C \leftarrow M_2$? State which clause of Definition 2.1 applies.
 
