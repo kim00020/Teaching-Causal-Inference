@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>8&nbsp; Mediation and Front-Door Identification – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./chapter_07.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_08.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">8.1</span> Motivation: Mechanisms</a></li>
+  <li><a href="#sec-dag" id="toc-sec-dag" class="nav-link" data-scroll-target="#sec-dag"><span class="header-section-number">8.2</span> The Mediation DAG</a>
+  <ul class="collapse">
+  <li><a href="#the-prototype-graph" id="toc-the-prototype-graph" class="nav-link" data-scroll-target="#the-prototype-graph"><span class="header-section-number">8.2.1</span> The Prototype Graph</a></li>
+  <li><a href="#what-makes-mediation-harder-than-total-effect-estimation" id="toc-what-makes-mediation-harder-than-total-effect-estimation" class="nav-link" data-scroll-target="#what-makes-mediation-harder-than-total-effect-estimation"><span class="header-section-number">8.2.2</span> What Makes Mediation Harder Than Total Effect Estimation</a></li>
+  <li><a href="#working-assumption-for-36" id="toc-working-assumption-for-36" class="nav-link" data-scroll-target="#working-assumption-for-36"><span class="header-section-number">8.2.3</span> Working Assumption for §§ 3–6</a></li>
+  </ul></li>
+  <li><a href="#sec-te" id="toc-sec-te" class="nav-link" data-scroll-target="#sec-te"><span class="header-section-number">8.3</span> Total Causal Effect</a></li>
+  <li><a href="#sec-cde" id="toc-sec-cde" class="nav-link" data-scroll-target="#sec-cde"><span class="header-section-number">8.4</span> Controlled Direct Effect</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">8.4.1</span> Definition</a></li>
+  <li><a href="#identification-of-the-cde" id="toc-identification-of-the-cde" class="nav-link" data-scroll-target="#identification-of-the-cde"><span class="header-section-number">8.4.2</span> Identification of the CDE</a></li>
+  <li><a href="#the-cde-does-not-have-a-complementary-indirect-effect" id="toc-the-cde-does-not-have-a-complementary-indirect-effect" class="nav-link" data-scroll-target="#the-cde-does-not-have-a-complementary-indirect-effect"><span class="header-section-number">8.4.3</span> The CDE Does Not Have a Complementary Indirect Effect</a></li>
+  </ul></li>
+  <li><a href="#sec-nie" id="toc-sec-nie" class="nav-link" data-scroll-target="#sec-nie"><span class="header-section-number">8.5</span> Natural Direct and Indirect Effects</a>
+  <ul class="collapse">
+  <li><a href="#motivation-cross-world-counterfactuals" id="toc-motivation-cross-world-counterfactuals" class="nav-link" data-scroll-target="#motivation-cross-world-counterfactuals"><span class="header-section-number">8.5.1</span> Motivation: Cross-World Counterfactuals</a></li>
+  <li><a href="#definitions" id="toc-definitions" class="nav-link" data-scroll-target="#definitions"><span class="header-section-number">8.5.2</span> Definitions</a></li>
+  </ul></li>
+  <li><a href="#sec-id-natural" id="toc-sec-id-natural" class="nav-link" data-scroll-target="#sec-id-natural"><span class="header-section-number">8.6</span> Identification of Natural Effects</a>
+  <ul class="collapse">
+  <li><a href="#sequential-ignorability" id="toc-sequential-ignorability" class="nav-link" data-scroll-target="#sequential-ignorability"><span class="header-section-number">8.6.1</span> Sequential Ignorability</a></li>
+  <li><a href="#the-mediation-formula" id="toc-the-mediation-formula" class="nav-link" data-scroll-target="#the-mediation-formula"><span class="header-section-number">8.6.2</span> The Mediation Formula</a></li>
+  </ul></li>
+  <li><a href="#sec-linear" id="toc-sec-linear" class="nav-link" data-scroll-target="#sec-linear"><span class="header-section-number">8.7</span> The Linear Mediation Model: Baron–Kenny</a>
+  <ul class="collapse">
+  <li><a href="#the-three-equation-system" id="toc-the-three-equation-system" class="nav-link" data-scroll-target="#the-three-equation-system"><span class="header-section-number">8.7.1</span> The Three-Equation System</a></li>
+  <li><a href="#the-product-and-difference-formulas" id="toc-the-product-and-difference-formulas" class="nav-link" data-scroll-target="#the-product-and-difference-formulas"><span class="header-section-number">8.7.2</span> The Product and Difference Formulas</a></li>
+  <li><a href="#inference-the-sobel-test-and-bootstrap" id="toc-inference-the-sobel-test-and-bootstrap" class="nav-link" data-scroll-target="#inference-the-sobel-test-and-bootstrap"><span class="header-section-number">8.7.3</span> Inference: The Sobel Test and Bootstrap</a></li>
+  <li><a href="#the-baronkenny-assumptions-two-distinct-categories" id="toc-the-baronkenny-assumptions-two-distinct-categories" class="nav-link" data-scroll-target="#the-baronkenny-assumptions-two-distinct-categories"><span class="header-section-number">8.7.4</span> The Baron–Kenny Assumptions: Two Distinct Categories</a></li>
+  </ul></li>
+  <li><a href="#sec-frontdoor" id="toc-sec-frontdoor" class="nav-link" data-scroll-target="#sec-frontdoor"><span class="header-section-number">8.8</span> Front-Door Identification</a>
+  <ul class="collapse">
+  <li><a href="#the-front-door-dag" id="toc-the-front-door-dag" class="nav-link" data-scroll-target="#the-front-door-dag"><span class="header-section-number">8.8.1</span> The Front-Door DAG</a></li>
+  <li><a href="#the-three-front-door-conditions" id="toc-the-three-front-door-conditions" class="nav-link" data-scroll-target="#the-three-front-door-conditions"><span class="header-section-number">8.8.2</span> The Three Front-Door Conditions</a></li>
+  <li><a href="#derivation-of-the-front-door-formula" id="toc-derivation-of-the-front-door-formula" class="nav-link" data-scroll-target="#derivation-of-the-front-door-formula"><span class="header-section-number">8.8.3</span> Derivation of the Front-Door Formula</a></li>
+  <li><a href="#intuition-routing-around-confounding" id="toc-intuition-routing-around-confounding" class="nav-link" data-scroll-target="#intuition-routing-around-confounding"><span class="header-section-number">8.8.4</span> Intuition: Routing Around Confounding</a></li>
+  </ul></li>
+  <li><a href="#sec-mediation-vs-iv" id="toc-sec-mediation-vs-iv" class="nav-link" data-scroll-target="#sec-mediation-vs-iv"><span class="header-section-number">8.9</span> Mediation vs.&nbsp;Instrumental Variables</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">8.10</span> Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">8.11</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Explain the distinction between the total causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> and a pathway-specific effect that operates through a mediator <span class="math inline">\(M\)</span>, and describe why this distinction matters scientifically.</li>
+<li>Draw the prototype mediation DAG, write its structural equations, and identify the direct and indirect pathways.</li>
+<li>Define the controlled direct effect (CDE) using the do-operator, identify it via the back-door formula for the joint intervention <span class="math inline">\((T, M)\)</span>, and explain why it depends on the fixed level <span class="math inline">\(m\)</span>.</li>
+<li>Define the natural direct and indirect effects (NDE, NIE) using the potential outcomes notation <span class="math inline">\(Y(t, M(t'))\)</span>, state the NDE<span class="math inline">\(+\)</span>NIE<span class="math inline">\(=\)</span>TE decomposition, and explain why these quantities involve cross-world counterfactuals.</li>
+<li>State the four sequential ignorability assumptions for identification of natural effects, write the mediation formula, and identify which assumption is violated when there is an unmeasured treatment-induced mediator–outcome confounder.</li>
+<li>Set up the Baron–Kenny three-equation system, derive the product and difference formulas for the indirect effect, and explain why the decomposition fails in nonlinear or interaction models.</li>
+<li>State the three front-door conditions, derive the front-door formula using the do-calculus, and explain why the front-door graph enables identification despite unobserved <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> confounding.</li>
+<li>Contrast mediation analysis and instrumental variables on the dimensions of variable position, identification goal, and key assumption.</li>
+</ol>
+</div>
+</div>
+<section id="sec-motivation" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">8.1</span> Motivation: Mechanisms</h2>
+<p>The identification results of Chapters 5–7 all answer the same question: <em>what is the total causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>?</em> Mediation analysis asks a finer question: <em>through what mechanism does that effect operate?</em></p>
+<p>More concretely, the total effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> may flow along multiple causal pathways. Some of this effect passes through an intermediate variable <span class="math inline">\(M\)</span> — the <em>mediator</em> — along the path <span class="math inline">\(T \to M \to Y\)</span>. The remainder flows directly along <span class="math inline">\(T \to Y\)</span>, bypassing the mediator entirely. Decomposing the total effect into these two components is the goal of mediation analysis.</p>
+<p>This decomposition matters for scientific and policy reasons. In a clinical trial of a behavioral intervention (<span class="math inline">\(T\)</span>) on depression (<span class="math inline">\(Y\)</span>), a researcher may want to know how much of the benefit operates through improved sleep quality (<span class="math inline">\(M\)</span>) versus other pathways — because if sleep is the main channel, targeting sleep directly may be a more efficient intervention. In an economics study of education (<span class="math inline">\(T\)</span>) on wages (<span class="math inline">\(Y\)</span>), how much operates through occupation (<span class="math inline">\(M\)</span>) versus cognitive skills?</p>
+<p><strong>Running example.</strong> Throughout this chapter we use the depression intervention as the primary example: <span class="math inline">\(T\)</span> is a randomized behavioral intervention, <span class="math inline">\(M\)</span> is self-reported sleep quality measured mid-trial, and <span class="math inline">\(Y\)</span> is a depression score (e.g., PHQ-9 scale).</p>
+<p>The challenge is that mediators are <em>post-treatment variables</em>: they are affected by the treatment, and may themselves be confounded with the outcome. Conditioning on a post-treatment variable creates exactly the collider and selection-bias problems studied in Chapters 2 and 3. A naive approach — simply including <span class="math inline">\(M\)</span> as a covariate in a regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> — conflates adjustment with mediation and can introduce bias even in a randomized experiment.</p>
+<p>This chapter also develops the <em>front-door criterion</em>, a distinct identification strategy that uses the mediation structure of the DAG to identify causal effects even when treatment and outcome are confounded by an unobserved variable.</p>
+</section>
+<section id="sec-dag" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="sec-dag"><span class="header-section-number">8.2</span> The Mediation DAG</h2>
+<section id="the-prototype-graph" class="level3" data-number="8.2.1">
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="the-prototype-graph"><span class="header-section-number">8.2.1</span> The Prototype Graph</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-mediation-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mediation-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_08_files/figure-html/fig-mediation-dag-1.pdf" class="img-fluid" width="384">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mediation-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.1: The prototype mediation DAG. The causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> operates through two pathways: the direct path <span class="math inline">\(T \to Y\)</span> and the indirect path <span class="math inline">\(T \to M \to Y\)</span> via the mediator. The unobserved variable <span class="math inline">\(U\)</span> confounds the treatment–outcome relationship; <span class="math inline">\(\mathbf{X}\)</span> denotes observed pre-treatment covariates.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The graph encodes two causal pathways: the <strong>direct pathway</strong> <span class="math inline">\(T \to Y\)</span> (treatment affects the outcome without passing through the mediator) and the <strong>indirect pathway</strong> <span class="math inline">\(T \to M \to Y\)</span> (treatment first shifts the mediator, which shifts the outcome).</p>
+<p>The prototype graph corresponds to the nonparametric SEM: <span class="math display">\[T = f_T(\mathbf{X},\, U,\, \varepsilon_T), \qquad M = f_M(T,\, \mathbf{X},\, \varepsilon_M), \qquad Y = f_Y(T,\, M,\, \mathbf{X},\, U,\, \varepsilon_Y).\]</span></p>
+</section>
+<section id="what-makes-mediation-harder-than-total-effect-estimation" class="level3" data-number="8.2.2">
+<h3 data-number="8.2.2" class="anchored" data-anchor-id="what-makes-mediation-harder-than-total-effect-estimation"><span class="header-section-number">8.2.2</span> What Makes Mediation Harder Than Total Effect Estimation</h3>
+<p>The key difficulty is that <span class="math inline">\(M\)</span> is a <em>post-treatment</em> variable. This creates two interrelated problems.</p>
+<p><strong>Collider bias.</strong> Conditioning on <span class="math inline">\(M\)</span> can open collider paths. If <span class="math inline">\(V \to M\)</span> and <span class="math inline">\(V \to Y\)</span> with <span class="math inline">\(V\)</span> unobserved, the path <span class="math inline">\(T \to M \leftarrow V \to Y\)</span> is blocked when <span class="math inline">\(M\)</span> is not conditioned on, but opens as soon as <span class="math inline">\(M\)</span> is included as a covariate. This is precisely why naively regressing <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, M)\)</span> does not isolate the direct effect.</p>
+<p><strong>Mediator–outcome confounding.</strong> Even when treatment is randomized, the mediator <span class="math inline">\(M\)</span> is never randomized. An unobserved <span class="math inline">\(V\)</span> with <span class="math inline">\(V \to M\)</span> and <span class="math inline">\(V \to Y\)</span> creates a back-door path from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> that randomization of <span class="math inline">\(T\)</span> does not close.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Post-Treatment Variables Are Dangerous to Condition On
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The mediator <span class="math inline">\(M\)</span> is caused by the treatment <span class="math inline">\(T\)</span>. This single fact makes every operation involving <span class="math inline">\(M\)</span> structurally different from operations involving pre-treatment covariates <span class="math inline">\(\mathbf{X}\)</span>.</p>
+<p>Conditioning on a post-treatment variable in a regression or matching procedure is <em>not</em> a neutral act. It can open collider paths that were previously blocked, introduce selection bias, and produce estimates of neither the total effect nor any well-defined direct effect. This chapter studies three regimes in which conditioning on or marginalizing over <span class="math inline">\(M\)</span> is justified: (1) <strong>CDE</strong>: both <span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span> are intervened on simultaneously via <span class="math inline">\(\doop(T, M)\)</span>; (2) <strong>NDE/NIE</strong>: <span class="math inline">\(M\)</span> is marginalized over using a distribution from a different treatment arm, justified by sequential ignorability; (3) <strong>Front-door</strong>: <span class="math inline">\(M\)</span> is summed over in the front-door formula, justified by graphical conditions. Outside these three regimes, conditioning on a post-treatment variable should be treated as an error until proven otherwise.</p>
+</div>
+</div>
+</section>
+<section id="working-assumption-for-36" class="level3" data-number="8.2.3">
+<h3 data-number="8.2.3" class="anchored" data-anchor-id="working-assumption-for-36"><span class="header-section-number">8.2.3</span> Working Assumption for §§ 3–6</h3>
+<p>Throughout §§ <a href="#sec-te" class="quarto-xref"><span>Section 8.3</span></a>–<a href="#sec-linear" class="quarto-xref"><span>Section 8.7</span></a>, we work with the <em>reduced prototype graph</em> (obtained from <a href="#fig-mediation-dag" class="quarto-xref">Figure&nbsp;<span>8.1</span></a> by assuming all <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> and <span class="math inline">\(T\)</span>–<span class="math inline">\(M\)</span> confounding is captured by the observed <span class="math inline">\(\mathbf{X}\)</span>). The unobserved confounder <span class="math inline">\(U\)</span> is restored in <a href="#sec-frontdoor" class="quarto-xref"><span>Section 8.8</span></a>.</p>
+</section>
+</section>
+<section id="sec-te" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="sec-te"><span class="header-section-number">8.3</span> Total Causal Effect</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Total Effect
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>total effect</strong> (TE) of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> is: <span class="math display">\[\mathrm{TE} = \E\!\bigl[Y(1) - Y(0)\bigr] = \E\!\bigl[Y \mid \doop(T{=}1)\bigr] - \E\!\bigl[Y \mid \doop(T{=}0)\bigr].\]</span></p>
+</div>
+</div>
+<p>The total effect captures the combined impact of all causal pathways — both <span class="math inline">\(T \to Y\)</span> and <span class="math inline">\(T \to M \to Y\)</span>. It is identified by the back-door formula whenever <span class="math inline">\(\mathbf{X}\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>.</p>
+<p><em>Running example.</em> For the depression trial, the TE is the expected change in depression score if the entire study population were assigned to the intervention versus control. It combines the effect operating through sleep improvement with every other pathway. Mediation analysis asks: of this total, how much is due to sleep?</p>
+</section>
+<section id="sec-cde" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="sec-cde"><span class="header-section-number">8.4</span> Controlled Direct Effect</h2>
+<section id="definition" class="level3" data-number="8.4.1">
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">8.4.1</span> Definition</h3>
+<p>The do-calculus provides the cleanest definition of the direct effect: intervene on both <span class="math inline">\(T\)</span> <em>and</em> <span class="math inline">\(M\)</span> simultaneously, fixing <span class="math inline">\(M\)</span> at a specified level <span class="math inline">\(m\)</span>. Any remaining effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> must then flow exclusively through the direct edge <span class="math inline">\(T \to Y\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Controlled Direct Effect (CDE)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>controlled direct effect</strong> of changing <span class="math inline">\(T\)</span> from 0 to 1 while fixing <span class="math inline">\(M = m\)</span> by intervention is: <span id="eq-cde"><span class="math display">\[\mathrm{CDE}(m) \;=\; \E\!\left[Y \mid \doop(T{=}1),\, \doop(M{=}m)\right] - \E\!\left[Y \mid \doop(T{=}0),\, \doop(M{=}m)\right]. \tag{8.1}\]</span></span></p>
+</div>
+</div>
+<p>This corresponds to the mutilated graph <span class="math inline">\(\Gcal_{\overline{TM}}\)</span> in which all edges into both <span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span> are deleted. Fixing <span class="math inline">\(M = m\)</span> for everyone shuts down the indirect pathway <span class="math inline">\(T \to M \to Y\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The CDE depends on the level <span class="math inline">\(m\)</span> at which <span class="math inline">\(M\)</span> is fixed. In a linear additive model, <span class="math inline">\(\mathrm{CDE}(m) = \tau'\)</span> for all <span class="math inline">\(m\)</span>, a special property of linearity. When <span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span> interact in their effect on <span class="math inline">\(Y\)</span>, the CDEs at different values of <span class="math inline">\(m\)</span> differ, and no single number summarizes the direct effect.</p>
+</div>
+</div>
+</section>
+<section id="identification-of-the-cde" class="level3" data-number="8.4.2">
+<h3 data-number="8.4.2" class="anchored" data-anchor-id="identification-of-the-cde"><span class="header-section-number">8.4.2</span> Identification of the CDE</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Identification of the CDE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose <span class="math inline">\(\mathbf{Z}\)</span> satisfies the back-door criterion for the joint intervention <span class="math inline">\(\doop(T, M)\)</span> on <span class="math inline">\(Y\)</span>: (i) <span class="math inline">\(\mathbf{Z}\)</span> contains no descendant of <span class="math inline">\(T\)</span> or <span class="math inline">\(M\)</span>, and (ii) <span class="math inline">\(\mathbf{Z}\)</span> blocks every back-door path from <span class="math inline">\(\{T, M\}\)</span> to <span class="math inline">\(Y\)</span>. Suppose further (iii) joint positivity: <span class="math inline">\(P(T{=}t,\, M{=}m \mid \mathbf{Z}{=}\mathbf{z}) &gt; 0\)</span> for <span class="math inline">\(P\)</span>-almost every <span class="math inline">\(\mathbf{z}\)</span>. Then: <span id="eq-cde-id"><span class="math display">\[\E[Y \mid \doop(T{=}t),\, \doop(M{=}m)] = \sum_{\mathbf{z}} \E[Y \mid t,\, m,\, \mathbf{z}]\, P(\mathbf{z}). \tag{8.2}\]</span></span></p>
+</div>
+</div>
+<p>Under the working assumption, <span class="math inline">\(\mathbf{Z} = \mathbf{X}\)</span> blocks every back-door path from <span class="math inline">\(\{T, M\}\)</span> to <span class="math inline">\(Y\)</span>, so: <span class="math display">\[\E[Y \mid \doop(T{=}t),\, \doop(M{=}m)] = \sum_{\mathbf{x}} \E[Y \mid t,\, m,\, \mathbf{x}]\, P(\mathbf{x}).\]</span></p>
+</section>
+<section id="the-cde-does-not-have-a-complementary-indirect-effect" class="level3" data-number="8.4.3">
+<h3 data-number="8.4.3" class="anchored" data-anchor-id="the-cde-does-not-have-a-complementary-indirect-effect"><span class="header-section-number">8.4.3</span> The CDE Does Not Have a Complementary Indirect Effect</h3>
+<p>A common misconception is that the CDE and some “controlled indirect effect” sum to the total effect. This is not generally true. The residual quantity <span class="math inline">\(\mathrm{TE} - \mathrm{CDE}(m)\)</span> depends on <span class="math inline">\(m\)</span>, has no clean do-calculus expression corresponding to “the indirect pathway,” and cannot be interpreted as the effect that flows through <span class="math inline">\(M\)</span>. The correct complementary decomposition uses the natural effects of <a href="#sec-nie" class="quarto-xref"><span>Section 8.5</span></a>.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Natural Effects Are a Strictly Harder Estimand Than the CDE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>The CDE is a single-world estimand.</strong> The quantity <span class="math inline">\(\E[Y \mid \doop(T{=}t), \doop(M{=}m)]\)</span> involves a single joint intervention. Identification reduces to the standard back-door criterion for the pair <span class="math inline">\((T, M)\)</span>.</p>
+<p><strong>The NDE and NIE are cross-world estimands.</strong> The nested counterfactual <span class="math inline">\(Y(t, M(t'))\)</span> requires an individual to simultaneously inhabit two worlds: the world where <span class="math inline">\(T = t\)</span> (which determines <span class="math inline">\(Y\)</span>) and the world where <span class="math inline">\(T = t'\)</span> (which determines what <span class="math inline">\(M\)</span> would <em>naturally</em> be). When <span class="math inline">\(t \neq t'\)</span>, these are logically distinct states of the world that no single experiment can realize. The do-operator alone cannot express this quantity.</p>
+<p><strong>The identification price is steep.</strong> The CDE requires only the back-door criterion. The NDE and NIE require four sequential ignorability assumptions, including Assumption 4 (no treatment-induced mediator–outcome confounder), which cannot be satisfied by randomizing <span class="math inline">\(T\)</span> and cannot be verified from data.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-nie" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="sec-nie"><span class="header-section-number">8.5</span> Natural Direct and Indirect Effects</h2>
+<section id="motivation-cross-world-counterfactuals" class="level3" data-number="8.5.1">
+<h3 data-number="8.5.1" class="anchored" data-anchor-id="motivation-cross-world-counterfactuals"><span class="header-section-number">8.5.1</span> Motivation: Cross-World Counterfactuals</h3>
+<p>The CDE fixes the mediator by external intervention. A more scientifically natural question is: what is the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> that bypasses <span class="math inline">\(M\)</span> when <span class="math inline">\(M\)</span> is held at the value it <em>would naturally take</em> under the reference treatment <span class="math inline">\(T = 0\)</span>?</p>
+<p>This requires the <em>nested potential outcomes</em> notation <span class="math inline">\(Y(t, M(t'))\)</span>, which denotes the outcome that would be observed if <span class="math inline">\(T\)</span> were set to <span class="math inline">\(t\)</span> and <span class="math inline">\(M\)</span> were simultaneously set to the value it would naturally take if <span class="math inline">\(T\)</span> were <span class="math inline">\(t'\)</span>. These are called <em>cross-world counterfactuals</em> because <span class="math inline">\(t\)</span> and <span class="math inline">\(t'\)</span> may differ, referring to two different hypothetical states of the world simultaneously.</p>
+</section>
+<section id="definitions" class="level3" data-number="8.5.2">
+<h3 data-number="8.5.2" class="anchored" data-anchor-id="definitions"><span class="header-section-number">8.5.2</span> Definitions</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Natural Direct and Indirect Effects
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="pearl2001direct">(Pearl 2001)</span> For binary <span class="math inline">\(T \in \{0,1\}\)</span>: <span id="eq-nde"><span class="math display">\[\mathrm{NDE} = \E\!\left[Y(1, M(0)) - Y(0, M(0))\right], \tag{8.3}\]</span></span> <span id="eq-nie"><span class="math display">\[\mathrm{NIE} = \E\!\left[Y(1, M(1)) - Y(1, M(0))\right]. \tag{8.4}\]</span></span></p>
+<p>The <strong>natural direct effect</strong> (NDE) is the expected change in the outcome when <span class="math inline">\(T\)</span> shifts from 0 to 1, holding the mediator at the value it would naturally take under <span class="math inline">\(T = 0\)</span>. The <strong>natural indirect effect</strong> (NIE) is the expected change in the outcome due to the shift in the mediator from <span class="math inline">\(M(0)\)</span> to <span class="math inline">\(M(1)\)</span>, holding <span class="math inline">\(T = 1\)</span> fixed.</p>
+</div>
+</div>
+<p><em>Running example.</em> The NDE is the expected reduction in depression score when the intervention is delivered but each participant’s sleep is held at the value it <em>would have had</em> without the intervention — the part of the benefit from cognitive, behavioral, or therapeutic-alliance pathways, not from sleep. The NIE is the complementary piece: how much of the depression reduction is due to the sleep improvement that the intervention itself causes.</p>
+<p><strong>Decomposition.</strong> The total effect decomposes as: <span id="eq-decomp-natural"><span class="math display">\[\mathrm{TE} \;=\; \mathrm{NDE} \;+\; \mathrm{NIE}. \tag{8.5}\]</span></span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math display">\[\mathrm{NDE} + \mathrm{NIE} = \E[Y(1, M(0)) - Y(0, M(0))] + \E[Y(1, M(1)) - Y(1, M(0))]\]</span> <span class="math display">\[= \E[Y(1, M(1)) - Y(0, M(0))] = \E[Y(1) - Y(0)] = \mathrm{TE}. \quad\square\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the linear additive Baron–Kenny SEM with no <span class="math inline">\(T \times M\)</span> interaction, the CDE and NDE coincide: <span class="math inline">\(\mathrm{NDE} = \tau'\)</span> and <span class="math inline">\(\mathrm{NIE} = ab\)</span>. When there is a <span class="math inline">\(T \times M\)</span> interaction, <span class="math inline">\(\mathrm{NDE} \neq \mathrm{CDE}\)</span> and the linear decomposition breaks down.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-id-natural" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="sec-id-natural"><span class="header-section-number">8.6</span> Identification of Natural Effects</h2>
+<section id="sequential-ignorability" class="level3" data-number="8.6.1">
+<h3 data-number="8.6.1" class="anchored" data-anchor-id="sequential-ignorability"><span class="header-section-number">8.6.1</span> Sequential Ignorability</h3>
+<p>Identification of the NDE and NIE requires four conditions, known collectively as <em>sequential ignorability</em> <span class="citation" data-cites="imai2010identification">(Imai et al. 2010)</span>. These conditions are substantially stronger than the ignorability assumptions used for the total effect or the CDE.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Sequential Ignorability Assumptions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>No unmeasured treatment–outcome confounding.</strong> <span class="math inline">\(\{Y(t', m),\, M(t)\} \;\indep\; T \;\big|\; \mathbf{X}\)</span> for all <span class="math inline">\(t, t', m\)</span>. Graphically: <span class="math inline">\(\mathbf{X}\)</span> blocks all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> and from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span>.</li>
+<li><strong>No unmeasured treatment–mediator confounding.</strong> Implied by Assumption 1 for the <span class="math inline">\(T \to M\)</span> sub-problem.</li>
+<li><strong>No unmeasured mediator–outcome confounding given <span class="math inline">\(T\)</span>.</strong> <span class="math inline">\(Y(t', m) \;\indep\; M \;\big|\; T, \mathbf{X}\)</span> for all <span class="math inline">\(t', m\)</span>. Graphically: <span class="math inline">\((T, \mathbf{X})\)</span> blocks all back-door paths from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span>.</li>
+<li><strong>No treatment-induced mediator–outcome confounder.</strong> There is no post-treatment variable <span class="math inline">\(L\)</span> such that <span class="math inline">\(T \to L\)</span>, <span class="math inline">\(L \to M\)</span>, and <span class="math inline">\(L \to Y\)</span>.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Positivity (Overlap) Conditions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>(P1) Treatment overlap.</strong> <span class="math inline">\(P(T = t \mid \mathbf{X} = \mathbf{x}) &gt; 0\)</span> for all <span class="math inline">\(t \in \{0, 1\}\)</span> and for <span class="math inline">\(P\)</span>-almost every <span class="math inline">\(\mathbf{x}\)</span>.</li>
+<li><strong>(P2) Mediator overlap across treatment arms.</strong> <span class="math inline">\(P(M = m \mid T = t, \mathbf{X} = \mathbf{x}) &gt; 0\)</span> whenever <span class="math inline">\(P(M = m \mid T = t', \mathbf{X} = \mathbf{x}) &gt; 0\)</span>.</li>
+</ul>
+</div>
+</div>
+<p><strong>What randomization of <span class="math inline">\(T\)</span> does and does not provide.</strong> Randomizing <span class="math inline">\(T\)</span> satisfies Assumptions 1 and 2 by design. It does <em>not</em> satisfy Assumptions 3 or 4. The mediator <span class="math inline">\(M\)</span> is a post-treatment variable that is never randomized; any unobserved <span class="math inline">\(V\)</span> with <span class="math inline">\(V \to M\)</span> and <span class="math inline">\(V \to Y\)</span> violates Assumption 3 regardless of how <span class="math inline">\(T\)</span> was assigned. Assumption 4 can be violated by a variable <span class="math inline">\(L\)</span> that is itself <em>caused</em> by the treatment, so randomizing <span class="math inline">\(T\)</span> actually creates the conditions under which Assumption 4 violations can arise.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Randomization of <span class="math inline">\(T\)</span> Does Not Secure Assumption 4
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Unlike unmeasured <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> confounders (which randomization of <span class="math inline">\(T\)</span> can eliminate), a treatment-induced mediator–outcome confounder <span class="math inline">\(L\)</span> is itself caused by the treatment: the path <span class="math inline">\(T \to L\)</span> is set in motion by the intervention. The absence of such an <span class="math inline">\(L\)</span> must be argued from design, timing, measurement, or subject-matter knowledge. This is why identification of natural effects is considered strictly harder than identification of the total effect or the CDE.</p>
+</div>
+</div>
+</section>
+<section id="the-mediation-formula" class="level3" data-number="8.6.2">
+<h3 data-number="8.6.2" class="anchored" data-anchor-id="the-mediation-formula"><span class="header-section-number">8.6.2</span> The Mediation Formula</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Mediation Formula
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="pearl2001direct">(Pearl 2001)</span> Under sequential ignorability, positivity (P1)–(P2), and with discrete <span class="math inline">\(M\)</span> and <span class="math inline">\(\mathbf{X}\)</span>: <span id="eq-mediation-formula"><span class="math display">\[\E\!\left[Y(t, M(t'))\right] = \sum_{m}\sum_{\mathbf{x}} \E\!\left[Y \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}\right] P(M{=}m \mid T{=}t',\, \mathbf{X}{=}\mathbf{x})\, P(\mathbf{X}{=}\mathbf{x}). \tag{8.6}\]</span></span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof Sketch (Five Steps)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Step 1</strong> (law of total expectation): <span class="math inline">\(\E[Y(t, M(t'))] = \sum_{m,\mathbf{x}} \E[Y(t, m) \mid M(t'){=}m,\, \mathbf{X}{=}\mathbf{x}]\, P(M(t'){=}m \mid \mathbf{X}{=}\mathbf{x})\, P(\mathbf{X}{=}\mathbf{x})\)</span>.</p>
+<p><strong>Step 2</strong> (Assumption 4: cross-world independence): Within the NPSEM-IE framework, no-treatment-induced-confounder implies <span class="math inline">\(Y(t, m) \indep M(t') \mid \mathbf{X}\)</span>, so conditioning on <span class="math inline">\(M(t')\)</span> can be dropped: <span class="math inline">\(\E[Y(t, m) \mid M(t'){=}m,\, \mathbf{X}{=}\mathbf{x}] = \E[Y(t, m) \mid \mathbf{X}{=}\mathbf{x}]\)</span>.</p>
+<p><strong>Step 3</strong> (Assumptions 1 and 3): By <span class="math inline">\(Y(t, m) \indep T \mid \mathbf{X}\)</span> and <span class="math inline">\(Y(t, m) \indep M \mid T, \mathbf{X}\)</span>: <span class="math inline">\(\E[Y(t, m) \mid \mathbf{X}{=}\mathbf{x}] = \E[Y(t, m) \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}]\)</span>.</p>
+<p><strong>Step 4</strong> (consistency for <span class="math inline">\(Y\)</span>): <span class="math inline">\(\E[Y(t, m) \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}] = \E[Y \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}]\)</span>.</p>
+<p><strong>Step 5</strong> (Assumption 2 and consistency for <span class="math inline">\(M\)</span>): <span class="math inline">\(P(M(t'){=}m \mid \mathbf{X}{=}\mathbf{x}) = P(M{=}m \mid T{=}t',\, \mathbf{X}{=}\mathbf{x})\)</span>.</p>
+<p>Substituting Steps 2–5 into Step 1 yields <a href="#eq-mediation-formula" class="quarto-xref">Equation&nbsp;<span>8.6</span></a>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> The mediation formula “mixes” the outcome regression under <span class="math inline">\(T = t\)</span> with the mediator distribution under <span class="math inline">\(T = t'\)</span>. To compute the NDE, set <span class="math inline">\(t = 1\)</span> and <span class="math inline">\(t' = 0\)</span>: take the conditional mean of <span class="math inline">\(Y\)</span> evaluated at treatment 1, but weight the mediator by its distribution under treatment 0. The presence of the second treatment index <span class="math inline">\(t'\)</span> on the right-hand side is the visible trace of the cross-world step.</p>
+<p><strong>The NDE and NIE from the formula:</strong></p>
+<p><span class="math display">\[\mathrm{NDE} = \sum_{m,\mathbf{x}} \bigl[\E[Y \mid T{=}1, M{=}m, \mathbf{X}{=}\mathbf{x}] - \E[Y \mid T{=}0, M{=}m, \mathbf{X}{=}\mathbf{x}]\bigr] P(M{=}m \mid T{=}0, \mathbf{X}{=}\mathbf{x})\, P(\mathbf{X}{=}\mathbf{x}),\]</span></p>
+<p><span class="math display">\[\mathrm{NIE} = \sum_{m,\mathbf{x}} \E[Y \mid T{=}1, M{=}m, \mathbf{X}{=}\mathbf{x}] \bigl[P(M{=}m \mid T{=}1, \mathbf{X}{=}\mathbf{x}) - P(M{=}m \mid T{=}0, \mathbf{X}{=}\mathbf{x})\bigr] P(\mathbf{X}{=}\mathbf{x}).\]</span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Estimation Recipe: Plug-In for the Mediation Formula
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Given data <span class="math inline">\(\{(Y_i, T_i, M_i, \mathbf{X}_i)\}_{i=1}^n\)</span>, a plug-in estimator requires:</p>
+<ol type="1">
+<li><strong>Fit an outcome model.</strong> Regress <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, M, \mathbf{X})\)</span> to obtain <span class="math inline">\(\hat\mu(t, m, \mathbf{x})\)</span>.</li>
+<li><strong>Fit a mediator model.</strong> Regress <span class="math inline">\(M\)</span> on <span class="math inline">\((T, \mathbf{X})\)</span> to obtain <span class="math inline">\(\hat p(m \mid t, \mathbf{x})\)</span>.</li>
+<li><strong>Predict outcomes at the evaluation arm.</strong> For each unit <span class="math inline">\(i\)</span>, compute <span class="math inline">\(\hat\mu(t, m, \mathbf{X}_i)\)</span>.</li>
+<li><strong>Reweight the mediator at the reference arm.</strong> For discrete <span class="math inline">\(M\)</span>: weight <span class="math inline">\(\hat\mu(t, m, \mathbf{X}_i)\)</span> by <span class="math inline">\(\hat p(m \mid t', \mathbf{X}_i)\)</span>.</li>
+<li><strong>Average over the empirical distribution of <span class="math inline">\(\mathbf{X}\)</span>:</strong> <span id="eq-plugin"><span class="math display">\[\frac{1}{n}\sum_{i=1}^n \sum_m \hat\mu(t, m, \mathbf{X}_i)\, \hat p(m \mid t', \mathbf{X}_i). \tag{8.7}\]</span></span></li>
+<li><strong>Quantify uncertainty.</strong> Nonparametric bootstrap or influence-function-based estimators (Chapters 9–10).</li>
+</ol>
+<p>The plug-in estimator is consistent only when both <span class="math inline">\(\hat\mu\)</span> and <span class="math inline">\(\hat p\)</span> are correctly specified.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-linear" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="sec-linear"><span class="header-section-number">8.7</span> The Linear Mediation Model: Baron–Kenny</h2>
+<section id="the-three-equation-system" class="level3" data-number="8.7.1">
+<h3 data-number="8.7.1" class="anchored" data-anchor-id="the-three-equation-system"><span class="header-section-number">8.7.1</span> The Three-Equation System</h3>
+<p>The regression-based approach of <span class="citation" data-cites="baron1986moderator">Baron and Kenny (1986)</span> restricts the reduced prototype graph to a linear SEM:</p>
+<p><span id="eq-bk1"><span class="math display">\[Y = \alpha_1 + \tau T + \boldsymbol{\gamma}_1^{\top}\mathbf{X} + \varepsilon_1, \tag{8.8}\]</span></span> <span id="eq-bk2"><span class="math display">\[M = \alpha_2 + a T + \boldsymbol{\gamma}_2^{\top}\mathbf{X} + \varepsilon_2, \tag{8.9}\]</span></span> <span id="eq-bk3"><span class="math display">\[Y = \alpha_3 + \tau' T + b M + \boldsymbol{\gamma}_3^{\top}\mathbf{X} + \varepsilon_3. \tag{8.10}\]</span></span></p>
+<p>The four coefficients of interest: <span class="math inline">\(\tau\)</span> (total effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>), <span class="math inline">\(a\)</span> (first-stage: <span class="math inline">\(T\)</span> on <span class="math inline">\(M\)</span>), <span class="math inline">\(\tau'\)</span> (direct: <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> controlling for <span class="math inline">\(M\)</span>), and <span class="math inline">\(b\)</span> (second-stage: <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span> controlling for <span class="math inline">\(T\)</span>).</p>
+</section>
+<section id="the-product-and-difference-formulas" class="level3" data-number="8.7.2">
+<h3 data-number="8.7.2" class="anchored" data-anchor-id="the-product-and-difference-formulas"><span class="header-section-number">8.7.2</span> The Product and Difference Formulas</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Proposition: Mediation Decomposition in the Linear Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under <a href="#eq-bk1" class="quarto-xref">Equation&nbsp;<span>8.8</span></a>–<a href="#eq-bk3" class="quarto-xref">Equation&nbsp;<span>8.10</span></a>: <span id="eq-linear-decomp"><span class="math display">\[\tau \;=\; \tau' \;+\; a b. \tag{8.11}\]</span></span></p>
+<p>The indirect effect is <span class="math inline">\(\tau_{\mathrm{ind}} = ab\)</span> (product method) and the direct effect is <span class="math inline">\(\tau_{\mathrm{dir}} = \tau - ab = \tau'\)</span> (difference method).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Substituting <a href="#eq-bk2" class="quarto-xref">Equation&nbsp;<span>8.9</span></a> into <a href="#eq-bk3" class="quarto-xref">Equation&nbsp;<span>8.10</span></a>: <span class="math inline">\(Y = (\alpha_3 + b\alpha_2) + (\tau' + ab)\,T + (\boldsymbol{\gamma}_3 + b\boldsymbol{\gamma}_2)^{\top}\mathbf{X} + (b\varepsilon_2 + \varepsilon_3)\)</span>. Comparing with <a href="#eq-bk1" class="quarto-xref">Equation&nbsp;<span>8.8</span></a> gives <span class="math inline">\(\tau = \tau' + ab\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Effect</strong></th>
+<th><strong>Formula</strong></th>
+<th><strong>Path(s)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total</td>
+<td><span class="math inline">\(\tau\)</span></td>
+<td><span class="math inline">\(T \to Y\)</span> and <span class="math inline">\(T \to M \to Y\)</span> combined</td>
+</tr>
+<tr class="even">
+<td>Direct</td>
+<td><span class="math inline">\(\tau' = \tau - ab\)</span></td>
+<td><span class="math inline">\(T \to Y\)</span> only</td>
+</tr>
+<tr class="odd">
+<td>Indirect</td>
+<td><span class="math inline">\(ab\)</span></td>
+<td><span class="math inline">\(T \to M \to Y\)</span> only</td>
+</tr>
+<tr class="even">
+<td>Proportion mediated</td>
+<td><span class="math inline">\(ab/\tau\)</span></td>
+<td>Share of total effect via <span class="math inline">\(M\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><em>Running example.</em> Suppose the fitted coefficients are <span class="math inline">\(\hat\tau = 0.50\)</span>, <span class="math inline">\(\hat a = 0.40\)</span>, <span class="math inline">\(\hat b = 0.60\)</span>, <span class="math inline">\(\hat\tau' = 0.26\)</span>. Then: indirect effect via sleep: <span class="math inline">\(\hat a \hat b = 0.40 \times 0.60 = 0.24\)</span>; direct effect: <span class="math inline">\(\hat\tau - \hat a \hat b = 0.50 - 0.24 = 0.26 = \hat\tau'\)</span>; proportion mediated: <span class="math inline">\(0.24/0.50 = 0.48\)</span>.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The Decomposition <span class="math inline">\(\tau = \tau' + ab\)</span> Is an Algebraic Identity, Not a Causal Theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The equality <span class="math inline">\(\tau - \tau' = ab\)</span> is a purely algebraic consequence of substituting one linear equation into another. It holds because linearity makes the indirect effect separable and additive. It does <em>not</em> hold in general: in <strong>nonlinear models</strong>, the product and difference methods yield numerically different estimates; when <strong><span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span> interact</strong>, the CDE depends on <span class="math inline">\(m\)</span> and the indirect effect cannot be summarized by a single number <span class="math inline">\(ab\)</span>; for <strong>non-continuous mediators</strong>, the product <span class="math inline">\(ab\)</span> has no simple causal interpretation.</p>
+<p>The correct generalization is the mediation formula (Theorem above), which reduces to <span class="math inline">\(ab\)</span> and <span class="math inline">\(\tau'\)</span> only in the linear, no-interaction special case.</p>
+</div>
+</div>
+</section>
+<section id="inference-the-sobel-test-and-bootstrap" class="level3" data-number="8.7.3">
+<h3 data-number="8.7.3" class="anchored" data-anchor-id="inference-the-sobel-test-and-bootstrap"><span class="header-section-number">8.7.3</span> Inference: The Sobel Test and Bootstrap</h3>
+<p>The delta method gives an approximate variance for the product <span class="math inline">\(\hat a \hat b\)</span>. The <em>Sobel test</em> <span class="citation" data-cites="sobel1982asymptotic">(Sobel 1982)</span> uses the simplified approximation: <span id="eq-sobel"><span class="math display">\[\widehat{\mathrm{Var}}_{\mathrm{Sobel}}(\hat a \hat b) = \hat b^2\, \widehat{\mathrm{Var}}(\hat a) + \hat a^2\, \widehat{\mathrm{Var}}(\hat b), \tag{8.12}\]</span></span> yielding <span class="math inline">\(z = \hat a \hat b / \sqrt{\widehat{\mathrm{Var}}_{\mathrm{Sobel}}(\hat a \hat b)}\)</span>.</p>
+<p><strong>Statistical validity versus causal interpretation.</strong> The Sobel test is a statistical inference procedure for the product of two fitted regression coefficients. Interpreting the tested product as an <em>indirect causal effect</em> additionally requires the causal identification conditions and the structural restrictions (linearity and no <span class="math inline">\(T \times M\)</span> interaction). In practice, bootstrap confidence intervals for <span class="math inline">\(ab\)</span> are preferred over the Sobel test because the distribution of a product of estimates is skewed in finite samples.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The “Significance of Both Paths” Criterion Is Not a Test for Mediation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A common misuse of the Baron–Kenny framework declares mediation when <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(T \to M\)</span>, and <span class="math inline">\(M \to Y\)</span> are each individually significant. This has three serious defects: (1) statistical significance <span class="math inline">\(\neq\)</span> mediation; (2) the Sobel test tests a regression product, not a causal quantity; (3) zero total effect does not preclude indirect effects — direct and indirect effects of opposite sign can cancel. The modern alternative is to estimate <span class="math inline">\(ab\)</span> (or the NIE via the mediation formula) and construct bootstrap confidence intervals.</p>
+</div>
+</div>
+</section>
+<section id="the-baronkenny-assumptions-two-distinct-categories" class="level3" data-number="8.7.4">
+<h3 data-number="8.7.4" class="anchored" data-anchor-id="the-baronkenny-assumptions-two-distinct-categories"><span class="header-section-number">8.7.4</span> The Baron–Kenny Assumptions: Two Distinct Categories</h3>
+<p><strong>Causal ignorability conditions</strong> (identification assumptions with graphical interpretations): (1) No unmeasured <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> confounding; (2) No unmeasured <span class="math inline">\(T\)</span>–<span class="math inline">\(M\)</span> confounding; (3) No unmeasured <span class="math inline">\(M\)</span>–<span class="math inline">\(Y\)</span> confounding given <span class="math inline">\(T\)</span> — this is <em>not</em> implied by randomization of <span class="math inline">\(T\)</span>.</p>
+<p><strong>Structural modeling restrictions</strong> (parametric assumptions, not identification conditions): (4) Linearity and additivity; (5) No <span class="math inline">\(T \times M\)</span> interaction. Restrictions 4 and 5 can in principle be tested; Conditions 1–3 cannot.</p>
+<p>Under Conditions 1–3 and Restrictions 4–5, Baron–Kenny is a valid estimator of the NDE and NIE. Outside those conditions, <span class="math inline">\(\tau'\)</span> and <span class="math inline">\(ab\)</span> estimate regression coefficients in misspecified structural equations, not causal effects.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Estimand</strong></th>
+<th><strong>Framework needed</strong></th>
+<th><strong>Section</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total effect <span class="math inline">\(P(y \mid \doop(t))\)</span></td>
+<td>Do-calculus</td>
+<td>Ch. 5 (back-door)</td>
+</tr>
+<tr class="even">
+<td>Controlled direct effect (CDE)</td>
+<td>Do-calculus</td>
+<td><a href="#sec-cde" class="quarto-xref"><span>Section 8.4</span></a></td>
+</tr>
+<tr class="odd">
+<td>Natural direct effect (NDE)</td>
+<td>Potential outcomes</td>
+<td><a href="#sec-nie" class="quarto-xref"><span>Section 8.5</span></a></td>
+</tr>
+<tr class="even">
+<td>Natural indirect effect (NIE)</td>
+<td>Potential outcomes</td>
+<td><a href="#sec-nie" class="quarto-xref"><span>Section 8.5</span></a></td>
+</tr>
+<tr class="odd">
+<td>Front-door identification</td>
+<td>Do-calculus</td>
+<td><a href="#sec-frontdoor" class="quarto-xref"><span>Section 8.8</span></a></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="sec-frontdoor" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="sec-frontdoor"><span class="header-section-number">8.8</span> Front-Door Identification</h2>
+<section id="the-front-door-dag" class="level3" data-number="8.8.1">
+<h3 data-number="8.8.1" class="anchored" data-anchor-id="the-front-door-dag"><span class="header-section-number">8.8.1</span> The Front-Door DAG</h3>
+<p>Every identification strategy in §§ <a href="#sec-cde" class="quarto-xref"><span>Section 8.4</span></a>–<a href="#sec-linear" class="quarto-xref"><span>Section 8.7</span></a> assumed that an observed covariate set <span class="math inline">\(\mathbf{X}\)</span> blocks the back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> through <span class="math inline">\(U\)</span>. What if <span class="math inline">\(U\)</span> is wholly unobserved and no such adjustment set exists?</p>
+<p>The front-door criterion turns this obstacle into an opportunity: under two additional restrictions on the prototype mediation graph, the mediation structure itself provides identification of the total effect without conditioning on <span class="math inline">\(U\)</span>. The two restrictions are: (1) remove the direct <span class="math inline">\(T \to Y\)</span> edge, so that <span class="math inline">\(M\)</span> fully mediates the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>; and (2) require that <span class="math inline">\(U\)</span> has no arrow into <span class="math inline">\(M\)</span>, so that the <span class="math inline">\(T \to M\)</span> sub-effect is unconfounded.</p>
+<p><em>Why the running example does not apply.</em> The depression/sleep scenario fails Condition 1 (full mediation): a behavioral intervention on depression plausibly operates through several non-sleep channels, so the direct edge <span class="math inline">\(T \to Y\)</span> is present. The canonical front-door example is Pearl’s smoking–tar–cancer graph: <span class="math inline">\(T\)</span> = smoking, <span class="math inline">\(M\)</span> = tar deposited in lungs, <span class="math inline">\(Y\)</span> = lung cancer, <span class="math inline">\(U\)</span> = unobserved genetic susceptibility.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-frontdoor" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-frontdoor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_08_files/figure-html/fig-frontdoor-1.pdf" class="img-fluid" width="336">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frontdoor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.2: The front-door graph. Compared with the prototype mediation DAG, two edges are absent: the direct <span class="math inline">\(T \to Y\)</span> edge is removed, and <span class="math inline">\(U\)</span> has no arrow into <span class="math inline">\(M\)</span>. The front-door formula identifies <span class="math inline">\(P(y \mid \doop(t))\)</span> without observing or conditioning on <span class="math inline">\(U\)</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Two Different Questions About a Mediator-Like Variable
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Ordinary mediation</strong></th>
+<th><strong>Front-door identification</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Question</strong></td>
+<td>How much of the total effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> flows through <span class="math inline">\(M\)</span>?</td>
+<td>Can <span class="math inline">\(M\)</span> identify the total effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> despite unmeasured <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> confounding?</td>
+</tr>
+<tr class="even">
+<td><strong>Role of <span class="math inline">\(M\)</span></strong></td>
+<td>Pathway: carries part of the causal effect</td>
+<td>Instrument-like relay: routes around confounding</td>
+</tr>
+<tr class="odd">
+<td><strong>Target estimand</strong></td>
+<td>NDE, NIE (decomposition)</td>
+<td><span class="math inline">\(P(y \mid \doop(t))\)</span> (total effect itself)</td>
+</tr>
+<tr class="even">
+<td><strong>Direct <span class="math inline">\(T \to Y\)</span> edge</strong></td>
+<td>Present</td>
+<td>Absent (required)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-three-front-door-conditions" class="level3" data-number="8.8.2">
+<h3 data-number="8.8.2" class="anchored" data-anchor-id="the-three-front-door-conditions"><span class="header-section-number">8.8.2</span> The Three Front-Door Conditions</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Front-Door Conditions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A set <span class="math inline">\(\{M\}\)</span> satisfies the <strong>front-door criterion</strong> for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> if:</p>
+<ol type="1">
+<li><strong>Full mediation.</strong> All directed paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> pass through <span class="math inline">\(M\)</span> (no direct <span class="math inline">\(T \to Y\)</span> edge).</li>
+<li><strong>No unblocked back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span>.</strong> All back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span> are blocked (no unobserved variables affect both <span class="math inline">\(T\)</span> and <span class="math inline">\(M\)</span>).</li>
+<li><strong>No unblocked back-door path from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> given <span class="math inline">\(T\)</span>.</strong> All back-door paths from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> are blocked by conditioning on <span class="math inline">\(T\)</span>.</li>
+</ol>
+</div>
+</div>
+<p>In <a href="#fig-frontdoor" class="quarto-xref">Figure&nbsp;<span>8.2</span></a>: Condition 1 holds (no <span class="math inline">\(T \to Y\)</span> edge). Condition 2 holds (<span class="math inline">\(U\)</span> has no arrow into <span class="math inline">\(M\)</span>). Condition 3 holds (the only back-door path from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> is <span class="math inline">\(M \leftarrow T \leftarrow U \to Y\)</span>, blocked by conditioning on <span class="math inline">\(T\)</span>).</p>
+</section>
+<section id="derivation-of-the-front-door-formula" class="level3" data-number="8.8.3">
+<h3 data-number="8.8.3" class="anchored" data-anchor-id="derivation-of-the-front-door-formula"><span class="header-section-number">8.8.3</span> Derivation of the Front-Door Formula</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Front-Door Formula
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="pearl1995causal">(Pearl 1995)</span> Suppose <span class="math inline">\(M\)</span> satisfies the front-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>, and positivity conditions (F1)–(F2) hold. Then: <span id="eq-frontdoor"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) = \sum_m P(m \mid t) \sum_{t'} P(y \mid m, t')\, P(t'). \tag{8.13}\]</span></span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof via Three Do-Calculus Steps
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Step 1: Identify the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(M\)</span>.</strong> By Condition 2, there are no unblocked back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span>, so <span class="math inline">\(T\)</span> satisfies the back-door criterion for <span class="math inline">\(M\)</span> with the empty adjustment set: <span class="math display">\[P\!\left(m \mid \doop(T{=}t)\right) = P(m \mid t).\]</span></p>
+<p><strong>Step 2: Identify the effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>.</strong> By Condition 3, conditioning on <span class="math inline">\(T\)</span> blocks all back-door paths from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span>, so <span class="math inline">\(\{T\}\)</span> is a valid back-door adjustment set: <span class="math display">\[P\!\left(y \mid \doop(M{=}m)\right) = \sum_{t'} P(y \mid m, t')\, P(t').\]</span></p>
+<p><strong>Step 3: Combine via full mediation.</strong> By the law of total probability under <span class="math inline">\(\doop(T{=}t)\)</span>: <span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) = \sum_m P\!\left(m \mid \doop(T{=}t)\right)\, P\!\left(y \mid \doop(T{=}t),\, \doop(M{=}m)\right).\]</span></p>
+<p>By Condition 1 (no direct <span class="math inline">\(T \to Y\)</span> edge), once <span class="math inline">\(M\)</span> is set to <span class="math inline">\(m\)</span> by intervention, <span class="math inline">\(T\)</span> is d-separated from <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal_{\overline{T}\,\overline{M}}\)</span>; Rule 3 of the do-calculus removes <span class="math inline">\(\doop(T{=}t)\)</span> from the second factor: <span class="math inline">\(P(y \mid \doop(T{=}t),\, \doop(M{=}m)) = P(y \mid \doop(M{=}m))\)</span>.</p>
+<p>Substituting Steps 1 and 2 yields <a href="#eq-frontdoor" class="quarto-xref">Equation&nbsp;<span>8.13</span></a>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="intuition-routing-around-confounding" class="level3" data-number="8.8.4">
+<h3 data-number="8.8.4" class="anchored" data-anchor-id="intuition-routing-around-confounding"><span class="header-section-number">8.8.4</span> Intuition: Routing Around Confounding</h3>
+<p>The front-door formula achieves identification in two steps that each use only unconfounded variation.</p>
+<ol type="1">
+<li><strong><span class="math inline">\(T\)</span> to <span class="math inline">\(M\)</span>:</strong> There is no confounding on the <span class="math inline">\(T \to M\)</span> edge (<span class="math inline">\(U\)</span> does not affect <span class="math inline">\(M\)</span>), so <span class="math inline">\(P(m \mid t)\)</span> is the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(M\)</span>.</li>
+<li><strong><span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span>:</strong> There is back-door confounding on <span class="math inline">\(M \to Y\)</span> through <span class="math inline">\(T \leftarrow U \to Y\)</span>, but it is blocked by summing over <span class="math inline">\(T\)</span>: <span class="math inline">\(\sum_{t'} P(y \mid m, t')\, P(t')\)</span> marginalizes out <span class="math inline">\(T\)</span>, removing the confounding path.</li>
+</ol>
+<p>The key insight: <span class="math inline">\(U\)</span> confounds <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> but <em>not</em> the <span class="math inline">\(T \to M\)</span> edge. The front-door formula exploits this asymmetry.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Feature</strong></th>
+<th><strong>Prototype mediation DAG</strong></th>
+<th><strong>Front-door DAG</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Direct <span class="math inline">\(T \to Y\)</span> edge</td>
+<td>Present</td>
+<td>Absent</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(U\)</span> confounds <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Goal</td>
+<td>Decompose total effect into direct/indirect</td>
+<td>Identify total effect despite <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> confounding</td>
+</tr>
+<tr class="even">
+<td>Requires Assumption 3</td>
+<td>Yes</td>
+<td>Satisfied by Condition 3, not by randomization</td>
+</tr>
+<tr class="odd">
+<td>Identified by front-door formula</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="sec-mediation-vs-iv" class="level2" data-number="8.9">
+<h2 data-number="8.9" class="anchored" data-anchor-id="sec-mediation-vs-iv"><span class="header-section-number">8.9</span> Mediation vs.&nbsp;Instrumental Variables</h2>
+<p>Mediation analysis and instrumental variables both involve a third variable connected to the treatment–outcome relationship, but the causal role of that variable is fundamentally different.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Feature</strong></th>
+<th><strong>Instrumental Variables</strong></th>
+<th><strong>Mediation Analysis</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Position of third variable</td>
+<td>Pre-treatment (<span class="math inline">\(Z\)</span> precedes <span class="math inline">\(T\)</span>)</td>
+<td>Post-treatment (<span class="math inline">\(M\)</span> follows <span class="math inline">\(T\)</span>)</td>
+</tr>
+<tr class="even">
+<td>Causal role</td>
+<td>Exogenous source of variation in <span class="math inline">\(T\)</span></td>
+<td>Pathway through which <span class="math inline">\(T\)</span> affects <span class="math inline">\(Y\)</span></td>
+</tr>
+<tr class="odd">
+<td>Primary goal</td>
+<td>Identification of <span class="math inline">\(T \to Y\)</span> effect under confounding</td>
+<td>Decomposition of <span class="math inline">\(T \to Y\)</span> effect into pathways</td>
+</tr>
+<tr class="even">
+<td>Key assumption</td>
+<td>Exclusion: <span class="math inline">\(Z\)</span> affects <span class="math inline">\(Y\)</span> only through <span class="math inline">\(T\)</span></td>
+<td>Sequential ignorability: no unmeasured <span class="math inline">\(M\)</span>–<span class="math inline">\(Y\)</span> confounding given <span class="math inline">\(T\)</span></td>
+</tr>
+<tr class="odd">
+<td>Estimand</td>
+<td>LATE (Wald) or ATE (2SLS under homogeneity)</td>
+<td>NDE, NIE, or CDE</td>
+</tr>
+<tr class="even">
+<td>Unobserved <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> confounders</td>
+<td>Permitted</td>
+<td>Must be addressed separately (Assumption 1)</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Key Conceptual Distinction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>IV</strong></th>
+<th><strong>Mediation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What the third variable does</td>
+<td>Generates clean variation in <span class="math inline">\(T\)</span> (exogenous source)</td>
+<td>Carries part of <span class="math inline">\(T\)</span>’s causal effect (pathway)</td>
+</tr>
+<tr class="even">
+<td>Exclusion vs.&nbsp;inclusion</td>
+<td><span class="math inline">\(Z\)</span> excluded from <span class="math inline">\(Y\)</span>’s structural equation</td>
+<td><span class="math inline">\(M\)</span> included in <span class="math inline">\(Y\)</span>’s structural equation</td>
+</tr>
+<tr class="odd">
+<td>Question answered</td>
+<td>Does <span class="math inline">\(T\)</span> cause <span class="math inline">\(Y\)</span>?</td>
+<td>How does <span class="math inline">\(T\)</span> cause <span class="math inline">\(Y\)</span>?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Can the same variable be both?</strong> Not in the same analysis. As a mediator, <span class="math inline">\(M\)</span> is on the causal path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> (inclusion required). As an instrument, <span class="math inline">\(M\)</span> would require the exclusion restriction — that it affects <span class="math inline">\(Y\)</span> only through <span class="math inline">\(T\)</span> — which contradicts <span class="math inline">\(M\)</span> being a mediator. The two frameworks make mutually incompatible structural assumptions about the intermediate variable. However, the front-door identification formula is IV’s closest relative within mediation analysis: it uses the mediator <span class="math inline">\(M\)</span> to achieve identification of the total effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> even when <span class="math inline">\(T\)</span> is confounded.</p>
+</section>
+<section id="summary" class="level2" data-number="8.10">
+<h2 data-number="8.10" class="anchored" data-anchor-id="summary"><span class="header-section-number">8.10</span> Summary</h2>
+<ol type="1">
+<li><p><strong>Mediation studies mechanisms.</strong> Mediation analysis decomposes the total effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> into a direct component (<span class="math inline">\(T \to Y\)</span>) and an indirect component (<span class="math inline">\(T \to M \to Y\)</span>). The challenge is that the mediator is a post-treatment variable that may be confounded.</p></li>
+<li><p><strong>The total effect is the baseline.</strong> The TE <span class="math inline">\(= \E[Y(1) - Y(0)]\)</span> captures all pathways combined. Mediation analysis asks for a finer decomposition.</p></li>
+<li><p><strong>The CDE uses do-calculus.</strong> The controlled direct effect fixes <span class="math inline">\(M = m\)</span> by joint intervention <span class="math inline">\(\doop(T, M)\)</span> and is identified by the back-door formula applied to the pair <span class="math inline">\((T, M)\)</span>. No assumptions beyond the back-door criterion are needed, but the CDE depends on <span class="math inline">\(m\)</span> and does not have a natural “indirect” complement.</p></li>
+<li><p><strong>Natural effects require potential outcomes.</strong> The NDE and NIE involve cross-world counterfactuals <span class="math inline">\(Y(t, M(t'))\)</span> that cannot be expressed with the do-operator alone. They decompose the total effect as TE <span class="math inline">\(=\)</span> NDE <span class="math inline">\(+\)</span> NIE, and are identified by the mediation formula under sequential ignorability. The critical Assumption 4 — no treatment-induced mediator–outcome confounder — is not secured by randomization of <span class="math inline">\(T\)</span>.</p></li>
+<li><p><strong>The linear model simplifies but restricts.</strong> The Baron–Kenny three-equation system gives the clean formulas <span class="math inline">\(\tau_{\mathrm{ind}} = ab\)</span> and <span class="math inline">\(\tau_{\mathrm{dir}} = \tau'\)</span>, with <span class="math inline">\(\tau = \tau' + ab\)</span>. This decomposition is purely algebraic and holds only under linearity and no interaction.</p></li>
+<li><p><strong>Front-door identification uses mediation structure.</strong> When <span class="math inline">\(M\)</span> fully mediates <span class="math inline">\(T \to Y\)</span>, no <span class="math inline">\(T \to M\)</span> confounding exists, and <span class="math inline">\(T\)</span> blocks <span class="math inline">\(M \to Y\)</span> confounding, the front-door formula identifies the total effect despite unobserved <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> confounding.</p></li>
+<li><p><strong>Mediation and IV are complementary, not equivalent.</strong> IV uses a pre-treatment variable to generate exogenous variation in <span class="math inline">\(T\)</span>; mediation uses a post-treatment variable to decompose the causal effect. The exclusion restriction of IV and the sequential ignorability of mediation are mutually incompatible for the same intermediate variable.</p></li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="8.11">
+<h2 data-number="8.11" class="anchored" data-anchor-id="problems"><span class="header-section-number">8.11</span> Problems</h2>
+<p><strong>1. Identifying the CDE.</strong> Consider the DAG: <span class="math inline">\(T \to M\)</span>, <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(M \to Y\)</span>, <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to M\)</span>, <span class="math inline">\(X \to Y\)</span>, with all variables observed.</p>
+<ol type="a">
+<li>Write the identification formula for <span class="math inline">\(\E[Y \mid \doop(T{=}1), \doop(M{=}m)]\)</span> using the back-door criterion for the joint intervention <span class="math inline">\((T, M)\)</span>.</li>
+<li>Add an unobserved <span class="math inline">\(U\)</span> with <span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span>. Does the back-door formula still identify the CDE? Explain which condition, if any, fails.</li>
+<li>Instead add <span class="math inline">\(U\)</span> with <span class="math inline">\(U \to M\)</span> and <span class="math inline">\(U \to Y\)</span>. Does the back-door formula still identify the CDE? Explain.</li>
+</ol>
+<p><strong>2. CDE vs.&nbsp;total effect.</strong> In the reduced prototype graph, let <span class="math inline">\(\mathbf{Z}\)</span> satisfy the back-door criterion for both the total effect and the joint intervention <span class="math inline">\((T, M)\)</span>.</p>
+<ol type="a">
+<li>Write expressions for the total effect and the <span class="math inline">\(\mathrm{CDE}(m)\)</span> using the back-door formula.</li>
+<li>Under what graphical condition does <span class="math inline">\(\mathrm{CDE}(m)\)</span> equal the total effect for all <span class="math inline">\(m\)</span>? Interpret this condition.</li>
+</ol>
+<p><strong>3. Natural direct and indirect effects.</strong> Verify the NDE <span class="math inline">\(+\)</span> NIE <span class="math inline">\(=\)</span> TE decomposition algebraically for the linear SEM <span class="math inline">\(M = \alpha T + \eta\)</span>, <span class="math inline">\(Y = \beta T + \gamma M + \varepsilon\)</span> (no interaction).</p>
+<ol type="a">
+<li>Compute <span class="math inline">\(Y(t, M(t'))\)</span> in the linear model. Show that <span class="math inline">\(Y(t, M(t')) = \beta t + \gamma(\alpha t') + \text{noise}\)</span>.</li>
+<li>Derive <span class="math inline">\(\mathrm{NDE} = \beta\)</span> and <span class="math inline">\(\mathrm{NIE} = \alpha\gamma\)</span> from the definitions <a href="#eq-nde" class="quarto-xref">Equation&nbsp;<span>8.3</span></a>–<a href="#eq-nie" class="quarto-xref">Equation&nbsp;<span>8.4</span></a>.</li>
+<li>Confirm <span class="math inline">\(\mathrm{NDE} + \mathrm{NIE} = \beta + \alpha\gamma = \mathrm{TE}\)</span>.</li>
+<li>Now suppose a <span class="math inline">\(T \times M\)</span> interaction is added: <span class="math inline">\(Y = \beta T + \gamma M + \delta (T \cdot M) + \varepsilon\)</span>. Compute <span class="math inline">\(\mathrm{CDE}(m)\)</span> and <span class="math inline">\(\mathrm{NDE}\)</span>. Show that <span class="math inline">\(\mathrm{NDE} \neq \mathrm{CDE}(m)\)</span> when <span class="math inline">\(\delta \neq 0\)</span>.</li>
+</ol>
+<p><strong>4. The Baron–Kenny three-equation system.</strong> In the reduced prototype graph with the linear SEM <a href="#eq-bk1" class="quarto-xref">Equation&nbsp;<span>8.8</span></a>–<a href="#eq-bk3" class="quarto-xref">Equation&nbsp;<span>8.10</span></a>:</p>
+<ol type="a">
+<li>State the three identification assumptions. For each, give the graphical condition in terms of back-door paths.</li>
+<li>Derive the equality <span class="math inline">\(\tau = \tau' + ab\)</span> algebraically.</li>
+<li>Suppose estimated coefficients are <span class="math inline">\(\hat\tau = 0.50\)</span>, <span class="math inline">\(\hat a = 0.40\)</span>, <span class="math inline">\(\hat b = 0.60\)</span>, <span class="math inline">\(\hat\tau' = 0.26\)</span>. Compute the indirect effect by both the product and difference methods. Do they agree? Compute the proportion mediated.</li>
+<li>An analyst reports <span class="math inline">\(\hat a = 0.40\)</span> with <span class="math inline">\(\widehat{\mathrm{SE}}(\hat a) = 0.08\)</span>, and <span class="math inline">\(\hat b = 0.60\)</span> with <span class="math inline">\(\widehat{\mathrm{SE}}(\hat b) = 0.10\)</span>. Compute the Sobel standard error for <span class="math inline">\(\hat a \hat b\)</span> using <a href="#eq-sobel" class="quarto-xref">Equation&nbsp;<span>8.12</span></a> and construct an approximate 95% confidence interval.</li>
+</ol>
+<p><strong>5. The critical role of Assumption 3.</strong> Consider the graph with an unobserved <span class="math inline">\(V\)</span> with <span class="math inline">\(V \to M\)</span> and <span class="math inline">\(V \to Y\)</span>. <span class="math inline">\(T\)</span> is randomized.</p>
+<ol type="a">
+<li>Identify all back-door paths from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> in this graph.</li>
+<li>Can any combination of observed variables <span class="math inline">\((T, \mathbf{X})\)</span> block all of these paths? Explain using d-separation.</li>
+<li>Suppose an analyst fits <a href="#eq-bk3" class="quarto-xref">Equation&nbsp;<span>8.10</span></a> ignoring <span class="math inline">\(V\)</span> and obtains <span class="math inline">\(\hat b = 0.80\)</span>. In which direction is <span class="math inline">\(\hat b\)</span> biased if <span class="math inline">\(V\)</span> has positive effects on both <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span>?</li>
+<li>State the additional data structure that would be needed to identify the second-stage effect nonparametrically.</li>
+</ol>
+<p><strong>6. Front-door identification.</strong> Consider the front-door graph of <a href="#fig-frontdoor" class="quarto-xref">Figure&nbsp;<span>8.2</span></a>.</p>
+<ol type="a">
+<li>Verify that the three front-door conditions hold.</li>
+<li>Walk through the three-step proof of the Front-Door Formula theorem for this graph: identify which do-calculus rule justifies each step.</li>
+<li>Add a direct edge <span class="math inline">\(T \to Y\)</span> to the graph. Which front-door condition is violated? Does formula <a href="#eq-frontdoor" class="quarto-xref">Equation&nbsp;<span>8.13</span></a> still hold?</li>
+<li>Explain why the front-door graph does not require Assumption 3 of the Baron–Kenny framework. Which back-door path — present in the graph with unobserved <span class="math inline">\(V\)</span> — is absent here?</li>
+</ol>
+<p><strong>7. Mediation vs.&nbsp;instrumental variables.</strong> A researcher studies the effect of a job training program (<span class="math inline">\(T\)</span>) on wages (<span class="math inline">\(Y\)</span>). She proposes two intermediate variables: (A) motivation (<span class="math inline">\(M_A\)</span>), measured after the program starts; (B) a lottery that randomly selects applicants for admission (<span class="math inline">\(Z\)</span>), measured before the program.</p>
+<ol type="a">
+<li>For variable (A): draw the mediation DAG including <span class="math inline">\(M_A\)</span>, <span class="math inline">\(T\)</span>, <span class="math inline">\(Y\)</span>, and an unobserved ability variable <span class="math inline">\(U\)</span>. State the sequential ignorability assumption needed to identify the NIE through <span class="math inline">\(M_A\)</span>. Explain why randomization of <span class="math inline">\(T\)</span> does not automatically satisfy this assumption.</li>
+<li>For variable (B): draw the IV DAG with <span class="math inline">\(Z\)</span>, <span class="math inline">\(T\)</span>, <span class="math inline">\(Y\)</span>, and <span class="math inline">\(U\)</span>. State the three IV assumptions. Explain why the exclusion restriction and the “mediator inclusion” of mediation analysis are mutually incompatible conditions for the same intermediate variable.</li>
+<li>The researcher argues that <span class="math inline">\(M_A\)</span> (motivation) and <span class="math inline">\(Z\)</span> (lottery) are both “intermediate” variables and that the analyses are interchangeable. Write a one-paragraph critique of this argument, using the distinctions from <a href="#sec-mediation-vs-iv" class="quarto-xref"><span>Section 8.9</span></a>.</li>
+<li>Can the front-door formula be applied if motivation <span class="math inline">\(M_A\)</span> fully mediates the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> and <span class="math inline">\(U\)</span> (unobserved ability) does not directly affect <span class="math inline">\(M_A\)</span>? State the three conditions and assess whether they hold.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_07.html" class="pagination-link" aria-label="Instrumental Variables">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

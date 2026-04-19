@@ -1,0 +1,552 @@
+---
+engine: knitr
+suppress-bibliography: true
+---
+
+# Mediation and Front-Door Identification
+
+::: {.callout-note icon=false}
+## Learning Objectives
+
+By the end of this chapter, students should be able to:
+
+1. Explain the distinction between the total causal effect of $T$ on $Y$ and a pathway-specific effect that operates through a mediator $M$, and describe why this distinction matters scientifically.
+2. Draw the prototype mediation DAG, write its structural equations, and identify the direct and indirect pathways.
+3. Define the controlled direct effect (CDE) using the do-operator, identify it via the back-door formula for the joint intervention $(T, M)$, and explain why it depends on the fixed level $m$.
+4. Define the natural direct and indirect effects (NDE, NIE) using the potential outcomes notation $Y(t, M(t'))$, state the NDE$+$NIE$=$TE decomposition, and explain why these quantities involve cross-world counterfactuals.
+5. State the four sequential ignorability assumptions for identification of natural effects, write the mediation formula, and identify which assumption is violated when there is an unmeasured treatment-induced mediator--outcome confounder.
+6. Set up the Baron--Kenny three-equation system, derive the product and difference formulas for the indirect effect, and explain why the decomposition fails in nonlinear or interaction models.
+7. State the three front-door conditions, derive the front-door formula using the do-calculus, and explain why the front-door graph enables identification despite unobserved $T$--$Y$ confounding.
+8. Contrast mediation analysis and instrumental variables on the dimensions of variable position, identification goal, and key assumption.
+:::
+
+## Motivation: Mechanisms {#sec-motivation}
+
+The identification results of Chapters 5--7 all answer the same question: *what is the total causal effect of $T$ on $Y$?* Mediation analysis asks a finer question: *through what mechanism does that effect operate?*
+
+More concretely, the total effect of $T$ on $Y$ may flow along multiple causal pathways. Some of this effect passes through an intermediate variable $M$ --- the *mediator* --- along the path $T \to M \to Y$. The remainder flows directly along $T \to Y$, bypassing the mediator entirely. Decomposing the total effect into these two components is the goal of mediation analysis.
+
+This decomposition matters for scientific and policy reasons. In a clinical trial of a behavioral intervention ($T$) on depression ($Y$), a researcher may want to know how much of the benefit operates through improved sleep quality ($M$) versus other pathways --- because if sleep is the main channel, targeting sleep directly may be a more efficient intervention. In an economics study of education ($T$) on wages ($Y$), how much operates through occupation ($M$) versus cognitive skills?
+
+**Running example.** Throughout this chapter we use the depression intervention as the primary example: $T$ is a randomized behavioral intervention, $M$ is self-reported sleep quality measured mid-trial, and $Y$ is a depression score (e.g., PHQ-9 scale).
+
+The challenge is that mediators are *post-treatment variables*: they are affected by the treatment, and may themselves be confounded with the outcome. Conditioning on a post-treatment variable creates exactly the collider and selection-bias problems studied in Chapters 2 and 3. A naive approach --- simply including $M$ as a covariate in a regression of $Y$ on $T$ --- conflates adjustment with mediation and can introduce bias even in a randomized experiment.
+
+This chapter also develops the *front-door criterion*, a distinct identification strategy that uses the mediation structure of the DAG to identify causal effects even when treatment and outcome are confounded by an unobserved variable.
+
+## The Mediation DAG {#sec-dag}
+
+### The Prototype Graph
+
+```{tikz}
+#| label: fig-mediation-dag
+#| fig-cap: "The prototype mediation DAG. The causal effect of $T$ on $Y$ operates through two pathways: the direct path $T \\to Y$ and the indirect path $T \\to M \\to Y$ via the mediator. The unobserved variable $U$ confounds the treatment--outcome relationship; $\\mathbf{X}$ denotes observed pre-treatment covariates."
+#| echo: false
+#| fig-width: 4
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\tikzset{
+  node/.style={circle, draw=isublue, fill=defbg, thick, minimum size=8mm, font=\small},
+  unode/.style={circle, draw=darkgrey, fill=white, dashed, thick, minimum size=8mm, font=\small},
+  edge/.style={-{Stealth[length=5pt]}, thick, color=isublue},
+  dedge/.style={-{Stealth[length=5pt]}, thick, dashed, color=darkgrey}
+}
+\begin{tikzpicture}[node distance=1.9cm]
+  \node[node]  (T) at (0,0)      {$T$};
+  \node[node]  (M) at (2.4,0)    {$M$};
+  \node[node]  (Y) at (4.8,0)    {$Y$};
+  \node[node]  (X) at (2.4, 1.5) {$\mathbf{X}$};
+  \node[unode] (U) at (2.4,-1.5) {$U$};
+  \draw[edge]  (T) -- (M);
+  \draw[edge]  (M) -- (Y);
+  \draw[edge]  (T) to[bend right=20] (Y);
+  \draw[edge]  (X) -- (T);
+  \draw[edge]  (X) -- (M);
+  \draw[edge]  (X) -- (Y);
+  \draw[dedge] (U) -- (T);
+  \draw[dedge] (U) -- (Y);
+  \node[font=\small\itshape\color{darkgrey}, below=0.12cm of T] {treatment};
+  \node[font=\small\itshape\color{darkgrey}, below=0.12cm of M] {mediator};
+  \node[font=\small\itshape\color{darkgrey}, below=0.12cm of Y] {outcome};
+  \node[font=\small\itshape\color{darkgrey}, above=0.10cm of X] {covariates};
+  \node[font=\small\itshape\color{darkgrey}, below=0.12cm of U] {unobserved};
+\end{tikzpicture}
+```
+
+The graph encodes two causal pathways: the **direct pathway** $T \to Y$ (treatment affects the outcome without passing through the mediator) and the **indirect pathway** $T \to M \to Y$ (treatment first shifts the mediator, which shifts the outcome).
+
+The prototype graph corresponds to the nonparametric SEM:
+$$T = f_T(\mathbf{X},\, U,\, \varepsilon_T), \qquad M = f_M(T,\, \mathbf{X},\, \varepsilon_M), \qquad Y = f_Y(T,\, M,\, \mathbf{X},\, U,\, \varepsilon_Y).$$
+
+### What Makes Mediation Harder Than Total Effect Estimation
+
+The key difficulty is that $M$ is a *post-treatment* variable. This creates two interrelated problems.
+
+**Collider bias.** Conditioning on $M$ can open collider paths. If $V \to M$ and $V \to Y$ with $V$ unobserved, the path $T \to M \leftarrow V \to Y$ is blocked when $M$ is not conditioned on, but opens as soon as $M$ is included as a covariate. This is precisely why naively regressing $Y$ on $(T, M)$ does not isolate the direct effect.
+
+**Mediator--outcome confounding.** Even when treatment is randomized, the mediator $M$ is never randomized. An unobserved $V$ with $V \to M$ and $V \to Y$ creates a back-door path from $M$ to $Y$ that randomization of $T$ does not close.
+
+::: {.callout-warning icon=false}
+## Post-Treatment Variables Are Dangerous to Condition On
+
+The mediator $M$ is caused by the treatment $T$. This single fact makes every operation involving $M$ structurally different from operations involving pre-treatment covariates $\mathbf{X}$.
+
+Conditioning on a post-treatment variable in a regression or matching procedure is *not* a neutral act. It can open collider paths that were previously blocked, introduce selection bias, and produce estimates of neither the total effect nor any well-defined direct effect. This chapter studies three regimes in which conditioning on or marginalizing over $M$ is justified: (1) **CDE**: both $T$ and $M$ are intervened on simultaneously via $\doop(T, M)$; (2) **NDE/NIE**: $M$ is marginalized over using a distribution from a different treatment arm, justified by sequential ignorability; (3) **Front-door**: $M$ is summed over in the front-door formula, justified by graphical conditions. Outside these three regimes, conditioning on a post-treatment variable should be treated as an error until proven otherwise.
+:::
+
+### Working Assumption for §§ 3--6
+
+Throughout §§ @sec-te--@sec-linear, we work with the *reduced prototype graph* (obtained from @fig-mediation-dag by assuming all $T$--$Y$ and $T$--$M$ confounding is captured by the observed $\mathbf{X}$). The unobserved confounder $U$ is restored in @sec-frontdoor.
+
+## Total Causal Effect {#sec-te}
+
+::: {.callout-note icon=false}
+## Definition: Total Effect
+
+The **total effect** (TE) of $T$ on $Y$ is:
+$$\mathrm{TE} = \E\!\bigl[Y(1) - Y(0)\bigr] = \E\!\bigl[Y \mid \doop(T{=}1)\bigr] - \E\!\bigl[Y \mid \doop(T{=}0)\bigr].$$
+:::
+
+The total effect captures the combined impact of all causal pathways --- both $T \to Y$ and $T \to M \to Y$. It is identified by the back-door formula whenever $\mathbf{X}$ satisfies the back-door criterion for the effect of $T$ on $Y$.
+
+*Running example.* For the depression trial, the TE is the expected change in depression score if the entire study population were assigned to the intervention versus control. It combines the effect operating through sleep improvement with every other pathway. Mediation analysis asks: of this total, how much is due to sleep?
+
+## Controlled Direct Effect {#sec-cde}
+
+### Definition
+
+The do-calculus provides the cleanest definition of the direct effect: intervene on both $T$ *and* $M$ simultaneously, fixing $M$ at a specified level $m$. Any remaining effect of $T$ on $Y$ must then flow exclusively through the direct edge $T \to Y$.
+
+::: {.callout-note icon=false}
+## Definition: Controlled Direct Effect (CDE)
+
+The **controlled direct effect** of changing $T$ from 0 to 1 while fixing $M = m$ by intervention is:
+$$\mathrm{CDE}(m) \;=\; \E\!\left[Y \mid \doop(T{=}1),\, \doop(M{=}m)\right] - \E\!\left[Y \mid \doop(T{=}0),\, \doop(M{=}m)\right].$$ {#eq-cde}
+:::
+
+This corresponds to the mutilated graph $\Gcal_{\overline{TM}}$ in which all edges into both $T$ and $M$ are deleted. Fixing $M = m$ for everyone shuts down the indirect pathway $T \to M \to Y$.
+
+::: {.callout-note icon=false}
+## Remark
+
+The CDE depends on the level $m$ at which $M$ is fixed. In a linear additive model, $\mathrm{CDE}(m) = \tau'$ for all $m$, a special property of linearity. When $T$ and $M$ interact in their effect on $Y$, the CDEs at different values of $m$ differ, and no single number summarizes the direct effect.
+:::
+
+### Identification of the CDE
+
+::: {.callout-tip icon=false}
+## Theorem: Identification of the CDE
+
+Suppose $\mathbf{Z}$ satisfies the back-door criterion for the joint intervention $\doop(T, M)$ on $Y$: (i) $\mathbf{Z}$ contains no descendant of $T$ or $M$, and (ii) $\mathbf{Z}$ blocks every back-door path from $\{T, M\}$ to $Y$. Suppose further (iii) joint positivity: $P(T{=}t,\, M{=}m \mid \mathbf{Z}{=}\mathbf{z}) > 0$ for $P$-almost every $\mathbf{z}$. Then:
+$$\E[Y \mid \doop(T{=}t),\, \doop(M{=}m)] = \sum_{\mathbf{z}} \E[Y \mid t,\, m,\, \mathbf{z}]\, P(\mathbf{z}).$$ {#eq-cde-id}
+:::
+
+Under the working assumption, $\mathbf{Z} = \mathbf{X}$ blocks every back-door path from $\{T, M\}$ to $Y$, so:
+$$\E[Y \mid \doop(T{=}t),\, \doop(M{=}m)] = \sum_{\mathbf{x}} \E[Y \mid t,\, m,\, \mathbf{x}]\, P(\mathbf{x}).$$
+
+### The CDE Does Not Have a Complementary Indirect Effect
+
+A common misconception is that the CDE and some "controlled indirect effect" sum to the total effect. This is not generally true. The residual quantity $\mathrm{TE} - \mathrm{CDE}(m)$ depends on $m$, has no clean do-calculus expression corresponding to "the indirect pathway," and cannot be interpreted as the effect that flows through $M$. The correct complementary decomposition uses the natural effects of @sec-nie.
+
+::: {.callout-warning icon=false}
+## Natural Effects Are a Strictly Harder Estimand Than the CDE
+
+**The CDE is a single-world estimand.** The quantity $\E[Y \mid \doop(T{=}t), \doop(M{=}m)]$ involves a single joint intervention. Identification reduces to the standard back-door criterion for the pair $(T, M)$.
+
+**The NDE and NIE are cross-world estimands.** The nested counterfactual $Y(t, M(t'))$ requires an individual to simultaneously inhabit two worlds: the world where $T = t$ (which determines $Y$) and the world where $T = t'$ (which determines what $M$ would *naturally* be). When $t \neq t'$, these are logically distinct states of the world that no single experiment can realize. The do-operator alone cannot express this quantity.
+
+**The identification price is steep.** The CDE requires only the back-door criterion. The NDE and NIE require four sequential ignorability assumptions, including Assumption 4 (no treatment-induced mediator--outcome confounder), which cannot be satisfied by randomizing $T$ and cannot be verified from data.
+:::
+
+## Natural Direct and Indirect Effects {#sec-nie}
+
+### Motivation: Cross-World Counterfactuals
+
+The CDE fixes the mediator by external intervention. A more scientifically natural question is: what is the effect of $T$ on $Y$ that bypasses $M$ when $M$ is held at the value it *would naturally take* under the reference treatment $T = 0$?
+
+This requires the *nested potential outcomes* notation $Y(t, M(t'))$, which denotes the outcome that would be observed if $T$ were set to $t$ and $M$ were simultaneously set to the value it would naturally take if $T$ were $t'$. These are called *cross-world counterfactuals* because $t$ and $t'$ may differ, referring to two different hypothetical states of the world simultaneously.
+
+### Definitions
+
+::: {.callout-note icon=false}
+## Definition: Natural Direct and Indirect Effects
+
+[@pearl2001direct] For binary $T \in \{0,1\}$:
+$$\mathrm{NDE} = \E\!\left[Y(1, M(0)) - Y(0, M(0))\right],$$ {#eq-nde}
+$$\mathrm{NIE} = \E\!\left[Y(1, M(1)) - Y(1, M(0))\right].$$ {#eq-nie}
+
+The **natural direct effect** (NDE) is the expected change in the outcome when $T$ shifts from 0 to 1, holding the mediator at the value it would naturally take under $T = 0$. The **natural indirect effect** (NIE) is the expected change in the outcome due to the shift in the mediator from $M(0)$ to $M(1)$, holding $T = 1$ fixed.
+:::
+
+*Running example.* The NDE is the expected reduction in depression score when the intervention is delivered but each participant's sleep is held at the value it *would have had* without the intervention --- the part of the benefit from cognitive, behavioral, or therapeutic-alliance pathways, not from sleep. The NIE is the complementary piece: how much of the depression reduction is due to the sleep improvement that the intervention itself causes.
+
+**Decomposition.** The total effect decomposes as:
+$$\mathrm{TE} \;=\; \mathrm{NDE} \;+\; \mathrm{NIE}.$$ {#eq-decomp-natural}
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+$$\mathrm{NDE} + \mathrm{NIE} = \E[Y(1, M(0)) - Y(0, M(0))] + \E[Y(1, M(1)) - Y(1, M(0))]$$
+$$= \E[Y(1, M(1)) - Y(0, M(0))] = \E[Y(1) - Y(0)] = \mathrm{TE}. \quad\square$$
+:::
+
+::: {.callout-note icon=false}
+## Remark
+
+In the linear additive Baron--Kenny SEM with no $T \times M$ interaction, the CDE and NDE coincide: $\mathrm{NDE} = \tau'$ and $\mathrm{NIE} = ab$. When there is a $T \times M$ interaction, $\mathrm{NDE} \neq \mathrm{CDE}$ and the linear decomposition breaks down.
+:::
+
+## Identification of Natural Effects {#sec-id-natural}
+
+### Sequential Ignorability
+
+Identification of the NDE and NIE requires four conditions, known collectively as *sequential ignorability* [@imai2010identification]. These conditions are substantially stronger than the ignorability assumptions used for the total effect or the CDE.
+
+::: {.callout-note icon=false}
+## Sequential Ignorability Assumptions
+
+1. **No unmeasured treatment--outcome confounding.** $\{Y(t', m),\, M(t)\} \;\indep\; T \;\big|\; \mathbf{X}$ for all $t, t', m$. Graphically: $\mathbf{X}$ blocks all back-door paths from $T$ to $Y$ and from $T$ to $M$.
+2. **No unmeasured treatment--mediator confounding.** Implied by Assumption 1 for the $T \to M$ sub-problem.
+3. **No unmeasured mediator--outcome confounding given $T$.** $Y(t', m) \;\indep\; M \;\big|\; T, \mathbf{X}$ for all $t', m$. Graphically: $(T, \mathbf{X})$ blocks all back-door paths from $M$ to $Y$.
+4. **No treatment-induced mediator--outcome confounder.** There is no post-treatment variable $L$ such that $T \to L$, $L \to M$, and $L \to Y$.
+:::
+
+::: {.callout-note icon=false}
+## Positivity (Overlap) Conditions
+
+- **(P1) Treatment overlap.** $P(T = t \mid \mathbf{X} = \mathbf{x}) > 0$ for all $t \in \{0, 1\}$ and for $P$-almost every $\mathbf{x}$.
+- **(P2) Mediator overlap across treatment arms.** $P(M = m \mid T = t, \mathbf{X} = \mathbf{x}) > 0$ whenever $P(M = m \mid T = t', \mathbf{X} = \mathbf{x}) > 0$.
+:::
+
+**What randomization of $T$ does and does not provide.** Randomizing $T$ satisfies Assumptions 1 and 2 by design. It does *not* satisfy Assumptions 3 or 4. The mediator $M$ is a post-treatment variable that is never randomized; any unobserved $V$ with $V \to M$ and $V \to Y$ violates Assumption 3 regardless of how $T$ was assigned. Assumption 4 can be violated by a variable $L$ that is itself *caused* by the treatment, so randomizing $T$ actually creates the conditions under which Assumption 4 violations can arise.
+
+::: {.callout-warning icon=false}
+## Randomization of $T$ Does Not Secure Assumption 4
+
+Unlike unmeasured $T$--$Y$ confounders (which randomization of $T$ can eliminate), a treatment-induced mediator--outcome confounder $L$ is itself caused by the treatment: the path $T \to L$ is set in motion by the intervention. The absence of such an $L$ must be argued from design, timing, measurement, or subject-matter knowledge. This is why identification of natural effects is considered strictly harder than identification of the total effect or the CDE.
+:::
+
+### The Mediation Formula
+
+::: {.callout-tip icon=false}
+## Theorem: Mediation Formula
+
+[@pearl2001direct] Under sequential ignorability, positivity (P1)--(P2), and with discrete $M$ and $\mathbf{X}$:
+$$\E\!\left[Y(t, M(t'))\right] = \sum_{m}\sum_{\mathbf{x}} \E\!\left[Y \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}\right] P(M{=}m \mid T{=}t',\, \mathbf{X}{=}\mathbf{x})\, P(\mathbf{X}{=}\mathbf{x}).$$ {#eq-mediation-formula}
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof Sketch (Five Steps)
+
+**Step 1** (law of total expectation): $\E[Y(t, M(t'))] = \sum_{m,\mathbf{x}} \E[Y(t, m) \mid M(t'){=}m,\, \mathbf{X}{=}\mathbf{x}]\, P(M(t'){=}m \mid \mathbf{X}{=}\mathbf{x})\, P(\mathbf{X}{=}\mathbf{x})$.
+
+**Step 2** (Assumption 4: cross-world independence): Within the NPSEM-IE framework, no-treatment-induced-confounder implies $Y(t, m) \indep M(t') \mid \mathbf{X}$, so conditioning on $M(t')$ can be dropped: $\E[Y(t, m) \mid M(t'){=}m,\, \mathbf{X}{=}\mathbf{x}] = \E[Y(t, m) \mid \mathbf{X}{=}\mathbf{x}]$.
+
+**Step 3** (Assumptions 1 and 3): By $Y(t, m) \indep T \mid \mathbf{X}$ and $Y(t, m) \indep M \mid T, \mathbf{X}$: $\E[Y(t, m) \mid \mathbf{X}{=}\mathbf{x}] = \E[Y(t, m) \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}]$.
+
+**Step 4** (consistency for $Y$): $\E[Y(t, m) \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}] = \E[Y \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}]$.
+
+**Step 5** (Assumption 2 and consistency for $M$): $P(M(t'){=}m \mid \mathbf{X}{=}\mathbf{x}) = P(M{=}m \mid T{=}t',\, \mathbf{X}{=}\mathbf{x})$.
+
+Substituting Steps 2--5 into Step 1 yields @eq-mediation-formula. $\square$
+:::
+
+**Interpretation.** The mediation formula "mixes" the outcome regression under $T = t$ with the mediator distribution under $T = t'$. To compute the NDE, set $t = 1$ and $t' = 0$: take the conditional mean of $Y$ evaluated at treatment 1, but weight the mediator by its distribution under treatment 0. The presence of the second treatment index $t'$ on the right-hand side is the visible trace of the cross-world step.
+
+**The NDE and NIE from the formula:**
+
+$$\mathrm{NDE} = \sum_{m,\mathbf{x}} \bigl[\E[Y \mid T{=}1, M{=}m, \mathbf{X}{=}\mathbf{x}] - \E[Y \mid T{=}0, M{=}m, \mathbf{X}{=}\mathbf{x}]\bigr] P(M{=}m \mid T{=}0, \mathbf{X}{=}\mathbf{x})\, P(\mathbf{X}{=}\mathbf{x}),$$
+
+$$\mathrm{NIE} = \sum_{m,\mathbf{x}} \E[Y \mid T{=}1, M{=}m, \mathbf{X}{=}\mathbf{x}] \bigl[P(M{=}m \mid T{=}1, \mathbf{X}{=}\mathbf{x}) - P(M{=}m \mid T{=}0, \mathbf{X}{=}\mathbf{x})\bigr] P(\mathbf{X}{=}\mathbf{x}).$$
+
+::: {.callout-note icon=false}
+## Estimation Recipe: Plug-In for the Mediation Formula
+
+Given data $\{(Y_i, T_i, M_i, \mathbf{X}_i)\}_{i=1}^n$, a plug-in estimator requires:
+
+1. **Fit an outcome model.** Regress $Y$ on $(T, M, \mathbf{X})$ to obtain $\hat\mu(t, m, \mathbf{x})$.
+2. **Fit a mediator model.** Regress $M$ on $(T, \mathbf{X})$ to obtain $\hat p(m \mid t, \mathbf{x})$.
+3. **Predict outcomes at the evaluation arm.** For each unit $i$, compute $\hat\mu(t, m, \mathbf{X}_i)$.
+4. **Reweight the mediator at the reference arm.** For discrete $M$: weight $\hat\mu(t, m, \mathbf{X}_i)$ by $\hat p(m \mid t', \mathbf{X}_i)$.
+5. **Average over the empirical distribution of $\mathbf{X}$:**
+$$\frac{1}{n}\sum_{i=1}^n \sum_m \hat\mu(t, m, \mathbf{X}_i)\, \hat p(m \mid t', \mathbf{X}_i).$$ {#eq-plugin}
+6. **Quantify uncertainty.** Nonparametric bootstrap or influence-function-based estimators (Chapters 9--10).
+
+The plug-in estimator is consistent only when both $\hat\mu$ and $\hat p$ are correctly specified.
+:::
+
+## The Linear Mediation Model: Baron--Kenny {#sec-linear}
+
+### The Three-Equation System
+
+The regression-based approach of @baron1986moderator restricts the reduced prototype graph to a linear SEM:
+
+$$Y = \alpha_1 + \tau T + \boldsymbol{\gamma}_1^{\top}\mathbf{X} + \varepsilon_1,$$ {#eq-bk1}
+$$M = \alpha_2 + a T + \boldsymbol{\gamma}_2^{\top}\mathbf{X} + \varepsilon_2,$$ {#eq-bk2}
+$$Y = \alpha_3 + \tau' T + b M + \boldsymbol{\gamma}_3^{\top}\mathbf{X} + \varepsilon_3.$$ {#eq-bk3}
+
+The four coefficients of interest: $\tau$ (total effect of $T$ on $Y$), $a$ (first-stage: $T$ on $M$), $\tau'$ (direct: $T$ on $Y$ controlling for $M$), and $b$ (second-stage: $M$ on $Y$ controlling for $T$).
+
+### The Product and Difference Formulas
+
+::: {.callout-tip icon=false}
+## Proposition: Mediation Decomposition in the Linear Model
+
+Under @eq-bk1--@eq-bk3:
+$$\tau \;=\; \tau' \;+\; a b.$$ {#eq-linear-decomp}
+
+The indirect effect is $\tau_{\mathrm{ind}} = ab$ (product method) and the direct effect is $\tau_{\mathrm{dir}} = \tau - ab = \tau'$ (difference method).
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+Substituting @eq-bk2 into @eq-bk3: $Y = (\alpha_3 + b\alpha_2) + (\tau' + ab)\,T + (\boldsymbol{\gamma}_3 + b\boldsymbol{\gamma}_2)^{\top}\mathbf{X} + (b\varepsilon_2 + \varepsilon_3)$. Comparing with @eq-bk1 gives $\tau = \tau' + ab$. $\square$
+:::
+
+| **Effect** | **Formula** | **Path(s)** |
+|---|---|---|
+| Total | $\tau$ | $T \to Y$ and $T \to M \to Y$ combined |
+| Direct | $\tau' = \tau - ab$ | $T \to Y$ only |
+| Indirect | $ab$ | $T \to M \to Y$ only |
+| Proportion mediated | $ab/\tau$ | Share of total effect via $M$ |
+
+*Running example.* Suppose the fitted coefficients are $\hat\tau = 0.50$, $\hat a = 0.40$, $\hat b = 0.60$, $\hat\tau' = 0.26$. Then: indirect effect via sleep: $\hat a \hat b = 0.40 \times 0.60 = 0.24$; direct effect: $\hat\tau - \hat a \hat b = 0.50 - 0.24 = 0.26 = \hat\tau'$; proportion mediated: $0.24/0.50 = 0.48$.
+
+::: {.callout-warning icon=false}
+## The Decomposition $\tau = \tau' + ab$ Is an Algebraic Identity, Not a Causal Theorem
+
+The equality $\tau - \tau' = ab$ is a purely algebraic consequence of substituting one linear equation into another. It holds because linearity makes the indirect effect separable and additive. It does *not* hold in general: in **nonlinear models**, the product and difference methods yield numerically different estimates; when **$T$ and $M$ interact**, the CDE depends on $m$ and the indirect effect cannot be summarized by a single number $ab$; for **non-continuous mediators**, the product $ab$ has no simple causal interpretation.
+
+The correct generalization is the mediation formula (Theorem above), which reduces to $ab$ and $\tau'$ only in the linear, no-interaction special case.
+:::
+
+### Inference: The Sobel Test and Bootstrap
+
+The delta method gives an approximate variance for the product $\hat a \hat b$. The *Sobel test* [@sobel1982asymptotic] uses the simplified approximation:
+$$\widehat{\mathrm{Var}}_{\mathrm{Sobel}}(\hat a \hat b) = \hat b^2\, \widehat{\mathrm{Var}}(\hat a) + \hat a^2\, \widehat{\mathrm{Var}}(\hat b),$$ {#eq-sobel}
+yielding $z = \hat a \hat b / \sqrt{\widehat{\mathrm{Var}}_{\mathrm{Sobel}}(\hat a \hat b)}$.
+
+**Statistical validity versus causal interpretation.** The Sobel test is a statistical inference procedure for the product of two fitted regression coefficients. Interpreting the tested product as an *indirect causal effect* additionally requires the causal identification conditions and the structural restrictions (linearity and no $T \times M$ interaction). In practice, bootstrap confidence intervals for $ab$ are preferred over the Sobel test because the distribution of a product of estimates is skewed in finite samples.
+
+::: {.callout-warning icon=false}
+## The "Significance of Both Paths" Criterion Is Not a Test for Mediation
+
+A common misuse of the Baron--Kenny framework declares mediation when $T \to Y$, $T \to M$, and $M \to Y$ are each individually significant. This has three serious defects: (1) statistical significance $\neq$ mediation; (2) the Sobel test tests a regression product, not a causal quantity; (3) zero total effect does not preclude indirect effects --- direct and indirect effects of opposite sign can cancel. The modern alternative is to estimate $ab$ (or the NIE via the mediation formula) and construct bootstrap confidence intervals.
+:::
+
+### The Baron--Kenny Assumptions: Two Distinct Categories
+
+**Causal ignorability conditions** (identification assumptions with graphical interpretations): (1) No unmeasured $T$--$Y$ confounding; (2) No unmeasured $T$--$M$ confounding; (3) No unmeasured $M$--$Y$ confounding given $T$ --- this is *not* implied by randomization of $T$.
+
+**Structural modeling restrictions** (parametric assumptions, not identification conditions): (4) Linearity and additivity; (5) No $T \times M$ interaction. Restrictions 4 and 5 can in principle be tested; Conditions 1--3 cannot.
+
+Under Conditions 1--3 and Restrictions 4--5, Baron--Kenny is a valid estimator of the NDE and NIE. Outside those conditions, $\tau'$ and $ab$ estimate regression coefficients in misspecified structural equations, not causal effects.
+
+| **Estimand** | **Framework needed** | **Section** |
+|---|---|---|
+| Total effect $P(y \mid \doop(t))$ | Do-calculus | Ch. 5 (back-door) |
+| Controlled direct effect (CDE) | Do-calculus | @sec-cde |
+| Natural direct effect (NDE) | Potential outcomes | @sec-nie |
+| Natural indirect effect (NIE) | Potential outcomes | @sec-nie |
+| Front-door identification | Do-calculus | @sec-frontdoor |
+
+## Front-Door Identification {#sec-frontdoor}
+
+### The Front-Door DAG
+
+Every identification strategy in §§ @sec-cde--@sec-linear assumed that an observed covariate set $\mathbf{X}$ blocks the back-door paths from $T$ to $Y$ through $U$. What if $U$ is wholly unobserved and no such adjustment set exists?
+
+The front-door criterion turns this obstacle into an opportunity: under two additional restrictions on the prototype mediation graph, the mediation structure itself provides identification of the total effect without conditioning on $U$. The two restrictions are: (1) remove the direct $T \to Y$ edge, so that $M$ fully mediates the effect of $T$ on $Y$; and (2) require that $U$ has no arrow into $M$, so that the $T \to M$ sub-effect is unconfounded.
+
+*Why the running example does not apply.* The depression/sleep scenario fails Condition 1 (full mediation): a behavioral intervention on depression plausibly operates through several non-sleep channels, so the direct edge $T \to Y$ is present. The canonical front-door example is Pearl's smoking--tar--cancer graph: $T$ = smoking, $M$ = tar deposited in lungs, $Y$ = lung cancer, $U$ = unobserved genetic susceptibility.
+
+```{tikz}
+#| label: fig-frontdoor
+#| fig-cap: "The front-door graph. Compared with the prototype mediation DAG, two edges are absent: the direct $T \\to Y$ edge is removed, and $U$ has no arrow into $M$. The front-door formula identifies $P(y \\mid \\doop(t))$ without observing or conditioning on $U$."
+#| echo: false
+#| fig-width: 3.5
+\usetikzlibrary{arrows.meta, positioning}
+\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{defbg}{RGB}{238,244,251}
+\definecolor{darkgrey}{RGB}{80,80,80}
+\tikzset{
+  node/.style={circle, draw=isublue, fill=defbg, thick, minimum size=8mm, font=\small},
+  unode/.style={circle, draw=darkgrey, fill=white, dashed, thick, minimum size=8mm, font=\small},
+  edge/.style={-{Stealth[length=5pt]}, thick, color=isublue},
+  dedge/.style={-{Stealth[length=5pt]}, thick, dashed, color=darkgrey}
+}
+\begin{tikzpicture}[node distance=1.9cm]
+  \node[node]  (T) at (0,0)    {$T$};
+  \node[node]  (M) at (2.8,0)  {$M$};
+  \node[node]  (Y) at (5.6,0)  {$Y$};
+  \node[unode] (U) at (2.8,1.8) {$U$};
+  \draw[edge]  (T) -- (M);
+  \draw[edge]  (M) -- (Y);
+  \draw[dedge] (U) -- (T);
+  \draw[dedge] (U) -- (Y);
+  \node[font=\small\itshape\color{darkgrey}, below=0.12cm of T] {treatment};
+  \node[font=\small\itshape\color{darkgrey}, below=0.12cm of M] {mediator};
+  \node[font=\small\itshape\color{darkgrey}, below=0.12cm of Y] {outcome};
+  \node[font=\small\itshape\color{darkgrey}, above=0.10cm of U] {unobserved};
+\end{tikzpicture}
+```
+
+::: {.callout-note icon=false}
+## Two Different Questions About a Mediator-Like Variable
+
+| | **Ordinary mediation** | **Front-door identification** |
+|---|---|---|
+| **Question** | How much of the total effect of $T$ on $Y$ flows through $M$? | Can $M$ identify the total effect of $T$ on $Y$ despite unmeasured $T$--$Y$ confounding? |
+| **Role of $M$** | Pathway: carries part of the causal effect | Instrument-like relay: routes around confounding |
+| **Target estimand** | NDE, NIE (decomposition) | $P(y \mid \doop(t))$ (total effect itself) |
+| **Direct $T \to Y$ edge** | Present | Absent (required) |
+:::
+
+### The Three Front-Door Conditions
+
+::: {.callout-note icon=false}
+## Front-Door Conditions
+
+A set $\{M\}$ satisfies the **front-door criterion** for the effect of $T$ on $Y$ if:
+
+1. **Full mediation.** All directed paths from $T$ to $Y$ pass through $M$ (no direct $T \to Y$ edge).
+2. **No unblocked back-door path from $T$ to $M$.** All back-door paths from $T$ to $M$ are blocked (no unobserved variables affect both $T$ and $M$).
+3. **No unblocked back-door path from $M$ to $Y$ given $T$.** All back-door paths from $M$ to $Y$ are blocked by conditioning on $T$.
+:::
+
+In @fig-frontdoor: Condition 1 holds (no $T \to Y$ edge). Condition 2 holds ($U$ has no arrow into $M$). Condition 3 holds (the only back-door path from $M$ to $Y$ is $M \leftarrow T \leftarrow U \to Y$, blocked by conditioning on $T$).
+
+### Derivation of the Front-Door Formula
+
+::: {.callout-tip icon=false}
+## Theorem: Front-Door Formula
+
+[@pearl1995causal] Suppose $M$ satisfies the front-door criterion for the effect of $T$ on $Y$, and positivity conditions (F1)--(F2) hold. Then:
+$$P\!\left(y \mid \doop(T{=}t)\right) = \sum_m P(m \mid t) \sum_{t'} P(y \mid m, t')\, P(t').$$ {#eq-frontdoor}
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof via Three Do-Calculus Steps
+
+**Step 1: Identify the effect of $T$ on $M$.** By Condition 2, there are no unblocked back-door paths from $T$ to $M$, so $T$ satisfies the back-door criterion for $M$ with the empty adjustment set:
+$$P\!\left(m \mid \doop(T{=}t)\right) = P(m \mid t).$$
+
+**Step 2: Identify the effect of $M$ on $Y$.** By Condition 3, conditioning on $T$ blocks all back-door paths from $M$ to $Y$, so $\{T\}$ is a valid back-door adjustment set:
+$$P\!\left(y \mid \doop(M{=}m)\right) = \sum_{t'} P(y \mid m, t')\, P(t').$$
+
+**Step 3: Combine via full mediation.** By the law of total probability under $\doop(T{=}t)$:
+$$P\!\left(y \mid \doop(T{=}t)\right) = \sum_m P\!\left(m \mid \doop(T{=}t)\right)\, P\!\left(y \mid \doop(T{=}t),\, \doop(M{=}m)\right).$$
+
+By Condition 1 (no direct $T \to Y$ edge), once $M$ is set to $m$ by intervention, $T$ is d-separated from $Y$ in $\Gcal_{\overline{T}\,\overline{M}}$; Rule 3 of the do-calculus removes $\doop(T{=}t)$ from the second factor: $P(y \mid \doop(T{=}t),\, \doop(M{=}m)) = P(y \mid \doop(M{=}m))$.
+
+Substituting Steps 1 and 2 yields @eq-frontdoor. $\square$
+:::
+
+### Intuition: Routing Around Confounding
+
+The front-door formula achieves identification in two steps that each use only unconfounded variation.
+
+1. **$T$ to $M$:** There is no confounding on the $T \to M$ edge ($U$ does not affect $M$), so $P(m \mid t)$ is the causal effect of $T$ on $M$.
+2. **$M$ to $Y$:** There is back-door confounding on $M \to Y$ through $T \leftarrow U \to Y$, but it is blocked by summing over $T$: $\sum_{t'} P(y \mid m, t')\, P(t')$ marginalizes out $T$, removing the confounding path.
+
+The key insight: $U$ confounds $T$ and $Y$ but *not* the $T \to M$ edge. The front-door formula exploits this asymmetry.
+
+| **Feature** | **Prototype mediation DAG** | **Front-door DAG** |
+|---|---|---|
+| Direct $T \to Y$ edge | Present | Absent |
+| $U$ confounds $T$--$Y$ | Yes | Yes |
+| Goal | Decompose total effect into direct/indirect | Identify total effect despite $T$--$Y$ confounding |
+| Requires Assumption 3 | Yes | Satisfied by Condition 3, not by randomization |
+| Identified by front-door formula | No | Yes |
+
+## Mediation vs. Instrumental Variables {#sec-mediation-vs-iv}
+
+Mediation analysis and instrumental variables both involve a third variable connected to the treatment--outcome relationship, but the causal role of that variable is fundamentally different.
+
+| **Feature** | **Instrumental Variables** | **Mediation Analysis** |
+|---|---|---|
+| Position of third variable | Pre-treatment ($Z$ precedes $T$) | Post-treatment ($M$ follows $T$) |
+| Causal role | Exogenous source of variation in $T$ | Pathway through which $T$ affects $Y$ |
+| Primary goal | Identification of $T \to Y$ effect under confounding | Decomposition of $T \to Y$ effect into pathways |
+| Key assumption | Exclusion: $Z$ affects $Y$ only through $T$ | Sequential ignorability: no unmeasured $M$--$Y$ confounding given $T$ |
+| Estimand | LATE (Wald) or ATE (2SLS under homogeneity) | NDE, NIE, or CDE |
+| Unobserved $T$--$Y$ confounders | Permitted | Must be addressed separately (Assumption 1) |
+
+::: {.callout-note icon=false}
+## The Key Conceptual Distinction
+
+| | **IV** | **Mediation** |
+|---|---|---|
+| What the third variable does | Generates clean variation in $T$ (exogenous source) | Carries part of $T$'s causal effect (pathway) |
+| Exclusion vs. inclusion | $Z$ excluded from $Y$'s structural equation | $M$ included in $Y$'s structural equation |
+| Question answered | Does $T$ cause $Y$? | How does $T$ cause $Y$? |
+:::
+
+**Can the same variable be both?** Not in the same analysis. As a mediator, $M$ is on the causal path from $T$ to $Y$ (inclusion required). As an instrument, $M$ would require the exclusion restriction --- that it affects $Y$ only through $T$ --- which contradicts $M$ being a mediator. The two frameworks make mutually incompatible structural assumptions about the intermediate variable. However, the front-door identification formula is IV's closest relative within mediation analysis: it uses the mediator $M$ to achieve identification of the total effect of $T$ on $Y$ even when $T$ is confounded.
+
+## Summary
+
+1. **Mediation studies mechanisms.** Mediation analysis decomposes the total effect of $T$ on $Y$ into a direct component ($T \to Y$) and an indirect component ($T \to M \to Y$). The challenge is that the mediator is a post-treatment variable that may be confounded.
+
+2. **The total effect is the baseline.** The TE $= \E[Y(1) - Y(0)]$ captures all pathways combined. Mediation analysis asks for a finer decomposition.
+
+3. **The CDE uses do-calculus.** The controlled direct effect fixes $M = m$ by joint intervention $\doop(T, M)$ and is identified by the back-door formula applied to the pair $(T, M)$. No assumptions beyond the back-door criterion are needed, but the CDE depends on $m$ and does not have a natural "indirect" complement.
+
+4. **Natural effects require potential outcomes.** The NDE and NIE involve cross-world counterfactuals $Y(t, M(t'))$ that cannot be expressed with the do-operator alone. They decompose the total effect as TE $=$ NDE $+$ NIE, and are identified by the mediation formula under sequential ignorability. The critical Assumption 4 --- no treatment-induced mediator--outcome confounder --- is not secured by randomization of $T$.
+
+5. **The linear model simplifies but restricts.** The Baron--Kenny three-equation system gives the clean formulas $\tau_{\mathrm{ind}} = ab$ and $\tau_{\mathrm{dir}} = \tau'$, with $\tau = \tau' + ab$. This decomposition is purely algebraic and holds only under linearity and no interaction.
+
+6. **Front-door identification uses mediation structure.** When $M$ fully mediates $T \to Y$, no $T \to M$ confounding exists, and $T$ blocks $M \to Y$ confounding, the front-door formula identifies the total effect despite unobserved $T$--$Y$ confounding.
+
+7. **Mediation and IV are complementary, not equivalent.** IV uses a pre-treatment variable to generate exogenous variation in $T$; mediation uses a post-treatment variable to decompose the causal effect. The exclusion restriction of IV and the sequential ignorability of mediation are mutually incompatible for the same intermediate variable.
+
+## Problems
+
+**1. Identifying the CDE.** Consider the DAG: $T \to M$, $T \to Y$, $M \to Y$, $X \to T$, $X \to M$, $X \to Y$, with all variables observed.
+
+(a) Write the identification formula for $\E[Y \mid \doop(T{=}1), \doop(M{=}m)]$ using the back-door criterion for the joint intervention $(T, M)$.
+(b) Add an unobserved $U$ with $U \to T$ and $U \to Y$. Does the back-door formula still identify the CDE? Explain which condition, if any, fails.
+(c) Instead add $U$ with $U \to M$ and $U \to Y$. Does the back-door formula still identify the CDE? Explain.
+
+**2. CDE vs. total effect.** In the reduced prototype graph, let $\mathbf{Z}$ satisfy the back-door criterion for both the total effect and the joint intervention $(T, M)$.
+
+(a) Write expressions for the total effect and the $\mathrm{CDE}(m)$ using the back-door formula.
+(b) Under what graphical condition does $\mathrm{CDE}(m)$ equal the total effect for all $m$? Interpret this condition.
+
+**3. Natural direct and indirect effects.** Verify the NDE $+$ NIE $=$ TE decomposition algebraically for the linear SEM $M = \alpha T + \eta$, $Y = \beta T + \gamma M + \varepsilon$ (no interaction).
+
+(a) Compute $Y(t, M(t'))$ in the linear model. Show that $Y(t, M(t')) = \beta t + \gamma(\alpha t') + \text{noise}$.
+(b) Derive $\mathrm{NDE} = \beta$ and $\mathrm{NIE} = \alpha\gamma$ from the definitions @eq-nde--@eq-nie.
+(c) Confirm $\mathrm{NDE} + \mathrm{NIE} = \beta + \alpha\gamma = \mathrm{TE}$.
+(d) Now suppose a $T \times M$ interaction is added: $Y = \beta T + \gamma M + \delta (T \cdot M) + \varepsilon$. Compute $\mathrm{CDE}(m)$ and $\mathrm{NDE}$. Show that $\mathrm{NDE} \neq \mathrm{CDE}(m)$ when $\delta \neq 0$.
+
+**4. The Baron--Kenny three-equation system.** In the reduced prototype graph with the linear SEM @eq-bk1--@eq-bk3:
+
+(a) State the three identification assumptions. For each, give the graphical condition in terms of back-door paths.
+(b) Derive the equality $\tau = \tau' + ab$ algebraically.
+(c) Suppose estimated coefficients are $\hat\tau = 0.50$, $\hat a = 0.40$, $\hat b = 0.60$, $\hat\tau' = 0.26$. Compute the indirect effect by both the product and difference methods. Do they agree? Compute the proportion mediated.
+(d) An analyst reports $\hat a = 0.40$ with $\widehat{\mathrm{SE}}(\hat a) = 0.08$, and $\hat b = 0.60$ with $\widehat{\mathrm{SE}}(\hat b) = 0.10$. Compute the Sobel standard error for $\hat a \hat b$ using @eq-sobel and construct an approximate 95% confidence interval.
+
+**5. The critical role of Assumption 3.** Consider the graph with an unobserved $V$ with $V \to M$ and $V \to Y$. $T$ is randomized.
+
+(a) Identify all back-door paths from $M$ to $Y$ in this graph.
+(b) Can any combination of observed variables $(T, \mathbf{X})$ block all of these paths? Explain using d-separation.
+(c) Suppose an analyst fits @eq-bk3 ignoring $V$ and obtains $\hat b = 0.80$. In which direction is $\hat b$ biased if $V$ has positive effects on both $M$ and $Y$?
+(d) State the additional data structure that would be needed to identify the second-stage effect nonparametrically.
+
+**6. Front-door identification.** Consider the front-door graph of @fig-frontdoor.
+
+(a) Verify that the three front-door conditions hold.
+(b) Walk through the three-step proof of the Front-Door Formula theorem for this graph: identify which do-calculus rule justifies each step.
+(c) Add a direct edge $T \to Y$ to the graph. Which front-door condition is violated? Does formula @eq-frontdoor still hold?
+(d) Explain why the front-door graph does not require Assumption 3 of the Baron--Kenny framework. Which back-door path --- present in the graph with unobserved $V$ --- is absent here?
+
+**7. Mediation vs. instrumental variables.** A researcher studies the effect of a job training program ($T$) on wages ($Y$). She proposes two intermediate variables: (A) motivation ($M_A$), measured after the program starts; (B) a lottery that randomly selects applicants for admission ($Z$), measured before the program.
+
+(a) For variable (A): draw the mediation DAG including $M_A$, $T$, $Y$, and an unobserved ability variable $U$. State the sequential ignorability assumption needed to identify the NIE through $M_A$. Explain why randomization of $T$ does not automatically satisfy this assumption.
+(b) For variable (B): draw the IV DAG with $Z$, $T$, $Y$, and $U$. State the three IV assumptions. Explain why the exclusion restriction and the "mediator inclusion" of mediation analysis are mutually incompatible conditions for the same intermediate variable.
+(c) The researcher argues that $M_A$ (motivation) and $Z$ (lottery) are both "intermediate" variables and that the analyses are interchangeable. Write a one-paragraph critique of this argument, using the distinctions from @sec-mediation-vs-iv.
+(d) Can the front-door formula be applied if motivation $M_A$ fully mediates the effect of $T$ on $Y$ and $U$ (unobserved ability) does not directly affect $M_A$? State the three conditions and assess whether they hold.
