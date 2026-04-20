@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Appendix C — Pathwise Differentiability and Efficient Influence Functions – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./appendix_B.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./appendix_A.html">Appendices</a></li><li class="breadcrumb-item"><a href="./appendix_C.html"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-submodels" id="toc-sec-submodels" class="nav-link active" data-scroll-target="#sec-submodels"><span class="header-section-number">C.1</span> Regular Parametric Submodels and Scores</a></li>
+  <li><a href="#sec-pathwise" id="toc-sec-pathwise" class="nav-link" data-scroll-target="#sec-pathwise"><span class="header-section-number">C.2</span> Pathwise Differentiability</a></li>
+  <li><a href="#sec-non-unique" id="toc-sec-non-unique" class="nav-link" data-scroll-target="#sec-non-unique"><span class="header-section-number">C.3</span> Non-Uniqueness of Influence Functions</a></li>
+  <li><a href="#sec-tangent" id="toc-sec-tangent" class="nav-link" data-scroll-target="#sec-tangent"><span class="header-section-number">C.4</span> The Tangent Space</a></li>
+  <li><a href="#sec-canonical" id="toc-sec-canonical" class="nav-link" data-scroll-target="#sec-canonical"><span class="header-section-number">C.5</span> The Canonical Gradient and the Efficiency Bound</a></li>
+  <li><a href="#bibliographic-notes" id="toc-bibliographic-notes" class="nav-link" data-scroll-target="#bibliographic-notes">Bibliographic Notes</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./appendix_A.html">Appendices</a></li><li class="breadcrumb-item"><a href="./appendix_C.html"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-appendix-c" class="quarto-section-identifier">Appendix C — Pathwise Differentiability and Efficient Influence Functions</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="chapter_09.html#sec-efficiency" class="quarto-xref"><span>Section 9.9</span></a> in Chapter 9 introduced the efficient influence function of the average treatment effect functional and stated, without proof, that this object is the <em>canonical gradient</em> of <span class="math inline">\(\Psi\)</span> relative to the nonparametric tangent space. This appendix supplies the geometric machinery behind that statement. The treatment follows <span class="citation" data-cites="bickel1993">Bickel et al. (1993)</span> and <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (2006)</span>, with notation aligned to Chapter 9.</p>
+<p>The reader should think of this appendix as the formal counterpart of Sections 9.3–9.7: those sections showed how an influence function determines the asymptotic distribution of an estimator; here we develop the parallel notion of an influence function as a <em>derivative of a functional</em>, and characterize the unique influence function that achieves the semiparametric efficiency bound.</p>
+<p>The applied consequences — the AIPW estimator, double robustness, Neyman orthogonality, cross-fitting, and rate conditions — are developed in Chapters 10 and 11. This appendix supplies only the foundational geometry on which those chapters rest.</p>
+<section id="sec-submodels" class="level2" data-number="C.1">
+<h2 data-number="C.1" class="anchored" data-anchor-id="sec-submodels"><span class="header-section-number">C.1</span> Regular Parametric Submodels and Scores</h2>
+<p>Let <span class="math inline">\(\mathcal{P}\)</span> be a statistical model for the distribution of the observed data <span class="math inline">\(O\)</span> on a sample space <span class="math inline">\(\mathcal{O}\)</span>, with true distribution <span class="math inline">\(P \in \mathcal{P}\)</span>. All densities below are taken with respect to a common dominating measure <span class="math inline">\(\mu\)</span>. The parameter of interest is a smooth real-valued functional <span class="math inline">\(\Psi:\mathcal{P} \to \mathbb{R}\)</span>, <span class="math inline">\(\psi = \Psi(P)\)</span>.</p>
+<p>To define what it means for <span class="math inline">\(\Psi\)</span> to be “smooth,” we need a notion of a path through <span class="math inline">\(\mathcal{P}\)</span> that begins at <span class="math inline">\(P\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Regular Parametric Submodel
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <strong>regular parametric submodel</strong> of <span class="math inline">\(\mathcal{P}\)</span> passing through <span class="math inline">\(P\)</span> is a one-parameter family <span class="math inline">\(\{P_\varepsilon : \varepsilon \in (-\delta, \delta)\} \subset \mathcal{P}\)</span> with <span class="math inline">\(P_0 = P\)</span>, with densities <span class="math inline">\(p_\varepsilon\)</span> such that <span class="math inline">\(\varepsilon \mapsto \log p_\varepsilon(O)\)</span> is differentiable at <span class="math inline">\(\varepsilon = 0\)</span> in <span class="math inline">\(L_2(P)\)</span>, with <strong>score</strong>: <span class="math display">\[S(O) = \left.\frac{\partial}{\partial \varepsilon} \log p_\varepsilon(O)\right|_{\varepsilon = 0} \;\in\; L_2(P).\]</span></p>
+</div>
+</div>
+<p>The <span class="math inline">\(L_2\)</span>-differentiability requirement is a mild smoothness condition that ensures <span class="math inline">\(\int p_\varepsilon\, d\mu\)</span> can be differentiated under the integral. For a rigorous formulation, see <span class="citation" data-cites="vandervaart1998">Vaart (1998, sec. 7.2)</span>.</p>
+<p>Because <span class="math inline">\(\int p_\varepsilon \, d\mu = 1\)</span> for all <span class="math inline">\(\varepsilon\)</span>, differentiating under the integral gives: <span id="eq-score-mean-zero"><span class="math display">\[\E_P[S(O)] = 0, \qquad \E_P[S(O)^2] &lt; \infty, \tag{C.1}\]</span></span> so every score lies in <span class="math inline">\(L_2^0(P) := \{f \in L_2(P) : \E_P[f] = 0\}\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Why Submodels Rather Than Point-Mass Contamination
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A heuristic device sometimes used for “probing” a functional is the contamination path <span class="math inline">\(P_\varepsilon = (1-\varepsilon)P + \varepsilon \delta_{o}\)</span>, which yields the classical Hampel influence function <span class="math inline">\(\Psi(\delta_o) - \Psi(P)\)</span>. Contamination is intuitive but does not yield a regular submodel: when <span class="math inline">\(P\)</span> is continuous, the formal “score” of such a path is <span class="math inline">\(\delta_o/p - 1\)</span>, which is not in <span class="math inline">\(L_2(P)\)</span>. All formal results below use the definition above, while the contamination heuristic remains useful for guessing the form of an influence function in concrete examples.</p>
+</div>
+</div>
+</section>
+<section id="sec-pathwise" class="level2" data-number="C.2">
+<h2 data-number="C.2" class="anchored" data-anchor-id="sec-pathwise"><span class="header-section-number">C.2</span> Pathwise Differentiability</h2>
+<p>The functional <span class="math inline">\(\Psi\)</span> is differentiable along a submodel if the map <span class="math inline">\(\varepsilon \mapsto \Psi(P_\varepsilon)\)</span> is differentiable at <span class="math inline">\(\varepsilon = 0\)</span>. Pathwise differentiability asserts that this derivative can be represented as an inner product between a fixed function and the score, uniformly over submodels.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Pathwise Differentiability and Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The functional <span class="math inline">\(\Psi: \mathcal{P} \to \mathbb{R}\)</span> is <strong>pathwise differentiable</strong> at <span class="math inline">\(P\)</span> if there exists a function <span class="math inline">\(\varphi \in L_2^0(P)\)</span> such that, for every regular parametric submodel <span class="math inline">\(\{P_\varepsilon\}\)</span> with score <span class="math inline">\(S\)</span>: <span id="eq-pathwise"><span class="math display">\[\left.\frac{\partial}{\partial \varepsilon} \Psi(P_\varepsilon)\right|_{\varepsilon=0} \;=\; \E_P[\varphi(O)\, S(O)]. \tag{C.2}\]</span></span></p>
+<p>Any such <span class="math inline">\(\varphi\)</span> is called an <strong>influence function</strong> (or <strong>gradient</strong>) of <span class="math inline">\(\Psi\)</span> at <span class="math inline">\(P\)</span>. The set of influence functions is denoted <span class="math inline">\(\mathrm{IF}(\Psi, P)\)</span>.</p>
+</div>
+</div>
+<p><a href="#eq-pathwise" class="quarto-xref">Equation&nbsp;<span>C.2</span></a> is the defining identity of semiparametric theory. It says the perturbation of <span class="math inline">\(\Psi\)</span> along a submodel is fully encoded by the <span class="math inline">\(L_2(P)\)</span> inner product of a fixed function <span class="math inline">\(\varphi\)</span> with the score <span class="math inline">\(S\)</span>. Geometrically, <span class="math inline">\(\varphi\)</span> is a representer for the linear functional <span class="math inline">\(S \mapsto \partial_\varepsilon \Psi(P_\varepsilon)|_0\)</span> restricted to the space of scores.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Mean Functional
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(O = Y\)</span> with <span class="math inline">\(\E_P|Y| &lt; \infty\)</span> and <span class="math inline">\(\Psi(P) = \E_P[Y]\)</span>. For any regular submodel <span class="math inline">\(\{P_\varepsilon\}\)</span> with score <span class="math inline">\(S\)</span>: <span class="math display">\[\frac{\partial}{\partial \varepsilon} \int y\, p_\varepsilon(y)\, d\mu(y) \bigg|_{0} = \E_P[Y \cdot S(O)].\]</span> Since <span class="math inline">\(\E_P[S] = 0\)</span>, subtracting <span class="math inline">\(\E_P[Y]\cdot\E_P[S] = 0\)</span> gives <span class="math inline">\(\partial_\varepsilon \Psi(P_\varepsilon)|_0 = \E_P[(Y - \E_P Y)\, S(O)]\)</span>, so <span class="math inline">\(\varphi(O) = Y - \Psi(P)\)</span> is an influence function of the mean functional. Under the nonparametric model, this is in fact the <em>unique</em> influence function, and hence the efficient influence function.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Connection to Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If an estimator <span class="math inline">\(\hat\psi\)</span> is asymptotically linear at <span class="math inline">\(P\)</span> with influence function <span class="math inline">\(\varphi\)</span> in the sense of Chapter 9, and if <span class="math inline">\(\hat\psi\)</span> is regular along every submodel, then <span class="math inline">\(\varphi\)</span> satisfies <a href="#eq-pathwise" class="quarto-xref">Equation&nbsp;<span>C.2</span></a> and is therefore a gradient of <span class="math inline">\(\Psi\)</span>. Pathwise differentiability is thus a necessary condition for the existence of a regular asymptotically linear estimator of <span class="math inline">\(\Psi\)</span> <span class="citation" data-cites="tsiatis2006semiparametric">(Tsiatis 2006, Theorem 3.1)</span>.</p>
+</div>
+</div>
+</section>
+<section id="sec-non-unique" class="level2" data-number="C.3">
+<h2 data-number="C.3" class="anchored" data-anchor-id="sec-non-unique"><span class="header-section-number">C.3</span> Non-Uniqueness of Influence Functions</h2>
+<p>Definition <a href="#sec-pathwise" class="quarto-xref"><span>Section C.2</span></a> does not produce a unique influence function. If <span class="math inline">\(\varphi\)</span> satisfies <a href="#eq-pathwise" class="quarto-xref">Equation&nbsp;<span>C.2</span></a> and <span class="math inline">\(h \in L_2^0(P)\)</span> is orthogonal to every score in <span class="math inline">\(L_2(P)\)</span>, then <span class="math inline">\(\varphi + h\)</span> also satisfies <a href="#eq-pathwise" class="quarto-xref">Equation&nbsp;<span>C.2</span></a>, since <span class="math inline">\(\E_P[(\varphi+h)S] = \E_P[\varphi S] + \E_P[h S] = \E_P[\varphi S]\)</span>. Whether <span class="math inline">\(\varphi\)</span> is unique depends on how rich the collection of scores is — a point made precise through the notion of the tangent space.</p>
+<p>The terminological distinction can now be made precise:</p>
+<ul>
+<li>An <strong>estimating function</strong> is any function <span class="math inline">\(U(O;\theta)\)</span> whose root defines an estimator (Chapter 9, <a href="chapter_09.html#sec-ee" class="quarto-xref"><span>Section 9.3</span></a>).</li>
+<li>An <strong>asymptotic influence function</strong> of an estimator is the function <span class="math inline">\(\varphi\)</span> in its asymptotic expansion (Chapter 9, <a href="chapter_09.html#sec-asymlin" class="quarto-xref"><span>Section 9.4</span></a>).</li>
+<li>A <strong>(pathwise) influence function</strong> of a functional is a <span class="math inline">\(\varphi \in L_2^0(P)\)</span> satisfying <a href="#eq-pathwise" class="quarto-xref">Equation&nbsp;<span>C.2</span></a>.</li>
+</ul>
+<p>For a regular asymptotically linear estimator of a pathwise-differentiable functional, all three notions coincide. The third depends crucially on <span class="math inline">\(\mathcal{P}\)</span> through the collection of admissible submodels, which is what makes <span class="math inline">\(\mathrm{IF}(\Psi, P)\)</span> generally non-unique in semiparametric models.</p>
+</section>
+<section id="sec-tangent" class="level2" data-number="C.4">
+<h2 data-number="C.4" class="anchored" data-anchor-id="sec-tangent"><span class="header-section-number">C.4</span> The Tangent Space</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Tangent Space
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>tangent space</strong> of <span class="math inline">\(\mathcal{P}\)</span> at <span class="math inline">\(P\)</span>, denoted <span class="math inline">\(T_P(\mathcal{P})\)</span> or simply <span class="math inline">\(T\)</span>, is the closed linear span in <span class="math inline">\(L_2^0(P)\)</span> of all scores of regular parametric submodels of <span class="math inline">\(\mathcal{P}\)</span> passing through <span class="math inline">\(P\)</span>.</p>
+</div>
+</div>
+<p>The tangent space is a closed subspace of the Hilbert space <span class="math inline">\(L_2^0(P)\)</span>. Two extreme cases are illustrative.</p>
+<p><strong>Nonparametric model.</strong> If <span class="math inline">\(\mathcal{P}\)</span> contains all distributions satisfying mild regularity, then for any bounded <span class="math inline">\(h \in L_2^0(P)\)</span>, the submodel <span class="math inline">\(p_\varepsilon(o) \propto (1 + \varepsilon\, h(o)) p(o)\)</span> is regular with score <span class="math inline">\(S = h\)</span>. Since bounded mean-zero functions are dense in <span class="math inline">\(L_2^0(P)\)</span>, taking closure gives <span class="math inline">\(T = L_2^0(P)\)</span>.</p>
+<p><strong>Fully parametric model.</strong> If <span class="math inline">\(\mathcal{P} = \{P_\theta : \theta \in \Theta \subset \mathbb{R}^k\}\)</span> with score <span class="math inline">\(S_\theta\)</span> at <span class="math inline">\(\theta_0\)</span>, then <span class="math inline">\(T = \mathrm{span}\{S_{\theta_0,1}, \ldots, S_{\theta_0,k}\}\)</span> is <span class="math inline">\(k\)</span>-dimensional.</p>
+<p>Most causal models lie between these extremes: the parameter of interest <span class="math inline">\(\psi\)</span> is finite-dimensional, but the rest of <span class="math inline">\(P\)</span> is unrestricted, making <span class="math inline">\(T\)</span> infinite-dimensional but not all of <span class="math inline">\(L_2^0(P)\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Nuisance Tangent Space
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A submodel <span class="math inline">\(\{P_\varepsilon\}\)</span> is a <strong>nuisance submodel</strong> at <span class="math inline">\(P\)</span> if <span class="math inline">\(\Psi(P_\varepsilon) = \Psi(P)\)</span> for all <span class="math inline">\(\varepsilon\)</span>, i.e., the parameter of interest is held fixed along the path. The <strong>nuisance tangent space</strong>, denoted <span class="math inline">\(T_\eta\)</span>, is the closed linear span of scores of all nuisance submodels.</p>
+</div>
+</div>
+<p>The nuisance tangent space is a closed subspace of <span class="math inline">\(T\)</span>, and hence of <span class="math inline">\(L_2^0(P)\)</span>. The orthogonal complement is: <span id="eq-teta-perp"><span class="math display">\[T_\eta^\perp := \{f \in L_2^0(P) : \E_P[f g] = 0 \text{ for all } g \in T_\eta\}. \tag{C.3}\]</span></span></p>
+<p>By the projection theorem, the Hilbert-space decomposition <span class="math inline">\(L_2^0(P) = T_\eta \oplus T_\eta^\perp\)</span> holds automatically.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Proposition: Every Influence Function Lies in <span class="math inline">\(T_\eta^\perp\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\Psi\)</span> be pathwise differentiable at <span class="math inline">\(P\)</span>. Then every influence function <span class="math inline">\(\varphi \in \mathrm{IF}(\Psi, P)\)</span> satisfies <span class="math inline">\(\varphi \in T_\eta^\perp\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For any nuisance submodel <span class="math inline">\(\{P_\varepsilon\}\)</span> with score <span class="math inline">\(S_\eta\)</span>, the definition of nuisance submodel gives <span class="math inline">\(\Psi(P_\varepsilon) = \Psi(P)\)</span> for all <span class="math inline">\(\varepsilon\)</span>, hence <span class="math inline">\(\partial_\varepsilon \Psi(P_\varepsilon)|_0 = 0\)</span>. Combined with <a href="#eq-pathwise" class="quarto-xref">Equation&nbsp;<span>C.2</span></a>: <span class="math display">\[0 = \left.\frac{\partial}{\partial\varepsilon}\Psi(P_\varepsilon)\right|_0 = \E_P[\varphi\, S_\eta].\]</span> This holds for every score <span class="math inline">\(S_\eta\)</span> of a nuisance submodel; by linearity and <span class="math inline">\(L_2\)</span>-continuity it extends to every element of the closed linear span <span class="math inline">\(T_\eta\)</span>. Hence <span class="math inline">\(\varphi \perp T_\eta\)</span>, i.e., <span class="math inline">\(\varphi \in T_\eta^\perp\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Causal Example
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For the ATE under the nonparametric model on <span class="math inline">\(O = (X, T, Y)\)</span>, <span class="math inline">\(T = L_2^0(P)\)</span> and <span class="math inline">\(T_\eta\)</span> is the closed linear span of all scores of submodels along which <span class="math inline">\(\E_P[Y(1) - Y(0)]\)</span> is constant. A standard calculation <span class="citation" data-cites="tsiatis2006semiparametric">(Tsiatis 2006, sec. 7.4)</span> identifies <span class="math inline">\(T_\eta^\perp\)</span> as a one-dimensional subspace spanned by the EIF <span class="math inline">\(\varphi^*\)</span> of Chapter 9, <a href="chapter_09.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>9.5</span></a>; this is the formal content of the claim that <span class="math inline">\(\varphi^*\)</span> is uniquely determined.</p>
+</div>
+</div>
+</section>
+<section id="sec-canonical" class="level2" data-number="C.5">
+<h2 data-number="C.5" class="anchored" data-anchor-id="sec-canonical"><span class="header-section-number">C.5</span> The Canonical Gradient and the Efficiency Bound</h2>
+<p>Among all influence functions, there is a unique one lying in the full tangent space <span class="math inline">\(T\)</span>, and it is the one with smallest variance.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Canonical Gradient
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\Psi\)</span> be pathwise differentiable at <span class="math inline">\(P\)</span> with non-empty influence function set <span class="math inline">\(\mathrm{IF}(\Psi, P)\)</span>. Then:</p>
+<ol type="i">
+<li>Any two influence functions differ by an element of <span class="math inline">\(T^\perp\)</span>: for <span class="math inline">\(\varphi_1, \varphi_2 \in \mathrm{IF}(\Psi, P)\)</span>, <span class="math inline">\(\varphi_1 - \varphi_2 \in T^\perp\)</span>.</li>
+<li>There exists a unique <span class="math inline">\(\varphi^* \in \mathrm{IF}(\Psi, P)\)</span> with <span class="math inline">\(\varphi^* \in T\)</span>, namely <span class="math inline">\(\varphi^* = \Pi[\varphi \mid T]\)</span> for any <span class="math inline">\(\varphi \in \mathrm{IF}(\Psi, P)\)</span>, where <span class="math inline">\(\Pi[\,\cdot \mid T\,]\)</span> denotes orthogonal projection in <span class="math inline">\(L_2^0(P)\)</span> onto <span class="math inline">\(T\)</span>.</li>
+<li>For every <span class="math inline">\(\varphi \in \mathrm{IF}(\Psi, P)\)</span>, <span class="math inline">\(\E_P[\varphi(O)^2] \geq \E_P[\varphi^*(O)^2]\)</span>, with equality iff <span class="math inline">\(\varphi = \varphi^*\)</span> in <span class="math inline">\(L_2(P)\)</span>.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>(i)</strong> For <span class="math inline">\(\varphi_1, \varphi_2 \in \mathrm{IF}(\Psi, P)\)</span> and every score <span class="math inline">\(S\)</span> of a regular submodel, <span class="math inline">\(\E_P[(\varphi_1 - \varphi_2) S] = \partial_\varepsilon\Psi|_0 - \partial_\varepsilon\Psi|_0 = 0\)</span>. By linearity and <span class="math inline">\(L_2\)</span>-continuity, <span class="math inline">\(\E_P[(\varphi_1 - \varphi_2) g] = 0\)</span> for every <span class="math inline">\(g \in T\)</span>, i.e., <span class="math inline">\(\varphi_1 - \varphi_2 \in T^\perp\)</span>.</p>
+<p><strong>(ii)</strong> Fix any <span class="math inline">\(\varphi \in \mathrm{IF}(\Psi, P)\)</span> and set <span class="math inline">\(\varphi^* := \Pi[\varphi \mid T]\)</span>, so <span class="math inline">\(\varphi - \varphi^* \in T^\perp\)</span>. For any score <span class="math inline">\(S \in T\)</span>: <span class="math display">\[\E_P[\varphi^* S] = \E_P[\varphi S] - \E_P[(\varphi - \varphi^*) S] = \E_P[\varphi S] = \left.\frac{\partial}{\partial\varepsilon}\Psi(P_\varepsilon)\right|_0,\]</span> so <span class="math inline">\(\varphi^* \in \mathrm{IF}(\Psi, P)\)</span>. Uniqueness: if <span class="math inline">\(\tilde\varphi^* \in \mathrm{IF}(\Psi, P) \cap T\)</span>, then by (i), <span class="math inline">\(\varphi^* - \tilde\varphi^* \in T^\perp \cap T = \{0\}\)</span>.</p>
+<p><strong>(iii)</strong> Write <span class="math inline">\(\varphi = \varphi^* + (\varphi - \varphi^*)\)</span> with the two summands orthogonal in <span class="math inline">\(L_2(P)\)</span> (since <span class="math inline">\(\varphi^* \in T\)</span> and <span class="math inline">\(\varphi - \varphi^* \in T^\perp\)</span>). The Pythagorean identity gives: <span class="math display">\[\E_P[\varphi^2] = \E_P[(\varphi^*)^2] + \E_P[(\varphi - \varphi^*)^2] \geq \E_P[(\varphi^*)^2],\]</span> with equality iff <span class="math inline">\(\varphi = \varphi^*\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Efficient Influence Function and Efficiency Bound
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The unique element <span class="math inline">\(\varphi^* \in \mathrm{IF}(\Psi, P) \cap T\)</span> is called the <strong>efficient influence function</strong> (EIF), or <strong>canonical gradient</strong>, of <span class="math inline">\(\Psi\)</span> at <span class="math inline">\(P\)</span>. Its variance: <span class="math display">\[V^*(\Psi, P) = \E_P[\varphi^*(O)^2]\]</span> is the <strong>semiparametric efficiency bound</strong> for estimating <span class="math inline">\(\Psi(P)\)</span> in the model <span class="math inline">\(\mathcal{P}\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Role of the Nuisance Tangent Space
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Since every influence function already lies in <span class="math inline">\(T_\eta^\perp\)</span>, the EIF can equivalently be described as the unique influence function in <span class="math inline">\(T \cap T_\eta^\perp\)</span>. This intersection contains exactly the directions in <span class="math inline">\(T\)</span> that are orthogonal to nuisance perturbations — directions along which <span class="math inline">\(\psi\)</span> genuinely moves. In practice, the EIF is often constructed by taking a naive influence function (such as the IPW form) and subtracting its projection onto <span class="math inline">\(T_\eta\)</span> to remove nuisance components; this is the projection view exploited in Chapter 10.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Asymptotic Efficiency Bound
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\hat\psi_n\)</span> be a regular asymptotically linear estimator of <span class="math inline">\(\Psi(P)\)</span> in the model <span class="math inline">\(\mathcal{P}\)</span>. Then its asymptotic variance satisfies: <span class="math display">\[\mathrm{AVar}(\sqrt{n}(\hat\psi_n - \psi)) \geq V^*(\Psi, P),\]</span> and the bound is achieved if and only if the influence function of <span class="math inline">\(\hat\psi_n\)</span> is <span class="math inline">\(\varphi^*\)</span> in <span class="math inline">\(L_2(P)\)</span>.</p>
+</div>
+</div>
+<p>This theorem is a corollary of the Hájek–Le Cam convolution theorem, which states the stronger result that <span class="math inline">\(\sqrt{n}(\hat\psi_n - \psi) \rightsquigarrow Z + W\)</span>, where <span class="math inline">\(Z \sim N(0, V^*)\)</span> and <span class="math inline">\(W\)</span> is independent of <span class="math inline">\(Z\)</span>. A precise statement requires the local asymptotic normality framework of <span class="citation" data-cites="vandervaart1998">Vaart (1998, secs. 25.3–25.6)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Why the EIF Appears in Concrete Formulas
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Canonical Gradient Theorem explains why specific objects such as the AIPW influence function in Chapter 9 look “constructed” rather than guessed. Given a naive influence function <span class="math inline">\(\varphi\)</span> (e.g., the IPW form <span class="math inline">\(TY/\pi - (1-T)Y/(1-\pi) - \psi\)</span>), it may fail to lie in <span class="math inline">\(T\)</span>; its projection <span class="math inline">\(\varphi^* = \Pi[\varphi \mid T]\)</span> is the EIF. In Chapter 10 this projection is computed explicitly for the ATE under ignorability, producing the AIPW formula. The construction in Chapter 10 should therefore be read as an instance of the Canonical Gradient Theorem applied to a specific causal functional.</p>
+</div>
+</div>
+</section>
+<section id="bibliographic-notes" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="bibliographic-notes">Bibliographic Notes</h2>
+<p>The modern formulation of pathwise differentiability and tangent spaces is developed in the monographs of <span class="citation" data-cites="bickel1993">Bickel et al. (1993)</span> and <span class="citation" data-cites="vandervaart1998">Vaart (1998, chap. 25)</span>; the latter is the standard reference for the convolution theorem and local asymptotic normality underlying the Asymptotic Efficiency Bound theorem. <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (2006)</span> gives a treatment oriented specifically toward missing data and causal inference, and is a natural companion to the material developed here.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./appendix_B.html" class="pagination-link" aria-label="Single World Intervention Graphs">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; Estimating Equations and Influence Functions – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./chapter_08.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_09.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">9.1</span> Why Estimation Needs Its Own Theory</a></li>
+  <li><a href="#sec-ate" id="toc-sec-ate" class="nav-link" data-scroll-target="#sec-ate"><span class="header-section-number">9.2</span> A Running Example: The Average Treatment Effect</a></li>
+  <li><a href="#sec-ee" id="toc-sec-ee" class="nav-link" data-scroll-target="#sec-ee"><span class="header-section-number">9.3</span> Estimating Equations</a></li>
+  <li><a href="#sec-asymlin" id="toc-sec-asymlin" class="nav-link" data-scroll-target="#sec-asymlin"><span class="header-section-number">9.4</span> From Estimating Equations to Asymptotic Linearity</a></li>
+  <li><a href="#sec-if-intuition" id="toc-sec-if-intuition" class="nav-link" data-scroll-target="#sec-if-intuition"><span class="header-section-number">9.5</span> Influence Functions: Intuition</a>
+  <ul class="collapse">
+  <li><a href="#statistical-functionals" id="toc-statistical-functionals" class="nav-link" data-scroll-target="#statistical-functionals"><span class="header-section-number">9.5.1</span> Statistical Functionals</a></li>
+  <li><a href="#influence-functions" id="toc-influence-functions" class="nav-link" data-scroll-target="#influence-functions"><span class="header-section-number">9.5.2</span> Influence Functions</a></li>
+  </ul></li>
+  <li><a href="#sec-if-causal" id="toc-sec-if-causal" class="nav-link" data-scroll-target="#sec-if-causal"><span class="header-section-number">9.6</span> Influence Functions for Simple Causal Estimators</a>
+  <ul class="collapse">
+  <li><a href="#known-outcome-regression" id="toc-known-outcome-regression" class="nav-link" data-scroll-target="#known-outcome-regression"><span class="header-section-number">9.6.1</span> Known Outcome Regression</a></li>
+  <li><a href="#known-propensity-score" id="toc-known-propensity-score" class="nav-link" data-scroll-target="#known-propensity-score"><span class="header-section-number">9.6.2</span> Known Propensity Score</a></li>
+  </ul></li>
+  <li><a href="#sec-nuisance" id="toc-sec-nuisance" class="nav-link" data-scroll-target="#sec-nuisance"><span class="header-section-number">9.7</span> Z-Estimation with Nuisance Parameters</a>
+  <ul class="collapse">
+  <li><a href="#the-stacked-estimating-equation-framework" id="toc-the-stacked-estimating-equation-framework" class="nav-link" data-scroll-target="#the-stacked-estimating-equation-framework"><span class="header-section-number">9.7.1</span> The Stacked Estimating Equation Framework</a></li>
+  <li><a href="#working-example-ipw-with-estimated-propensity-score" id="toc-working-example-ipw-with-estimated-propensity-score" class="nav-link" data-scroll-target="#working-example-ipw-with-estimated-propensity-score"><span class="header-section-number">9.7.2</span> Working Example: IPW with Estimated Propensity Score</a></li>
+  </ul></li>
+  <li><a href="#sec-variance" id="toc-sec-variance" class="nav-link" data-scroll-target="#sec-variance"><span class="header-section-number">9.8</span> Variance Estimation and Confidence Intervals</a></li>
+  <li><a href="#sec-efficiency" id="toc-sec-efficiency" class="nav-link" data-scroll-target="#sec-efficiency"><span class="header-section-number">9.9</span> Toward Efficiency: Semiparametric Models and the EIF</a>
+  <ul class="collapse">
+  <li><a href="#semiparametric-models" id="toc-semiparametric-models" class="nav-link" data-scroll-target="#semiparametric-models"><span class="header-section-number">9.9.1</span> Semiparametric Models</a></li>
+  <li><a href="#regular-estimators" id="toc-regular-estimators" class="nav-link" data-scroll-target="#regular-estimators"><span class="header-section-number">9.9.2</span> Regular Estimators</a></li>
+  <li><a href="#the-semiparametric-efficiency-bound-and-the-eif" id="toc-the-semiparametric-efficiency-bound-and-the-eif" class="nav-link" data-scroll-target="#the-semiparametric-efficiency-bound-and-the-eif"><span class="header-section-number">9.9.3</span> The Semiparametric Efficiency Bound and the EIF</a></li>
+  <li><a href="#the-efficient-influence-function-for-the-ate" id="toc-the-efficient-influence-function-for-the-ate" class="nav-link" data-scroll-target="#the-efficient-influence-function-for-the-ate"><span class="header-section-number">9.9.4</span> The Efficient Influence Function for the ATE</a></li>
+  </ul></li>
+  <li><a href="#sec-summary" id="toc-sec-summary" class="nav-link" data-scroll-target="#sec-summary"><span class="header-section-number">9.10</span> Chapter Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">9.11</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Explain why identification of a causal parameter does not automatically yield a statistically reliable estimator, and articulate the distinct questions that an estimation theory must address.</li>
+<li>Define an estimating equation and verify the population moment condition for standard examples (sample mean, OLS, IPW).</li>
+<li>State the definition of an asymptotically linear estimator and derive the influence function from a generic first-order expansion of an estimating equation.</li>
+<li>Compute the influence function for simple causal estimators when nuisance functions are known, and interpret it as the infinitesimal contribution of a single observation.</li>
+<li>Describe how estimation error in nuisance functions propagates into the target estimator, and explain why this is the central statistical challenge in causal inference.</li>
+<li>Use the influence function to construct a consistent variance estimator and an approximate Wald confidence interval.</li>
+<li>Define efficiency in the class of regular estimators and explain the role of the efficient influence function as the foundation for doubly robust estimation in Chapter 10.</li>
+</ol>
+</div>
+</div>
+<section id="sec-motivation" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">9.1</span> Why Estimation Needs Its Own Theory</h2>
+<p>So far the focus has been on <em>identification</em>: under what assumptions can a causal parameter be written as a functional of the observed-data distribution? Identification does not by itself provide a statistically reliable estimator. Once a causal parameter is identified, several distinct questions remain: How should the estimator be constructed from the observed sample? How does estimation of nuisance functions affect the target estimator? What is the large-sample distribution of the estimator? How can we compute valid standard errors and confidence intervals?</p>
+<p>These questions motivate a separate theory of <em>estimation and inference</em>. In causal inference this issue is especially important because identified parameters often depend on auxiliary, or <em>nuisance</em>, functions such as the outcome regression <span class="math inline">\(\mu_t(x) = \E(Y \mid T=t,\, X=x)\)</span> or the propensity score <span class="math inline">\(\pi(x) = P(T=1 \mid X=x)\)</span>. Even when the causal parameter is identified, different estimation strategies may behave quite differently in terms of robustness, efficiency, and sensitivity to model misspecification.</p>
+<p>The goal of this chapter is to introduce a general framework for estimation based on <em>estimating equations</em> and <em>influence functions</em>. This framework will serve as the foundation for the doubly robust and semiparametric methods developed in Chapter 10; see also <span class="citation" data-cites="imbens2015causal">Imbens and Rubin (2015)</span> and <span class="citation" data-cites="hernan2020causal">Hernán and Robins (2020)</span> for complementary treatments.</p>
+</section>
+<section id="sec-ate" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="sec-ate"><span class="header-section-number">9.2</span> A Running Example: The Average Treatment Effect</h2>
+<p>Throughout this chapter we use the ATE <span class="math inline">\(\psi = \E\{Y(1) - Y(0)\}\)</span> as a running example. Under consistency, conditional exchangeability, and positivity, the ATE is identified by the back-door formula (Chapter 5): <span class="math display">\[\psi = \E[\mu_1(X) - \mu_0(X)], \qquad \mu_t(x) = \E(Y \mid T=t,\, X=x),\quad t\in\{0,1\}.\]</span></p>
+<p>This identity tells us what the target parameter is, but it does not uniquely determine how to estimate it. One may consider: a <em>regression-based</em> estimator using models for <span class="math inline">\(\mu_1(x)\)</span> and <span class="math inline">\(\mu_0(x)\)</span>; a <em>weighting</em> estimator based on the propensity score <span class="math inline">\(\pi(x)\)</span> (Chapter 6); or an <em>augmented</em> estimator combining both. All of these estimators may target the same causal parameter yet differ in their statistical properties.</p>
+</section>
+<section id="sec-ee" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="sec-ee"><span class="header-section-number">9.3</span> Estimating Equations</h2>
+<p>A broad class of estimators can be defined as solutions to <em>estimating equations</em>. Let <span class="math inline">\(O_1,\dots,O_n\)</span> be i.i.d. observations from a distribution <span class="math inline">\(P\)</span>, and let <span class="math inline">\(\theta\)</span> denote a finite-dimensional target parameter. Write <span class="math inline">\(\mathbb{P}_n f = \frac{1}{n}\sum_{i=1}^n f(O_i)\)</span> for the empirical average.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Estimating Equation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An <strong>estimating equation</strong> for a parameter <span class="math inline">\(\theta\)</span> is an equation of the form <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\} = 0\)</span>, where the <strong>population moment condition</strong> <span class="math inline">\(\E\{U(O;\theta_0)\} = 0\)</span> holds at the true parameter value <span class="math inline">\(\theta_0\)</span>. The function <span class="math inline">\(U(O;\theta)\)</span> is called the <strong>estimating function</strong>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Sample Mean
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\theta = \E(Y)\)</span>. The sample mean <span class="math inline">\(\hat\theta = \bar Y\)</span> solves <span class="math inline">\(\mathbb{P}_n(Y-\theta) = 0\)</span>. The estimating function is <span class="math inline">\(U(O;\theta) = Y - \theta\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Ordinary Least Squares
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(O = (X,Y)\)</span> and suppose <span class="math inline">\(\beta\)</span> is defined by the linear moment condition <span class="math inline">\(\E[X\{Y - X^\top\beta\}] = 0\)</span>. Then the OLS estimator solves <span class="math inline">\(\mathbb{P}_n\bigl[X\{Y - X^\top\beta\}\bigr] = 0\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: A Simple IPW Estimating Equation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose <span class="math inline">\(\pi(X)\)</span> is known and <span class="math inline">\(\psi = \E\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\}\)</span>. Then <span class="math inline">\(\psi\)</span> solves <span class="math inline">\(\E\!\left[\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \psi\right] = 0\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="sec-asymlin" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="sec-asymlin"><span class="header-section-number">9.4</span> From Estimating Equations to Asymptotic Linearity</h2>
+<p>Under suitable regularity conditions, an estimator solving an estimating equation can typically be approximated as: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1)\]</span> for some mean-zero function <span class="math inline">\(\varphi(O)\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Asymptotic Linearity and Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An estimator <span class="math inline">\(\hat\theta\)</span> is <strong>asymptotically linear</strong> with <strong>influence function</strong> <span class="math inline">\(\varphi(O)\)</span> if: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1), \qquad \E\{\varphi(O)\} = 0.\]</span></p>
+</div>
+</div>
+<p>This representation immediately implies asymptotic normality. When <span class="math inline">\(\theta \in \mathbb{R}^p\)</span>: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) \overset{d}{\longrightarrow} N\!\left(\mathbf{0},\; \Sigma\right), \qquad \Sigma = \E\bigl[\varphi(O)\varphi(O)^\top\bigr].\]</span></p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Proposition: Generic First-Order Expansion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under smoothness and regularity conditions, an estimator <span class="math inline">\(\hat\theta\)</span> solving <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\}=0\)</span> admits a first-order expansion: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = -A^{-1}\,\frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1),\]</span> where <span class="math inline">\(A = \E\!\left\{\frac{\partial}{\partial\theta^\top}U(O;\theta_0)\right\}\)</span>. Hence the influence function is <span class="math inline">\(\varphi(O) = -A^{-1}U(O;\theta_0)\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A Taylor expansion of the sample moment condition around <span class="math inline">\(\theta_0\)</span> gives: <span class="math display">\[0 = \mathbb{P}_n\{U(O;\hat\theta)\} \approx \mathbb{P}_n\{U(O;\theta_0)\} + \mathbb{P}_n\!\left\{\frac{\partial}{\partial\theta^\top} U(O;\theta_0)\right\}(\hat\theta - \theta_0).\]</span> By the law of large numbers, <span class="math inline">\(\mathbb{P}_n\{\partial_{\theta^\top} U(O;\theta_0)\} \to A\)</span> in probability. Rearranging and multiplying by <span class="math inline">\(\sqrt{n}\)</span> yields the stated expansion. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-if-intuition" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="sec-if-intuition"><span class="header-section-number">9.5</span> Influence Functions: Intuition</h2>
+<section id="statistical-functionals" class="level3" data-number="9.5.1">
+<h3 data-number="9.5.1" class="anchored" data-anchor-id="statistical-functionals"><span class="header-section-number">9.5.1</span> Statistical Functionals</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Statistical Functional
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <strong>statistical functional</strong> is a map <span class="math inline">\(\Psi : \mathcal{P} \longrightarrow \mathbb{R}^p\)</span> that assigns a parameter value <span class="math inline">\(\psi = \Psi(P)\)</span> to each distribution <span class="math inline">\(P \in \mathcal{P}\)</span>. The <strong>plug-in estimator</strong> of <span class="math inline">\(\psi\)</span> is <span class="math inline">\(\hat\psi = \Psi(\mathbb{P}_n)\)</span>.</p>
+</div>
+</div>
+<p>The mean, OLS coefficient, and ATE are all statistical functionals. A functional <span class="math inline">\(\Psi\)</span> is <em>linear</em> if <span class="math inline">\(\Psi((1-\epsilon)P + \epsilon Q) = (1-\epsilon)\Psi(P) + \epsilon\Psi(Q)\)</span>. The mean is linear; the variance, OLS coefficient, and ATE are nonlinear, requiring local linearization — precisely what the influence function provides.</p>
+</section>
+<section id="influence-functions" class="level3" data-number="9.5.2">
+<h3 data-number="9.5.2" class="anchored" data-anchor-id="influence-functions"><span class="header-section-number">9.5.2</span> Influence Functions</h3>
+<p>Influence functions describe the first-order sensitivity of a statistical functional to small perturbations of the underlying distribution.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\psi = \Psi(P)\)</span> be a scalar parameter. A function <span class="math inline">\(\varphi(O)\)</span> is called an <strong>influence function</strong> for <span class="math inline">\(\Psi\)</span> if it has mean zero under <span class="math inline">\(P\)</span> and: <span class="math display">\[\hat\psi - \psi = \frac{1}{n}\sum_{i=1}^n \varphi(O_i) + o_p(n^{-1/2}).\]</span></p>
+<p><em>The influence function is the infinitesimal contribution of a single observation to the first-order behavior of the estimator.</em></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Formal Derivation via Pathwise Derivatives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The influence function can be defined formally through the <em>pathwise (Gateaux) derivative</em>: if <span class="math inline">\(P_\epsilon = (1-\epsilon)P + \epsilon\delta_O\)</span> is the <span class="math inline">\(\epsilon\)</span>-mixture of <span class="math inline">\(P\)</span> with a point mass at <span class="math inline">\(O\)</span>, then: <span class="math display">\[\varphi(O) = \left.\frac{d}{d\epsilon}\Psi(P_\epsilon)\right|_{\epsilon=0}.\]</span> This derivative-based definition is the starting point for semiparametric efficiency theory, developed formally in Appendix C.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Influence Function of the OLS Slope
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For the OLS coefficient <span class="math inline">\(\beta = [\E(XX^\top)]^{-1}\E(XY)\)</span>:</p>
+<p><strong>Step 1.</strong> Construct the perturbed distribution <span class="math inline">\(P_\epsilon = (1-\epsilon)P + \epsilon\delta_O\)</span>: <span class="math display">\[\Psi(P_\epsilon) = \bigl[(1-\epsilon)\E(XX^\top) + \epsilon XX^\top\bigr]^{-1} \bigl[(1-\epsilon)\E(XY) + \epsilon XY\bigr].\]</span></p>
+<p><strong>Step 2.</strong> Differentiate with respect to <span class="math inline">\(\epsilon\)</span> at <span class="math inline">\(\epsilon = 0\)</span>, using <span class="math inline">\(\frac{d}{d\epsilon}M(\epsilon)^{-1}\big|_0 = -[\E(XX^\top)]^{-1}(XX^\top - \E(XX^\top))[\E(XX^\top)]^{-1}\)</span> and the product rule:</p>
+<p><span class="math display">\[\varphi(O) = [\E(XX^\top)]^{-1} X(Y - X^\top\beta).\]</span></p>
+<p><strong>Verification.</strong> <span class="math inline">\(\E[\varphi(O)] = [\E(XX^\top)]^{-1}\E[X(Y - X^\top\beta)] = 0\)</span> by definition of <span class="math inline">\(\beta\)</span>.</p>
+<p><em>Connection to estimating equations:</em> The OLS estimating function is <span class="math inline">\(U(O;\beta) = X(Y - X^\top\beta)\)</span>, <span class="math inline">\(A = -\E(XX^\top)\)</span>, and Proposition 1 gives the same <span class="math inline">\(\varphi(O) = [\E(XX^\top)]^{-1}X(Y - X^\top\beta)\)</span>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-if-causal" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="sec-if-causal"><span class="header-section-number">9.6</span> Influence Functions for Simple Causal Estimators</h2>
+<section id="known-outcome-regression" class="level3" data-number="9.6.1">
+<h3 data-number="9.6.1" class="anchored" data-anchor-id="known-outcome-regression"><span class="header-section-number">9.6.1</span> Known Outcome Regression</h3>
+<p>Suppose <span class="math inline">\(\psi = \E[\mu_1(X) - \mu_0(X)]\)</span> and the functions <span class="math inline">\(\mu_1(\cdot)\)</span> and <span class="math inline">\(\mu_0(\cdot)\)</span> are known. The natural plug-in estimator is <span class="math inline">\(\hat\psi = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}\)</span>. Its influence function is: <span class="math display">\[\varphi(O) = \mu_1(X) - \mu_0(X) - \psi.\]</span></p>
+</section>
+<section id="known-propensity-score" class="level3" data-number="9.6.2">
+<h3 data-number="9.6.2" class="anchored" data-anchor-id="known-propensity-score"><span class="header-section-number">9.6.2</span> Known Propensity Score</h3>
+<p>Suppose <span class="math inline">\(\pi(X)\)</span> is known and <span class="math inline">\(\psi = \E\!\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\}\)</span>. The empirical analogue is the Horvitz–Thompson estimator, and its influence function is: <span class="math display">\[\varphi(O) = \frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \psi.\]</span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Nuisance Functions and the Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When nuisance functions are <em>known</em>, the influence function is simply the centered estimating function. This observation becomes much more consequential in the next section, where nuisance functions are unknown and must be estimated from data.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Estimating Function, Influence Function, and Efficient Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>These three objects are closely related but not the same.</p>
+<ol type="1">
+<li>An <em>estimating function</em> defines an estimator through a sample moment equation <span class="math inline">\(\mathbb{P}_n\{\phi(O;\theta)\} = 0\)</span>.</li>
+<li>An <em>influence function</em> describes the first-order asymptotic behavior of an estimator: <span class="math inline">\(\sqrt{n}(\hat\theta - \theta_0) = n^{-1/2}\sum_i \varphi(O_i) + o_p(1)\)</span>.</li>
+<li>The <em>efficient influence function</em> is the influence function with the smallest possible asymptotic variance among regular estimators in the statistical model.</li>
+</ol>
+<p>In simple examples with known nuisance functions, the centered estimating function often coincides with the influence function. This is not automatic when nuisance parameters are estimated.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-nuisance" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="sec-nuisance"><span class="header-section-number">9.7</span> Z-Estimation with Nuisance Parameters</h2>
+<p>In real applications, nuisance functions must be estimated from the same data used to estimate the target parameter. Once this happens, the first-order expansion of <span class="math inline">\(\hat\psi\)</span> is no longer obtained by simply centering the estimating function with the nuisance held fixed. Z-estimation provides the correct framework: it treats both the target parameter and the nuisance parameter as components of a single stacked estimating equation.</p>
+<section id="the-stacked-estimating-equation-framework" class="level3" data-number="9.7.1">
+<h3 data-number="9.7.1" class="anchored" data-anchor-id="the-stacked-estimating-equation-framework"><span class="header-section-number">9.7.1</span> The Stacked Estimating Equation Framework</h3>
+<p>Suppose the target parameter <span class="math inline">\(\psi \in \mathbb{R}\)</span> depends on an unknown nuisance parameter <span class="math inline">\(\alpha \in \mathbb{R}^q\)</span>. Both are estimated by solving a stacked system: <span id="eq-stacked"><span class="math display">\[\mathbb{P}_n\bigl\{U_1(O;\psi,\alpha)\bigr\} = 0, \qquad \mathbb{P}_n\bigl\{U_2(O;\alpha)\bigr\} = 0. \tag{9.1}\]</span></span></p>
+<p>Write <span class="math inline">\(\theta = (\psi^\top, \alpha^\top)^\top\)</span> and <span class="math inline">\(U(O;\theta) = (U_1(O;\psi,\alpha),\, U_2(O;\alpha))^\top\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Z-Estimation Theorem (Stacked Equations)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose the true parameter value is <span class="math inline">\(\theta_0 = (\psi_0,\alpha_0^\top)^\top\)</span> and the population moment condition <span class="math inline">\(\E\{U(O;\theta_0)\}=0\)</span> holds, the Jacobian <span class="math inline">\(\mathcal{A} = \E\{\partial_{\theta^\top} U(O;\theta_0)\}\)</span> is invertible, and regularity conditions hold. Then <span class="math inline">\(\hat\theta\)</span> is consistent for <span class="math inline">\(\theta_0\)</span> and: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = -\mathcal{A}^{-1}\, \frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1).\]</span> The influence function of <span class="math inline">\(\hat\psi\)</span> is: <span id="eq-if-corrected"><span class="math display">\[\varphi(O) = -A_{11}^{-1}\,U_1(O;\psi_0,\alpha_0) + A_{11}^{-1}A_{12}A_{22}^{-1}\,U_2(O;\alpha_0), \tag{9.2}\]</span></span> where <span class="math inline">\(A_{11} = \E\{\partial_\psi U_1\}\)</span>, <span class="math inline">\(A_{12} = \E\{\partial_{\alpha^\top} U_1\}\)</span>, <span class="math inline">\(A_{22} = \E\{\partial_{\alpha^\top} U_2\}\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Partitioning <span class="math inline">\(\mathcal{A}\)</span> conformably with <span class="math inline">\((\psi, \alpha)\)</span>: <span class="math display">\[\mathcal{A} = \begin{pmatrix} A_{11} &amp; A_{12} \\ 0 &amp; A_{22} \end{pmatrix}, \qquad \mathcal{A}^{-1} = \begin{pmatrix} A_{11}^{-1} &amp; -A_{11}^{-1}A_{12}A_{22}^{-1} \\ 0 &amp; A_{22}^{-1} \end{pmatrix}.\]</span> The lower-left block is zero because <span class="math inline">\(U_2\)</span> does not depend on <span class="math inline">\(\psi\)</span>. Reading off the first row of <span class="math inline">\(-\mathcal{A}^{-1}U(O;\theta_0)\)</span> gives <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Interpreting the Correction Term
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a> decomposes the influence function into two parts. The first term, <span class="math inline">\(-A_{11}^{-1}U_1(O;\psi_0,\alpha_0)\)</span>, is exactly what we would obtain if <span class="math inline">\(\alpha_0\)</span> were known. The second term, <span class="math inline">\(A_{11}^{-1}A_{12}A_{22}^{-1}U_2(O;\alpha_0)\)</span>, is a <em>nuisance correction</em> that accounts for the additional variability introduced by estimating <span class="math inline">\(\alpha\)</span>. If <span class="math inline">\(A_{12}=0\)</span>, the target estimating function <span class="math inline">\(U_1\)</span> does not depend on <span class="math inline">\(\alpha\)</span> at <span class="math inline">\(\alpha_0\)</span>, and the correction vanishes. This is the key condition exploited by <em>doubly robust</em> estimators in Chapter 10.</p>
+</div>
+</div>
+</section>
+<section id="working-example-ipw-with-estimated-propensity-score" class="level3" data-number="9.7.2">
+<h3 data-number="9.7.2" class="anchored" data-anchor-id="working-example-ipw-with-estimated-propensity-score"><span class="header-section-number">9.7.2</span> Working Example: IPW with Estimated Propensity Score</h3>
+<p>Assume a logistic regression model <span class="math inline">\(\pi(X;\alpha) = \mathrm{expit}(X^\top\alpha)\)</span>. The IPW estimating equation for <span class="math inline">\(\psi\)</span> is <span class="math inline">\(U_1(O;\psi,\alpha) = \frac{TY}{\pi(X;\alpha)} - \frac{(1-T)Y}{1-\pi(X;\alpha)} - \psi\)</span>, and the score for the logistic regression is <span class="math inline">\(U_2(O;\alpha) = X\{T - \pi(X;\alpha)\}\)</span>.</p>
+<p>Computing the Jacobian blocks: <span class="math inline">\(A_{11} = -1\)</span>, <span class="math inline">\(A_{22} = -\Sigma_\pi := -\E\{\pi(X;\alpha_0)(1-\pi(X;\alpha_0))XX^\top\}\)</span>. After computing <span class="math inline">\(A_{12}\)</span>, the corrected influence function is: <span id="eq-if-ipw-corrected"><span class="math display">\[\varphi(O) = U_1(O;\psi_0,\alpha_0) + A_{12}\,\Sigma_\pi^{-1}\,U_2(O;\alpha_0). \tag{9.3}\]</span></span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Variance Reduction from ML Estimation of Propensity Score
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We show that estimating <span class="math inline">\(\alpha\)</span> by maximum likelihood can only <em>reduce</em> the asymptotic variance relative to using the true <span class="math inline">\(\alpha_0\)</span>.</p>
+<p>Write <span class="math inline">\(\sigma_1^2 = \E[U_1^2]\)</span> for the variance of the naive IPW estimating function. Two Bartlett-type identities are the key:</p>
+<p><strong>Identity 1</strong> (Bartlett for ML score): <span class="math inline">\(\E[U_2 U_2^\top] = \Sigma_\pi\)</span>.</p>
+<p><strong>Identity 2</strong> (cross-identity): <span class="math inline">\(A_{12} = -\E[U_1 U_2^\top]\)</span>.</p>
+<p>Substituting into <span class="math inline">\(\E[\varphi(O)^2] = \sigma_1^2 + 2A_{12}\Sigma_\pi^{-1}\E[U_1 U_2] + A_{12}\Sigma_\pi^{-1}\E[U_2 U_2^\top]\Sigma_\pi^{-1}A_{12}^\top\)</span>: <span class="math display">\[\E[\varphi(O)^2] = \sigma_1^2 - A_{12}\Sigma_\pi^{-1}A_{12}^\top \leq \sigma_1^2.\]</span> Since <span class="math inline">\(\Sigma_\pi\)</span> is positive definite, the variance is reduced. <em>ML estimation of the propensity score parameters reduces the asymptotic variance of the IPW estimator</em> — the <em>estimated propensity score paradox</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Sandwich Variance Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a> provides the basis for the <em>sandwich variance estimator</em>: <span class="math inline">\(\hat V = n^{-2}\sum_{i=1}^n \hat\varphi_i^2\)</span>, where <span class="math inline">\(\hat\varphi_i\)</span> is <span class="math inline">\(\varphi(O_i)\)</span> evaluated at <span class="math inline">\((\hat\psi,\hat\alpha)\)</span>. This estimator automatically accounts for nuisance estimation uncertainty. Standard errors from a logistic regression routine that ignores the link between <span class="math inline">\(\hat\alpha\)</span> and <span class="math inline">\(\hat\psi\)</span> will in general be <em>incorrect</em>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The Central Challenge in Causal Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The primary difficulty in practice is often not identifying the target parameter, but <em>correctly accounting for the effect of nuisance estimation</em> on the asymptotic distribution of the final estimator. Treating <span class="math inline">\(\hat\alpha\)</span> as if it were the true <span class="math inline">\(\alpha_0\)</span> yields correct point estimates under a correctly specified propensity score model but <em>incorrect standard errors</em>. The Z-estimation framework resolves this variance-accounting issue whenever the nuisance model is correctly specified and the nuisance estimator converges at rate <span class="math inline">\(n^{-1/2}\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Machine Learning for Nuisance Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Z-estimation theorem as stated requires <span class="math inline">\(\hat\alpha\)</span> to converge at rate <span class="math inline">\(n^{-1/2}\)</span>, which holds for finite-dimensional parametric models but fails for nonparametric or machine-learning estimators. When flexible methods are used for <span class="math inline">\(\pi(x)\)</span> or <span class="math inline">\(\mu_t(x)\)</span>, the correction term in <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a> no longer has the simple form derived here. This is the starting point for the doubly robust and debiased machine-learning estimators introduced in Chapter 11.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-variance" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="sec-variance"><span class="header-section-number">9.8</span> Variance Estimation and Confidence Intervals</h2>
+<p>Once an estimator admits the asymptotic linear representation, its asymptotic variance is <span class="math inline">\(\mathrm{Var}(\hat\psi) \approx n^{-1}\,\mathrm{Var}\{\varphi(O)\}\)</span>. A natural estimator is: <span id="eq-var-est"><span class="math display">\[\hat V = \frac{1}{n^2}\sum_{i=1}^n \hat\varphi_i^2 = \frac{1}{n(n-1)}\sum_{i=1}^n (\hat\varphi_i - \bar\varphi)^2. \tag{9.4}\]</span></span></p>
+<p>This yields the approximate Wald confidence interval <span class="math inline">\(\hat\psi \pm z_{1-\alpha/2}\,\sqrt{\hat V}\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Proposition: Variance from the Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(\sqrt{n}(\hat\psi - \psi) = n^{-1/2}\sum_{i=1}^n \varphi(O_i) + o_p(1)\)</span> with <span class="math inline">\(\E\{\varphi(O)\} = 0\)</span> and <span class="math inline">\(\E\{\varphi(O)^2\} &lt; \infty\)</span>, then: <span class="math display">\[\sqrt{n}(\hat\psi - \psi) \overset{d}{\longrightarrow} N\!\left(0,\, \E[\varphi(O)^2]\right), \qquad \mathrm{Var}(\hat\psi) = \frac{1}{n}\,\E[\varphi(O)^2] + o(n^{-1}).\]</span></p>
+</div>
+</div>
+</section>
+<section id="sec-efficiency" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="sec-efficiency"><span class="header-section-number">9.9</span> Toward Efficiency: Semiparametric Models and the EIF</h2>
+<p>Different regular estimators of the same parameter may have different large-sample variances. What is the smallest achievable asymptotic variance among all regular estimators? Answering that question leads to semiparametric efficiency theory. The formal machinery — regular parametric submodels, scores, tangent spaces, and the characterization of the EIF as a canonical gradient — is developed in Appendix C.</p>
+<section id="semiparametric-models" class="level3" data-number="9.9.1">
+<h3 data-number="9.9.1" class="anchored" data-anchor-id="semiparametric-models"><span class="header-section-number">9.9.1</span> Semiparametric Models</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Semiparametric Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <strong>semiparametric model</strong> is a statistical model <span class="math inline">\(\mathcal{P}\)</span> for the distribution <span class="math inline">\(P\)</span> of the observed data in which (i) the <strong>parameter of interest</strong> <span class="math inline">\(\psi = \Psi(P) \in \mathbb{R}^p\)</span> is finite-dimensional, and (ii) the remaining aspects of <span class="math inline">\(P\)</span> — collectively called the <strong>nuisance parameter</strong> — are infinite-dimensional.</p>
+</div>
+</div>
+<p>The canonical example is the nonparametric model <span class="math inline">\(\mathcal{P} = \{P : 0 &lt; \pi(x) &lt; 1\ \forall x\}\)</span> with target parameter <span class="math inline">\(\psi = \E[Y(1)-Y(0)]\)</span>. The nuisance consists of <span class="math inline">\(\mu_t(x)\)</span>, <span class="math inline">\(\pi(x)\)</span>, and the marginal distribution of <span class="math inline">\(X\)</span>.</p>
+</section>
+<section id="regular-estimators" class="level3" data-number="9.9.2">
+<h3 data-number="9.9.2" class="anchored" data-anchor-id="regular-estimators"><span class="header-section-number">9.9.2</span> Regular Estimators</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Regular Estimator (informal)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An estimator <span class="math inline">\(\hat\psi\)</span> is called <strong>regular</strong> at <span class="math inline">\(P_0\)</span> if, along every smooth parametric submodel <span class="math inline">\(\{P_t\}\)</span> with <span class="math inline">\(P_0 = P_{t=0}\)</span>, the limiting distribution of <span class="math inline">\(\sqrt{n}(\hat\psi - \psi_t)\)</span> under <span class="math inline">\(P_t = P_{1/\sqrt{n}}\)</span> does not depend on the submodel.</p>
+</div>
+</div>
+<p>Regularity rules out pathological “superefficient” estimators. All estimators in this course — regression, IPW, and their augmented variants — are regular.</p>
+</section>
+<section id="the-semiparametric-efficiency-bound-and-the-eif" class="level3" data-number="9.9.3">
+<h3 data-number="9.9.3" class="anchored" data-anchor-id="the-semiparametric-efficiency-bound-and-the-eif"><span class="header-section-number">9.9.3</span> The Semiparametric Efficiency Bound and the EIF</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Semiparametric Convolution Theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="bickel1993">(Bickel et al. 1993)</span> In a semiparametric model <span class="math inline">\(\mathcal{P}\)</span>, the asymptotic distribution of any regular estimator <span class="math inline">\(\hat\psi\)</span> of <span class="math inline">\(\psi_0\)</span> satisfies: <span class="math display">\[\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\longrightarrow} N(0, V^*) * M\]</span> for some distribution <span class="math inline">\(M\)</span>, where <span class="math inline">\(V^* = \E_P\!\bigl[\varphi^*(O)\,\varphi^*(O)^\top\bigr]\)</span> is the <strong>semiparametric efficiency bound</strong>. The function <span class="math inline">\(\varphi^*(O)\)</span> with <span class="math inline">\(\E[\varphi^*(O)] = 0\)</span> and <span class="math inline">\(\E[\varphi^*(O)^2] = V^*\)</span> is called the <strong>efficient influence function</strong> (EIF). An estimator achieves <span class="math inline">\(V^*\)</span> if and only if it is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Semiparametrically Efficient Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A regular estimator <span class="math inline">\(\hat\psi\)</span> is <strong>semiparametrically efficient</strong> at <span class="math inline">\(P_0 \in \mathcal{P}\)</span> if <span class="math inline">\(\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\longrightarrow} N(0, V^*)\)</span>. Equivalently, <span class="math inline">\(\hat\psi\)</span> is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: How the EIF is Computed
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The EIF <span class="math inline">\(\varphi^*(O)\)</span> can be derived as the pathwise derivative of <span class="math inline">\(\Psi(P)\)</span> in the <em>least favorable</em> direction. In practice: (i) compute the pathwise derivative <span class="math inline">\(\varphi(O; P_\epsilon)\)</span> for an arbitrary parametric submodel; (ii) project onto the tangent space of <span class="math inline">\(\mathcal{P}\)</span> at <span class="math inline">\(P_0\)</span>. For nonparametric or large semiparametric models, the tangent space is rich enough that this projection is often the identity, and the EIF equals the ordinary pathwise derivative. See Appendix C for the formal treatment.</p>
+</div>
+</div>
+</section>
+<section id="the-efficient-influence-function-for-the-ate" class="level3" data-number="9.9.4">
+<h3 data-number="9.9.4" class="anchored" data-anchor-id="the-efficient-influence-function-for-the-ate"><span class="header-section-number">9.9.4</span> The Efficient Influence Function for the ATE</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: EIF for the ATE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For the ATE <span class="math inline">\(\psi = \E\{Y(1) - Y(0)\}\)</span> in the nonparametric observational-data model under strong ignorability and positivity, the efficient influence function is: <span id="eq-eif-ate"><span class="math display">\[\varphi^*(O) = \frac{T\{Y - \mu_1(X)\}}{\pi(X)} - \frac{(1-T)\{Y - \mu_0(X)\}}{1-\pi(X)} + \mu_1(X) - \mu_0(X) - \psi. \tag{9.5}\]</span></span></p>
+<p>This expression has a natural decomposition: the first two terms are an IPW-style residual correction, and the last two are the regression estimator centered at <span class="math inline">\(\psi\)</span>. The EIF depends on <em>both</em> nuisance functions <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span>, and an estimator that plugs in consistent estimates of both achieves the efficiency bound <span class="math inline">\(V^* = \E[\varphi^*(O)^2]\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Bridge to Chapter 10
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Two important properties of <span class="math inline">\(\varphi^*(O)\)</span> will be central in Chapter 10:</p>
+<ol type="i">
+<li><p><strong>Double robustness.</strong> The estimator obtained by replacing <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> by estimates and averaging <span class="math inline">\(\varphi^*(O_i)\)</span> is consistent for <span class="math inline">\(\psi\)</span> if <em>either</em> <span class="math inline">\(\hat\pi\)</span> or <span class="math inline">\(\hat\mu_t\)</span> is consistent — not necessarily both.</p></li>
+<li><p><strong>Semiparametric efficiency.</strong> When both nuisance estimators are consistent and converge at suitable rates, the resulting estimator achieves the efficiency bound <span class="math inline">\(V^*\)</span>.</p></li>
+</ol>
+<p>The <em>augmented IPW</em> (AIPW) estimator is the principal tool for exploiting these two properties simultaneously, and will be derived and analyzed in Chapter 10.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-summary" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="sec-summary"><span class="header-section-number">9.10</span> Chapter Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Object</strong></th>
+<th><strong>Role</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estimating function <span class="math inline">\(U(O;\theta)\)</span></td>
+<td>Defines the estimator via <span class="math inline">\(\mathbb{P}_n\{U(O;\hat\theta)\}=0\)</span></td>
+</tr>
+<tr class="even">
+<td>Influence function <span class="math inline">\(\varphi(O)\)</span></td>
+<td>First-order term in the expansion of <span class="math inline">\(\hat\psi - \psi\)</span>; used for CLT and variance estimation</td>
+</tr>
+<tr class="odd">
+<td>Asymptotic variance <span class="math inline">\(\E[\varphi(O)^2]/n\)</span></td>
+<td>Governs precision; the target for efficiency comparisons</td>
+</tr>
+<tr class="even">
+<td>Efficient influence function <span class="math inline">\(\varphi^*(O)\)</span></td>
+<td>Achieves the semiparametric efficiency bound; basis for doubly robust estimators (Chapter 10)</td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li><strong>Identification is not estimation.</strong> Identification provides a population formula, but not automatically a satisfactory estimator.</li>
+<li><strong>Estimating equations.</strong> Many estimators are defined as solutions to sample moment conditions <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\}=0\)</span>, with the population condition <span class="math inline">\(\E\{U(O;\theta_0)\}=0\)</span> ensuring consistency.</li>
+<li><strong>Asymptotic linearity.</strong> Estimating equations often yield a first-order expansion, immediately implying asymptotic normality via the CLT.</li>
+<li><strong>Influence functions.</strong> The function <span class="math inline">\(\varphi(O)\)</span> describes the first-order sensitivity of the estimator to a single observation. It is the key object for both asymptotic theory and variance estimation.</li>
+<li><strong>Nuisance estimation.</strong> In causal inference, nuisance functions must be estimated, and this estimation error propagates into the target estimator. The Z-estimation framework corrects for this propagation.</li>
+<li><strong>Variance from the influence function.</strong> The asymptotic variance is <span class="math inline">\(n^{-1}\E[\varphi(O)^2]\)</span>, consistently estimated by <span class="math inline">\(n^{-2}\sum_i\hat\varphi_i^2\)</span>.</li>
+<li><strong>Efficiency.</strong> Among regular estimators, the one with the smallest asymptotic variance is efficient. The EIF characterizes this lower bound and will guide estimator construction in Chapter 10.</li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="9.11">
+<h2 data-number="9.11" class="anchored" data-anchor-id="problems"><span class="header-section-number">9.11</span> Problems</h2>
+<p><strong>1. Estimating equations and moment conditions.</strong></p>
+<ol type="a">
+<li>Let <span class="math inline">\(O = (X, Y)\)</span> and define <span class="math inline">\(\theta = \mathrm{Cov}(X,Y)/\mathrm{Var}(X)\)</span>. Write down an estimating equation for <span class="math inline">\(\theta\)</span> and verify that the population moment condition holds at <span class="math inline">\(\theta_0\)</span>.</li>
+<li>Let <span class="math inline">\(\theta = F^{-1}(0.5)\)</span> be the population median. Propose an estimating function <span class="math inline">\(U(O;\theta)\)</span> and verify the population moment condition. (<em>Hint</em>: consider <span class="math inline">\(U(O;\theta) = \mathbf{1}(Y \leq \theta) - 0.5\)</span>.)</li>
+<li>Show that the OLS estimator and the IPW estimator of the ATE are both special cases of the general M-estimator framework.</li>
+</ol>
+<p><strong>2. Asymptotic linearity and the CLT.</strong></p>
+<ol type="a">
+<li>Let <span class="math inline">\(\hat\psi = \bar Y\)</span> be the sample mean with <span class="math inline">\(\E Y = \psi\)</span> and <span class="math inline">\(\mathrm{Var}(Y) = \sigma^2 &lt; \infty\)</span>. Write down the influence function, state its asymptotic distribution, and give a consistent estimator of <span class="math inline">\(\mathrm{Var}(\hat\psi)\)</span>.</li>
+<li>Suppose <span class="math inline">\(\hat\psi_1\)</span> and <span class="math inline">\(\hat\psi_2\)</span> are two asymptotically linear estimators with influence functions <span class="math inline">\(\varphi_1\)</span> and <span class="math inline">\(\varphi_2\)</span>. Show that <span class="math inline">\(\hat\psi_\lambda = \lambda\hat\psi_1 + (1-\lambda)\hat\psi_2\)</span> is also asymptotically linear for any fixed <span class="math inline">\(\lambda \in [0,1]\)</span>, and find its influence function.</li>
+<li>Use part (b) to explain why, among linear combinations of two estimators, the one minimizing asymptotic variance is generally not the simple average (<span class="math inline">\(\lambda = 1/2\)</span>).</li>
+</ol>
+<p><strong>3. Influence functions for causal estimators.</strong> Consider the ATE <span class="math inline">\(\psi = \E\{Y(1) - Y(0)\}\)</span> identified under strong ignorability.</p>
+<ol type="a">
+<li>Assume <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> are both known. Compute the influence functions of: (i) the regression estimator <span class="math inline">\(\hat\psi_{\mathrm{reg}} = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}\)</span>; (ii) the IPW estimator <span class="math inline">\(\hat\psi_{\mathrm{IPW}} = \mathbb{P}_n\!\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}\)</span>.</li>
+<li>Under what conditions on the data-generating process will <span class="math inline">\(\hat\psi_{\mathrm{reg}}\)</span> have a smaller asymptotic variance than <span class="math inline">\(\hat\psi_{\mathrm{IPW}}\)</span>?</li>
+<li>Using the EIF <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>9.5</span></a>, verify that it has mean zero under <span class="math inline">\(P\)</span> by computing <span class="math inline">\(\E[\varphi^*(O)]\)</span>.</li>
+</ol>
+<p><strong>4. Variance estimation.</strong></p>
+<ol type="a">
+<li>Let <span class="math inline">\(\hat\varphi_i = \hat\mu_1(X_i) - \hat\mu_0(X_i) - \hat\psi_{\mathrm{reg}}\)</span> be the estimated influence values for the regression estimator. Write down the plug-in variance estimator <span class="math inline">\(\hat V\)</span> and simplify. Under what conditions is <span class="math inline">\(\hat V\)</span> consistent for <span class="math inline">\(\mathrm{Var}(\hat\psi_{\mathrm{reg}})\)</span>?</li>
+<li>A researcher reports <span class="math inline">\(\hat\psi = 2.4\)</span> and <span class="math inline">\(\hat V = 0.09\)</span> based on <span class="math inline">\(n = 400\)</span> observations. Compute a 95% Wald confidence interval. Is the treatment effect statistically distinguishable from zero at the 5% level?</li>
+<li>Explain why simply plugging in <span class="math inline">\(\hat\mu_t\)</span> and <span class="math inline">\(\hat\pi\)</span> into the influence function formula may yield an inconsistent variance estimator when these nuisance estimators converge at a slower rate than <span class="math inline">\(n^{-1/2}\)</span>.</li>
+</ol>
+<p><strong>5. Efficiency comparisons.</strong></p>
+<ol type="a">
+<li>Suppose <span class="math inline">\(\varphi_{\mathrm{reg}}\)</span> and <span class="math inline">\(\varphi_{\mathrm{IPW}}\)</span> denote the influence functions of the regression and IPW estimators. Without calculation, explain why neither estimator is always more efficient than the other.</li>
+<li>The semiparametric efficiency bound for the ATE is <span class="math inline">\(\E[\varphi^*(O)^2]\)</span>, where <span class="math inline">\(\varphi^*\)</span> is given in <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>9.5</span></a>. Show that <span class="math inline">\(\E[\varphi^*(O)^2] \leq \E[\varphi_{\mathrm{IPW}}(O)^2]\)</span> by expanding the squared EIF. (<em>Hint</em>: use the law of iterated expectations to show that the cross-terms cancel.)</li>
+<li>Give one practical reason why an efficient estimator based on the EIF may not always be preferred over a simpler, less efficient estimator.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_08.html" class="pagination-link" aria-label="Mediation and Front-Door Identification">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

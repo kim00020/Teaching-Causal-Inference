@@ -1,0 +1,187 @@
+---
+engine: knitr
+suppress-bibliography: true
+---
+
+# Pathwise Differentiability and Efficient Influence Functions {#sec-appendix-c}
+
+@sec-efficiency in Chapter 9 introduced the efficient influence function of the average treatment effect functional and stated, without proof, that this object is the *canonical gradient* of $\Psi$ relative to the nonparametric tangent space. This appendix supplies the geometric machinery behind that statement. The treatment follows @bickel1993 and @tsiatis2006semiparametric, with notation aligned to Chapter 9.
+
+The reader should think of this appendix as the formal counterpart of Sections 9.3--9.7: those sections showed how an influence function determines the asymptotic distribution of an estimator; here we develop the parallel notion of an influence function as a *derivative of a functional*, and characterize the unique influence function that achieves the semiparametric efficiency bound.
+
+The applied consequences --- the AIPW estimator, double robustness, Neyman orthogonality, cross-fitting, and rate conditions --- are developed in Chapters 10 and 11. This appendix supplies only the foundational geometry on which those chapters rest.
+
+## Regular Parametric Submodels and Scores {#sec-submodels}
+
+Let $\mathcal{P}$ be a statistical model for the distribution of the observed data $O$ on a sample space $\mathcal{O}$, with true distribution $P \in \mathcal{P}$. All densities below are taken with respect to a common dominating measure $\mu$. The parameter of interest is a smooth real-valued functional $\Psi:\mathcal{P} \to \mathbb{R}$, $\psi = \Psi(P)$.
+
+To define what it means for $\Psi$ to be "smooth," we need a notion of a path through $\mathcal{P}$ that begins at $P$.
+
+::: {.callout-note icon=false}
+## Definition: Regular Parametric Submodel
+
+A **regular parametric submodel** of $\mathcal{P}$ passing through $P$ is a one-parameter family $\{P_\varepsilon : \varepsilon \in (-\delta, \delta)\} \subset \mathcal{P}$ with $P_0 = P$, with densities $p_\varepsilon$ such that $\varepsilon \mapsto \log p_\varepsilon(O)$ is differentiable at $\varepsilon = 0$ in $L_2(P)$, with **score**:
+$$S(O) = \left.\frac{\partial}{\partial \varepsilon} \log p_\varepsilon(O)\right|_{\varepsilon = 0} \;\in\; L_2(P).$$
+:::
+
+The $L_2$-differentiability requirement is a mild smoothness condition that ensures $\int p_\varepsilon\, d\mu$ can be differentiated under the integral. For a rigorous formulation, see @vandervaart1998 [§7.2].
+
+Because $\int p_\varepsilon \, d\mu = 1$ for all $\varepsilon$, differentiating under the integral gives:
+$$\E_P[S(O)] = 0, \qquad \E_P[S(O)^2] < \infty,$$ {#eq-score-mean-zero}
+so every score lies in $L_2^0(P) := \{f \in L_2(P) : \E_P[f] = 0\}$.
+
+::: {.callout-note icon=false}
+## Remark: Why Submodels Rather Than Point-Mass Contamination
+
+A heuristic device sometimes used for "probing" a functional is the contamination path $P_\varepsilon = (1-\varepsilon)P + \varepsilon \delta_{o}$, which yields the classical Hampel influence function $\Psi(\delta_o) - \Psi(P)$. Contamination is intuitive but does not yield a regular submodel: when $P$ is continuous, the formal "score" of such a path is $\delta_o/p - 1$, which is not in $L_2(P)$. All formal results below use the definition above, while the contamination heuristic remains useful for guessing the form of an influence function in concrete examples.
+:::
+
+## Pathwise Differentiability {#sec-pathwise}
+
+The functional $\Psi$ is differentiable along a submodel if the map $\varepsilon \mapsto \Psi(P_\varepsilon)$ is differentiable at $\varepsilon = 0$. Pathwise differentiability asserts that this derivative can be represented as an inner product between a fixed function and the score, uniformly over submodels.
+
+::: {.callout-note icon=false}
+## Definition: Pathwise Differentiability and Influence Function
+
+The functional $\Psi: \mathcal{P} \to \mathbb{R}$ is **pathwise differentiable** at $P$ if there exists a function $\varphi \in L_2^0(P)$ such that, for every regular parametric submodel $\{P_\varepsilon\}$ with score $S$:
+$$\left.\frac{\partial}{\partial \varepsilon} \Psi(P_\varepsilon)\right|_{\varepsilon=0} \;=\; \E_P[\varphi(O)\, S(O)].$$ {#eq-pathwise}
+
+Any such $\varphi$ is called an **influence function** (or **gradient**) of $\Psi$ at $P$. The set of influence functions is denoted $\mathrm{IF}(\Psi, P)$.
+:::
+
+@eq-pathwise is the defining identity of semiparametric theory. It says the perturbation of $\Psi$ along a submodel is fully encoded by the $L_2(P)$ inner product of a fixed function $\varphi$ with the score $S$. Geometrically, $\varphi$ is a representer for the linear functional $S \mapsto \partial_\varepsilon \Psi(P_\varepsilon)|_0$ restricted to the space of scores.
+
+::: {.callout-note icon=false}
+## Example: Mean Functional
+
+Let $O = Y$ with $\E_P|Y| < \infty$ and $\Psi(P) = \E_P[Y]$. For any regular submodel $\{P_\varepsilon\}$ with score $S$:
+$$\frac{\partial}{\partial \varepsilon} \int y\, p_\varepsilon(y)\, d\mu(y) \bigg|_{0} = \E_P[Y \cdot S(O)].$$
+Since $\E_P[S] = 0$, subtracting $\E_P[Y]\cdot\E_P[S] = 0$ gives $\partial_\varepsilon \Psi(P_\varepsilon)|_0 = \E_P[(Y - \E_P Y)\, S(O)]$, so $\varphi(O) = Y - \Psi(P)$ is an influence function of the mean functional. Under the nonparametric model, this is in fact the *unique* influence function, and hence the efficient influence function.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Connection to Estimation
+
+If an estimator $\hat\psi$ is asymptotically linear at $P$ with influence function $\varphi$ in the sense of Chapter 9, and if $\hat\psi$ is regular along every submodel, then $\varphi$ satisfies @eq-pathwise and is therefore a gradient of $\Psi$. Pathwise differentiability is thus a necessary condition for the existence of a regular asymptotically linear estimator of $\Psi$ [@tsiatis2006semiparametric, Theorem 3.1].
+:::
+
+## Non-Uniqueness of Influence Functions {#sec-non-unique}
+
+Definition @sec-pathwise does not produce a unique influence function. If $\varphi$ satisfies @eq-pathwise and $h \in L_2^0(P)$ is orthogonal to every score in $L_2(P)$, then $\varphi + h$ also satisfies @eq-pathwise, since $\E_P[(\varphi+h)S] = \E_P[\varphi S] + \E_P[h S] = \E_P[\varphi S]$. Whether $\varphi$ is unique depends on how rich the collection of scores is --- a point made precise through the notion of the tangent space.
+
+The terminological distinction can now be made precise:
+
+- An **estimating function** is any function $U(O;\theta)$ whose root defines an estimator (Chapter 9, @sec-ee).
+- An **asymptotic influence function** of an estimator is the function $\varphi$ in its asymptotic expansion (Chapter 9, @sec-asymlin).
+- A **(pathwise) influence function** of a functional is a $\varphi \in L_2^0(P)$ satisfying @eq-pathwise.
+
+For a regular asymptotically linear estimator of a pathwise-differentiable functional, all three notions coincide. The third depends crucially on $\mathcal{P}$ through the collection of admissible submodels, which is what makes $\mathrm{IF}(\Psi, P)$ generally non-unique in semiparametric models.
+
+## The Tangent Space {#sec-tangent}
+
+::: {.callout-note icon=false}
+## Definition: Tangent Space
+
+The **tangent space** of $\mathcal{P}$ at $P$, denoted $T_P(\mathcal{P})$ or simply $T$, is the closed linear span in $L_2^0(P)$ of all scores of regular parametric submodels of $\mathcal{P}$ passing through $P$.
+:::
+
+The tangent space is a closed subspace of the Hilbert space $L_2^0(P)$. Two extreme cases are illustrative.
+
+**Nonparametric model.** If $\mathcal{P}$ contains all distributions satisfying mild regularity, then for any bounded $h \in L_2^0(P)$, the submodel $p_\varepsilon(o) \propto (1 + \varepsilon\, h(o)) p(o)$ is regular with score $S = h$. Since bounded mean-zero functions are dense in $L_2^0(P)$, taking closure gives $T = L_2^0(P)$.
+
+**Fully parametric model.** If $\mathcal{P} = \{P_\theta : \theta \in \Theta \subset \mathbb{R}^k\}$ with score $S_\theta$ at $\theta_0$, then $T = \mathrm{span}\{S_{\theta_0,1}, \ldots, S_{\theta_0,k}\}$ is $k$-dimensional.
+
+Most causal models lie between these extremes: the parameter of interest $\psi$ is finite-dimensional, but the rest of $P$ is unrestricted, making $T$ infinite-dimensional but not all of $L_2^0(P)$.
+
+::: {.callout-note icon=false}
+## Definition: Nuisance Tangent Space
+
+A submodel $\{P_\varepsilon\}$ is a **nuisance submodel** at $P$ if $\Psi(P_\varepsilon) = \Psi(P)$ for all $\varepsilon$, i.e., the parameter of interest is held fixed along the path. The **nuisance tangent space**, denoted $T_\eta$, is the closed linear span of scores of all nuisance submodels.
+:::
+
+The nuisance tangent space is a closed subspace of $T$, and hence of $L_2^0(P)$. The orthogonal complement is:
+$$T_\eta^\perp := \{f \in L_2^0(P) : \E_P[f g] = 0 \text{ for all } g \in T_\eta\}.$$ {#eq-teta-perp}
+
+By the projection theorem, the Hilbert-space decomposition $L_2^0(P) = T_\eta \oplus T_\eta^\perp$ holds automatically.
+
+::: {.callout-tip icon=false}
+## Proposition: Every Influence Function Lies in $T_\eta^\perp$
+
+Let $\Psi$ be pathwise differentiable at $P$. Then every influence function $\varphi \in \mathrm{IF}(\Psi, P)$ satisfies $\varphi \in T_\eta^\perp$.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+For any nuisance submodel $\{P_\varepsilon\}$ with score $S_\eta$, the definition of nuisance submodel gives $\Psi(P_\varepsilon) = \Psi(P)$ for all $\varepsilon$, hence $\partial_\varepsilon \Psi(P_\varepsilon)|_0 = 0$. Combined with @eq-pathwise:
+$$0 = \left.\frac{\partial}{\partial\varepsilon}\Psi(P_\varepsilon)\right|_0 = \E_P[\varphi\, S_\eta].$$
+This holds for every score $S_\eta$ of a nuisance submodel; by linearity and $L_2$-continuity it extends to every element of the closed linear span $T_\eta$. Hence $\varphi \perp T_\eta$, i.e., $\varphi \in T_\eta^\perp$. $\square$
+:::
+
+::: {.callout-note icon=false}
+## Remark: Causal Example
+
+For the ATE under the nonparametric model on $O = (X, T, Y)$, $T = L_2^0(P)$ and $T_\eta$ is the closed linear span of all scores of submodels along which $\E_P[Y(1) - Y(0)]$ is constant. A standard calculation [@tsiatis2006semiparametric, §7.4] identifies $T_\eta^\perp$ as a one-dimensional subspace spanned by the EIF $\varphi^*$ of Chapter 9, @eq-eif-ate; this is the formal content of the claim that $\varphi^*$ is uniquely determined.
+:::
+
+## The Canonical Gradient and the Efficiency Bound {#sec-canonical}
+
+Among all influence functions, there is a unique one lying in the full tangent space $T$, and it is the one with smallest variance.
+
+::: {.callout-tip icon=false}
+## Theorem: Canonical Gradient
+
+Let $\Psi$ be pathwise differentiable at $P$ with non-empty influence function set $\mathrm{IF}(\Psi, P)$. Then:
+
+(i) Any two influence functions differ by an element of $T^\perp$: for $\varphi_1, \varphi_2 \in \mathrm{IF}(\Psi, P)$, $\varphi_1 - \varphi_2 \in T^\perp$.
+(ii) There exists a unique $\varphi^* \in \mathrm{IF}(\Psi, P)$ with $\varphi^* \in T$, namely $\varphi^* = \Pi[\varphi \mid T]$ for any $\varphi \in \mathrm{IF}(\Psi, P)$, where $\Pi[\,\cdot \mid T\,]$ denotes orthogonal projection in $L_2^0(P)$ onto $T$.
+(iii) For every $\varphi \in \mathrm{IF}(\Psi, P)$, $\E_P[\varphi(O)^2] \geq \E_P[\varphi^*(O)^2]$, with equality iff $\varphi = \varphi^*$ in $L_2(P)$.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+**(i)** For $\varphi_1, \varphi_2 \in \mathrm{IF}(\Psi, P)$ and every score $S$ of a regular submodel, $\E_P[(\varphi_1 - \varphi_2) S] = \partial_\varepsilon\Psi|_0 - \partial_\varepsilon\Psi|_0 = 0$. By linearity and $L_2$-continuity, $\E_P[(\varphi_1 - \varphi_2) g] = 0$ for every $g \in T$, i.e., $\varphi_1 - \varphi_2 \in T^\perp$.
+
+**(ii)** Fix any $\varphi \in \mathrm{IF}(\Psi, P)$ and set $\varphi^* := \Pi[\varphi \mid T]$, so $\varphi - \varphi^* \in T^\perp$. For any score $S \in T$:
+$$\E_P[\varphi^* S] = \E_P[\varphi S] - \E_P[(\varphi - \varphi^*) S] = \E_P[\varphi S] = \left.\frac{\partial}{\partial\varepsilon}\Psi(P_\varepsilon)\right|_0,$$
+so $\varphi^* \in \mathrm{IF}(\Psi, P)$. Uniqueness: if $\tilde\varphi^* \in \mathrm{IF}(\Psi, P) \cap T$, then by (i), $\varphi^* - \tilde\varphi^* \in T^\perp \cap T = \{0\}$.
+
+**(iii)** Write $\varphi = \varphi^* + (\varphi - \varphi^*)$ with the two summands orthogonal in $L_2(P)$ (since $\varphi^* \in T$ and $\varphi - \varphi^* \in T^\perp$). The Pythagorean identity gives:
+$$\E_P[\varphi^2] = \E_P[(\varphi^*)^2] + \E_P[(\varphi - \varphi^*)^2] \geq \E_P[(\varphi^*)^2],$$
+with equality iff $\varphi = \varphi^*$. $\square$
+:::
+
+::: {.callout-note icon=false}
+## Definition: Efficient Influence Function and Efficiency Bound
+
+The unique element $\varphi^* \in \mathrm{IF}(\Psi, P) \cap T$ is called the **efficient influence function** (EIF), or **canonical gradient**, of $\Psi$ at $P$. Its variance:
+$$V^*(\Psi, P) = \E_P[\varphi^*(O)^2]$$
+is the **semiparametric efficiency bound** for estimating $\Psi(P)$ in the model $\mathcal{P}$.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Role of the Nuisance Tangent Space
+
+Since every influence function already lies in $T_\eta^\perp$, the EIF can equivalently be described as the unique influence function in $T \cap T_\eta^\perp$. This intersection contains exactly the directions in $T$ that are orthogonal to nuisance perturbations --- directions along which $\psi$ genuinely moves. In practice, the EIF is often constructed by taking a naive influence function (such as the IPW form) and subtracting its projection onto $T_\eta$ to remove nuisance components; this is the projection view exploited in Chapter 10.
+:::
+
+::: {.callout-tip icon=false}
+## Theorem: Asymptotic Efficiency Bound
+
+Let $\hat\psi_n$ be a regular asymptotically linear estimator of $\Psi(P)$ in the model $\mathcal{P}$. Then its asymptotic variance satisfies:
+$$\mathrm{AVar}(\sqrt{n}(\hat\psi_n - \psi)) \geq V^*(\Psi, P),$$
+and the bound is achieved if and only if the influence function of $\hat\psi_n$ is $\varphi^*$ in $L_2(P)$.
+:::
+
+This theorem is a corollary of the Hájek--Le Cam convolution theorem, which states the stronger result that $\sqrt{n}(\hat\psi_n - \psi) \rightsquigarrow Z + W$, where $Z \sim N(0, V^*)$ and $W$ is independent of $Z$. A precise statement requires the local asymptotic normality framework of @vandervaart1998 [§25.3--25.6].
+
+::: {.callout-note icon=false}
+## Remark: Why the EIF Appears in Concrete Formulas
+
+The Canonical Gradient Theorem explains why specific objects such as the AIPW influence function in Chapter 9 look "constructed" rather than guessed. Given a naive influence function $\varphi$ (e.g., the IPW form $TY/\pi - (1-T)Y/(1-\pi) - \psi$), it may fail to lie in $T$; its projection $\varphi^* = \Pi[\varphi \mid T]$ is the EIF. In Chapter 10 this projection is computed explicitly for the ATE under ignorability, producing the AIPW formula. The construction in Chapter 10 should therefore be read as an instance of the Canonical Gradient Theorem applied to a specific causal functional.
+:::
+
+## Bibliographic Notes {.unnumbered}
+
+The modern formulation of pathwise differentiability and tangent spaces is developed in the monographs of @bickel1993 and @vandervaart1998 [Chapter 25]; the latter is the standard reference for the convolution theorem and local asymptotic normality underlying the Asymptotic Efficiency Bound theorem. @tsiatis2006semiparametric gives a treatment oriented specifically toward missing data and causal inference, and is a natural companion to the material developed here.
