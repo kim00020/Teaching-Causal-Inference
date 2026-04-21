@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>10&nbsp; Doubly Robust Estimation and Semiparametric Efficiency – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./chapter_09.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_10.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">10.1</span> Why Combine Outcome Regression and Weighting?</a></li>
+  <li><a href="#sec-prediction" id="toc-sec-prediction" class="nav-link" data-scroll-target="#sec-prediction"><span class="header-section-number">10.2</span> The Prediction Estimator and Its Bias</a></li>
+  <li><a href="#sec-aipw" id="toc-sec-aipw" class="nav-link" data-scroll-target="#sec-aipw"><span class="header-section-number">10.3</span> The Augmented IPW Estimator</a></li>
+  <li><a href="#sec-class" id="toc-sec-class" class="nav-link" data-scroll-target="#sec-class"><span class="header-section-number">10.4</span> A Class of Augmented Estimators</a></li>
+  <li><a href="#sec-projection" id="toc-sec-projection" class="nav-link" data-scroll-target="#sec-projection"><span class="header-section-number">10.5</span> The Projection Interpretation</a></li>
+  <li><a href="#sec-proj-causal" id="toc-sec-proj-causal" class="nav-link" data-scroll-target="#sec-proj-causal"><span class="header-section-number">10.6</span> Projection in the Causal Inference Setting</a></li>
+  <li><a href="#sec-eif" id="toc-sec-eif" class="nav-link" data-scroll-target="#sec-eif"><span class="header-section-number">10.7</span> The Efficient Influence Function and Semiparametric Efficiency</a></li>
+  <li><a href="#sec-ibc" id="toc-sec-ibc" class="nav-link" data-scroll-target="#sec-ibc"><span class="header-section-number">10.8</span> Doubly Robust Regression: Weighted and Augmented Approaches</a>
+  <ul class="collapse">
+  <li><a href="#the-internal-bias-calibration-conditions" id="toc-the-internal-bias-calibration-conditions" class="nav-link" data-scroll-target="#the-internal-bias-calibration-conditions"><span class="header-section-number">10.8.1</span> The Internal Bias Calibration Conditions</a></li>
+  <li><a href="#weighted-regression-approach" id="toc-weighted-regression-approach" class="nav-link" data-scroll-target="#weighted-regression-approach"><span class="header-section-number">10.8.2</span> Weighted Regression Approach</a></li>
+  <li><a href="#augmented-model-approach-and-the-clever-covariate" id="toc-augmented-model-approach-and-the-clever-covariate" class="nav-link" data-scroll-target="#augmented-model-approach-and-the-clever-covariate"><span class="header-section-number">10.8.3</span> Augmented Model Approach and the Clever Covariate</a></li>
+  </ul></li>
+  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">10.9</span> Lab: Simulation Study</a></li>
+  <li><a href="#sec-asymp" id="toc-sec-asymp" class="nav-link" data-scroll-target="#sec-asymp"><span class="header-section-number">10.10</span> Asymptotic Inference with Estimated Nuisance Functions</a>
+  <ul class="collapse">
+  <li><a href="#variance-estimation-and-confidence-intervals" id="toc-variance-estimation-and-confidence-intervals" class="nav-link" data-scroll-target="#variance-estimation-and-confidence-intervals"><span class="header-section-number">10.10.1</span> Variance Estimation and Confidence Intervals</a></li>
+  </ul></li>
+  <li><a href="#sec-comparison" id="toc-sec-comparison" class="nav-link" data-scroll-target="#sec-comparison"><span class="header-section-number">10.11</span> Comparison of Regression, IPW, and AIPW</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">10.12</span> Chapter Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">10.13</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Derive the AIPW estimator as a bias-corrected prediction estimator, and explain the role of each term.</li>
+<li>Prove the double robustness property using the law of iterated expectations.</li>
+<li>Describe the class of augmented IPW estimators indexed by arbitrary control functions <span class="math inline">\(b_t(x)\)</span>, verify unbiasedness for any <span class="math inline">\(b_t\)</span>, and identify the optimal choice that minimizes total variance.</li>
+<li>Interpret the augmentation step as a Hilbert-space projection onto the orthogonal complement of the augmentation space, and derive the Pythagorean variance decomposition.</li>
+<li>Carry out the projection argument in the causal inference setting, starting from the Horvitz–Thompson estimator.</li>
+<li>State the semiparametric efficiency bound for the ATE and explain why the AIPW estimating function is the efficient influence function.</li>
+<li>Derive two approaches to building double robustness directly into the outcome model: IPW-weighted regression and the augmented model with clever covariate; explain why including <span class="math inline">\(\hat\pi_i^{-1}\)</span> acts as a debiasing correction and connect this to TMLE.</li>
+<li>Identify the product-rate condition as the key sufficient condition for nuisance estimation error to be asymptotically negligible, and construct a consistent variance estimator and Wald confidence interval.</li>
+</ol>
+</div>
+</div>
+<section id="sec-motivation" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">10.1</span> Why Combine Outcome Regression and Weighting?</h2>
+<p>Under consistency, conditional exchangeability, and positivity, the ATE <span class="math inline">\(\tau = \E\{Y(1) - Y(0)\}\)</span> is identified by either of the following: <span class="math display">\[\tau = \E\{\mu_1(X) - \mu_0(X)\}, \qquad \text{or} \qquad \tau = \E\!\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\},\]</span> where <span class="math inline">\(\mu_t(x) = \E(Y \mid T=t,\, X=x)\)</span> and <span class="math inline">\(\pi(x) = P(T=1 \mid X=x)\)</span>.</p>
+<p>These formulas suggest two basic estimation strategies. The <em>outcome regression</em> (prediction) estimator averages <span class="math inline">\(\hat\mu_1(X_i) - \hat\mu_0(X_i)\)</span> over the sample. The <em>IPW</em> estimator reweights observed outcomes using the propensity score. Each strategy has weaknesses: regression can be biased under misspecification, while IPW can be unstable when estimated propensity scores are close to 0 or 1 <span class="citation" data-cites="rosenbaum1983central">(Rosenbaum and Rubin 1983)</span>.</p>
+<p>This chapter develops a third strategy: combine both models to construct an estimator that is consistent when <em>either</em> model is correct, and achieves the semiparametric efficiency bound when both are correct. We derive the same estimator in three complementary ways: as a bias-corrected prediction estimator (<a href="#sec-prediction" class="quarto-xref"><span>Section 10.2</span></a>), as the optimal member of a class of augmented estimators (<a href="#sec-class" class="quarto-xref"><span>Section 10.4</span></a>–<a href="#sec-proj-causal" class="quarto-xref"><span>Section 10.6</span></a>), and as the efficient influence function (<a href="#sec-eif" class="quarto-xref"><span>Section 10.7</span></a>).</p>
+</section>
+<section id="sec-prediction" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="sec-prediction"><span class="header-section-number">10.2</span> The Prediction Estimator and Its Bias</h2>
+<p>Work first with generic <em>working regression functions</em> <span class="math inline">\(m_t(x)\)</span>, not necessarily equal to the true conditional means. The <em>prediction estimator</em> based on <span class="math inline">\(m_t\)</span> is: <span class="math display">\[\hat\tau_{\mathrm{pred}}(m) = \frac{1}{n}\sum_{i=1}^n \{m_1(X_i) - m_0(X_i)\}.\]</span></p>
+<p>Its bias is: <span id="eq-pred-bias"><span class="math display">\[\tau_{\mathrm{pred}}(m) - \tau = \E\bigl[(m_1(X)-\mu_1(X)) - (m_0(X)-\mu_0(X))\bigr]. \tag{10.1}\]</span></span></p>
+<p>The prediction estimator is unbiased only when the working regressions equal the true outcome regressions.</p>
+<p>If a propensity score estimator <span class="math inline">\(\hat\pi\)</span> is available, the two bias terms in <a href="#eq-pred-bias" class="quarto-xref">Equation&nbsp;<span>10.1</span></a> can be estimated from observed data. Defining residuals <span class="math inline">\(e_i(t) = Y_i(t) - \hat\mu_t(X_i)\)</span>: <span class="math display">\[\widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}}) = -\frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi(X_i)}\,e_i(1) + \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\hat\pi(X_i)}\,e_i(0).\]</span></p>
+<p>The bias-corrected prediction estimator is <span class="math inline">\(\hat\tau_{\mathrm{AIPW}} = \hat\tau_{\mathrm{pred}} - \widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}}) = \hat\mu_{1,\mathrm{dr}} - \hat\mu_{0,\mathrm{dr}}\)</span>, where: <span id="eq-mu1dr"><span class="math display">\[\hat\mu_{1,\mathrm{dr}} = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi(X_i)}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\} + \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i), \tag{10.2}\]</span></span> <span id="eq-mu0dr"><span class="math display">\[\hat\mu_{0,\mathrm{dr}} = \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\hat\pi(X_i)}\bigl\{Y_i - \hat\mu_0(X_i)\bigr\} + \frac{1}{n}\sum_{i=1}^n \hat\mu_0(X_i). \tag{10.3}\]</span></span></p>
+</section>
+<section id="sec-aipw" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="sec-aipw"><span class="header-section-number">10.3</span> The Augmented IPW Estimator</h2>
+<p><em>Notation.</em> From this point on, <span class="math inline">\(\mu_t(x)\)</span> inside estimating functions denotes a <em>generic working</em> outcome regression; the truth is written <span class="math inline">\(\mu_t^*(x) = \E(Y\mid T=t,X=x)\)</span>. The propensity score <span class="math inline">\(\pi(x) = P(T=1\mid X=x)\)</span> is always the true propensity.</p>
+<p>Collecting terms gives the estimating-equation form. The AIPW estimator solves <span class="math inline">\(\mathbb{P}_n\{\phi(O;\tau,\hat\eta)\} = 0\)</span> where: <span id="eq-dr-score"><span class="math display">\[\phi(O;\tau,\eta) = \left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\}+\mu_1(X)\right] - \left[\frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\}+\mu_0(X)\right] - \tau. \tag{10.4}\]</span></span></p>
+<p>Solving explicitly:</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: AIPW Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span id="eq-aipw"><span class="math display">\[\hat\tau_{\mathrm{AIPW}} = \frac{1}{n}\sum_{i=1}^n \Bigg[\hat\mu_1(X_i) - \hat\mu_0(X_i) + \frac{T_i}{\hat\pi(X_i)}\{Y_i - \hat\mu_1(X_i)\} - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i - \hat\mu_0(X_i)\}\Bigg]. \tag{10.5}\]</span></span></p>
+<p>The <strong>augmented inverse probability weighted (AIPW) estimator</strong> equals the prediction estimator plus a weighted-residual bias correction.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Two Roles of the Augmentation Terms
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The terms <span class="math inline">\(T_i\{Y_i-\hat\mu_1(X_i)\}/\hat\pi(X_i)\)</span> have two complementary roles. From the bias-correction perspective, they are IPW-weighted residuals that estimate the prediction error of the outcome regression. From an estimating-equation perspective, they make the estimating function orthogonal to nuisance perturbations. The estimated bias term has zero expectation when the outcome model is correct; the bias-corrected estimator is unbiased when the propensity model is correct. Hence the name <em>doubly robust</em>.</p>
+</div>
+</div>
+<p><strong>Double Robustness.</strong></p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Double Robustness
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\phi(O;\tau,\eta)\)</span> be the estimating function in <a href="#eq-dr-score" class="quarto-xref">Equation&nbsp;<span>10.4</span></a>. Suppose consistency, conditional exchangeability, and positivity hold. Then <span class="math inline">\(\E\{\phi(O;\tau,\eta)\} = 0\)</span> if either:</p>
+<ol type="1">
+<li><span class="math inline">\(\mu_t(x) = \mu_t^*(x)\)</span> for <span class="math inline">\(t=0,1\)</span>, regardless of whether <span class="math inline">\(\pi(x)\)</span> is correctly specified; or</li>
+<li><span class="math inline">\(\pi(x) = P(T=1\mid X=x)\)</span>, regardless of whether <span class="math inline">\(\mu_0\)</span> and <span class="math inline">\(\mu_1\)</span> are correctly specified.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Case 1: outcome regression correct.</strong> If <span class="math inline">\(\mu_t(X) = \E(Y\mid T=t,X)\)</span>, then conditional on <span class="math inline">\(X\)</span>: <span class="math display">\[\E\!\left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\}\,\middle|\,X\right] = \frac{P(T=1\mid X)}{\pi(X)}\,\E\{Y-\mu_1(X)\mid T=1,X\} = 0,\]</span> and similarly the untreated augmentation term vanishes. Therefore <span class="math inline">\(\E\{\phi\} = \E\{\mu_1(X)-\mu_0(X)\} - \tau = 0\)</span>.</p>
+<p><strong>Case 2: propensity score correct.</strong> Suppose <span class="math inline">\(\pi(X) = P(T=1\mid X)\)</span> but <span class="math inline">\(\mu_0, \mu_1\)</span> are arbitrary. Compute the conditional expectation of the first bracket given <span class="math inline">\(X\)</span>: <span class="math display">\[\E\!\left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\} + \mu_1(X)\,\Big|\, X\right] = \frac{\E[TY\mid X]}{\pi(X)} - \mu_1(X)\,\frac{\E[T\mid X]}{\pi(X)} + \mu_1(X) = \mu_1^*(X),\]</span> using <span class="math inline">\(\E[T\mid X] = \pi(X)\)</span> so the <span class="math inline">\(\mu_1\)</span> terms cancel, and <span class="math inline">\(\E[TY\mid X] = \pi(X)\mu_1^*(X)\)</span>. By symmetry, the control bracket has conditional expectation <span class="math inline">\(\mu_0^*(X)\)</span>. Taking expectations and invoking <span class="math inline">\(\tau = \E[\mu_1^*(X) - \mu_0^*(X)]\)</span> gives <span class="math inline">\(\E\{\phi\} = 0\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: The Algebra of Case 2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The key cancellation in Case 2 is that the working outcome function <span class="math inline">\(\mu_1(X)\)</span> enters the bracket twice—once multiplied by <span class="math inline">\(T/\pi(X)\)</span> and once as a standalone term—and the two instances have equal and opposite conditional expectations because <span class="math inline">\(\E[T/\pi(X)\mid X] = 1\)</span> when <span class="math inline">\(\pi\)</span> is correct. A wrong <span class="math inline">\(\mu_t\)</span> is subtracted out by the correct <span class="math inline">\(\pi\)</span>.</p>
+</div>
+</div>
+<p>Double robustness guarantees consistency if <em>either</em> model is correct; it does <em>not</em> protect against misspecification of both models simultaneously.</p>
+</section>
+<section id="sec-class" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="sec-class"><span class="header-section-number">10.4</span> A Class of Augmented Estimators</h2>
+<p>The AIPW estimator is the variance-minimizing estimator within a broad class of augmented IPW estimators. For any square-integrable functions <span class="math inline">\(b_1(x)\)</span> and <span class="math inline">\(b_0(x)\)</span>, define: <span id="eq-mu1b"><span class="math display">\[\hat\mu_{1,b} = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\pi(X_i)}\,Y_i - \frac{1}{n}\sum_{i=1}^n \left\{\frac{T_i}{\pi(X_i)}-1\right\} b_1(X_i), \tag{10.6}\]</span></span> <span id="eq-mu0b"><span class="math display">\[\hat\mu_{0,b} = \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\pi(X_i)}\,Y_i - \frac{1}{n}\sum_{i=1}^n \left\{\frac{1-T_i}{1-\pi(X_i)}-1\right\} b_0(X_i), \tag{10.7}\]</span></span> and let <span class="math inline">\(\hat\tau_b = \hat\mu_{1,b} - \hat\mu_{0,b}\)</span>. The standard AIPW estimator is the special case <span class="math inline">\(b_t = \mu_t\)</span> (see the connection via <a href="#eq-mu1dr" class="quarto-xref">Equation&nbsp;<span>10.2</span></a>).</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Unbiasedness and Variance of the AIPW Class
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under conditional exchangeability, SUTVA, and positivity, with the true <span class="math inline">\(\pi(x)\)</span> used in the estimator, for any square-integrable <span class="math inline">\(b_0\)</span>, <span class="math inline">\(b_1\)</span>:</p>
+<ol type="1">
+<li><strong>Unbiasedness:</strong> <span class="math inline">\(\E(\hat\tau_b) = \tau\)</span>.</li>
+<li><strong>Total variance:</strong> <span id="eq-var-b"><span class="math display">\[\mathrm{Var}(\hat\tau_b) = \frac{1}{n}\,\E\!\left[\left(\frac{1}{\pi(X)}-1\right)\{Y(1)-b_1(X)\}^2 + 2\{Y(1)-b_1(X)\}\{Y(0)-b_0(X)\} + \left(\frac{1}{1-\pi(X)}-1\right)\{Y(0)-b_0(X)\}^2\right] + \frac{1}{n}\,\mathrm{Var}\{Y(1)-Y(0)\}. \tag{10.8}\]</span></span></li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Write <span class="math inline">\(\xi = \frac{T}{\pi(X)}\{Y-b_1(X)\} + b_1(X) - \frac{1-T}{1-\pi(X)}\{Y-b_0(X)\} - b_0(X)\)</span>, so <span class="math inline">\(\hat\tau_b = n^{-1}\sum_i \xi_i\)</span>. By SUTVA, <span class="math inline">\(\xi = \frac{T}{\pi(X)}\{Y(1)-b_1(X)\} + b_1(X) - \frac{1-T}{1-\pi(X)}\{Y(0)-b_0(X)\} - b_0(X)\)</span>.</p>
+<p><strong>Part (i).</strong> Since <span class="math inline">\(\E[T/\pi(X)\mid X] = 1\)</span>, we have <span class="math inline">\(\E[(T/\pi(X)-1)b_1(X)] = 0\)</span>. Under conditional exchangeability, <span class="math inline">\(\E[(T/\pi(X))\,Y(1)\mid X] = \mu_1^*(X)\)</span>. Hence <span class="math inline">\(\E[\hat\mu_{1,b}] = \mu_1\)</span> and <span class="math inline">\(\E(\hat\tau_b) = \tau\)</span>.</p>
+<p><strong>Part (ii).</strong> Apply the law of total variance conditioning on <span class="math inline">\((X, Y(1), Y(0))\)</span>. The conditional mean is <span class="math inline">\(\E[\xi \mid X, Y(1), Y(0)] = Y(1) - Y(0)\)</span>. For the conditional variance, <span class="math inline">\(\xi\)</span> is linear in <span class="math inline">\(T\)</span> with <span class="math inline">\(\mathrm{Var}(T\mid X) = \pi(X)(1-\pi(X))\)</span>: <span class="math display">\[\mathrm{Var}(\xi \mid X, Y(1), Y(0)) = \left(\frac{1}{\pi(X)}-1\right)\{Y(1)-b_1(X)\}^2 + 2\{Y(1)-b_1(X)\}\{Y(0)-b_0(X)\} + \left(\frac{1}{1-\pi(X)}-1\right)\{Y(0)-b_0(X)\}^2.\]</span> Taking expectations over <span class="math inline">\((X, Y(1), Y(0))\)</span> and adding <span class="math inline">\(\mathrm{Var}(Y(1)-Y(0))\)</span> gives <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.8</span></a>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Optimal Control Functions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The control functions <span class="math inline">\(b_1^*(X) = \E\{Y(1)\mid X\}\)</span> and <span class="math inline">\(b_0^*(X) = \E\{Y(0)\mid X\}\)</span> minimize the total variance in <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.8</span></a>. The resulting AIPW estimator coincides with the bias-corrected prediction estimator.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Write <span class="math inline">\(u(X) = \mu_1^*(X)-b_1(X)\)</span> and <span class="math inline">\(v(X)=\mu_0^*(X)-b_0(X)\)</span>. Decompose <span class="math inline">\(Y(t) - b_t(X) = d_t(X) + \varepsilon_t\)</span> where <span class="math inline">\(\E[\varepsilon_t\mid X]=0\)</span>. The cross terms between <span class="math inline">\((u,v)\)</span> and <span class="math inline">\((\varepsilon_1,\varepsilon_0)\)</span> vanish by iterated expectations, leaving a <span class="math inline">\(b_t\)</span>-dependent term: <span class="math display">\[Q(b_0,b_1) = \E\!\left[\left(\frac{1}{\pi}-1\right)u^2 + 2uv + \left(\frac{1}{1-\pi}-1\right)v^2\right].\]</span> Writing the integrand as a perfect square: <span class="math display">\[\frac{1-\pi}{\pi}\,u^2 + 2uv + \frac{\pi}{1-\pi}\,v^2 = \left(\sqrt{\frac{1-\pi}{\pi}}\,u+\sqrt{\frac{\pi}{1-\pi}}\,v\right)^{\!2} \geq 0,\]</span> so <span class="math inline">\(Q(b_0,b_1) \geq 0\)</span> with equality at <span class="math inline">\(u \equiv 0\)</span>, <span class="math inline">\(v \equiv 0\)</span>, i.e., <span class="math inline">\(b_t^* = \mu_t^*\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Non-Uniqueness of the Joint Minimizer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The perfect square vanishes whenever <span class="math inline">\((1-\pi(X))u(X) + \pi(X)v(X) = 0\)</span> a.s., so <span class="math inline">\(Q=0\)</span> on a one-dimensional family of pairs <span class="math inline">\((b_0, b_1)\)</span>. The non-uniqueness arises because <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.8</span></a> is the variance of the <em>difference</em> <span class="math inline">\(\hat\mu_{1,b} - \hat\mu_{0,b}\)</span>. The canonical choice <span class="math inline">\(b_t^* = \mu_t^*\)</span> is distinguished by being the arm-wise optimum: it separately minimizes <span class="math inline">\(\mathrm{Var}(\hat\mu_{t,b})\)</span> for each <span class="math inline">\(t\)</span>. The arm-by-arm projection in <a href="#sec-proj-causal" class="quarto-xref"><span>Section 10.6</span></a> makes this uniqueness explicit.</p>
+</div>
+</div>
+</section>
+<section id="sec-projection" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="sec-projection"><span class="header-section-number">10.5</span> The Projection Interpretation</h2>
+<p>The optimality of AIPW has an elegant interpretation in terms of projections in a Hilbert space of estimators. The collection of mean-zero square-integrable random variables, under inner product <span class="math inline">\(\langle X, Y\rangle = \E(XY) = \mathrm{Cov}(X, Y)\)</span>, is a genuine Hilbert space, and the results below are instances of the <span class="math inline">\(L^2\)</span> projection theorem.</p>
+<p>Let <span class="math inline">\(\hat\theta_0\)</span> be an unbiased estimator of <span class="math inline">\(\theta\)</span>. Define the <em>augmentation space</em>: <span id="eq-aug-space-gen"><span class="math display">\[\Lambda = \bigl\{\hat b : \E(\hat b) = 0\bigr\}. \tag{10.9}\]</span></span></p>
+<p>For any <span class="math inline">\(\hat b \in \Lambda\)</span>, the estimator <span class="math inline">\(\hat\theta_b = \hat\theta_0 - \hat b\)</span> remains unbiased. We seek the <span class="math inline">\(\hat b^* \in \Lambda\)</span> that minimizes <span class="math inline">\(\mathrm{Var}(\hat\theta_b)\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Optimal Projection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The optimal correction is <span class="math inline">\(\hat b^* = \Pi(\hat\theta_0\mid\Lambda)\)</span>, the <span class="math inline">\(L^2\)</span> projection of <span class="math inline">\(\hat\theta_0\)</span> onto <span class="math inline">\(\Lambda\)</span>, characterized by: (1) <span class="math inline">\(\hat b^* \in \Lambda\)</span>; (2) <span class="math inline">\(\mathrm{Cov}(\hat\theta_0-\hat b^*,\;\hat b) = 0\)</span> for all <span class="math inline">\(\hat b \in \Lambda\)</span>. The optimal estimator is: <span class="math display">\[\hat\theta_{\mathrm{opt}} = \hat\theta_0 - \hat b^* = \Pi(\hat\theta_0 \mid \Lambda^\perp),\]</span> and satisfies the <strong>Pythagorean identity</strong>: <span id="eq-pythagoras"><span class="math display">\[\mathrm{Var}(\hat\theta_0) = \mathrm{Var}(\hat\theta_{\mathrm{opt}}) + \mathrm{Var}(\hat b^*). \tag{10.10}\]</span></span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof Sketch
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\Lambda\)</span> is a closed linear subspace of the Hilbert space of mean-zero square-integrable random variables, so the <span class="math inline">\(L^2\)</span> projection theorem gives a unique <span class="math inline">\(\hat b^* \in \Lambda\)</span> satisfying the orthogonality condition. Any other choice <span class="math inline">\(\hat b \in \Lambda\)</span> yields: <span class="math display">\[\mathrm{Var}(\hat\theta_0 - \hat b) = \mathrm{Var}(\hat\theta_{\mathrm{opt}}) + \mathrm{Var}(\hat b^* - \hat b) \geq \mathrm{Var}(\hat\theta_{\mathrm{opt}}),\]</span> using <span class="math inline">\(\mathrm{Cov}(\hat\theta_{\mathrm{opt}},\, \hat b^* - \hat b) = 0\)</span> (since <span class="math inline">\(\hat b^* - \hat b \in \Lambda\)</span> and <span class="math inline">\(\hat\theta_{\mathrm{opt}} \perp \Lambda\)</span>). Specializing to <span class="math inline">\(\hat b = 0\)</span> gives the Pythagorean identity. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<p>The Pythagorean identity shows that the variance of the initial estimator decomposes orthogonally: the optimal estimator retains only the component in <span class="math inline">\(\Lambda^\perp\)</span>, and the discarded component <span class="math inline">\(\hat b^*\)</span> accounts for the remainder <span class="citation" data-cites="tsiatis2006semiparametric">(Tsiatis 2006 calls <span class="math inline">\(\Lambda\)</span> the <em>augmentation space</em> precisely because its elements are the corrections that reduce variance)</span>.</p>
+</section>
+<section id="sec-proj-causal" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="sec-proj-causal"><span class="header-section-number">10.6</span> Projection in the Causal Inference Setting</h2>
+<p>We now specialize the projection framework to the ATE, assuming <span class="math inline">\(\pi(X)\)</span> is known. Decompose the Horvitz–Thompson estimator as <span class="math inline">\(\hat\tau_{\mathrm{HT}} = \hat\mu_{1,\mathrm{HT}} - \hat\mu_{0,\mathrm{HT}}\)</span> where: <span class="math display">\[\hat\mu_{1,\mathrm{HT}} = \frac{1}{n}\sum_{i=1}^n \frac{T_i Y_i}{\pi_i}, \qquad \hat\mu_{0,\mathrm{HT}} = \frac{1}{n}\sum_{i=1}^n \frac{(1-T_i)Y_i}{1-\pi_i}.\]</span></p>
+<p>Define arm-specific augmentation spaces: <span id="eq-aug-space"><span class="math display">\[\Lambda_1 = \left\{n^{-1}\sum_{i=1}^n\!\left(\frac{T_i}{\pi_i}-1\right) b_1(X_i) : b_1 \in \mathcal{L}^2\right\}, \quad \Lambda_0 = \left\{n^{-1}\sum_{i=1}^n\!\left(\frac{1-T_i}{1-\pi_i}-1\right) b_0(X_i) : b_0 \in \mathcal{L}^2\right\}. \tag{10.11}\]</span></span></p>
+<p>Because <span class="math inline">\(\E[(T_i/\pi_i-1)\mid X_i]=0\)</span>, every element of <span class="math inline">\(\Lambda_1\)</span> (resp. <span class="math inline">\(\Lambda_0\)</span>) has expectation zero. The combined augmentation space is <span class="math inline">\(\Lambda = \Lambda_1 \oplus \Lambda_0\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Arm-wise Projections onto the Augmentation Spaces
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The optimal corrections are: <span class="math display">\[\Pi(\hat\mu_{1,\mathrm{HT}} \mid \Lambda_1) = n^{-1}\sum_{i=1}^n\!\left(\frac{T_i}{\pi_i}-1\right) b_1^*(X_i), \quad b_1^*(x) = \E\{Y(1)\mid x\},\]</span> <span class="math display">\[\Pi(\hat\mu_{0,\mathrm{HT}} \mid \Lambda_0) = n^{-1}\sum_{i=1}^n\!\left(\frac{1-T_i}{1-\pi_i}-1\right) b_0^*(X_i), \quad b_0^*(x) = \E\{Y(0)\mid x\}.\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We verify the treated arm. Denote <span class="math inline">\(R_1 = \hat\mu_{1,\mathrm{HT}} - n^{-1}\sum_i (T_i/\pi_i - 1)\,b_1^*(X_i) = n^{-1}\sum_i r_{1i}\)</span> where <span class="math inline">\(r_{1i} = (T_i/\pi_i)\{Y_i - b_1^*(X_i)\} + b_1^*(X_i)\)</span>. By the Optimal Projection Theorem, it suffices to show <span class="math inline">\(\mathrm{Cov}(R_1,\, \hat b) = 0\)</span> for every <span class="math inline">\(\hat b \in \Lambda_1\)</span>.</p>
+<p>Using independence across units, <span class="math inline">\(\mathrm{Cov}(R_1, \hat b) = n^{-1}\,\E[r_{1i}\, b_i]\)</span> where <span class="math inline">\(b_i = (T_i/\pi_i - 1)\,b_1(X_i)\)</span>. Condition on <span class="math inline">\((X_i, Y_i(1), Y_i(0))\)</span>; the only remaining randomness is <span class="math inline">\(T_i \mid X_i\)</span>. Since <span class="math inline">\(T_i^2 = T_i\)</span>, <span class="math inline">\(\E[T_i^2/\pi_i^2 \mid X_i] = 1/\pi_i\)</span> and <span class="math inline">\(\E[T_i/\pi_i \mid X_i] = 1\)</span>, so <span class="math inline">\(\E[T_i/\pi_i\cdot(T_i/\pi_i - 1)\mid X_i] = 1/\pi_i - 1\)</span>. Taking outer expectation and using <span class="math inline">\(\E\{Y_i(1)-b_1^*(X_i)\mid X_i\} = 0\)</span>, the contribution vanishes. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<p>The optimal estimators are: <span class="math display">\[\hat\mu_{1,\mathrm{opt}} = \frac{1}{n}\sum_{i=1}^n\left[\frac{T_i}{\pi_i}\{Y_i-\mu_1^*(X_i)\}+\mu_1^*(X_i)\right], \quad \hat\mu_{0,\mathrm{opt}} = \frac{1}{n}\sum_{i=1}^n\left[\frac{1-T_i}{1-\pi_i}\{Y_i-\mu_0^*(X_i)\}+\mu_0^*(X_i)\right].\]</span> Their difference <span class="math inline">\(\hat\tau_{\mathrm{opt}} = \hat\mu_{1,\mathrm{opt}} - \hat\mu_{0,\mathrm{opt}}\)</span> is precisely the AIPW estimator <a href="#eq-aipw" class="quarto-xref">Equation&nbsp;<span>10.5</span></a> with <span class="math inline">\(b_t^*(X) = \E\{Y(t)\mid X\}\)</span>, confirming the Optimal Control Functions theorem by a different route.</p>
+</section>
+<section id="sec-eif" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="sec-eif"><span class="header-section-number">10.7</span> The Efficient Influence Function and Semiparametric Efficiency</h2>
+<p><em>This section states the semiparametric efficiency result and interprets it in light of the estimator development above. A complete proof requires explicit characterization of the nuisance tangent space; see <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (2006)</span> for a rigorous development.</em></p>
+<p>Under the nonparametric model for <span class="math inline">\(O=(X,T,Y)\)</span>, the efficient influence function for the ATE is: <span id="eq-eif-ate"><span class="math display">\[\varphi_{\mathrm{eff}}(O) = \frac{T}{\pi(X)}\{Y-\mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau. \tag{10.12}\]</span></span></p>
+<p>Comparing <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.12</span></a> with <a href="#eq-dr-score" class="quarto-xref">Equation&nbsp;<span>10.4</span></a>, the AIPW estimating function <em>is</em> the efficient influence function <span class="math inline">\(\varphi^*(O)\)</span> from Chapter 9. The augmentation space <span class="math inline">\(\Lambda\)</span> in <a href="#eq-aug-space" class="quarto-xref">Equation&nbsp;<span>10.11</span></a> is the nuisance tangent space of the nonparametric model, and projection onto <span class="math inline">\(\Lambda^\perp\)</span> corresponds to the standard semiparametric operation of removing nuisance variation.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Semiparametric Efficiency Bound for the ATE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the nonparametric model for <span class="math inline">\(O=(X,T,Y)\)</span>, every regular asymptotically linear estimator <span class="math inline">\(\hat\tau\)</span> of the ATE satisfies: <span class="math display">\[\mathrm{Avar}(\sqrt{n}(\hat\tau - \tau)) \;\geq\; \E\{\varphi_{\mathrm{eff}}(O)^2\},\]</span> and the bound is attained by estimators whose influence function equals <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Scope of the Bound
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The result is a specialization to the ATE of the Hájek–Le Cam convolution theorem <span class="citation" data-cites="bickel1993 vandervaart1998">(Bickel et al. 1993; Vaart 1998, Ch. 25)</span>. Regularity rules out Hodges-type super-efficient estimators.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: EIF as the Semiparametric Score
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The efficient influence function plays the same role in semiparametric theory that the score plays in parametric models: its variance gives the information lower bound, analogous to the Cramér–Rao bound. The three derivations in this chapter — bias correction (<a href="#sec-prediction" class="quarto-xref"><span>Section 10.2</span></a>), optimal augmentation (<a href="#sec-class" class="quarto-xref"><span>Section 10.4</span></a>), and semiparametric identification — converge on the same estimating function. This is the deepest explanation of why AIPW occupies a central place in the causal inference toolkit.</p>
+</div>
+</div>
+</section>
+<section id="sec-ibc" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="sec-ibc"><span class="header-section-number">10.8</span> Doubly Robust Regression: Weighted and Augmented Approaches</h2>
+<p>The AIPW estimator achieves double robustness by adding an explicit bias-correction term. An equally important question is how to build double robustness <em>directly into the outcome model fit</em>, so that the prediction estimator is itself doubly robust. The unifying concept is the <em>internal bias calibration</em> (IBC) condition.</p>
+<section id="the-internal-bias-calibration-conditions" class="level3" data-number="10.8.1">
+<h3 data-number="10.8.1" class="anchored" data-anchor-id="the-internal-bias-calibration-conditions"><span class="header-section-number">10.8.1</span> The Internal Bias Calibration Conditions</h3>
+<p>Let <span class="math inline">\(\hat\mu_t(x)\)</span> denote any fitted outcome model and <span class="math inline">\(\hat\pi_i = \hat\pi(X_i)\)</span>. The prediction estimator requires no augmentation if the IPW-weighted residuals vanish: <span id="eq-ibc"><span class="math display">\[\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\} = 0, \qquad \sum_{i=1}^n \frac{1-T_i}{1-\hat\pi_i}\bigl\{Y_i - \hat\mu_0(X_i)\bigr\} = 0. \tag{10.13}\]</span></span></p>
+<p>We call <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.13</span></a> the <em>internal bias calibration</em> (IBC) conditions <span class="citation" data-cites="firth1998robust">(Firth and Bennett 1998)</span>. When both IBC conditions hold, the augmentation terms in <a href="#eq-aipw" class="quarto-xref">Equation&nbsp;<span>10.5</span></a> are zero by construction, so <span class="math inline">\(\hat\tau_{\mathrm{pred}} = \hat\tau_{\mathrm{AIPW}}\)</span> and the prediction estimator is itself doubly robust.</p>
+</section>
+<section id="weighted-regression-approach" class="level3" data-number="10.8.2">
+<h3 data-number="10.8.2" class="anchored" data-anchor-id="weighted-regression-approach"><span class="header-section-number">10.8.2</span> Weighted Regression Approach</h3>
+<p>Suppose the outcome model for arm <span class="math inline">\(t\)</span> is parameterized as <span class="math inline">\(\mu_t(X;\theta_t)\)</span> with a constant term. Instead of fitting by OLS, use <em>IPW-weighted</em> least squares: <span id="eq-wls"><span class="math display">\[\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\bigl\{Y_i - \mu_1(X_i;\theta_1)\bigr\}^2. \tag{10.14}\]</span></span></p>
+<p>The normal equation of <a href="#eq-wls" class="quarto-xref">Equation&nbsp;<span>10.14</span></a> with respect to the intercept component of <span class="math inline">\(\theta_1\)</span> is <span class="math inline">\(\sum_i \frac{T_i}{\hat\pi_i}\{Y_i - \mu_1(X_i;\hat\theta_1)\} = 0\)</span>, which is exactly IBC condition <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.13</span></a>. Hence IPW-weighted fitted values automatically satisfy IBC for any model containing a constant <span class="citation" data-cites="robins1994estimation bang2005doubly">(Robins et al. 1994; Bang and Robins 2005)</span>. The key point is not that weighted least squares creates a fundamentally different doubly robust estimator; rather, it constructs fitted values for which the prediction estimator algebraically equals the AIPW estimator.</p>
+</section>
+<section id="augmented-model-approach-and-the-clever-covariate" class="level3" data-number="10.8.3">
+<h3 data-number="10.8.3" class="anchored" data-anchor-id="augmented-model-approach-and-the-clever-covariate"><span class="header-section-number">10.8.3</span> Augmented Model Approach and the Clever Covariate</h3>
+<p>The augmented approach achieves the same calibration by modifying the covariate set. Let <span class="math inline">\(\hat\mu_1^{(0)}(X_i)\)</span> be any initial fit. Augment it by including the <em>clever covariate</em> <span class="math inline">\(\hat\pi_i^{-1}\)</span> <span class="citation" data-cites="vanderLaan2006targeted vanderLaan2011targeted">(Laan and Rubin 2006; Laan and Rose 2011)</span> and run OLS of <span class="math inline">\(Y_i\)</span> on <span class="math inline">\(\hat\mu_1^{(0)}(X_i)\)</span> and <span class="math inline">\(\hat\pi_i^{-1}\)</span> among treated units: <span id="eq-aug-model"><span class="math display">\[Y_i = \alpha_1 + \beta_1\hat\mu_1^{(0)}(X_i) + \gamma_1\hat\pi_i^{-1} + e_i(1), \qquad T_i = 1. \tag{10.15}\]</span></span></p>
+<p>The fitted outcome model evaluated at all units is <span class="math inline">\(\hat\mu_1(X_i) = \hat\alpha_1 + \hat\beta_1\hat\mu_1^{(0)}(X_i) + \hat\gamma_1\hat\pi_i^{-1}\)</span>.</p>
+<p>The normal equation for <span class="math inline">\(\hat\gamma_1\)</span> (the coefficient on <span class="math inline">\(\hat\pi_i^{-1}\)</span>) is <span class="math inline">\(\sum_i \frac{T_i}{\hat\pi_i}\{Y_i - \hat\mu_1(X_i)\} = 0\)</span>, exactly IBC condition <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.13</span></a>. Since this sum equals zero, we can add it to the prediction estimator: <span class="math display">\[\hat\mu_1^{\mathrm{pred}} = \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i) + \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\},\]</span> which is the AIPW representation. The covariate <span class="math inline">\(\hat\pi_i^{-1}\)</span> is called <em>clever</em> because it is chosen so that the fitted regression satisfies the same score equation that appears in the AIPW bias correction. When the initial outcome model is misspecified, including this covariate lets the regression absorb the component of the model error correlated with <span class="math inline">\(\hat\pi_i^{-1}\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Behavior Under Correct Outcome Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If the initial outcome model <span class="math inline">\(\hat\mu_1^{(0)}\)</span> is correctly specified, then <span class="math inline">\(\hat\alpha_1 \overset{p}{\to} 0\)</span>, <span class="math inline">\(\hat\beta_1 \overset{p}{\to} 1\)</span>, and <span class="math inline">\(\hat\gamma_1 \overset{p}{\to} 0\)</span>: the augmented model reduces asymptotically to <span class="math inline">\(\hat\mu_1^{(0)}(X_i)\)</span>, and including the additional covariates carries no asymptotic efficiency cost.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Connection to TMLE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The augmented model approach captures the same targeting idea that underlies <em>targeted minimum loss-based estimation</em> (TMLE), introduced by <span class="citation" data-cites="vanderLaan2006targeted">Laan and Rubin (2006)</span>. The standard TMLE targeting step uses the fixed-offset form (coefficient on <span class="math inline">\(\hat\mu_1^{(0)}\)</span> fixed at 1), the minimal fluctuation sufficient to satisfy the IBC condition. The model <a href="#eq-aug-model" class="quarto-xref">Equation&nbsp;<span>10.15</span></a> goes further by freely estimating <span class="math inline">\(\hat\beta_1\)</span>, providing additional recalibration of the initial fit beyond canonical TMLE.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-lab" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">10.9</span> Lab: Simulation Study</h2>
+<p>This lab compares four estimators of the ATE: <span class="math inline">\(\hat\tau_{\mathrm{HT}}\)</span>, <span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span>, the fixed-offset augmented-model estimator <span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span>, and the improved augmented-model estimator <span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span> of <a href="#eq-aug-model" class="quarto-xref">Equation&nbsp;<span>10.15</span></a>. The propensity score model is correctly specified throughout; two scenarios differ in whether the outcome regression is correctly specified.</p>
+<p><strong>Data-generating process.</strong> <span class="math inline">\(n = 1000\)</span> observations: <span class="math inline">\(X_i \sim N(0,1)\)</span>, <span class="math inline">\(T_i \mid X_i \sim \mathrm{Bernoulli}(\mathrm{expit}(0.5X_i))\)</span>, <span class="math inline">\(Y_i(1) = 1 + X_i + 0.5X_i^2 + \varepsilon_i(1)\)</span>, <span class="math inline">\(Y_i(0) = X_i + 0.5X_i^2 + \varepsilon_i(0)\)</span>, with <span class="math inline">\(\varepsilon_i(t) \sim N(0,1)\)</span> i.i.d., giving true ATE <span class="math inline">\(\tau = 1\)</span>. The quadratic term <span class="math inline">\(0.5X_i^2\)</span> is the component that a linear outcome model omits.</p>
+<p><strong>Scenarios.</strong> Scenario 1 (OR correct): separate linear regressions on <span class="math inline">\((1, X_i, X_i^2)\)</span> within each arm. Scenario 2 (OR misspecified): separate linear regressions on <span class="math inline">\((1, X_i)\)</span> only.</p>
+<p><strong>Results</strong> (<span class="math inline">\(B = 2000\)</span> replications, <code>set.seed(2025)</code>). Entries are bias, variance, MSE <span class="math inline">\(\times 10^3\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><span class="math inline">\(\hat\tau_{\mathrm{HT}}\)</span></th>
+<th><span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span></th>
+<th><span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span></th>
+<th><span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Scenario 1: OR correct</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Bias <span class="math inline">\(\times 10^3\)</span></td>
+<td><span class="math inline">\(-0.37\)</span></td>
+<td><span class="math inline">\(0.19\)</span></td>
+<td><span class="math inline">\(0.19\)</span></td>
+<td><span class="math inline">\(0.20\)</span></td>
+</tr>
+<tr class="odd">
+<td>Var <span class="math inline">\(\times 10^3\)</span></td>
+<td><span class="math inline">\(7.78\)</span></td>
+<td><span class="math inline">\(4.25\)</span></td>
+<td><span class="math inline">\(4.25\)</span></td>
+<td><span class="math inline">\(4.24\)</span></td>
+</tr>
+<tr class="even">
+<td>MSE <span class="math inline">\(\times 10^3\)</span></td>
+<td><span class="math inline">\(7.78\)</span></td>
+<td><span class="math inline">\(4.25\)</span></td>
+<td><span class="math inline">\(4.25\)</span></td>
+<td><span class="math inline">\(4.24\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Scenario 2: OR misspecified</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Bias <span class="math inline">\(\times 10^3\)</span></td>
+<td><span class="math inline">\(2.41\)</span></td>
+<td><span class="math inline">\(2.20\)</span></td>
+<td><span class="math inline">\(2.20\)</span></td>
+<td><span class="math inline">\(1.06\)</span></td>
+</tr>
+<tr class="odd">
+<td>Var <span class="math inline">\(\times 10^3\)</span></td>
+<td><span class="math inline">\(7.72\)</span></td>
+<td><span class="math inline">\(7.70\)</span></td>
+<td><span class="math inline">\(7.54\)</span></td>
+<td><span class="math inline">\(4.49\)</span></td>
+</tr>
+<tr class="even">
+<td>MSE <span class="math inline">\(\times 10^3\)</span></td>
+<td><span class="math inline">\(7.73\)</span></td>
+<td><span class="math inline">\(7.71\)</span></td>
+<td><span class="math inline">\(7.55\)</span></td>
+<td><span class="math inline">\(4.49\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scenario 1.</strong> All four estimators are approximately unbiased. <span class="math inline">\(\hat\tau_{\mathrm{HT}}\)</span> has roughly twice the MSE of the others because it discards the outcome model. <span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span>, <span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span>, and <span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span> are essentially identical (MSE <span class="math inline">\(\approx 4.25 \times 10^{-3}\)</span>), confirming that when the OR model is correct the augmented parameters <span class="math inline">\((\hat\alpha_t, \hat\beta_t, \hat\gamma_t)\)</span> converge to <span class="math inline">\((0, 1, 0)\)</span>.</p>
+<p><strong>Scenario 2.</strong> All four remain nearly unbiased (PS is correct throughout), confirming double robustness. The efficiency ordering is <span class="math inline">\(\hat\tau_{\mathrm{aug}^+} \ll \hat\tau_{\mathrm{aug}} &lt; \hat\tau_{\mathrm{AIPW}} \ll \hat\tau_{\mathrm{HT}}\)</span>. The improved estimator <span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span> achieves a <strong>42% MSE reduction</strong> relative to AIPW (<span class="math inline">\(4.49\)</span> vs <span class="math inline">\(7.71 \times 10^{-3}\)</span>). The free coefficient <span class="math inline">\(\hat\beta_t\)</span> recalibrates the scale of the initial fit, leaving residuals far smaller than those from the misspecified <span class="math inline">\(\hat\mu_t^{(0)}\)</span> alone.</p>
+</section>
+<section id="sec-asymp" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="sec-asymp"><span class="header-section-number">10.10</span> Asymptotic Inference with Estimated Nuisance Functions</h2>
+<p>Under suitable regularity conditions: <span class="math display">\[\sqrt{n}(\hat\tau_{\mathrm{AIPW}}-\tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i) + o_p(1) \overset{d}{\longrightarrow} N\!\bigl(0,\;\E\{\varphi_{\mathrm{eff}}(O)^2\}\bigr).\]</span></p>
+<p>The <span class="math inline">\(o_p(1)\)</span> remainder captures the effect of nuisance estimation error. Neyman orthogonality implies that this error enters the AIPW estimator only through a second-order remainder. A sufficient condition for the remainder to be negligible is the <em>product-rate condition</em>: <span id="eq-product-rate"><span class="math display">\[\|\hat\pi-\pi\|\cdot\|\hat\mu_t-\mu_t\| = o_p(n^{-1/2}), \qquad t=0,1, \tag{10.16}\]</span></span> where the norms are mean-squared-error norms. This allows each nuisance estimator to converge at rate <span class="math inline">\(n^{-1/4}\)</span>, much weaker than the parametric rate <span class="math inline">\(n^{-1/2}\)</span> required of each individually. In modern applications with flexible machine-learning methods, this is usually paired with <em>sample splitting</em> or <em>cross-fitting</em>; Chapter 11 develops the cross-fitting approach in detail.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Neyman Orthogonality
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The first-order insensitivity of the AIPW estimating function to nuisance perturbations is an instance of <em>Neyman orthogonality</em>, a property shared by a broad class of semiparametric estimators. Chapter 11 exploits this property systematically through cross-fitting, which eliminates the need for additional empirical-process conditions on the nuisance estimators.</p>
+</div>
+</div>
+<section id="variance-estimation-and-confidence-intervals" class="level3" data-number="10.10.1">
+<h3 data-number="10.10.1" class="anchored" data-anchor-id="variance-estimation-and-confidence-intervals"><span class="header-section-number">10.10.1</span> Variance Estimation and Confidence Intervals</h3>
+<p>Because <span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span> is asymptotically linear with influence function <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span>, its asymptotic variance is estimated consistently by the empirical variance of the plug-in influence values. Compute: <span id="eq-ifhat"><span class="math display">\[\hat\varphi_i = \frac{T_i}{\hat\pi(X_i)}\{Y_i-\hat\mu_1(X_i)\} - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i-\hat\mu_0(X_i)\} + \hat\mu_1(X_i)-\hat\mu_0(X_i) - \hat\tau_{\mathrm{AIPW}}, \tag{10.17}\]</span></span> and set: <span id="eq-var-aipw"><span class="math display">\[\hat V = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i-\bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i. \tag{10.18}\]</span></span></p>
+<p>The Wald confidence interval is <span class="math inline">\(\hat\tau_{\mathrm{AIPW}} \pm z_{1-\alpha/2}\sqrt{\hat V}\)</span>.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Extreme Propensity Scores
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When <span class="math inline">\(\hat\pi(X_i)\)</span> is near <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, the IPW weights become large and can destabilize the estimator. Practical remedies include overlap diagnostics, truncation of extreme propensity scores, or restricting the target population to a subgroup with adequate overlap. The augmented model approach of <a href="#sec-ibc" class="quarto-xref"><span>Section 10.8</span></a> provides a complementary strategy by building the propensity score into the outcome regression itself.</p>
+</div>
+</div>
+<p><strong>When plug-in fails.</strong> For finite-dimensional parametric nuisance models, the product-rate condition and standard Donsker arguments hold automatically. The situation changes with flexible machine-learning methods: nuisance convergence rates may be slower than <span class="math inline">\(n^{-1/4}\)</span>, and machine-learning function classes are typically not Donsker. Chapter 11 addresses both difficulties through Neyman orthogonality and cross-fitting, producing the <em>double/debiased machine learning</em> (DML) estimator <span class="citation" data-cites="chernozhukov2018double">(Chernozhukov et al. 2018)</span> as a direct extension of the AIPW development here.</p>
+</section>
+</section>
+<section id="sec-comparison" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="sec-comparison"><span class="header-section-number">10.11</span> Comparison of Regression, IPW, and AIPW</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Estimator</strong></th>
+<th><strong>Uses <span class="math inline">\(\mu_t\)</span></strong></th>
+<th><strong>Uses <span class="math inline">\(\pi\)</span></strong></th>
+<th><strong>Consistent if</strong></th>
+<th><strong>Main weakness</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regression (prediction)</td>
+<td>Yes</td>
+<td>No</td>
+<td>outcome model correct</td>
+<td>Sensitive to OR misspecification</td>
+</tr>
+<tr class="even">
+<td>IPW (Horvitz–Thompson)</td>
+<td>No</td>
+<td>Yes</td>
+<td>propensity model correct</td>
+<td>Unstable under weak overlap</td>
+</tr>
+<tr class="odd">
+<td>AIPW</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>either model correct</td>
+<td>Requires estimating both nuisances and careful inference</td>
+</tr>
+</tbody>
+</table>
+<p>When overlap is weak, the IBC-based approaches of <a href="#sec-ibc" class="quarto-xref"><span>Section 10.8</span></a> can stabilize the AIPW estimator by folding the propensity score into the outcome-model fit, rather than relying on a separate multiplicative correction.</p>
+</section>
+<section id="chapter-summary" class="level2" data-number="10.12">
+<h2 data-number="10.12" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">10.12</span> Chapter Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Symbol</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\tau\)</span></td>
+<td>ATE <span class="math inline">\(= \E\{Y(1)-Y(0)\}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mu_t(x)\)</span></td>
+<td>Outcome regression <span class="math inline">\(\E(Y\mid T=t,X=x)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\pi(x)\)</span></td>
+<td>Propensity score <span class="math inline">\(P(T=1\mid X=x)\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(b_t(x)\)</span></td>
+<td>Control function; optimal choice <span class="math inline">\(b_t^*(x)=\E\{Y(t)\mid X=x\}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span></td>
+<td>AIPW estimator <a href="#eq-aipw" class="quarto-xref">Equation&nbsp;<span>10.5</span></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\Lambda\)</span></td>
+<td>Augmentation space <a href="#eq-aug-space" class="quarto-xref">Equation&nbsp;<span>10.11</span></a></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\varphi_{\mathrm{eff}}(O)\)</span></td>
+<td>Efficient influence function <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.12</span></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\pi_i^{-1}\)</span></td>
+<td>Clever covariate; its normal equation enforces IBC <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.13</span></a></td>
+</tr>
+<tr class="odd">
+<td>IBC</td>
+<td>Internal bias calibration conditions <span class="citation" data-cites="firth1998robust">(Firth and Bennett 1998)</span></td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li>The prediction estimator is biased when the outcome model is misspecified; the bias can be estimated with the propensity score and subtracted to yield the AIPW estimator.</li>
+<li>The AIPW estimator has two key properties: <em>double robustness</em> (consistent when either model is correct) and <em>class-optimal variance</em> (the choice <span class="math inline">\(b_t^* = \E\{Y(t)\mid X\}\)</span> minimizes variance when both nuisances are correctly specified).</li>
+<li>The optimality of AIPW follows also from a Hilbert-space projection: the optimal estimator is the projection of the HT estimator onto <span class="math inline">\(\Lambda^\perp\)</span>, and the Pythagorean identity governs the variance reduction.</li>
+<li>The AIPW estimating function is the efficient influence function for the ATE; its variance gives the semiparametric efficiency bound. The bias-correction, optimal-augmentation, and semiparametric-efficiency derivations all converge on the same object.</li>
+<li>Double robustness can be enforced within the outcome-regression fitting step, by IPW-weighted regression or by an augmented regression model including the inverse propensity score as a clever covariate (TMLE connection).</li>
+<li>For asymptotic inference, the product-rate condition is sufficient for root-<span class="math inline">\(n\)</span> inference; Chapter 11 develops cross-fitting for the machine-learning setting.</li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="10.13">
+<h2 data-number="10.13" class="anchored" data-anchor-id="problems"><span class="header-section-number">10.13</span> Problems</h2>
+<p><strong>1. Bias of the prediction estimator.</strong></p>
+<ol type="a">
+<li>Verify the bias formula <a href="#eq-pred-bias" class="quarto-xref">Equation&nbsp;<span>10.1</span></a> by writing <span class="math inline">\(\tau_{\mathrm{pred}}(m)-\tau\)</span> as a difference of working-model errors and simplifying.</li>
+<li>Under what condition on the propensity score model does <span class="math inline">\(\widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}})\)</span> have zero expectation? Provide a careful argument using iterated expectations.</li>
+<li>Construct a simple example (binary <span class="math inline">\(X\)</span>, binary <span class="math inline">\(T\)</span>, binary <span class="math inline">\(Y\)</span>) in which both the estimated bias is nonzero and the outcome model is misspecified, but the AIPW estimator is still consistent.</li>
+</ol>
+<p><strong>2. The AIPW class and optimal control functions.</strong></p>
+<ol type="a">
+<li>Verify that <span class="math inline">\(\hat\tau_b\)</span> with <span class="math inline">\(b_t = \mu_t\)</span> equals the AIPW estimator <a href="#eq-aipw" class="quarto-xref">Equation&nbsp;<span>10.5</span></a>.</li>
+<li>Using <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.8</span></a>, show that <span class="math inline">\(b_t^*(x) = \E\{Y(t)\mid x\}\)</span> minimizes conditional variance by completing the square in <span class="math inline">\(b_t\)</span>.</li>
+<li>Suppose <span class="math inline">\(\pi(x) = 1/2\)</span> for all <span class="math inline">\(x\)</span>. Simplify <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.8</span></a> and interpret the result.</li>
+</ol>
+<p><strong>3. Double robustness.</strong></p>
+<ol type="a">
+<li>Verify Case 1 of the Double Robustness theorem: with <span class="math inline">\(\mu_t = \mu_t^*\)</span> and arbitrary <span class="math inline">\(\pi\)</span>, show <span class="math inline">\(\E\{\phi\}=0\)</span>.</li>
+<li>Verify Case 2: with <span class="math inline">\(\pi = \pi^*\)</span> and arbitrary <span class="math inline">\(\mu_t\)</span>, show <span class="math inline">\(\E\{\phi\}=0\)</span>.</li>
+<li>Provide a counterexample showing <span class="math inline">\(\E\{\phi\}\neq 0\)</span> when both models are misspecified.</li>
+</ol>
+<p><strong>4. Projection and the Pythagorean identity.</strong></p>
+<ol type="a">
+<li>Verify <span class="math inline">\(\mathrm{Cov}(\hat\theta_{\mathrm{opt}},\hat b^*)=0\)</span> from the definition of <span class="math inline">\(\hat b^*\)</span>.</li>
+<li>Deduce <a href="#eq-pythagoras" class="quarto-xref">Equation&nbsp;<span>10.10</span></a> from the decomposition <span class="math inline">\(\hat\theta_0 = \hat\theta_{\mathrm{opt}} + \hat b^*\)</span>.</li>
+<li>Explain why <span class="math inline">\(\hat\theta_{\mathrm{opt}}\)</span> is still unbiased for <span class="math inline">\(\theta\)</span> even though <span class="math inline">\(\hat b^* \in \Lambda\)</span> is subtracted.</li>
+</ol>
+<p><strong>5. Semiparametric efficiency.</strong></p>
+<ol type="a">
+<li>Show <span class="math inline">\(\E\{\varphi_{\mathrm{eff}}(O)^2\} \leq \E\{\varphi_{\mathrm{IPW}}(O)^2\}\)</span> by writing <span class="math inline">\(\varphi_{\mathrm{IPW}} = \varphi_{\mathrm{eff}} + (\varphi_{\mathrm{IPW}}-\varphi_{\mathrm{eff}})\)</span> and showing the cross term vanishes.</li>
+<li>Interpret the efficiency gain <span class="math inline">\(\E\{\varphi_{\mathrm{IPW}}^2\}-\E\{\varphi_{\mathrm{eff}}^2\}\)</span> in terms of the variance of the outcome regression.</li>
+<li>Give one reason why an efficient estimator based on <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> may still be disfavored in practice relative to a simpler, less efficient alternative.</li>
+</ol>
+<p><strong>6. Augmented model and the clever covariate.</strong></p>
+<ol type="a">
+<li>Let <span class="math inline">\(\hat\mu_1^{(0)}(X_i)\)</span> be any initial outcome model fit. Show that the normal equation for <span class="math inline">\(\hat\gamma_1\)</span> in the augmented model <a href="#eq-aug-model" class="quarto-xref">Equation&nbsp;<span>10.15</span></a> is exactly the IBC condition <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.13</span></a>, and conclude that the prediction estimator can always be written in AIPW form.</li>
+<li>Explain why <span class="math inline">\(\hat\gamma_1 \overset{p}{\to} 0\)</span> when the initial model <span class="math inline">\(\hat\mu_1^{(0)}\)</span> is correctly specified, and what this implies about the efficiency cost of including the clever covariate.</li>
+<li>Explain in words why <span class="math inline">\(\hat\pi_i^{-1}\)</span> is called the clever covariate: what bias does it absorb, and why does this make the prediction estimator a debiased estimator even when <span class="math inline">\(\hat\mu_1^{(0)}\)</span> is misspecified?</li>
+</ol>
+<p><strong>7. Coverage of the Wald confidence interval (computational).</strong> Using the DGP of <a href="#sec-lab" class="quarto-xref"><span>Section 10.9</span></a> — <span class="math inline">\(X_i \sim N(0,1)\)</span>, <span class="math inline">\(T_i \mid X_i \sim \mathrm{Bernoulli}(\mathrm{expit}(\gamma X_i))\)</span>, <span class="math inline">\(Y_i(t) = t + X_i + 0.5X_i^2 + \varepsilon_i(t)\)</span> with <span class="math inline">\(\varepsilon_i(t) \sim N(0,1)\)</span> — implement the AIPW estimator and the influence-function variance estimator <a href="#eq-var-aipw" class="quarto-xref">Equation&nbsp;<span>10.18</span></a>. Use logistic regression of <span class="math inline">\(T\)</span> on <span class="math inline">\((1, X)\)</span> for <span class="math inline">\(\hat\pi\)</span> and OLS of <span class="math inline">\(Y\)</span> on <span class="math inline">\((1, X, X^2)\)</span> separately in each arm for <span class="math inline">\(\hat\mu_t\)</span>; truncate <span class="math inline">\(\hat\pi\)</span> to <span class="math inline">\([10^{-3}, 1-10^{-3}]\)</span>.</p>
+<ol type="a">
+<li>With <span class="math inline">\(\gamma = 0.5\)</span>, <span class="math inline">\(n = 500\)</span>, <span class="math inline">\(B = 2000\)</span> replications, compute the empirical coverage of the 95% Wald interval <span class="math inline">\(\hat\tau_{\mathrm{AIPW}} \pm z_{0.975}\sqrt{\hat V}\)</span>. Confirm coverage is close to nominal, and compare the average standard error <span class="math inline">\(\overline{\sqrt{\hat V}}\)</span> with the empirical standard deviation of <span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span> across replications.</li>
+<li>Repeat with <span class="math inline">\(\gamma \in \{1.5,\, 3.0\}\)</span>, producing increasingly weak overlap. Report coverage, average SE, and empirical SD. What do you observe?</li>
+<li>Which assumption of the asymptotic theory (<a href="#sec-asymp" class="quarto-xref"><span>Section 10.10</span></a>) is stressed as <span class="math inline">\(\gamma\)</span> grows, and which of the remedies in the Extreme Propensity Scores warning would you try first? (No simulation required; a paragraph suffices.)</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_09.html" class="pagination-link" aria-label="Estimating Equations and Influence Functions">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
