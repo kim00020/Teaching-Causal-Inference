@@ -1,0 +1,365 @@
+---
+engine: knitr
+suppress-bibliography: true
+---
+
+# Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting
+
+::: {.callout-note icon=false}
+## Learning Objectives
+
+By the end of this chapter, students should be able to:
+
+1. Explain why flexible nuisance estimation can produce misleading inference for a causal parameter even when predictive accuracy is high.
+2. Define Neyman orthogonality, verify it for a given estimating function, and explain how it reduces sensitivity to first-order nuisance estimation error.
+3. Identify the orthogonal score for the ATE, recognize it as the efficient influence function from Chapter 10, and state the three roles it simultaneously fulfills.
+4. Describe sample splitting, explain why independence between nuisance estimation and score evaluation simplifies asymptotic arguments, and articulate its efficiency cost.
+5. Describe $K$-fold cross-fitting, write the cross-fitted moment equation explicitly, and explain how cross-fitting recovers efficiency relative to a single split.
+6. State the product-rate condition for the cross-fitted AIPW estimator, connect it to Neyman orthogonality, and explain why it allows each nuisance estimator to converge at rate $n^{-1/4}$.
+7. Construct a consistent variance estimator from out-of-fold estimated influence values and form a Wald confidence interval.
+8. Articulate what machine learning can and cannot contribute to causal inference, and follow the practical workflow for cross-fitted orthogonal-score estimation.
+:::
+
+## Why Flexible Nuisance Estimation Is Both Attractive and Dangerous {#sec-motivation}
+
+In Chapters 9 and 10 we developed estimation and inference using estimating equations, influence functions, doubly robust scores, and semiparametric efficiency. The causal parameter of interest depends on nuisance functions such as the outcome regressions $\mu_t(x) = \E(Y \mid T=t,\, X=x)$ and the propensity score $\pi(x) = P(T=1 \mid X=x)$. In many real applications, these may be too complex to model accurately with low-dimensional parametric forms, making flexible methods attractive: penalized regression, splines, random forests, boosting, neural networks, and ensemble learning.
+
+These methods can substantially improve predictive accuracy, but they also create new statistical difficulties: they may converge more slowly than parametric estimators; they may overfit the observed sample; their asymptotic behavior may be difficult to characterize; and naive plug-in inference can fail even when prediction quality is good.
+
+Better nuisance prediction therefore does not automatically imply valid inference for the target causal parameter. The goal of this chapter is to explain how orthogonal scores, sample splitting, and cross-fitting make it possible to combine flexible nuisance estimation with valid large-sample inference.
+
+## Why Naive Plug-In Estimation Can Fail {#sec-plugin}
+
+Suppose the parameter of interest is $\psi = \Psi(\eta)$, where $\eta$ denotes a nuisance object such as $(\mu_0, \mu_1, \pi)$. The *plug-in estimator* $\hat\psi_{\mathrm{plug}} = \Psi(\hat\eta)$ has a first-order Taylor expansion around the true nuisance $\eta_0$:
+$$\hat\psi_{\mathrm{plug}} - \psi = \underbrace{D_\eta\Psi(\eta_0)[\hat\eta - \eta_0]}_{\text{linear term}} + \underbrace{R(\hat\eta,\,\eta_0)}_{\text{second-order remainder}}, $$ {#eq-taylor}
+where $D_\eta\Psi(\eta_0)[h]$ denotes the Gateaux derivative and $|R(\hat\eta, \eta_0)| \lesssim \|\hat\eta - \eta_0\|^2$.
+
+The second-order remainder is typically manageable: if $\|\hat\eta - \eta_0\| = o_p(n^{-1/4})$ then $R = o_p(n^{-1/2})$. The obstacle is the *linear term*, proportional to the nuisance estimation error.
+
+**Finite-dimensional nuisance.** If $\eta \in \mathbb{R}^d$ and $\hat\eta - \eta_0 = O_p(n^{-1/2})$, the linear term is $O_p(n^{-1/2})$ and contaminates the root-$n$ limiting distribution. If the functional satisfies $D_\eta\Psi(\eta_0) = 0$ — *Neyman orthogonality* — the linear term vanishes and the expansion reduces to the second-order remainder alone, $O_p(n^{-1})$, asymptotically negligible.
+
+**Infinite-dimensional nuisance.** When $\eta$ belongs to a function space, orthogonality removes the *population bias* but does not control the *empirical process term*. Writing the plug-in estimating equation as $\mathbb{P}_n\{\phi(\,\cdot\,;\psi, \hat\eta)\} = 0$, the deviation from the population equation decomposes as:
+$$\mathbb{P}_n\{\phi(\,\cdot\,;\psi,\hat\eta)\} - \mathbb{P}_n\{\phi(\,\cdot\,;\psi,\eta_0)\} = \underbrace{P\bigl\{\phi(\,\cdot\,;\psi,\hat\eta) - \phi(\,\cdot\,;\psi,\eta_0)\bigr\}}_{\text{population bias}} + \underbrace{(\mathbb{P}_n - P)\bigl\{\phi(\,\cdot\,;\psi,\hat\eta) - \phi(\,\cdot\,;\psi,\eta_0)\bigr\}}_{\text{empirical process term}}.$$ {#eq-decomp}
+
+Neyman orthogonality controls the *population bias*: because the Gateaux derivative vanishes at the truth, the population bias is second order in $\|\hat\eta - \eta_0\|$. For flexible machine-learning estimators, the *empirical process term* can remain non-negligible even as $\hat\eta$ converges consistently. This is why orthogonality and cross-fitting are *complements* rather than substitutes.
+
+::: {.callout-note icon=false}
+## Remark
+
+This problem is not specific to machine learning. It arises whenever nuisance parameters are estimated in an infinite-dimensional model. Machine learning makes the issue more visible because it encourages highly adaptive nuisance estimation; see @chernozhukov2018double for a systematic treatment.
+:::
+
+## Orthogonal Scores {#sec-orthogonal}
+
+::: {.callout-note icon=false}
+## Definition: Neyman Orthogonality
+
+The score function $\phi(O;\,\psi,\eta)$ is called **orthogonal** (or **Neyman orthogonal**) at the truth $(\psi_0, \eta_0)$ if the Gateaux derivative of the estimating equation with respect to the nuisance, evaluated at the truth, vanishes:
+$$\left.\frac{\partial}{\partial r}\E\bigl\{\phi(O;\,\psi_0,\,\eta_0 + r h)\bigr\}\right|_{r=0} = 0$$
+for all perturbation directions $h$ in a suitable class.
+:::
+
+This means small local perturbations of the nuisance parameter have no first-order effect on the estimating equation at the truth. Orthogonality does not mean nuisance estimation no longer matters: it controls only the population-level bias, and a separate argument (cross-fitting) is needed to rule out the additional bias from evaluating the score on the same sample used to estimate $\hat\eta$.
+
+::: {.callout-note icon=false}
+## Remark: Neyman's Original Insight
+
+The terminology honors Jerzy Neyman, whose work on hypothesis testing introduced the idea of constructing test statistics that are insensitive to nuisance parameters. In the modern semiparametric literature the concept was formalized by @robins1994estimation and others, and later made systematic in the double machine learning framework of @chernozhukov2018double.
+:::
+
+## The Orthogonal Score for the Average Treatment Effect {#sec-ate-score}
+
+The efficient influence function from Chapter 10 is:
+$$\varphi_{\mathrm{eff}}(O;\,\tau,\eta) = \frac{T}{\pi(X)}\{Y - \mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y - \mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau,$$ {#eq-orth-score-ate}
+where $\eta = (\mu_0, \mu_1, \pi)$. We now prove this score is Neyman orthogonal.
+
+::: {.callout-tip icon=false}
+## Lemma: Neyman Orthogonality of the ATE Score
+
+The score $\varphi_{\mathrm{eff}}(O;\,\tau,\eta)$ in @eq-orth-score-ate is Neyman orthogonal at every truth $(\tau_0, \eta_0)$ satisfying the identification assumptions. That is, for every bounded perturbation direction $h(x)$, $g(x)$, or $\ell(x)$:
+$$\left.\frac{\partial}{\partial r}\E\!\left\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\,\mu_0,\,\mu_1,\,\pi+rh)\right\}\right|_{r=0} = 0,$$
+$$\left.\frac{\partial}{\partial r}\E\!\left\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\,\mu_0,\,\mu_1+rg,\,\pi)\right\}\right|_{r=0} = 0,$$
+$$\left.\frac{\partial}{\partial r}\E\!\left\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\,\mu_0+r\ell,\,\mu_1,\,\pi)\right\}\right|_{r=0} = 0.$$
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof
+
+Throughout, recall $\E(Y \mid T=1, X) = \mu_1(X)$, $\E(Y \mid T=0, X) = \mu_0(X)$, $\E(T \mid X) = \pi(X)$.
+
+**Perturbation in $\pi$.** Replace $\pi$ by $\pi + rh$ and differentiate. The derivative becomes $\E\!\left[-\frac{T\,h(X)}{\pi(X)^2}\{Y-\mu_1(X)\} - \frac{(1-T)\,h(X)}{(1-\pi(X))^2}\{Y-\mu_0(X)\}\right]$. Conditioning on $X$: $\E[T\{Y-\mu_1(X)\}\mid X] = \pi(X)\mu_1(X) - \mu_1(X)\pi(X) = 0$, and similarly $\E[(1-T)\{Y-\mu_0(X)\}\mid X] = 0$. Both conditional expectations vanish.
+
+**Perturbation in $\mu_1$.** Replace $\mu_1$ by $\mu_1 + rg$. The derivative is $\E\!\left[g(X)\left(1 - \frac{T}{\pi(X)}\right)\right]$. Conditioning on $X$: $\E\!\left[1 - T/\pi(X) \mid X\right] = 1 - \pi(X)/\pi(X) = 0$.
+
+**Perturbation in $\mu_0$.** Replace $\mu_0$ by $\mu_0 + r\ell$. The derivative is $\E\!\left[\ell(X)\left(\frac{1-T}{1-\pi(X)} - 1\right)\right]$. Conditioning on $X$: $\E[(1-T)/(1-\pi(X)) - 1 \mid X] = (1-\pi(X))/(1-\pi(X)) - 1 = 0$. $\square$
+:::
+
+::: {.callout-note icon=false}
+## Remark: What the Proof Reveals
+
+Each of the three derivative calculations reduces to a single key fact: the conditional mean of the IPW weight equals one. Specifically, $\E(T/\pi(X)\mid X) = 1$ and $\E((1-T)/(1-\pi(X))\mid X) = 1$ are immediate consequences of $\E(T\mid X) = \pi(X)$, the engine behind both the balancing theorem and the IPW identification formula (Chapter 6). Neyman orthogonality of the ATE score is therefore a direct consequence of how the propensity score is defined.
+:::
+
+The score @eq-orth-score-ate simultaneously fulfills three purposes:
+
+1. It *identifies* $\tau$ through the moment condition $\E\{\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\} = 0$.
+2. It is *doubly robust*, yielding a consistent estimator whenever either the outcome model or the propensity score model is correctly specified.
+3. It is the *efficient influence function*, so any estimator based on it achieves the semiparametric efficiency bound.
+
+## Why Reusing the Same Data Can Be Problematic {#sec-reuse}
+
+Define the centered empirical process $\mathbb{G}_n f = \sqrt{n}\,(\mathbb{P}_n - P) f$. With the plug-in AIPW estimating equation, the remainder $R_n$ decomposes exactly as in @eq-decomp:
+$$R_n = \underbrace{P\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{\text{population bias}} + \underbrace{(\mathbb{P}_n - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{\text{empirical process term}}.$$ {#eq-Rn-decomp}
+
+By Neyman orthogonality (@sec-ate-score), the population bias is $o_p(n^{-1/2})$ under the product-rate condition. The *empirical process term* $n^{-1/2}\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\}$ depends on $\hat\eta$ estimated from the same sample. Whether it is $o_p(n^{-1/2})$ depends on how complex the class $\{f_\eta : \eta \in \mathcal{H}\}$ is — a question the Donsker condition answers.
+
+::: {.callout-note icon=false}
+## Definition: Donsker Class
+
+A class of measurable functions $\mathcal{F}$ is a **Donsker class** if the empirical process $\{\mathbb{G}_n f : f \in \mathcal{F}\}$ converges weakly in $\ell^\infty(\mathcal{F})$ to a tight Gaussian process. Equivalently, $\sup_{f \in \mathcal{F}}|(\mathbb{P}_n - P) f| = O_p(n^{-1/2})$ and the fluctuations of $n^{1/2}(\mathbb{P}_n - P)$ over $\mathcal{F}$ are stochastically equicontinuous; see @vandervaart1998, Ch. 19.
+:::
+
+::: {.callout-note icon=false}
+## Example: Donsker and Non-Donsker Classes
+
+- **Parametric classes** (e.g., logistic regression models indexed by a finite-dimensional parameter) are Donsker under mild moment conditions.
+- **Hölder-smooth function classes** on $[0,1]^d$ with smoothness index $s > d/2$ are Donsker.
+- **Indicator classes** $\{x \mapsto \mathbf{1}(x \leq t) : t \in \mathbb{R}\}$ are Donsker by the classical theorem.
+- **Random forests and neural networks** typically fall outside classical Donsker regimes in the forms used for modern flexible prediction.
+- **High-dimensional lasso** with a growing number of selected variables also typically falls outside Donsker regimes.
+:::
+
+If $\{f_\eta : \eta \in \mathcal{H}\}$ is Donsker and $\|\hat\eta - \eta_0\| \to 0$, then by stochastic equicontinuity $\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\} = o_p(1)$, making the empirical process term $o_p(n^{-1/2})$. When the Donsker condition fails, this need not hold: the empirical process term can remain non-negligible even as $\hat\eta \to \eta_0$.
+
+::: {.callout-note icon=false}
+## Remark: Donsker Conditions and Machine Learning
+
+The Donsker condition fails for random forests, neural networks, and high-dimensional lasso precisely because their function classes are too rich. Cross-fitting sidesteps this entirely: because $\hat\eta^{(-k)}$ is independent of the observations in $\mathcal{I}_k$, the empirical process term is replaced by a sum of conditionally independent terms, each $o_p(n^{-1/2})$ by a conditional law of large numbers, with no Donsker assumption required.
+:::
+
+## Sample Splitting {#sec-splitting}
+
+Sample splitting resolves the data-reuse problem by construction. Partition $\{1,\ldots,n\}$ into a training sample $\mathcal{I}_{\mathrm{train}}$ and an evaluation sample $\mathcal{I}_{\mathrm{eval}}$. Fit nuisance estimators $\hat\eta^{(\mathrm{train})}$ on $\mathcal{I}_{\mathrm{train}}$, then define $\hat\tau$ by solving the estimating equation on the held-out sample:
+$$\frac{1}{|\mathcal{I}_{\mathrm{eval}}|}\sum_{i \in \mathcal{I}_{\mathrm{eval}}} \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(\mathrm{train})}\bigr) = 0.$$
+
+Because $\hat\eta^{(\mathrm{train})}$ is estimated on $\mathcal{I}_{\mathrm{train}}$, it is *independent* of the observations in $\mathcal{I}_{\mathrm{eval}}$. Conditioning on $\hat\eta^{(\mathrm{train})}$, the summands in the empirical process term are independent and mean zero, so by the conditional law of large numbers:
+$$(\mathbb{P}_{n_{\mathrm{e}}} - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta^{(\mathrm{train})}) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\} = o_p(n^{-1/2}).$$
+
+No Donsker condition is needed: independence does the work that Donsker equicontinuity would otherwise have to do.
+
+The main disadvantage is inefficiency: only $|\mathcal{I}_{\mathrm{eval}}|$ observations contribute to estimating $\tau$, and the estimate depends on the particular random partition chosen.
+
+## Cross-Fitting {#sec-crossfit}
+
+Cross-fitting extends sample splitting to recover full-sample efficiency while preserving the independence argument. Partition $\{1,\ldots,n\}$ into $K$ approximately equal folds $\mathcal{I}_1,\ldots,\mathcal{I}_K$. For each fold $k$: (1) estimate nuisance functions on $\{1,\ldots,n\} \setminus \mathcal{I}_k$ to obtain $\hat\eta^{(-k)} = (\hat\mu_0^{(-k)}, \hat\mu_1^{(-k)}, \hat\pi^{(-k)})$; (2) evaluate the orthogonal score on $\mathcal{I}_k$; (3) aggregate across all folds. The cross-fitted estimator $\hat\tau_{\mathrm{DML}}$ solves:
+$$\frac{1}{n}\sum_{k=1}^K\sum_{i \in \mathcal{I}_k} \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(-k)}\bigr) = 0.$$ {#eq-crossfit-moment}
+
+For each fold $k$, the nuisance estimate $\hat\eta^{(-k)}$ is trained on $\{1,\ldots,n\}\setminus\mathcal{I}_k$, independent of the observations in $\mathcal{I}_k$. Conditioning on $\hat\eta^{(-k)}$, the fold-$k$ summands are independent and mean zero, and the conditional law of large numbers gives $R_n^{(k)} = o_p(n^{-1/2})$ for each $k$ without any Donsker assumption. Averaging over folds, $R_n = o_p(n^{-1/2})$.
+
+Cross-fitting therefore achieves two goals simultaneously: it preserves the held-out independence structure, and it ensures every observation serves once as an evaluation point, so the full sample contributes to estimating $\tau$.
+
+::: {.callout-note icon=false}
+## Algorithm: Cross-Fitted Orthogonal-Score Estimator for the ATE
+
+1. Partition the sample into $K$ folds $\mathcal{I}_1,\ldots,\mathcal{I}_K$.
+2. For each $k = 1,\ldots,K$, fit nuisance estimators $\hat\eta^{(-k)} = (\hat\mu_0^{(-k)}, \hat\mu_1^{(-k)}, \hat\pi^{(-k)})$ on $\{1,\ldots,n\} \setminus \mathcal{I}_k$.
+3. For each $i \in \mathcal{I}_k$, compute the out-of-fold score $\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(-k)}\bigr)$.
+4. Solve the cross-fitted moment equation @eq-crossfit-moment. Because the score is linear in $\tau$, the solution is:
+$$\hat\tau_{\mathrm{DML}} = \hat\mu_{1,\mathrm{DML}} - \hat\mu_{0,\mathrm{DML}},$$ {#eq-dml-ate}
+where $\hat\mu_{t,\mathrm{DML}} = \frac{1}{n}\sum_{k=1}^K\sum_{i\in\mathcal{I}_k}\Bigl[\hat\mu_t^{(-k)}(X_i) + \frac{T_i^{(t)}}{\hat\pi^{(-k)}(X_i)^{(t)}}\{Y_i - \hat\mu_t^{(-k)}(X_i)\}\Bigr]$, with $T_i^{(1)} = T_i$, $T_i^{(0)} = 1-T_i$.
+:::
+
+## Double Machine Learning for the Average Treatment Effect {#sec-dml}
+
+The estimator @eq-dml-ate is simply the AIPW estimator from Chapter 10 with out-of-fold nuisance estimates. The term *double machine learning* (DML), introduced by @chernozhukov2018double, refers to the combination of three ingredients:
+
+- *Neyman orthogonality*, which eliminates the population bias term so nuisance estimation error enters only at second order;
+- *cross-fitting*, which eliminates the empirical process term via fold-by-fold conditional independence, removing the need for Donsker conditions; and
+- *flexible machine-learning estimation* of the nuisance functions, which is made valid by the first two ingredients.
+
+The term "double" should not be read as merely meaning "two models"; it refers to the combination of nuisance learning with orthogonalization and debiasing. DML is not a new causal estimand and not a new identification strategy; it is a modern estimation protocol built around an orthogonal score. In the biostatistics literature, the same estimator is often called the *cross-fitted AIPW estimator*.
+
+::: {.callout-warning icon=false}
+## "Double" Does Not Mean "Two Models Are Enough"
+
+It is tempting to think that estimating any two of $\mu_0$, $\mu_1$, and $\pi$ flexibly is sufficient. What matters is that *all* nuisance components entering the orthogonal score are estimated out-of-fold, and that the product-rate condition is satisfied. Using flexible methods for only one nuisance function while misspecifying another can still produce invalid inference.
+:::
+
+## Rate Conditions and Asymptotic Normality {#sec-rates}
+
+::: {.callout-tip icon=false}
+## Theorem: Asymptotic Linearity Under Cross-Fitting
+
+Suppose: (i) the score $\varphi_{\mathrm{eff}}$ is orthogonal at the truth; (ii) the nuisance estimators are consistent in mean squared error; (iii) *strong overlap* holds: there exists $c > 0$ such that $c \leq \pi(X) \leq 1-c$ and $c \leq \hat\pi^{(-k)}(X) \leq 1-c$ a.s. for each fold $k$; (iv) the *product-rate condition* holds:
+$$\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1.$$ {#eq-product-rate}
+
+Then the cross-fitted estimator satisfies:
+$$\sqrt{n}(\hat\tau_{\mathrm{DML}} - \tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi_{\mathrm{eff}}(O_i;\,\tau,\eta) + o_p(1) \overset{d}{\longrightarrow} N\!\Bigl(0,\;\E\bigl[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2\bigr]\Bigr).$$
+:::
+
+The asymptotic variance equals the semiparametric efficiency bound, so $\hat\tau_{\mathrm{DML}}$ is asymptotically efficient whenever the product-rate condition holds.
+
+::: {.callout-note icon=false}
+## Remark: Weak Overlap vs. Strong Overlap
+
+*Weak overlap* ($0 < \pi(X) < 1$ a.s.) is the condition needed for *identification*: every covariate stratum contains units from both treatment arms. *Strong overlap* ($c \leq \pi(X) \leq 1-c$ for some $c > 0$) is what the proof actually uses: it bounds the inverse-probability weights away from infinity. Without strong overlap, influence function values can have infinite variance, and $\sqrt{n}$-consistent inference breaks down even if the ATE is identified [@khan2010irregular]. Trimming extreme weights or restricting the target population to a region of stronger overlap are common practical responses.
+:::
+
+::: {.callout-note collapse=true icon=false}
+## Proof Sketch
+
+Write $n_k = |\mathcal{I}_k|$. The cross-fitted moment equation gives $0 = K^{-1}\sum_k \mathbb{P}_{n_k}\{\varphi_{\mathrm{eff}}(O;\,\tau,\hat\eta^{(-k)})\}$. Adding and subtracting $\varphi_{\mathrm{eff}}(O;\,\tau,\eta_0)$ and rearranging:
+$$\hat\tau_{\mathrm{DML}} - \tau = \frac{1}{n}\sum_{i=1}^n \varphi_{\mathrm{eff}}(O_i;\,\tau,\eta_0) + \frac{1}{K}\sum_{k=1}^K R_n^{(k)},$$
+where each fold remainder $R_n^{(k)}$ decomposes into population bias $B_n^{(k)}$ and empirical process term $E_n^{(k)}$.
+
+**Step 1 (population bias).** By iterated expectations and $\E(T\mid X) = \pi(X)$:
+$$|B_n^{(k)}| \leq C\Bigl(\|\hat\mu_1^{(-k)} - \mu_1\|\cdot\|\hat\pi^{(-k)}-\pi\| + \|\hat\mu_0^{(-k)} - \mu_0\|\cdot\|\hat\pi^{(-k)}-\pi\|\Bigr) = o_p(n^{-1/2})$$
+by the product-rate condition (strong overlap ensures denominators are bounded below).
+
+**Step 2 (empirical process term).** Condition on $\hat\eta^{(-k)}$. Since $\hat\eta^{(-k)}$ is trained on $\{1,\ldots,n\}\setminus\mathcal{I}_k$, the evaluation-fold summands are conditionally i.i.d. with conditional mean zero. The conditional variance of $E_n^{(k)}$ satisfies $\mathrm{Var}(\sqrt{n}\,E_n^{(k)}\mid\hat\eta^{(-k)}) = (n/n_k)\,\|f_k\|_{L_2}^2 = o_p(1)$ under consistency. By conditional Chebyshev, $\sqrt{n}\,E_n^{(k)} = o_p(1)$.
+
+**Conclusion.** $\sqrt{n}\,R_n^{(k)} = o_p(1)$ for each $k$, so $\sqrt{n}\,K^{-1}\sum_k R_n^{(k)} = o_p(1)$. The CLT applies to the first term, and asymptotic normality follows by Slutsky's theorem. $\square$
+:::
+
+::: {.callout-note icon=false}
+## Remark: Interpreting the Product-Rate Condition
+
+The product-rate condition requires the *product* of the two nuisance estimation errors to be $o_p(n^{-1/2})$, substantially weaker than requiring each error individually to be $o_p(n^{-1/2})$. A sufficient symmetric case: each nuisance estimator converges at rate $o_p(n^{-1/4})$ in mean square, achievable by many nonparametric and machine-learning methods. This is what makes flexible nuisance estimation feasible in semiparametric causal inference.
+:::
+
+## Lab: Simulation Study of the DML Estimator {#sec-lab}
+
+**Data-generating process.** $n = 2000$ observations; $X_1, X_2, X_3 \sim \mathrm{Uniform}(-1, 1)$ i.i.d. True nuisance functions:
+$$\pi(X) = \mathrm{expit}\!\bigl(\sin(\pi X_1) + X_2^2 - 0.5\bigr), \quad \mu_1(X) = 2\sin(\pi X_1) + X_2^2 + X_3, \quad \mu_0(X) = \sin(\pi X_1) + X_2^2 - X_3.$$
+
+True ATE: $\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0$ (by symmetry). The nonlinearity of $\pi$ and $\mu_t$ means random forests can fit them consistently, while the Donsker condition fails — exactly the setting of @sec-reuse.
+
+**The three estimators.** (1) *Oracle AIPW*: plug in the true nuisance functions directly — infeasible but provides the semiparametric efficiency benchmark. (2) *Naive RF AIPW*: estimate $\pi$, $\mu_1$, $\mu_0$ using random forests on the **full sample**, then evaluate the AIPW score on the same sample — the Donsker condition fails. (3) *DML (cross-fitted AIPW)*: same random forest learners but via $K = 5$-fold cross-fitting — the fold-by-fold independence argument eliminates the empirical process term.
+
+**Simulation results** ($n = 2000$, 200 replications):
+
+| **Estimator** | **Bias** | **Variance** | **RMSE** |
+|---|---|---|---|
+| Oracle AIPW | 0.009 | 0.0029 | 0.055 |
+| Naive RF AIPW | 0.039 | 0.0031 | 0.068 |
+| DML | 0.007 | 0.0036 | 0.061 |
+
+**Oracle AIPW** is nearly unbiased, serving as the efficiency benchmark. **Naive RF AIPW** exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term: reusing the same sample allows overfitting to propagate into the AIPW score. **DML** reduces the bias to 0.007 --- within Monte Carlo error of zero --- at a modest variance cost (0.0031 to 0.0036), achieving a **lower RMSE** (0.061 vs 0.068) than the naive approach. The key comparison is between Naive RF AIPW and DML: both use identical random forest learners; the only difference is cross-fitting.
+
+## Variance Estimation and Confidence Intervals {#sec-variance}
+
+Inference for $\hat\tau_{\mathrm{DML}}$ proceeds exactly as in Chapter 10, except that nuisance estimates are now out-of-fold. Let $k(i)$ denote the fold containing observation $i$, and define:
+$$\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\hat\tau_{\mathrm{DML}},\,\hat\eta^{(-k(i))}\bigr).$$ {#eq-ifhat}
+
+The variance estimator is:
+$$\hat{V} = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i.$$ {#eq-var-est}
+
+The Wald confidence interval at level $1-\alpha$ is $\hat\tau_{\mathrm{DML}} \pm z_{1-\alpha/2}\sqrt{\hat{V}}$.
+
+::: {.callout-tip icon=false}
+## Theorem: Consistency of the Variance Estimator
+
+Under the conditions of the Asymptotic Linearity theorem, the variance estimator $\hat{V}$ in @eq-var-est is consistent for the asymptotic variance of $\hat\tau_{\mathrm{DML}}$; equivalently, $n\hat{V} \overset{p}{\longrightarrow} \E[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2]$.
+:::
+
+The formula @eq-var-est is the sample variance of the out-of-fold estimated influence values divided by $n$ --- identical to Chapter 10's formula, but $\hat\varphi_i$ now uses the out-of-fold nuisance estimate $\hat\eta^{(-k(i))}$.
+
+## A Practical Workflow {#sec-workflow}
+
+::: {.callout-note icon=false}
+## Workflow: Cross-Fitted Causal Estimation
+
+**Phase 1: Identification and setup**
+
+1. **Specify the estimand.** State the target causal parameter and verify the identification assumptions (conditional exchangeability, positivity, and consistency for the ATE).
+2. **Choose the orthogonal score.** For the ATE under conditional exchangeability, use the efficient influence function @eq-orth-score-ate.
+3. **Select nuisance learners.** Choose flexible learners for $\mu_0(x)$, $\mu_1(x)$, $\pi(x)$. Verify informally that the product-rate condition @eq-product-rate is plausible.
+4. **Monitor overlap.** Examine the empirical distribution of covariates by treatment group before fitting.
+
+**Phase 2: Estimation**
+
+5. **Partition and cross-fit.** Partition into $K$ folds ($K = 5$ is a common default). For each fold $k$, fit nuisance learners on the complement to obtain $\hat\eta^{(-k)}$.
+6. **Compute out-of-fold orthogonal scores.** For each $i \in \mathcal{I}_k$, compute $\hat\varphi_i$.
+7. **Solve the moment equation.** Average scores across all observations to obtain $\hat\tau_{\mathrm{DML}}$ via @eq-dml-ate.
+8. **Estimate the variance.** Compute $\hat{V}$ via @eq-var-est and form the Wald confidence interval.
+
+**Phase 3: Diagnostics and interpretation**
+
+9. **Inspect estimated propensity scores.** Examine $\hat\pi^{(-k)}(X_i)$ across folds; extreme values near 0 or 1 inflate influence-value variance.
+10. **Assess sensitivity.** Repeat with alternative learners. Substantial sensitivity signals that the product-rate condition may not be satisfied.
+11. **Interpret relative to identification assumptions.** The credibility of the causal estimate rests on identification assumptions, not on predictive accuracy of the nuisance learners.
+:::
+
+Step 11 deserves emphasis. A common error is to assess credibility by citing good out-of-sample predictive accuracy for the nuisance models. Predictive accuracy is necessary but not sufficient. The identifying assumptions are untestable from the data:
+
+> *Modern causal estimation is not merely machine learning plus a causal estimand. It is machine learning embedded inside a carefully constructed semiparametric procedure, whose validity rests on identification assumptions that no algorithm can verify.*
+
+## What Machine Learning Does Not Solve {#sec-limits}
+
+Flexible nuisance estimation is a genuine improvement over parametric methods, but it does not resolve the fundamental difficulties of causal inference. In particular, machine learning does not solve:
+
+- **Unmeasured confounding.** If important confounders are absent from $X$, conditional exchangeability $Y(t) \indep T \mid X$ fails. No amount of flexibility in estimating $\pi(x)$ or $\mu_t(x)$ can correct this.
+- **Violations of consistency.** If the treatment version is ill-defined or SUTVA is violated, the potential outcomes framework itself is compromised.
+- **Failure of positivity.** When $\pi(x) \approx 0$ or $\pi(x) \approx 1$, influence values become unstable and coverage can degrade severely.
+- **Ambiguity about the estimand.** Flexible estimation cannot resolve disagreement about what causal quantity is scientifically meaningful.
+- **Invalid instrumental variable assumptions.** The exclusion restriction and exogeneity conditions (Chapter 7) are not testable; machine learning cannot substitute for subject-matter justification.
+- **Fragile mediation assumptions.** Sequential ignorability and no interference between mediators (Chapter 8) must be argued on substantive grounds.
+
+Machine learning improves the estimation of nuisance functions *within* a given identification strategy. It does not create identification where none exists.
+
+## Chapter Summary
+
+| **Symbol** | **Meaning** |
+|---|---|
+| $\eta = (\mu_0, \mu_1, \pi)$ | Nuisance tuple |
+| $\phi(O;\,\psi,\eta)$ | Generic orthogonal score; zero mean at truth |
+| $\varphi_{\mathrm{eff}}(O;\,\tau,\eta)$ | Efficient influence function for the ATE @eq-orth-score-ate |
+| $\mathcal{I}_k$ | $k$-th fold; $k=1,\ldots,K$ |
+| $\hat\eta^{(-k)}$ | Nuisance estimates trained without fold $k$ |
+| $\hat\tau_{\mathrm{DML}}$ | Cross-fitted AIPW (DML) estimator @eq-dml-ate |
+| $\hat\varphi_i$ | Out-of-fold estimated influence value |
+| $\hat{V}$ | Variance estimator @eq-var-est |
+
+1. Flexible methods are attractive for nuisance estimation when true nuisance functions are complex, but naive plug-in estimators can fail for two reasons: orthogonality may be absent, and even when orthogonality holds, same-sample nuisance fitting can create an additional empirical-process bias.
+2. A score function is Neyman orthogonal if its Gateaux derivative with respect to the nuisance vanishes at the truth, so nuisance estimation error enters only at second order.
+3. The efficient influence function for the ATE @eq-orth-score-ate is orthogonal, doubly robust, and efficiency-achieving.
+4. Even with an orthogonal score, reusing the same data for nuisance estimation and score evaluation can induce overfitting bias, especially when Donsker conditions fail.
+5. Sample splitting removes this bias by separating nuisance estimation from score evaluation, but wastes data.
+6. Cross-fitting recovers efficiency by rotating training and evaluation roles across $K$ folds.
+7. The cross-fitted AIPW estimator $\hat\tau_{\mathrm{DML}}$ is the standard double machine learning estimator for the ATE.
+8. Under the product-rate condition @eq-product-rate, orthogonality and cross-fitting together yield asymptotic linearity, root-$n$ consistency, asymptotic normality, and efficiency. A sufficient case: each nuisance estimator converges at rate $o_p(n^{-1/4})$.
+9. The asymptotic variance is estimated consistently from the empirical variance of the out-of-fold estimated influence values.
+10. Machine learning improves nuisance estimation, but does not resolve identification problems: unmeasured confounding, positivity failures, and untestable structural assumptions remain the researcher's responsibility.
+
+## Problems
+
+**1. Verifying orthogonality.**
+
+(a) Write out the efficient influence function $\varphi_{\mathrm{eff}}(O;\,\tau,\eta)$ for the ATE and compute its expectation. Confirm it equals zero at the truth.
+(b) Consider a perturbation $\pi \mapsto \pi + r\cdot h$ for a bounded function $h(x)$. Differentiate $\E\{\varphi_{\mathrm{eff}}(O;\,\tau, \mu_0, \mu_1, \pi+rh)\}$ with respect to $r$ and evaluate at $r=0$. Show the derivative is zero, confirming Neyman orthogonality in the propensity score direction.
+(c) Repeat the calculation for a perturbation in $\mu_1$.
+
+**2. First-order bias of the plug-in estimator.** Suppose $\hat\mu_1 = \mu_1 + \delta$ for a deterministic function $\delta(x)$, and $\hat\mu_0 = \mu_0$, $\hat\pi = \pi$.
+
+(a) Show that the bias of the prediction estimator $\hat\tau_{\mathrm{pred}} = n^{-1}\sum_i\{\hat\mu_1(X_i) - \hat\mu_0(X_i)\}$ is $\E\{\delta(X)\}$.
+(b) Show that the population bias of the plug-in AIPW estimator (using $\hat\mu_1 = \mu_1 + \delta$ with the true $\pi$ and $\mu_0$) is zero. Explain which property of the AIPW score is responsible. Does this mean the plug-in AIPW estimator is asymptotically unbiased when $\hat\mu_1$ is estimated flexibly from the same sample used to evaluate the score? Explain why or why not.
+
+**3. Cross-fitting with $K=2$.** Partition $n=200$ observations into two halves $\mathcal{I}_1$ and $\mathcal{I}_2$.
+
+(a) Write down the cross-fitted moment equation @eq-crossfit-moment explicitly for $K=2$.
+(b) Explain why the contribution from $\mathcal{I}_1$ uses nuisance estimates trained on $\mathcal{I}_2$ and vice versa.
+(c) Compare this procedure to single sample splitting with $\mathcal{I}_1$ as the training fold. What is gained and what is lost?
+
+**4. The product-rate condition.** Suppose $\|\hat\pi - \pi\|_{L_2} = o_p(n^{-\alpha})$ and $\|\hat\mu_t - \mu_t\|_{L_2} = o_p(n^{-\beta})$ for $\alpha, \beta > 0$.
+
+(a) State the condition on $\alpha$ and $\beta$ under which the product-rate condition @eq-product-rate holds.
+(b) Show that $\alpha = \beta = 1/4$ satisfies your condition.
+(c) Does $\alpha = 1/2$, $\beta = 0$ satisfy it? What does this say about the case where the propensity score is estimated parametrically but the outcome model converges only at an unspecified rate?
+
+**5. Variance estimation.** Using the explicit formula @eq-dml-ate, write out the estimated influence value $\hat\varphi_i$ for a generic observation $i \in \mathcal{I}_k$. Show that $n^{-1}\sum_i \hat\varphi_i = 0$ when $\hat\tau_{\mathrm{DML}}$ solves the cross-fitted moment equation, and explain why the centering in @eq-var-est is therefore asymptotically inconsequential.
+
+**6. What machine learning cannot do.** For each of the following scenarios, identify the identification assumption that is violated and explain why flexible nuisance estimation cannot remedy the problem.
+
+(a) A study of job-training effects on earnings omits pre-program earnings, a strong predictor of both program participation and subsequent earnings.
+(b) A study of a medical treatment estimates the propensity score accurately, but the treatment was assigned in clusters (hospital wards) and outcomes may be correlated within clusters in a way that depends on the fraction of patients treated.
+(c) An instrument is used to estimate the effect of education on wages, but the instrument also directly affects wages through a channel not related to education.

@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>11&nbsp; Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./chapter_10.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_11.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_11.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">11.1</span> Why Flexible Nuisance Estimation Is Both Attractive and Dangerous</a></li>
+  <li><a href="#sec-plugin" id="toc-sec-plugin" class="nav-link" data-scroll-target="#sec-plugin"><span class="header-section-number">11.2</span> Why Naive Plug-In Estimation Can Fail</a></li>
+  <li><a href="#sec-orthogonal" id="toc-sec-orthogonal" class="nav-link" data-scroll-target="#sec-orthogonal"><span class="header-section-number">11.3</span> Orthogonal Scores</a></li>
+  <li><a href="#sec-ate-score" id="toc-sec-ate-score" class="nav-link" data-scroll-target="#sec-ate-score"><span class="header-section-number">11.4</span> The Orthogonal Score for the Average Treatment Effect</a></li>
+  <li><a href="#sec-reuse" id="toc-sec-reuse" class="nav-link" data-scroll-target="#sec-reuse"><span class="header-section-number">11.5</span> Why Reusing the Same Data Can Be Problematic</a></li>
+  <li><a href="#sec-splitting" id="toc-sec-splitting" class="nav-link" data-scroll-target="#sec-splitting"><span class="header-section-number">11.6</span> Sample Splitting</a></li>
+  <li><a href="#sec-crossfit" id="toc-sec-crossfit" class="nav-link" data-scroll-target="#sec-crossfit"><span class="header-section-number">11.7</span> Cross-Fitting</a></li>
+  <li><a href="#sec-dml" id="toc-sec-dml" class="nav-link" data-scroll-target="#sec-dml"><span class="header-section-number">11.8</span> Double Machine Learning for the Average Treatment Effect</a></li>
+  <li><a href="#sec-rates" id="toc-sec-rates" class="nav-link" data-scroll-target="#sec-rates"><span class="header-section-number">11.9</span> Rate Conditions and Asymptotic Normality</a></li>
+  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">11.10</span> Lab: Simulation Study of the DML Estimator</a></li>
+  <li><a href="#sec-variance" id="toc-sec-variance" class="nav-link" data-scroll-target="#sec-variance"><span class="header-section-number">11.11</span> Variance Estimation and Confidence Intervals</a></li>
+  <li><a href="#sec-workflow" id="toc-sec-workflow" class="nav-link" data-scroll-target="#sec-workflow"><span class="header-section-number">11.12</span> A Practical Workflow</a></li>
+  <li><a href="#sec-limits" id="toc-sec-limits" class="nav-link" data-scroll-target="#sec-limits"><span class="header-section-number">11.13</span> What Machine Learning Does Not Solve</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">11.14</span> Chapter Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">11.15</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this chapter, students should be able to:</p>
+<ol type="1">
+<li>Explain why flexible nuisance estimation can produce misleading inference for a causal parameter even when predictive accuracy is high.</li>
+<li>Define Neyman orthogonality, verify it for a given estimating function, and explain how it reduces sensitivity to first-order nuisance estimation error.</li>
+<li>Identify the orthogonal score for the ATE, recognize it as the efficient influence function from Chapter 10, and state the three roles it simultaneously fulfills.</li>
+<li>Describe sample splitting, explain why independence between nuisance estimation and score evaluation simplifies asymptotic arguments, and articulate its efficiency cost.</li>
+<li>Describe <span class="math inline">\(K\)</span>-fold cross-fitting, write the cross-fitted moment equation explicitly, and explain how cross-fitting recovers efficiency relative to a single split.</li>
+<li>State the product-rate condition for the cross-fitted AIPW estimator, connect it to Neyman orthogonality, and explain why it allows each nuisance estimator to converge at rate <span class="math inline">\(n^{-1/4}\)</span>.</li>
+<li>Construct a consistent variance estimator from out-of-fold estimated influence values and form a Wald confidence interval.</li>
+<li>Articulate what machine learning can and cannot contribute to causal inference, and follow the practical workflow for cross-fitted orthogonal-score estimation.</li>
+</ol>
+</div>
+</div>
+<section id="sec-motivation" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">11.1</span> Why Flexible Nuisance Estimation Is Both Attractive and Dangerous</h2>
+<p>In Chapters 9 and 10 we developed estimation and inference using estimating equations, influence functions, doubly robust scores, and semiparametric efficiency. The causal parameter of interest depends on nuisance functions such as the outcome regressions <span class="math inline">\(\mu_t(x) = \E(Y \mid T=t,\, X=x)\)</span> and the propensity score <span class="math inline">\(\pi(x) = P(T=1 \mid X=x)\)</span>. In many real applications, these may be too complex to model accurately with low-dimensional parametric forms, making flexible methods attractive: penalized regression, splines, random forests, boosting, neural networks, and ensemble learning.</p>
+<p>These methods can substantially improve predictive accuracy, but they also create new statistical difficulties: they may converge more slowly than parametric estimators; they may overfit the observed sample; their asymptotic behavior may be difficult to characterize; and naive plug-in inference can fail even when prediction quality is good.</p>
+<p>Better nuisance prediction therefore does not automatically imply valid inference for the target causal parameter. The goal of this chapter is to explain how orthogonal scores, sample splitting, and cross-fitting make it possible to combine flexible nuisance estimation with valid large-sample inference.</p>
+</section>
+<section id="sec-plugin" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="sec-plugin"><span class="header-section-number">11.2</span> Why Naive Plug-In Estimation Can Fail</h2>
+<p>Suppose the parameter of interest is <span class="math inline">\(\psi = \Psi(\eta)\)</span>, where <span class="math inline">\(\eta\)</span> denotes a nuisance object such as <span class="math inline">\((\mu_0, \mu_1, \pi)\)</span>. The <em>plug-in estimator</em> <span class="math inline">\(\hat\psi_{\mathrm{plug}} = \Psi(\hat\eta)\)</span> has a first-order Taylor expansion around the true nuisance <span class="math inline">\(\eta_0\)</span>: <span id="eq-taylor"><span class="math display">\[\hat\psi_{\mathrm{plug}} - \psi = \underbrace{D_\eta\Psi(\eta_0)[\hat\eta - \eta_0]}_{\text{linear term}} + \underbrace{R(\hat\eta,\,\eta_0)}_{\text{second-order remainder}},  \tag{11.1}\]</span></span> where <span class="math inline">\(D_\eta\Psi(\eta_0)[h]\)</span> denotes the Gateaux derivative and <span class="math inline">\(|R(\hat\eta, \eta_0)| \lesssim \|\hat\eta - \eta_0\|^2\)</span>.</p>
+<p>The second-order remainder is typically manageable: if <span class="math inline">\(\|\hat\eta - \eta_0\| = o_p(n^{-1/4})\)</span> then <span class="math inline">\(R = o_p(n^{-1/2})\)</span>. The obstacle is the <em>linear term</em>, proportional to the nuisance estimation error.</p>
+<p><strong>Finite-dimensional nuisance.</strong> If <span class="math inline">\(\eta \in \mathbb{R}^d\)</span> and <span class="math inline">\(\hat\eta - \eta_0 = O_p(n^{-1/2})\)</span>, the linear term is <span class="math inline">\(O_p(n^{-1/2})\)</span> and contaminates the root-<span class="math inline">\(n\)</span> limiting distribution. If the functional satisfies <span class="math inline">\(D_\eta\Psi(\eta_0) = 0\)</span> — <em>Neyman orthogonality</em> — the linear term vanishes and the expansion reduces to the second-order remainder alone, <span class="math inline">\(O_p(n^{-1})\)</span>, asymptotically negligible.</p>
+<p><strong>Infinite-dimensional nuisance.</strong> When <span class="math inline">\(\eta\)</span> belongs to a function space, orthogonality removes the <em>population bias</em> but does not control the <em>empirical process term</em>. Writing the plug-in estimating equation as <span class="math inline">\(\mathbb{P}_n\{\phi(\,\cdot\,;\psi, \hat\eta)\} = 0\)</span>, the deviation from the population equation decomposes as: <span id="eq-decomp"><span class="math display">\[\mathbb{P}_n\{\phi(\,\cdot\,;\psi,\hat\eta)\} - \mathbb{P}_n\{\phi(\,\cdot\,;\psi,\eta_0)\} = \underbrace{P\bigl\{\phi(\,\cdot\,;\psi,\hat\eta) - \phi(\,\cdot\,;\psi,\eta_0)\bigr\}}_{\text{population bias}} + \underbrace{(\mathbb{P}_n - P)\bigl\{\phi(\,\cdot\,;\psi,\hat\eta) - \phi(\,\cdot\,;\psi,\eta_0)\bigr\}}_{\text{empirical process term}}. \tag{11.2}\]</span></span></p>
+<p>Neyman orthogonality controls the <em>population bias</em>: because the Gateaux derivative vanishes at the truth, the population bias is second order in <span class="math inline">\(\|\hat\eta - \eta_0\|\)</span>. For flexible machine-learning estimators, the <em>empirical process term</em> can remain non-negligible even as <span class="math inline">\(\hat\eta\)</span> converges consistently. This is why orthogonality and cross-fitting are <em>complements</em> rather than substitutes.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This problem is not specific to machine learning. It arises whenever nuisance parameters are estimated in an infinite-dimensional model. Machine learning makes the issue more visible because it encourages highly adaptive nuisance estimation; see <span class="citation" data-cites="chernozhukov2018double">Chernozhukov et al. (2018)</span> for a systematic treatment.</p>
+</div>
+</div>
+</section>
+<section id="sec-orthogonal" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="sec-orthogonal"><span class="header-section-number">11.3</span> Orthogonal Scores</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Neyman Orthogonality
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The score function <span class="math inline">\(\phi(O;\,\psi,\eta)\)</span> is called <strong>orthogonal</strong> (or <strong>Neyman orthogonal</strong>) at the truth <span class="math inline">\((\psi_0, \eta_0)\)</span> if the Gateaux derivative of the estimating equation with respect to the nuisance, evaluated at the truth, vanishes: <span class="math display">\[\left.\frac{\partial}{\partial r}\E\bigl\{\phi(O;\,\psi_0,\,\eta_0 + r h)\bigr\}\right|_{r=0} = 0\]</span> for all perturbation directions <span class="math inline">\(h\)</span> in a suitable class.</p>
+</div>
+</div>
+<p>This means small local perturbations of the nuisance parameter have no first-order effect on the estimating equation at the truth. Orthogonality does not mean nuisance estimation no longer matters: it controls only the population-level bias, and a separate argument (cross-fitting) is needed to rule out the additional bias from evaluating the score on the same sample used to estimate <span class="math inline">\(\hat\eta\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Neyman’s Original Insight
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The terminology honors Jerzy Neyman, whose work on hypothesis testing introduced the idea of constructing test statistics that are insensitive to nuisance parameters. In the modern semiparametric literature the concept was formalized by <span class="citation" data-cites="robins1994estimation">Robins et al. (1994)</span> and others, and later made systematic in the double machine learning framework of <span class="citation" data-cites="chernozhukov2018double">Chernozhukov et al. (2018)</span>.</p>
+</div>
+</div>
+</section>
+<section id="sec-ate-score" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="sec-ate-score"><span class="header-section-number">11.4</span> The Orthogonal Score for the Average Treatment Effect</h2>
+<p>The efficient influence function from Chapter 10 is: <span id="eq-orth-score-ate"><span class="math display">\[\varphi_{\mathrm{eff}}(O;\,\tau,\eta) = \frac{T}{\pi(X)}\{Y - \mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y - \mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau, \tag{11.3}\]</span></span> where <span class="math inline">\(\eta = (\mu_0, \mu_1, \pi)\)</span>. We now prove this score is Neyman orthogonal.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Lemma: Neyman Orthogonality of the ATE Score
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The score <span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\)</span> in <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>11.3</span></a> is Neyman orthogonal at every truth <span class="math inline">\((\tau_0, \eta_0)\)</span> satisfying the identification assumptions. That is, for every bounded perturbation direction <span class="math inline">\(h(x)\)</span>, <span class="math inline">\(g(x)\)</span>, or <span class="math inline">\(\ell(x)\)</span>: <span class="math display">\[\left.\frac{\partial}{\partial r}\E\!\left\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\,\mu_0,\,\mu_1,\,\pi+rh)\right\}\right|_{r=0} = 0,\]</span> <span class="math display">\[\left.\frac{\partial}{\partial r}\E\!\left\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\,\mu_0,\,\mu_1+rg,\,\pi)\right\}\right|_{r=0} = 0,\]</span> <span class="math display">\[\left.\frac{\partial}{\partial r}\E\!\left\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\,\mu_0+r\ell,\,\mu_1,\,\pi)\right\}\right|_{r=0} = 0.\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Throughout, recall <span class="math inline">\(\E(Y \mid T=1, X) = \mu_1(X)\)</span>, <span class="math inline">\(\E(Y \mid T=0, X) = \mu_0(X)\)</span>, <span class="math inline">\(\E(T \mid X) = \pi(X)\)</span>.</p>
+<p><strong>Perturbation in <span class="math inline">\(\pi\)</span>.</strong> Replace <span class="math inline">\(\pi\)</span> by <span class="math inline">\(\pi + rh\)</span> and differentiate. The derivative becomes <span class="math inline">\(\E\!\left[-\frac{T\,h(X)}{\pi(X)^2}\{Y-\mu_1(X)\} - \frac{(1-T)\,h(X)}{(1-\pi(X))^2}\{Y-\mu_0(X)\}\right]\)</span>. Conditioning on <span class="math inline">\(X\)</span>: <span class="math inline">\(\E[T\{Y-\mu_1(X)\}\mid X] = \pi(X)\mu_1(X) - \mu_1(X)\pi(X) = 0\)</span>, and similarly <span class="math inline">\(\E[(1-T)\{Y-\mu_0(X)\}\mid X] = 0\)</span>. Both conditional expectations vanish.</p>
+<p><strong>Perturbation in <span class="math inline">\(\mu_1\)</span>.</strong> Replace <span class="math inline">\(\mu_1\)</span> by <span class="math inline">\(\mu_1 + rg\)</span>. The derivative is <span class="math inline">\(\E\!\left[g(X)\left(1 - \frac{T}{\pi(X)}\right)\right]\)</span>. Conditioning on <span class="math inline">\(X\)</span>: <span class="math inline">\(\E\!\left[1 - T/\pi(X) \mid X\right] = 1 - \pi(X)/\pi(X) = 0\)</span>.</p>
+<p><strong>Perturbation in <span class="math inline">\(\mu_0\)</span>.</strong> Replace <span class="math inline">\(\mu_0\)</span> by <span class="math inline">\(\mu_0 + r\ell\)</span>. The derivative is <span class="math inline">\(\E\!\left[\ell(X)\left(\frac{1-T}{1-\pi(X)} - 1\right)\right]\)</span>. Conditioning on <span class="math inline">\(X\)</span>: <span class="math inline">\(\E[(1-T)/(1-\pi(X)) - 1 \mid X] = (1-\pi(X))/(1-\pi(X)) - 1 = 0\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: What the Proof Reveals
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Each of the three derivative calculations reduces to a single key fact: the conditional mean of the IPW weight equals one. Specifically, <span class="math inline">\(\E(T/\pi(X)\mid X) = 1\)</span> and <span class="math inline">\(\E((1-T)/(1-\pi(X))\mid X) = 1\)</span> are immediate consequences of <span class="math inline">\(\E(T\mid X) = \pi(X)\)</span>, the engine behind both the balancing theorem and the IPW identification formula (Chapter 6). Neyman orthogonality of the ATE score is therefore a direct consequence of how the propensity score is defined.</p>
+</div>
+</div>
+<p>The score <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>11.3</span></a> simultaneously fulfills three purposes:</p>
+<ol type="1">
+<li>It <em>identifies</em> <span class="math inline">\(\tau\)</span> through the moment condition <span class="math inline">\(\E\{\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\} = 0\)</span>.</li>
+<li>It is <em>doubly robust</em>, yielding a consistent estimator whenever either the outcome model or the propensity score model is correctly specified.</li>
+<li>It is the <em>efficient influence function</em>, so any estimator based on it achieves the semiparametric efficiency bound.</li>
+</ol>
+</section>
+<section id="sec-reuse" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="sec-reuse"><span class="header-section-number">11.5</span> Why Reusing the Same Data Can Be Problematic</h2>
+<p>Define the centered empirical process <span class="math inline">\(\mathbb{G}_n f = \sqrt{n}\,(\mathbb{P}_n - P) f\)</span>. With the plug-in AIPW estimating equation, the remainder <span class="math inline">\(R_n\)</span> decomposes exactly as in <a href="#eq-decomp" class="quarto-xref">Equation&nbsp;<span>11.2</span></a>: <span id="eq-Rn-decomp"><span class="math display">\[R_n = \underbrace{P\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{\text{population bias}} + \underbrace{(\mathbb{P}_n - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{\text{empirical process term}}. \tag{11.4}\]</span></span></p>
+<p>By Neyman orthogonality (<a href="#sec-ate-score" class="quarto-xref"><span>Section 11.4</span></a>), the population bias is <span class="math inline">\(o_p(n^{-1/2})\)</span> under the product-rate condition. The <em>empirical process term</em> <span class="math inline">\(n^{-1/2}\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\}\)</span> depends on <span class="math inline">\(\hat\eta\)</span> estimated from the same sample. Whether it is <span class="math inline">\(o_p(n^{-1/2})\)</span> depends on how complex the class <span class="math inline">\(\{f_\eta : \eta \in \mathcal{H}\}\)</span> is — a question the Donsker condition answers.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Donsker Class
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A class of measurable functions <span class="math inline">\(\mathcal{F}\)</span> is a <strong>Donsker class</strong> if the empirical process <span class="math inline">\(\{\mathbb{G}_n f : f \in \mathcal{F}\}\)</span> converges weakly in <span class="math inline">\(\ell^\infty(\mathcal{F})\)</span> to a tight Gaussian process. Equivalently, <span class="math inline">\(\sup_{f \in \mathcal{F}}|(\mathbb{P}_n - P) f| = O_p(n^{-1/2})\)</span> and the fluctuations of <span class="math inline">\(n^{1/2}(\mathbb{P}_n - P)\)</span> over <span class="math inline">\(\mathcal{F}\)</span> are stochastically equicontinuous; see <span class="citation" data-cites="vandervaart1998">Vaart (1998)</span>, Ch. 19.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Donsker and Non-Donsker Classes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Parametric classes</strong> (e.g., logistic regression models indexed by a finite-dimensional parameter) are Donsker under mild moment conditions.</li>
+<li><strong>Hölder-smooth function classes</strong> on <span class="math inline">\([0,1]^d\)</span> with smoothness index <span class="math inline">\(s &gt; d/2\)</span> are Donsker.</li>
+<li><strong>Indicator classes</strong> <span class="math inline">\(\{x \mapsto \mathbf{1}(x \leq t) : t \in \mathbb{R}\}\)</span> are Donsker by the classical theorem.</li>
+<li><strong>Random forests and neural networks</strong> typically fall outside classical Donsker regimes in the forms used for modern flexible prediction.</li>
+<li><strong>High-dimensional lasso</strong> with a growing number of selected variables also typically falls outside Donsker regimes.</li>
+</ul>
+</div>
+</div>
+<p>If <span class="math inline">\(\{f_\eta : \eta \in \mathcal{H}\}\)</span> is Donsker and <span class="math inline">\(\|\hat\eta - \eta_0\| \to 0\)</span>, then by stochastic equicontinuity <span class="math inline">\(\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\} = o_p(1)\)</span>, making the empirical process term <span class="math inline">\(o_p(n^{-1/2})\)</span>. When the Donsker condition fails, this need not hold: the empirical process term can remain non-negligible even as <span class="math inline">\(\hat\eta \to \eta_0\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Donsker Conditions and Machine Learning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Donsker condition fails for random forests, neural networks, and high-dimensional lasso precisely because their function classes are too rich. Cross-fitting sidesteps this entirely: because <span class="math inline">\(\hat\eta^{(-k)}\)</span> is independent of the observations in <span class="math inline">\(\mathcal{I}_k\)</span>, the empirical process term is replaced by a sum of conditionally independent terms, each <span class="math inline">\(o_p(n^{-1/2})\)</span> by a conditional law of large numbers, with no Donsker assumption required.</p>
+</div>
+</div>
+</section>
+<section id="sec-splitting" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="sec-splitting"><span class="header-section-number">11.6</span> Sample Splitting</h2>
+<p>Sample splitting resolves the data-reuse problem by construction. Partition <span class="math inline">\(\{1,\ldots,n\}\)</span> into a training sample <span class="math inline">\(\mathcal{I}_{\mathrm{train}}\)</span> and an evaluation sample <span class="math inline">\(\mathcal{I}_{\mathrm{eval}}\)</span>. Fit nuisance estimators <span class="math inline">\(\hat\eta^{(\mathrm{train})}\)</span> on <span class="math inline">\(\mathcal{I}_{\mathrm{train}}\)</span>, then define <span class="math inline">\(\hat\tau\)</span> by solving the estimating equation on the held-out sample: <span class="math display">\[\frac{1}{|\mathcal{I}_{\mathrm{eval}}|}\sum_{i \in \mathcal{I}_{\mathrm{eval}}} \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(\mathrm{train})}\bigr) = 0.\]</span></p>
+<p>Because <span class="math inline">\(\hat\eta^{(\mathrm{train})}\)</span> is estimated on <span class="math inline">\(\mathcal{I}_{\mathrm{train}}\)</span>, it is <em>independent</em> of the observations in <span class="math inline">\(\mathcal{I}_{\mathrm{eval}}\)</span>. Conditioning on <span class="math inline">\(\hat\eta^{(\mathrm{train})}\)</span>, the summands in the empirical process term are independent and mean zero, so by the conditional law of large numbers: <span class="math display">\[(\mathbb{P}_{n_{\mathrm{e}}} - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta^{(\mathrm{train})}) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\} = o_p(n^{-1/2}).\]</span></p>
+<p>No Donsker condition is needed: independence does the work that Donsker equicontinuity would otherwise have to do.</p>
+<p>The main disadvantage is inefficiency: only <span class="math inline">\(|\mathcal{I}_{\mathrm{eval}}|\)</span> observations contribute to estimating <span class="math inline">\(\tau\)</span>, and the estimate depends on the particular random partition chosen.</p>
+</section>
+<section id="sec-crossfit" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="sec-crossfit"><span class="header-section-number">11.7</span> Cross-Fitting</h2>
+<p>Cross-fitting extends sample splitting to recover full-sample efficiency while preserving the independence argument. Partition <span class="math inline">\(\{1,\ldots,n\}\)</span> into <span class="math inline">\(K\)</span> approximately equal folds <span class="math inline">\(\mathcal{I}_1,\ldots,\mathcal{I}_K\)</span>. For each fold <span class="math inline">\(k\)</span>: (1) estimate nuisance functions on <span class="math inline">\(\{1,\ldots,n\} \setminus \mathcal{I}_k\)</span> to obtain <span class="math inline">\(\hat\eta^{(-k)} = (\hat\mu_0^{(-k)}, \hat\mu_1^{(-k)}, \hat\pi^{(-k)})\)</span>; (2) evaluate the orthogonal score on <span class="math inline">\(\mathcal{I}_k\)</span>; (3) aggregate across all folds. The cross-fitted estimator <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> solves: <span id="eq-crossfit-moment"><span class="math display">\[\frac{1}{n}\sum_{k=1}^K\sum_{i \in \mathcal{I}_k} \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(-k)}\bigr) = 0. \tag{11.5}\]</span></span></p>
+<p>For each fold <span class="math inline">\(k\)</span>, the nuisance estimate <span class="math inline">\(\hat\eta^{(-k)}\)</span> is trained on <span class="math inline">\(\{1,\ldots,n\}\setminus\mathcal{I}_k\)</span>, independent of the observations in <span class="math inline">\(\mathcal{I}_k\)</span>. Conditioning on <span class="math inline">\(\hat\eta^{(-k)}\)</span>, the fold-<span class="math inline">\(k\)</span> summands are independent and mean zero, and the conditional law of large numbers gives <span class="math inline">\(R_n^{(k)} = o_p(n^{-1/2})\)</span> for each <span class="math inline">\(k\)</span> without any Donsker assumption. Averaging over folds, <span class="math inline">\(R_n = o_p(n^{-1/2})\)</span>.</p>
+<p>Cross-fitting therefore achieves two goals simultaneously: it preserves the held-out independence structure, and it ensures every observation serves once as an evaluation point, so the full sample contributes to estimating <span class="math inline">\(\tau\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Algorithm: Cross-Fitted Orthogonal-Score Estimator for the ATE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Partition the sample into <span class="math inline">\(K\)</span> folds <span class="math inline">\(\mathcal{I}_1,\ldots,\mathcal{I}_K\)</span>.</li>
+<li>For each <span class="math inline">\(k = 1,\ldots,K\)</span>, fit nuisance estimators <span class="math inline">\(\hat\eta^{(-k)} = (\hat\mu_0^{(-k)}, \hat\mu_1^{(-k)}, \hat\pi^{(-k)})\)</span> on <span class="math inline">\(\{1,\ldots,n\} \setminus \mathcal{I}_k\)</span>.</li>
+<li>For each <span class="math inline">\(i \in \mathcal{I}_k\)</span>, compute the out-of-fold score <span class="math inline">\(\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(-k)}\bigr)\)</span>.</li>
+<li>Solve the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>11.5</span></a>. Because the score is linear in <span class="math inline">\(\tau\)</span>, the solution is: <span id="eq-dml-ate"><span class="math display">\[\hat\tau_{\mathrm{DML}} = \hat\mu_{1,\mathrm{DML}} - \hat\mu_{0,\mathrm{DML}}, \tag{11.6}\]</span></span> where <span class="math inline">\(\hat\mu_{t,\mathrm{DML}} = \frac{1}{n}\sum_{k=1}^K\sum_{i\in\mathcal{I}_k}\Bigl[\hat\mu_t^{(-k)}(X_i) + \frac{T_i^{(t)}}{\hat\pi^{(-k)}(X_i)^{(t)}}\{Y_i - \hat\mu_t^{(-k)}(X_i)\}\Bigr]\)</span>, with <span class="math inline">\(T_i^{(1)} = T_i\)</span>, <span class="math inline">\(T_i^{(0)} = 1-T_i\)</span>.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="sec-dml" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="sec-dml"><span class="header-section-number">11.8</span> Double Machine Learning for the Average Treatment Effect</h2>
+<p>The estimator <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>11.6</span></a> is simply the AIPW estimator from Chapter 10 with out-of-fold nuisance estimates. The term <em>double machine learning</em> (DML), introduced by <span class="citation" data-cites="chernozhukov2018double">Chernozhukov et al. (2018)</span>, refers to the combination of three ingredients:</p>
+<ul>
+<li><em>Neyman orthogonality</em>, which eliminates the population bias term so nuisance estimation error enters only at second order;</li>
+<li><em>cross-fitting</em>, which eliminates the empirical process term via fold-by-fold conditional independence, removing the need for Donsker conditions; and</li>
+<li><em>flexible machine-learning estimation</em> of the nuisance functions, which is made valid by the first two ingredients.</li>
+</ul>
+<p>The term “double” should not be read as merely meaning “two models”; it refers to the combination of nuisance learning with orthogonalization and debiasing. DML is not a new causal estimand and not a new identification strategy; it is a modern estimation protocol built around an orthogonal score. In the biostatistics literature, the same estimator is often called the <em>cross-fitted AIPW estimator</em>.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>“Double” Does Not Mean “Two Models Are Enough”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It is tempting to think that estimating any two of <span class="math inline">\(\mu_0\)</span>, <span class="math inline">\(\mu_1\)</span>, and <span class="math inline">\(\pi\)</span> flexibly is sufficient. What matters is that <em>all</em> nuisance components entering the orthogonal score are estimated out-of-fold, and that the product-rate condition is satisfied. Using flexible methods for only one nuisance function while misspecifying another can still produce invalid inference.</p>
+</div>
+</div>
+</section>
+<section id="sec-rates" class="level2" data-number="11.9">
+<h2 data-number="11.9" class="anchored" data-anchor-id="sec-rates"><span class="header-section-number">11.9</span> Rate Conditions and Asymptotic Normality</h2>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Asymptotic Linearity Under Cross-Fitting
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose: (i) the score <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> is orthogonal at the truth; (ii) the nuisance estimators are consistent in mean squared error; (iii) <em>strong overlap</em> holds: there exists <span class="math inline">\(c &gt; 0\)</span> such that <span class="math inline">\(c \leq \pi(X) \leq 1-c\)</span> and <span class="math inline">\(c \leq \hat\pi^{(-k)}(X) \leq 1-c\)</span> a.s. for each fold <span class="math inline">\(k\)</span>; (iv) the <em>product-rate condition</em> holds: <span id="eq-product-rate"><span class="math display">\[\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1. \tag{11.7}\]</span></span></p>
+<p>Then the cross-fitted estimator satisfies: <span class="math display">\[\sqrt{n}(\hat\tau_{\mathrm{DML}} - \tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi_{\mathrm{eff}}(O_i;\,\tau,\eta) + o_p(1) \overset{d}{\longrightarrow} N\!\Bigl(0,\;\E\bigl[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2\bigr]\Bigr).\]</span></p>
+</div>
+</div>
+<p>The asymptotic variance equals the semiparametric efficiency bound, so <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is asymptotically efficient whenever the product-rate condition holds.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Weak Overlap vs.&nbsp;Strong Overlap
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><em>Weak overlap</em> (<span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> a.s.) is the condition needed for <em>identification</em>: every covariate stratum contains units from both treatment arms. <em>Strong overlap</em> (<span class="math inline">\(c \leq \pi(X) \leq 1-c\)</span> for some <span class="math inline">\(c &gt; 0\)</span>) is what the proof actually uses: it bounds the inverse-probability weights away from infinity. Without strong overlap, influence function values can have infinite variance, and <span class="math inline">\(\sqrt{n}\)</span>-consistent inference breaks down even if the ATE is identified <span class="citation" data-cites="khan2010irregular">(Khan and Tamer 2010)</span>. Trimming extreme weights or restricting the target population to a region of stronger overlap are common practical responses.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof Sketch
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Write <span class="math inline">\(n_k = |\mathcal{I}_k|\)</span>. The cross-fitted moment equation gives <span class="math inline">\(0 = K^{-1}\sum_k \mathbb{P}_{n_k}\{\varphi_{\mathrm{eff}}(O;\,\tau,\hat\eta^{(-k)})\}\)</span>. Adding and subtracting <span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta_0)\)</span> and rearranging: <span class="math display">\[\hat\tau_{\mathrm{DML}} - \tau = \frac{1}{n}\sum_{i=1}^n \varphi_{\mathrm{eff}}(O_i;\,\tau,\eta_0) + \frac{1}{K}\sum_{k=1}^K R_n^{(k)},\]</span> where each fold remainder <span class="math inline">\(R_n^{(k)}\)</span> decomposes into population bias <span class="math inline">\(B_n^{(k)}\)</span> and empirical process term <span class="math inline">\(E_n^{(k)}\)</span>.</p>
+<p><strong>Step 1 (population bias).</strong> By iterated expectations and <span class="math inline">\(\E(T\mid X) = \pi(X)\)</span>: <span class="math display">\[|B_n^{(k)}| \leq C\Bigl(\|\hat\mu_1^{(-k)} - \mu_1\|\cdot\|\hat\pi^{(-k)}-\pi\| + \|\hat\mu_0^{(-k)} - \mu_0\|\cdot\|\hat\pi^{(-k)}-\pi\|\Bigr) = o_p(n^{-1/2})\]</span> by the product-rate condition (strong overlap ensures denominators are bounded below).</p>
+<p><strong>Step 2 (empirical process term).</strong> Condition on <span class="math inline">\(\hat\eta^{(-k)}\)</span>. Since <span class="math inline">\(\hat\eta^{(-k)}\)</span> is trained on <span class="math inline">\(\{1,\ldots,n\}\setminus\mathcal{I}_k\)</span>, the evaluation-fold summands are conditionally i.i.d. with conditional mean zero. The conditional variance of <span class="math inline">\(E_n^{(k)}\)</span> satisfies <span class="math inline">\(\mathrm{Var}(\sqrt{n}\,E_n^{(k)}\mid\hat\eta^{(-k)}) = (n/n_k)\,\|f_k\|_{L_2}^2 = o_p(1)\)</span> under consistency. By conditional Chebyshev, <span class="math inline">\(\sqrt{n}\,E_n^{(k)} = o_p(1)\)</span>.</p>
+<p><strong>Conclusion.</strong> <span class="math inline">\(\sqrt{n}\,R_n^{(k)} = o_p(1)\)</span> for each <span class="math inline">\(k\)</span>, so <span class="math inline">\(\sqrt{n}\,K^{-1}\sum_k R_n^{(k)} = o_p(1)\)</span>. The CLT applies to the first term, and asymptotic normality follows by Slutsky’s theorem. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Interpreting the Product-Rate Condition
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The product-rate condition requires the <em>product</em> of the two nuisance estimation errors to be <span class="math inline">\(o_p(n^{-1/2})\)</span>, substantially weaker than requiring each error individually to be <span class="math inline">\(o_p(n^{-1/2})\)</span>. A sufficient symmetric case: each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span> in mean square, achievable by many nonparametric and machine-learning methods. This is what makes flexible nuisance estimation feasible in semiparametric causal inference.</p>
+</div>
+</div>
+</section>
+<section id="sec-lab" class="level2" data-number="11.10">
+<h2 data-number="11.10" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">11.10</span> Lab: Simulation Study of the DML Estimator</h2>
+<p><strong>Data-generating process.</strong> <span class="math inline">\(n = 2000\)</span> observations; <span class="math inline">\(X_1, X_2, X_3 \sim \mathrm{Uniform}(-1, 1)\)</span> i.i.d. True nuisance functions: <span class="math display">\[\pi(X) = \mathrm{expit}\!\bigl(\sin(\pi X_1) + X_2^2 - 0.5\bigr), \quad \mu_1(X) = 2\sin(\pi X_1) + X_2^2 + X_3, \quad \mu_0(X) = \sin(\pi X_1) + X_2^2 - X_3.\]</span></p>
+<p>True ATE: <span class="math inline">\(\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0\)</span> (by symmetry). The nonlinearity of <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\mu_t\)</span> means random forests can fit them consistently, while the Donsker condition fails — exactly the setting of <a href="#sec-reuse" class="quarto-xref"><span>Section 11.5</span></a>.</p>
+<p><strong>The three estimators.</strong> (1) <em>Oracle AIPW</em>: plug in the true nuisance functions directly — infeasible but provides the semiparametric efficiency benchmark. (2) <em>Naive RF AIPW</em>: estimate <span class="math inline">\(\pi\)</span>, <span class="math inline">\(\mu_1\)</span>, <span class="math inline">\(\mu_0\)</span> using random forests on the <strong>full sample</strong>, then evaluate the AIPW score on the same sample — the Donsker condition fails. (3) <em>DML (cross-fitted AIPW)</em>: same random forest learners but via <span class="math inline">\(K = 5\)</span>-fold cross-fitting — the fold-by-fold independence argument eliminates the empirical process term.</p>
+<p><strong>Simulation results</strong> (<span class="math inline">\(n = 2000\)</span>, 200 replications):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Estimator</strong></th>
+<th><strong>Bias</strong></th>
+<th><strong>Variance</strong></th>
+<th><strong>RMSE</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Oracle AIPW</td>
+<td>0.009</td>
+<td>0.0029</td>
+<td>0.055</td>
+</tr>
+<tr class="even">
+<td>Naive RF AIPW</td>
+<td>0.039</td>
+<td>0.0031</td>
+<td>0.068</td>
+</tr>
+<tr class="odd">
+<td>DML</td>
+<td>0.007</td>
+<td>0.0036</td>
+<td>0.061</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Oracle AIPW</strong> is nearly unbiased, serving as the efficiency benchmark. <strong>Naive RF AIPW</strong> exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term: reusing the same sample allows overfitting to propagate into the AIPW score. <strong>DML</strong> reduces the bias to 0.007 — within Monte Carlo error of zero — at a modest variance cost (0.0031 to 0.0036), achieving a <strong>lower RMSE</strong> (0.061 vs 0.068) than the naive approach. The key comparison is between Naive RF AIPW and DML: both use identical random forest learners; the only difference is cross-fitting.</p>
+</section>
+<section id="sec-variance" class="level2" data-number="11.11">
+<h2 data-number="11.11" class="anchored" data-anchor-id="sec-variance"><span class="header-section-number">11.11</span> Variance Estimation and Confidence Intervals</h2>
+<p>Inference for <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> proceeds exactly as in Chapter 10, except that nuisance estimates are now out-of-fold. Let <span class="math inline">\(k(i)\)</span> denote the fold containing observation <span class="math inline">\(i\)</span>, and define: <span id="eq-ifhat"><span class="math display">\[\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\hat\tau_{\mathrm{DML}},\,\hat\eta^{(-k(i))}\bigr). \tag{11.8}\]</span></span></p>
+<p>The variance estimator is: <span id="eq-var-est"><span class="math display">\[\hat{V} = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i. \tag{11.9}\]</span></span></p>
+<p>The Wald confidence interval at level <span class="math inline">\(1-\alpha\)</span> is <span class="math inline">\(\hat\tau_{\mathrm{DML}} \pm z_{1-\alpha/2}\sqrt{\hat{V}}\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Consistency of the Variance Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the conditions of the Asymptotic Linearity theorem, the variance estimator <span class="math inline">\(\hat{V}\)</span> in <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>11.9</span></a> is consistent for the asymptotic variance of <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span>; equivalently, <span class="math inline">\(n\hat{V} \overset{p}{\longrightarrow} \E[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2]\)</span>.</p>
+</div>
+</div>
+<p>The formula <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>11.9</span></a> is the sample variance of the out-of-fold estimated influence values divided by <span class="math inline">\(n\)</span> — identical to Chapter 10’s formula, but <span class="math inline">\(\hat\varphi_i\)</span> now uses the out-of-fold nuisance estimate <span class="math inline">\(\hat\eta^{(-k(i))}\)</span>.</p>
+</section>
+<section id="sec-workflow" class="level2" data-number="11.12">
+<h2 data-number="11.12" class="anchored" data-anchor-id="sec-workflow"><span class="header-section-number">11.12</span> A Practical Workflow</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Workflow: Cross-Fitted Causal Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Phase 1: Identification and setup</strong></p>
+<ol type="1">
+<li><strong>Specify the estimand.</strong> State the target causal parameter and verify the identification assumptions (conditional exchangeability, positivity, and consistency for the ATE).</li>
+<li><strong>Choose the orthogonal score.</strong> For the ATE under conditional exchangeability, use the efficient influence function <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>11.3</span></a>.</li>
+<li><strong>Select nuisance learners.</strong> Choose flexible learners for <span class="math inline">\(\mu_0(x)\)</span>, <span class="math inline">\(\mu_1(x)\)</span>, <span class="math inline">\(\pi(x)\)</span>. Verify informally that the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>11.7</span></a> is plausible.</li>
+<li><strong>Monitor overlap.</strong> Examine the empirical distribution of covariates by treatment group before fitting.</li>
+</ol>
+<p><strong>Phase 2: Estimation</strong></p>
+<ol start="5" type="1">
+<li><strong>Partition and cross-fit.</strong> Partition into <span class="math inline">\(K\)</span> folds (<span class="math inline">\(K = 5\)</span> is a common default). For each fold <span class="math inline">\(k\)</span>, fit nuisance learners on the complement to obtain <span class="math inline">\(\hat\eta^{(-k)}\)</span>.</li>
+<li><strong>Compute out-of-fold orthogonal scores.</strong> For each <span class="math inline">\(i \in \mathcal{I}_k\)</span>, compute <span class="math inline">\(\hat\varphi_i\)</span>.</li>
+<li><strong>Solve the moment equation.</strong> Average scores across all observations to obtain <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> via <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>11.6</span></a>.</li>
+<li><strong>Estimate the variance.</strong> Compute <span class="math inline">\(\hat{V}\)</span> via <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>11.9</span></a> and form the Wald confidence interval.</li>
+</ol>
+<p><strong>Phase 3: Diagnostics and interpretation</strong></p>
+<ol start="9" type="1">
+<li><strong>Inspect estimated propensity scores.</strong> Examine <span class="math inline">\(\hat\pi^{(-k)}(X_i)\)</span> across folds; extreme values near 0 or 1 inflate influence-value variance.</li>
+<li><strong>Assess sensitivity.</strong> Repeat with alternative learners. Substantial sensitivity signals that the product-rate condition may not be satisfied.</li>
+<li><strong>Interpret relative to identification assumptions.</strong> The credibility of the causal estimate rests on identification assumptions, not on predictive accuracy of the nuisance learners.</li>
+</ol>
+</div>
+</div>
+<p>Step 11 deserves emphasis. A common error is to assess credibility by citing good out-of-sample predictive accuracy for the nuisance models. Predictive accuracy is necessary but not sufficient. The identifying assumptions are untestable from the data:</p>
+<blockquote class="blockquote">
+<p><em>Modern causal estimation is not merely machine learning plus a causal estimand. It is machine learning embedded inside a carefully constructed semiparametric procedure, whose validity rests on identification assumptions that no algorithm can verify.</em></p>
+</blockquote>
+</section>
+<section id="sec-limits" class="level2" data-number="11.13">
+<h2 data-number="11.13" class="anchored" data-anchor-id="sec-limits"><span class="header-section-number">11.13</span> What Machine Learning Does Not Solve</h2>
+<p>Flexible nuisance estimation is a genuine improvement over parametric methods, but it does not resolve the fundamental difficulties of causal inference. In particular, machine learning does not solve:</p>
+<ul>
+<li><strong>Unmeasured confounding.</strong> If important confounders are absent from <span class="math inline">\(X\)</span>, conditional exchangeability <span class="math inline">\(Y(t) \indep T \mid X\)</span> fails. No amount of flexibility in estimating <span class="math inline">\(\pi(x)\)</span> or <span class="math inline">\(\mu_t(x)\)</span> can correct this.</li>
+<li><strong>Violations of consistency.</strong> If the treatment version is ill-defined or SUTVA is violated, the potential outcomes framework itself is compromised.</li>
+<li><strong>Failure of positivity.</strong> When <span class="math inline">\(\pi(x) \approx 0\)</span> or <span class="math inline">\(\pi(x) \approx 1\)</span>, influence values become unstable and coverage can degrade severely.</li>
+<li><strong>Ambiguity about the estimand.</strong> Flexible estimation cannot resolve disagreement about what causal quantity is scientifically meaningful.</li>
+<li><strong>Invalid instrumental variable assumptions.</strong> The exclusion restriction and exogeneity conditions (Chapter 7) are not testable; machine learning cannot substitute for subject-matter justification.</li>
+<li><strong>Fragile mediation assumptions.</strong> Sequential ignorability and no interference between mediators (Chapter 8) must be argued on substantive grounds.</li>
+</ul>
+<p>Machine learning improves the estimation of nuisance functions <em>within</em> a given identification strategy. It does not create identification where none exists.</p>
+</section>
+<section id="chapter-summary" class="level2" data-number="11.14">
+<h2 data-number="11.14" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">11.14</span> Chapter Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Symbol</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\eta = (\mu_0, \mu_1, \pi)\)</span></td>
+<td>Nuisance tuple</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\phi(O;\,\psi,\eta)\)</span></td>
+<td>Generic orthogonal score; zero mean at truth</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\)</span></td>
+<td>Efficient influence function for the ATE <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>11.3</span></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mathcal{I}_k\)</span></td>
+<td><span class="math inline">\(k\)</span>-th fold; <span class="math inline">\(k=1,\ldots,K\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat\eta^{(-k)}\)</span></td>
+<td>Nuisance estimates trained without fold <span class="math inline">\(k\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span></td>
+<td>Cross-fitted AIPW (DML) estimator <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>11.6</span></a></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat\varphi_i\)</span></td>
+<td>Out-of-fold estimated influence value</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat{V}\)</span></td>
+<td>Variance estimator <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>11.9</span></a></td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li>Flexible methods are attractive for nuisance estimation when true nuisance functions are complex, but naive plug-in estimators can fail for two reasons: orthogonality may be absent, and even when orthogonality holds, same-sample nuisance fitting can create an additional empirical-process bias.</li>
+<li>A score function is Neyman orthogonal if its Gateaux derivative with respect to the nuisance vanishes at the truth, so nuisance estimation error enters only at second order.</li>
+<li>The efficient influence function for the ATE <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>11.3</span></a> is orthogonal, doubly robust, and efficiency-achieving.</li>
+<li>Even with an orthogonal score, reusing the same data for nuisance estimation and score evaluation can induce overfitting bias, especially when Donsker conditions fail.</li>
+<li>Sample splitting removes this bias by separating nuisance estimation from score evaluation, but wastes data.</li>
+<li>Cross-fitting recovers efficiency by rotating training and evaluation roles across <span class="math inline">\(K\)</span> folds.</li>
+<li>The cross-fitted AIPW estimator <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is the standard double machine learning estimator for the ATE.</li>
+<li>Under the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>11.7</span></a>, orthogonality and cross-fitting together yield asymptotic linearity, root-<span class="math inline">\(n\)</span> consistency, asymptotic normality, and efficiency. A sufficient case: each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span>.</li>
+<li>The asymptotic variance is estimated consistently from the empirical variance of the out-of-fold estimated influence values.</li>
+<li>Machine learning improves nuisance estimation, but does not resolve identification problems: unmeasured confounding, positivity failures, and untestable structural assumptions remain the researcher’s responsibility.</li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="11.15">
+<h2 data-number="11.15" class="anchored" data-anchor-id="problems"><span class="header-section-number">11.15</span> Problems</h2>
+<p><strong>1. Verifying orthogonality.</strong></p>
+<ol type="a">
+<li>Write out the efficient influence function <span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\)</span> for the ATE and compute its expectation. Confirm it equals zero at the truth.</li>
+<li>Consider a perturbation <span class="math inline">\(\pi \mapsto \pi + r\cdot h\)</span> for a bounded function <span class="math inline">\(h(x)\)</span>. Differentiate <span class="math inline">\(\E\{\varphi_{\mathrm{eff}}(O;\,\tau, \mu_0, \mu_1, \pi+rh)\}\)</span> with respect to <span class="math inline">\(r\)</span> and evaluate at <span class="math inline">\(r=0\)</span>. Show the derivative is zero, confirming Neyman orthogonality in the propensity score direction.</li>
+<li>Repeat the calculation for a perturbation in <span class="math inline">\(\mu_1\)</span>.</li>
+</ol>
+<p><strong>2. First-order bias of the plug-in estimator.</strong> Suppose <span class="math inline">\(\hat\mu_1 = \mu_1 + \delta\)</span> for a deterministic function <span class="math inline">\(\delta(x)\)</span>, and <span class="math inline">\(\hat\mu_0 = \mu_0\)</span>, <span class="math inline">\(\hat\pi = \pi\)</span>.</p>
+<ol type="a">
+<li>Show that the bias of the prediction estimator <span class="math inline">\(\hat\tau_{\mathrm{pred}} = n^{-1}\sum_i\{\hat\mu_1(X_i) - \hat\mu_0(X_i)\}\)</span> is <span class="math inline">\(\E\{\delta(X)\}\)</span>.</li>
+<li>Show that the population bias of the plug-in AIPW estimator (using <span class="math inline">\(\hat\mu_1 = \mu_1 + \delta\)</span> with the true <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\mu_0\)</span>) is zero. Explain which property of the AIPW score is responsible. Does this mean the plug-in AIPW estimator is asymptotically unbiased when <span class="math inline">\(\hat\mu_1\)</span> is estimated flexibly from the same sample used to evaluate the score? Explain why or why not.</li>
+</ol>
+<p><strong>3. Cross-fitting with <span class="math inline">\(K=2\)</span>.</strong> Partition <span class="math inline">\(n=200\)</span> observations into two halves <span class="math inline">\(\mathcal{I}_1\)</span> and <span class="math inline">\(\mathcal{I}_2\)</span>.</p>
+<ol type="a">
+<li>Write down the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>11.5</span></a> explicitly for <span class="math inline">\(K=2\)</span>.</li>
+<li>Explain why the contribution from <span class="math inline">\(\mathcal{I}_1\)</span> uses nuisance estimates trained on <span class="math inline">\(\mathcal{I}_2\)</span> and vice versa.</li>
+<li>Compare this procedure to single sample splitting with <span class="math inline">\(\mathcal{I}_1\)</span> as the training fold. What is gained and what is lost?</li>
+</ol>
+<p><strong>4. The product-rate condition.</strong> Suppose <span class="math inline">\(\|\hat\pi - \pi\|_{L_2} = o_p(n^{-\alpha})\)</span> and <span class="math inline">\(\|\hat\mu_t - \mu_t\|_{L_2} = o_p(n^{-\beta})\)</span> for <span class="math inline">\(\alpha, \beta &gt; 0\)</span>.</p>
+<ol type="a">
+<li>State the condition on <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> under which the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>11.7</span></a> holds.</li>
+<li>Show that <span class="math inline">\(\alpha = \beta = 1/4\)</span> satisfies your condition.</li>
+<li>Does <span class="math inline">\(\alpha = 1/2\)</span>, <span class="math inline">\(\beta = 0\)</span> satisfy it? What does this say about the case where the propensity score is estimated parametrically but the outcome model converges only at an unspecified rate?</li>
+</ol>
+<p><strong>5. Variance estimation.</strong> Using the explicit formula <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>11.6</span></a>, write out the estimated influence value <span class="math inline">\(\hat\varphi_i\)</span> for a generic observation <span class="math inline">\(i \in \mathcal{I}_k\)</span>. Show that <span class="math inline">\(n^{-1}\sum_i \hat\varphi_i = 0\)</span> when <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> solves the cross-fitted moment equation, and explain why the centering in <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>11.9</span></a> is therefore asymptotically inconsequential.</p>
+<p><strong>6. What machine learning cannot do.</strong> For each of the following scenarios, identify the identification assumption that is violated and explain why flexible nuisance estimation cannot remedy the problem.</p>
+<ol type="a">
+<li>A study of job-training effects on earnings omits pre-program earnings, a strong predictor of both program participation and subsequent earnings.</li>
+<li>A study of a medical treatment estimates the propensity score accurately, but the treatment was assigned in clusters (hospital wards) and outcomes may be correlated within clusters in a way that depends on the fraction of patients treated.</li>
+<li>An instrument is used to estimate the effect of education on wages, but the instrument also directly affects wages through a channel not related to education.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_10.html" class="pagination-link" aria-label="Doubly Robust Estimation and Semiparametric Efficiency">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
