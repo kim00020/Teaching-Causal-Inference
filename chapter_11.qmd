@@ -232,11 +232,24 @@ The product-rate condition requires the *product* of the two nuisance estimation
 **Data-generating process.** $n = 2000$ observations; $X_1, X_2, X_3 \sim \mathrm{Uniform}(-1, 1)$ i.i.d. True nuisance functions:
 $$\pi(X) = \mathrm{expit}\!\bigl(\sin(\pi X_1) + X_2^2 - 0.5\bigr), \quad \mu_1(X) = 2\sin(\pi X_1) + X_2^2 + X_3, \quad \mu_0(X) = \sin(\pi X_1) + X_2^2 - X_3.$$
 
-True ATE: $\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0$ (by symmetry). The nonlinearity of $\pi$ and $\mu_t$ means random forests can fit them consistently, while the Donsker condition fails — exactly the setting of @sec-reuse.
+True ATE: $\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0$ (by symmetry). The nonlinearity of $\pi$ and $\mu_t$ means random forests can fit them consistently, while the Donsker condition fails for the function class they trace out — exactly the setting of @sec-reuse.
 
 **The three estimators.** (1) *Oracle AIPW*: plug in the true nuisance functions directly — infeasible but provides the semiparametric efficiency benchmark. (2) *Naive RF AIPW*: estimate $\pi$, $\mu_1$, $\mu_0$ using random forests on the **full sample**, then evaluate the AIPW score on the same sample — the Donsker condition fails. (3) *DML (cross-fitted AIPW)*: same random forest learners but via $K = 5$-fold cross-fitting — the fold-by-fold independence argument eliminates the empirical process term.
 
-**Simulation results** ($n = 2000$, 200 replications):
+Estimators (2) and (3) use identical learners; the only difference is data reuse versus cross-fitting.
+
+**Implementation.** The simulation was run in Python using scikit-learn random forests with fixed hyperparameters (`n_estimators=100`, `min_samples_leaf=5`; all other settings at library defaults). No nested cross-validation is used to tune learners inside the cross-fitting loop: this keeps the comparison between Naive and DML clean --- any difference is attributable to cross-fitting alone, not to different tuning paths. The propensity score is clipped to $[0.01, 0.99]$ after fitting. Replication seed is $1000 + r$ for $r = 0, \ldots, 199$.
+
+::: {.callout-note icon=false}
+## Pseudocode: One Replication
+
+1. **Generate data.** Draw $(X_i, T_i, Y_i)$ for $i = 1,\ldots,n$ from the DGP above.
+2. **Oracle AIPW.** Compute $\hat\tau_{\mathrm{oracle}} = n^{-1}\sum_i \varphi_{\mathrm{eff}}(O_i;\,\tau, \pi, \mu_0, \mu_1)$ using the true nuisance functions.
+3. **Naive RF AIPW.** Fit $\hat\pi$, $\hat\mu_0$, $\hat\mu_1$ as random forests on the full sample; clip $\hat\pi$ to $[0.01, 0.99]$; compute $\hat\tau_{\mathrm{naive}}$ with the same-sample fits.
+4. **DML.** Partition $\{1,\ldots,n\}$ into $K$ shuffled folds. For each fold $k$: fit $\hat\pi^{(-k)}$, $\hat\mu_0^{(-k)}$, $\hat\mu_1^{(-k)}$ on $\{1,\ldots,n\}\setminus\mathcal{I}_k$; clip $\hat\pi^{(-k)}$ to $[0.01, 0.99]$; predict on $\mathcal{I}_k$. Compute $\hat\tau_{\mathrm{DML}}$ from @eq-dml-ate.
+:::
+
+**Simulation results** ($n = 2000$, $K = 5$, 200 replications):
 
 | **Estimator** | **Bias** | **Variance** | **RMSE** |
 |---|---|---|---|
@@ -244,7 +257,13 @@ True ATE: $\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0$ (b
 | Naive RF AIPW | 0.039 | 0.0031 | 0.068 |
 | DML | 0.007 | 0.0036 | 0.061 |
 
-**Oracle AIPW** is nearly unbiased, serving as the efficiency benchmark. **Naive RF AIPW** exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term: reusing the same sample allows overfitting to propagate into the AIPW score. **DML** reduces the bias to 0.007 --- within Monte Carlo error of zero --- at a modest variance cost (0.0031 to 0.0036), achieving a **lower RMSE** (0.061 vs 0.068) than the naive approach. The key comparison is between Naive RF AIPW and DML: both use identical random forest learners; the only difference is cross-fitting.
+**Oracle AIPW** is nearly unbiased, serving as the efficiency benchmark. **Naive RF AIPW** exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term: reusing the same sample allows overfitting in the random forests to propagate into the AIPW score, exactly as analyzed in @sec-reuse. **DML** reduces the bias to 0.007 --- within Monte Carlo error of zero --- at a modest finite-sample variance cost (from 0.0031 to 0.0036). The small variance increase does *not* represent an asymptotic efficiency cost: every observation is used once as an evaluation point, and cross-fitting is designed to recover first-order efficiency. At $n = 2000$ with $K = 5$, the increase arises from two finite-sample sources: each out-of-fold nuisance estimator is trained on $(K-1)n/K = 1600$ observations rather than the full sample, so its predictions are slightly noisier; and fold-assignment randomness adds a small additional source of sampling variability. (The Naive estimator's lower variance is in part a consequence of overfitting, which reduces plug-in variance at the cost of the bias this lab is designed to expose.) The net effect is a **lower RMSE for DML** (0.061) than for Naive RF AIPW (0.068): the bias reduction outweighs the variance difference.
+
+::: {.callout-note icon=false}
+## Remark
+
+The key comparison is between Naive RF AIPW and DML, not between either and the oracle. Both use identical random forest learners; the only difference is cross-fitting. The bias reduction from 0.039 to 0.007 is therefore attributable solely to removing the same-sample data-reuse problem. The accompanying small increase in variance is a finite-sample phenomenon, not an asymptotic penalty: cross-fitting is designed to recover first-order efficiency, and the gap should narrow as $n$ grows.
+:::
 
 ## Variance Estimation and Confidence Intervals {#sec-variance}
 
@@ -323,11 +342,11 @@ Machine learning improves the estimation of nuisance functions *within* a given 
 1. Flexible methods are attractive for nuisance estimation when true nuisance functions are complex, but naive plug-in estimators can fail for two reasons: orthogonality may be absent, and even when orthogonality holds, same-sample nuisance fitting can create an additional empirical-process bias.
 2. A score function is Neyman orthogonal if its Gateaux derivative with respect to the nuisance vanishes at the truth, so nuisance estimation error enters only at second order.
 3. The efficient influence function for the ATE @eq-orth-score-ate is orthogonal, doubly robust, and efficiency-achieving.
-4. Even with an orthogonal score, reusing the same data for nuisance estimation and score evaluation can induce overfitting bias, especially when Donsker conditions fail.
+4. Even with an orthogonal score, reusing the same data for nuisance estimation and score evaluation can induce overfitting bias, especially when the nuisance class falls outside classical fixed Donsker regimes.
 5. Sample splitting removes this bias by separating nuisance estimation from score evaluation, but wastes data.
 6. Cross-fitting recovers efficiency by rotating training and evaluation roles across $K$ folds.
 7. The cross-fitted AIPW estimator $\hat\tau_{\mathrm{DML}}$ is the standard double machine learning estimator for the ATE.
-8. Under the product-rate condition @eq-product-rate, orthogonality and cross-fitting together yield asymptotic linearity, root-$n$ consistency, asymptotic normality, and efficiency. A sufficient case: each nuisance estimator converges at rate $o_p(n^{-1/4})$.
+8. Under the product-rate condition @eq-product-rate, orthogonality and cross-fitting together yield asymptotic linearity, root-$n$ consistency, and asymptotic normality of $\hat\tau_{\mathrm{DML}}$, with asymptotic variance equal to the semiparametric efficiency bound. A sufficient condition: each nuisance estimator converges at rate $o_p(n^{-1/4})$ in $L_2(P)$ norm, equivalently that its squared $L_2$ risk is $o_p(n^{-1/2})$.
 9. The asymptotic variance is estimated consistently from the empirical variance of the out-of-fold estimated influence values.
 10. Machine learning improves nuisance estimation, but does not resolve identification problems: unmeasured confounding, positivity failures, and untestable structural assumptions remain the researcher's responsibility.
 

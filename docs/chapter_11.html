@@ -640,9 +640,29 @@ window.Quarto = {
 <section id="sec-lab" class="level2" data-number="11.10">
 <h2 data-number="11.10" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">11.10</span> Lab: Simulation Study of the DML Estimator</h2>
 <p><strong>Data-generating process.</strong> <span class="math inline">\(n = 2000\)</span> observations; <span class="math inline">\(X_1, X_2, X_3 \sim \mathrm{Uniform}(-1, 1)\)</span> i.i.d. True nuisance functions: <span class="math display">\[\pi(X) = \mathrm{expit}\!\bigl(\sin(\pi X_1) + X_2^2 - 0.5\bigr), \quad \mu_1(X) = 2\sin(\pi X_1) + X_2^2 + X_3, \quad \mu_0(X) = \sin(\pi X_1) + X_2^2 - X_3.\]</span></p>
-<p>True ATE: <span class="math inline">\(\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0\)</span> (by symmetry). The nonlinearity of <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\mu_t\)</span> means random forests can fit them consistently, while the Donsker condition fails — exactly the setting of <a href="#sec-reuse" class="quarto-xref"><span>Section 11.5</span></a>.</p>
+<p>True ATE: <span class="math inline">\(\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0\)</span> (by symmetry). The nonlinearity of <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\mu_t\)</span> means random forests can fit them consistently, while the Donsker condition fails for the function class they trace out — exactly the setting of <a href="#sec-reuse" class="quarto-xref"><span>Section 11.5</span></a>.</p>
 <p><strong>The three estimators.</strong> (1) <em>Oracle AIPW</em>: plug in the true nuisance functions directly — infeasible but provides the semiparametric efficiency benchmark. (2) <em>Naive RF AIPW</em>: estimate <span class="math inline">\(\pi\)</span>, <span class="math inline">\(\mu_1\)</span>, <span class="math inline">\(\mu_0\)</span> using random forests on the <strong>full sample</strong>, then evaluate the AIPW score on the same sample — the Donsker condition fails. (3) <em>DML (cross-fitted AIPW)</em>: same random forest learners but via <span class="math inline">\(K = 5\)</span>-fold cross-fitting — the fold-by-fold independence argument eliminates the empirical process term.</p>
-<p><strong>Simulation results</strong> (<span class="math inline">\(n = 2000\)</span>, 200 replications):</p>
+<p>Estimators (2) and (3) use identical learners; the only difference is data reuse versus cross-fitting.</p>
+<p><strong>Implementation.</strong> The simulation was run in Python using scikit-learn random forests with fixed hyperparameters (<code>n_estimators=100</code>, <code>min_samples_leaf=5</code>; all other settings at library defaults). No nested cross-validation is used to tune learners inside the cross-fitting loop: this keeps the comparison between Naive and DML clean — any difference is attributable to cross-fitting alone, not to different tuning paths. The propensity score is clipped to <span class="math inline">\([0.01, 0.99]\)</span> after fitting. Replication seed is <span class="math inline">\(1000 + r\)</span> for <span class="math inline">\(r = 0, \ldots, 199\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Pseudocode: One Replication
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Generate data.</strong> Draw <span class="math inline">\((X_i, T_i, Y_i)\)</span> for <span class="math inline">\(i = 1,\ldots,n\)</span> from the DGP above.</li>
+<li><strong>Oracle AIPW.</strong> Compute <span class="math inline">\(\hat\tau_{\mathrm{oracle}} = n^{-1}\sum_i \varphi_{\mathrm{eff}}(O_i;\,\tau, \pi, \mu_0, \mu_1)\)</span> using the true nuisance functions.</li>
+<li><strong>Naive RF AIPW.</strong> Fit <span class="math inline">\(\hat\pi\)</span>, <span class="math inline">\(\hat\mu_0\)</span>, <span class="math inline">\(\hat\mu_1\)</span> as random forests on the full sample; clip <span class="math inline">\(\hat\pi\)</span> to <span class="math inline">\([0.01, 0.99]\)</span>; compute <span class="math inline">\(\hat\tau_{\mathrm{naive}}\)</span> with the same-sample fits.</li>
+<li><strong>DML.</strong> Partition <span class="math inline">\(\{1,\ldots,n\}\)</span> into <span class="math inline">\(K\)</span> shuffled folds. For each fold <span class="math inline">\(k\)</span>: fit <span class="math inline">\(\hat\pi^{(-k)}\)</span>, <span class="math inline">\(\hat\mu_0^{(-k)}\)</span>, <span class="math inline">\(\hat\mu_1^{(-k)}\)</span> on <span class="math inline">\(\{1,\ldots,n\}\setminus\mathcal{I}_k\)</span>; clip <span class="math inline">\(\hat\pi^{(-k)}\)</span> to <span class="math inline">\([0.01, 0.99]\)</span>; predict on <span class="math inline">\(\mathcal{I}_k\)</span>. Compute <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> from <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>11.6</span></a>.</li>
+</ol>
+</div>
+</div>
+<p><strong>Simulation results</strong> (<span class="math inline">\(n = 2000\)</span>, <span class="math inline">\(K = 5\)</span>, 200 replications):</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -673,7 +693,20 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p><strong>Oracle AIPW</strong> is nearly unbiased, serving as the efficiency benchmark. <strong>Naive RF AIPW</strong> exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term: reusing the same sample allows overfitting to propagate into the AIPW score. <strong>DML</strong> reduces the bias to 0.007 — within Monte Carlo error of zero — at a modest variance cost (0.0031 to 0.0036), achieving a <strong>lower RMSE</strong> (0.061 vs 0.068) than the naive approach. The key comparison is between Naive RF AIPW and DML: both use identical random forest learners; the only difference is cross-fitting.</p>
+<p><strong>Oracle AIPW</strong> is nearly unbiased, serving as the efficiency benchmark. <strong>Naive RF AIPW</strong> exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term: reusing the same sample allows overfitting in the random forests to propagate into the AIPW score, exactly as analyzed in <a href="#sec-reuse" class="quarto-xref"><span>Section 11.5</span></a>. <strong>DML</strong> reduces the bias to 0.007 — within Monte Carlo error of zero — at a modest finite-sample variance cost (from 0.0031 to 0.0036). The small variance increase does <em>not</em> represent an asymptotic efficiency cost: every observation is used once as an evaluation point, and cross-fitting is designed to recover first-order efficiency. At <span class="math inline">\(n = 2000\)</span> with <span class="math inline">\(K = 5\)</span>, the increase arises from two finite-sample sources: each out-of-fold nuisance estimator is trained on <span class="math inline">\((K-1)n/K = 1600\)</span> observations rather than the full sample, so its predictions are slightly noisier; and fold-assignment randomness adds a small additional source of sampling variability. (The Naive estimator’s lower variance is in part a consequence of overfitting, which reduces plug-in variance at the cost of the bias this lab is designed to expose.) The net effect is a <strong>lower RMSE for DML</strong> (0.061) than for Naive RF AIPW (0.068): the bias reduction outweighs the variance difference.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The key comparison is between Naive RF AIPW and DML, not between either and the oracle. Both use identical random forest learners; the only difference is cross-fitting. The bias reduction from 0.039 to 0.007 is therefore attributable solely to removing the same-sample data-reuse problem. The accompanying small increase in variance is a finite-sample phenomenon, not an asymptotic penalty: cross-fitting is designed to recover first-order efficiency, and the gap should narrow as <span class="math inline">\(n\)</span> grows.</p>
+</div>
+</div>
 </section>
 <section id="sec-variance" class="level2" data-number="11.11">
 <h2 data-number="11.11" class="anchored" data-anchor-id="sec-variance"><span class="header-section-number">11.11</span> Variance Estimation and Confidence Intervals</h2>
@@ -799,11 +832,11 @@ window.Quarto = {
 <li>Flexible methods are attractive for nuisance estimation when true nuisance functions are complex, but naive plug-in estimators can fail for two reasons: orthogonality may be absent, and even when orthogonality holds, same-sample nuisance fitting can create an additional empirical-process bias.</li>
 <li>A score function is Neyman orthogonal if its Gateaux derivative with respect to the nuisance vanishes at the truth, so nuisance estimation error enters only at second order.</li>
 <li>The efficient influence function for the ATE <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>11.3</span></a> is orthogonal, doubly robust, and efficiency-achieving.</li>
-<li>Even with an orthogonal score, reusing the same data for nuisance estimation and score evaluation can induce overfitting bias, especially when Donsker conditions fail.</li>
+<li>Even with an orthogonal score, reusing the same data for nuisance estimation and score evaluation can induce overfitting bias, especially when the nuisance class falls outside classical fixed Donsker regimes.</li>
 <li>Sample splitting removes this bias by separating nuisance estimation from score evaluation, but wastes data.</li>
 <li>Cross-fitting recovers efficiency by rotating training and evaluation roles across <span class="math inline">\(K\)</span> folds.</li>
 <li>The cross-fitted AIPW estimator <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is the standard double machine learning estimator for the ATE.</li>
-<li>Under the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>11.7</span></a>, orthogonality and cross-fitting together yield asymptotic linearity, root-<span class="math inline">\(n\)</span> consistency, asymptotic normality, and efficiency. A sufficient case: each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span>.</li>
+<li>Under the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>11.7</span></a>, orthogonality and cross-fitting together yield asymptotic linearity, root-<span class="math inline">\(n\)</span> consistency, and asymptotic normality of <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span>, with asymptotic variance equal to the semiparametric efficiency bound. A sufficient condition: each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span> in <span class="math inline">\(L_2(P)\)</span> norm, equivalently that its squared <span class="math inline">\(L_2\)</span> risk is <span class="math inline">\(o_p(n^{-1/2})\)</span>.</li>
 <li>The asymptotic variance is estimated consistently from the empirical variance of the out-of-fold estimated influence values.</li>
 <li>Machine learning improves nuisance estimation, but does not resolve identification problems: unmeasured confounding, positivity failures, and untestable structural assumptions remain the researcher’s responsibility.</li>
 </ol>
