@@ -1,22 +1,26 @@
 # Preface {.unnumbered}
 
-These lecture notes accompany the graduate course **STAT 5900B: Theory and Methods in Causal Inference** at the Department of Statistics, Iowa State University.
+These lecture notes accompany the graduate course **STAT 5900B: Theory and Methods in Causal Inference** at the Department of Statistics, Iowa State University (Version 2.0).
 
-The course targets graduate students in statistics. It assumes familiarity with probability theory, mathematical statistics, and linear models at the level of a graduate sequence, but no prior exposure to causal inference.
+The course targets first-year PhD students in statistics. It assumes familiarity with probability theory, mathematical statistics, and linear models at the level of a graduate sequence, but no prior exposure to causal inference.
 
 📄 [Download full PDF](Theory-and-Methods-in-Causal-Inference.pdf)
 
 ## Organization
 
-The notes are organized in four parts.
+The notes are organized in three parts, with a fourth part on policy learning deferred to a later release.
 
-**Part I — Foundations** (Chapters 1–4) builds the graphical and conceptual foundation: the causal trinity (SEM, DAG, potential outcomes), DAGs and d-separation, the do-calculus and identification criteria, and the connection between potential outcomes and the do-calculus.
+**Part I — Foundations** (Chapters 1–3) builds the graphical and conceptual foundation of causal inference. Chapter 1 introduces the three languages of causality — structural equation models (SEMs), directed acyclic graphs (DAGs), and potential outcomes — and explains how they relate. Chapter 2 develops DAGs and d-separation as tools for reading off conditional independence from causal structure. Chapter 3 introduces the do-calculus and the main identification criteria (back-door, front-door, do-calculus rules) that translate causal queries into statistical ones.
 
-**Part II — Identification** (Chapters 5–8) bridges the graphical framework and observed data: randomization and back-door adjustment, propensity score methods, instrumental variables, and mediation and front-door identification.
+**Part II — Identification** (Chapters 4–9) bridges the graphical framework and observed data. Chapter 4 connects the potential outcomes framework to the do-calculus and establishes the consistency, exchangeability, and positivity assumptions. Chapter 5 covers randomization and the back-door adjustment formula. Chapter 6 develops propensity score methods — weighting, matching, and the balancing property. Chapter 7 develops instrumental variables: the Wald estimand, the local average treatment effect (LATE) for compliers, and the three IV assumptions. Chapter 8 covers mediation analysis and the front-door criterion, distinguishing the controlled direct effect from the natural direct and indirect effects. Chapter 9 introduces the estimation framework — estimating equations, asymptotic linearity, influence functions, and the semiparametric efficiency bound — that underlies the methods of Part III.
 
-**Part III — Estimation** (Chapters 9–12) covers semiparametric efficiency theory: estimating equations and influence functions, doubly robust estimation, flexible nuisance estimation with cross-fitting, and estimation under instrumental variables.
+**Part III — Estimation** (Chapters 10–13) covers semiparametric efficiency theory and its modern applications. Chapter 10 develops the augmented inverse probability weighted (AIPW) estimator from three complementary perspectives — bias correction, optimal augmentation, and the efficient influence function — and establishes double robustness and semiparametric efficiency. Chapter 11 addresses flexible nuisance estimation with orthogonal scores and cross-fitting, culminating in the double machine learning (DML) estimator. Chapters 12 and 13 cover estimation under instrumental variables and further extensions (to be added).
 
-**Part IV — Policy Learning and Sequential Decision Making** (Chapters 13–15) covers policy evaluation, optimal policy learning, and dynamic treatment regimes.
+**Part IV — Policy Learning and Sequential Decision Making** (Chapters 14–16, deferred) will cover policy evaluation, optimal policy learning, and dynamic treatment regimes.
+
+## Appendices
+
+**Appendix A** provides graphical intuition for conditional independence and d-separation. **Appendix B** introduces Single World Intervention Graphs (SWIGs). **Appendix C** develops the formal foundations of pathwise differentiability and efficient influence functions for readers who want the semiparametric geometry underlying Chapter 9.
 
 ## Notation
 
@@ -25,4 +29,6 @@ Throughout these notes:
 - $\doop(T = t)$ denotes the do-operator (intervention).
 - $Y(t)$ denotes the potential outcome under $T = t$.
 - $\E[\,\cdot\,]$ denotes expectation; $\indep$ denotes conditional independence.
-- $\mathcal{G}$ denotes a DAG; $\mathcal{G}_T$ denotes the mutilated graph after intervening on $T$.
+- $\mathcal{G}$ denotes a DAG; $\mathcal{G}_{\overline{T}}$ denotes the mutilated graph after intervening on $T$.
+- $\pi(x) = P(T=1 \mid X=x)$ denotes the propensity score.
+- $\mu_t(x) = \E(Y \mid T=t, X=x)$ denotes the outcome regression.
