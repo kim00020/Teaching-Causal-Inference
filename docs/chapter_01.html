@@ -23,6 +23,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -327,17 +362,17 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#motivation-why-causal-inference-is-hard" id="toc-motivation-why-causal-inference-is-hard" class="nav-link active" data-scroll-target="#motivation-why-causal-inference-is-hard"><span class="header-section-number">1.1</span> Motivation: Why Causal Inference Is Hard</a>
+  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">1.1</span> Motivation: Why Causal Inference Is Hard</a>
   <ul class="collapse">
   <li><a href="#the-central-question" id="toc-the-central-question" class="nav-link" data-scroll-target="#the-central-question"><span class="header-section-number">1.1.1</span> The Central Question</a></li>
   </ul></li>
-  <li><a href="#the-causal-trinity-three-languages-for-one-idea" id="toc-the-causal-trinity-three-languages-for-one-idea" class="nav-link" data-scroll-target="#the-causal-trinity-three-languages-for-one-idea"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</a>
+  <li><a href="#sec-trinity" id="toc-sec-trinity" class="nav-link" data-scroll-target="#sec-trinity"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</a>
   <ul class="collapse">
   <li><a href="#language-1-structural-equation-models" id="toc-language-1-structural-equation-models" class="nav-link" data-scroll-target="#language-1-structural-equation-models"><span class="header-section-number">1.2.1</span> Language 1: Structural Equation Models</a></li>
   <li><a href="#language-2-directed-acyclic-graphs" id="toc-language-2-directed-acyclic-graphs" class="nav-link" data-scroll-target="#language-2-directed-acyclic-graphs"><span class="header-section-number">1.2.2</span> Language 2: Directed Acyclic Graphs</a></li>
   <li><a href="#language-3-potential-outcomes" id="toc-language-3-potential-outcomes" class="nav-link" data-scroll-target="#language-3-potential-outcomes"><span class="header-section-number">1.2.3</span> Language 3: Potential Outcomes</a></li>
   <li><a href="#roadmap-how-the-trinity-organizes-these-notes" id="toc-roadmap-how-the-trinity-organizes-these-notes" class="nav-link" data-scroll-target="#roadmap-how-the-trinity-organizes-these-notes"><span class="header-section-number">1.2.4</span> Roadmap: How the Trinity Organizes These Notes</a></li>
-  <li><a href="#sec-history" id="toc-sec-history" class="nav-link" data-scroll-target="#sec-history"><span class="header-section-number">1.2.5</span> Historical Roots of the Causal Trinity</a></li>
+  <li><a href="#historical-roots-of-the-causal-trinity" id="toc-historical-roots-of-the-causal-trinity" class="nav-link" data-scroll-target="#historical-roots-of-the-causal-trinity"><span class="header-section-number">1.2.5</span> Historical Roots of the Causal Trinity</a></li>
   </ul></li>
   <li><a href="#sec-core" id="toc-sec-core" class="nav-link" data-scroll-target="#sec-core"><span class="header-section-number">1.3</span> The Core Distinction</a>
   <ul class="collapse">
@@ -345,16 +380,13 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-gaussian" id="toc-sec-gaussian" class="nav-link" data-scroll-target="#sec-gaussian"><span class="header-section-number">1.4</span> The Gaussian Linear Confounded Model</a>
   <ul class="collapse">
-  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">1.4.1</span> Setup</a></li>
-  <li><a href="#two-explicit-densities" id="toc-two-explicit-densities" class="nav-link" data-scroll-target="#two-explicit-densities"><span class="header-section-number">1.4.2</span> Two Explicit Densities</a></li>
-  <li><a href="#the-endogeneity-gap" id="toc-the-endogeneity-gap" class="nav-link" data-scroll-target="#the-endogeneity-gap"><span class="header-section-number">1.4.3</span> The Endogeneity Gap</a></li>
-  <li><a href="#lab-simulating-the-two-densities" id="toc-lab-simulating-the-two-densities" class="nav-link" data-scroll-target="#lab-simulating-the-two-densities"><span class="header-section-number">1.4.4</span> Lab: Simulating the Two Densities</a></li>
+  <li><a href="#two-explicit-densities" id="toc-two-explicit-densities" class="nav-link" data-scroll-target="#two-explicit-densities"><span class="header-section-number">1.4.1</span> Two Explicit Densities</a></li>
+  <li><a href="#the-endogeneity-gap" id="toc-the-endogeneity-gap" class="nav-link" data-scroll-target="#the-endogeneity-gap"><span class="header-section-number">1.4.2</span> The Endogeneity Gap</a></li>
+  <li><a href="#lab-simulating-the-two-densities" id="toc-lab-simulating-the-two-densities" class="nav-link" data-scroll-target="#lab-simulating-the-two-densities"><span class="header-section-number">1.4.3</span> Lab: Simulating the Two Densities</a></li>
   </ul></li>
   <li><a href="#sec-two-step" id="toc-sec-two-step" class="nav-link" data-scroll-target="#sec-two-step"><span class="header-section-number">1.5</span> The Two-Step Paradigm</a>
   <ul class="collapse">
-  <li><a href="#step-1-identification" id="toc-step-1-identification" class="nav-link" data-scroll-target="#step-1-identification"><span class="header-section-number">1.5.1</span> Step 1: Identification</a></li>
-  <li><a href="#step-2-estimation" id="toc-step-2-estimation" class="nav-link" data-scroll-target="#step-2-estimation"><span class="header-section-number">1.5.2</span> Step 2: Estimation</a></li>
-  <li><a href="#sec-simpson" id="toc-sec-simpson" class="nav-link" data-scroll-target="#sec-simpson"><span class="header-section-number">1.5.3</span> A Worked Example: Flu Vaccination and Infection</a></li>
+  <li><a href="#worked-example-flu-vaccination-and-infection-simpsons-paradox" id="toc-worked-example-flu-vaccination-and-infection-simpsons-paradox" class="nav-link" data-scroll-target="#worked-example-flu-vaccination-and-infection-simpsons-paradox"><span class="header-section-number">1.5.1</span> Worked Example: Flu Vaccination and Infection (Simpson’s Paradox)</a></li>
   </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">1.6</span> Summary</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">1.7</span> Problems</a></li>
@@ -395,17 +427,16 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter, students should be able to:</p>
 <ol type="1">
-<li>Articulate the distinction between an interventional distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> and an observational conditional distribution <span class="math inline">\(f(y \mid T{=}t)\)</span>, and explain why they differ whenever <span class="math inline">\(T\)</span> is endogenous.</li>
+<li>Articulate the distinction between an interventional distribution <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span> and an observational conditional distribution <span class="math inline">\(P(y \mid T{=}t)\)</span>, and explain why they differ whenever <span class="math inline">\(T\)</span> is endogenous.</li>
 <li>Describe the same causal question in all three languages — SEM, DAG graph surgery, and potential outcomes — and begin to translate between them.</li>
 <li>Derive the two densities explicitly in the Gaussian linear confounded model, and identify the endogeneity bias <span class="math inline">\(\alpha\gamma\sigma_U^2/\sigma_T^2\)</span> as the gap between them.</li>
 <li>State the two-step paradigm (identification then estimation) and locate each step in the causal inference pipeline.</li>
 </ol>
 </div>
 </div>
-<p>This chapter is an orientation, not a complete treatment. It introduces four ideas — the interventional/observational distinction, the causal trinity, the Gaussian confounded model as a running example, and the identification-versus-estimation paradigm — that will be developed rigorously in Chapters 2–4 and beyond.</p>
-<section id="motivation-why-causal-inference-is-hard" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="motivation-why-causal-inference-is-hard"><span class="header-section-number">1.1</span> Motivation: Why Causal Inference Is Hard</h2>
-<p>Causal inference studies when and how the observational distribution can be used to recover the distribution that would arise under interventions.</p>
+<p>This chapter is an orientation, not a complete treatment. It introduces four ideas — the interventional/observational distinction, the causal trinity, the Gaussian confounded model as a running example, and the identification-versus-estimation paradigm — that will be developed rigorously in the chapters that follow.</p>
+<section id="sec-motivation" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">1.1</span> Motivation: Why Causal Inference Is Hard</h2>
 <section id="the-central-question" class="level3" data-number="1.1.1">
 <h3 data-number="1.1.1" class="anchored" data-anchor-id="the-central-question"><span class="header-section-number">1.1.1</span> The Central Question</h3>
 <p>Causal inference is concerned with a deceptively simple question: what would happen to <span class="math inline">\(Y\)</span> if we were to <em>set</em> <span class="math inline">\(T = t\)</span>? This is fundamentally different from the question that standard statistical procedures answer: what is the distribution of <span class="math inline">\(Y\)</span> among units <em>observed</em> to have <span class="math inline">\(T = t\)</span>?</p>
@@ -420,27 +451,10 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>The <em>interventional distribution</em> <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> is the distribution of <span class="math inline">\(Y\)</span> in a hypothetical world where <span class="math inline">\(T\)</span> has been <em>externally set</em> to <span class="math inline">\(t\)</span>, regardless of the usual data-generating mechanism for <span class="math inline">\(T\)</span>.</li>
-<li>The <em>observational conditional distribution</em> <span class="math inline">\(f(y \mid T{=}t)\)</span> is the distribution of <span class="math inline">\(Y\)</span> among the subpopulation of units for whom <span class="math inline">\(T = t\)</span> was <em>observed</em> to hold.</li>
+<li>The <em>interventional distribution</em> <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span> is the distribution of <span class="math inline">\(Y\)</span> in a hypothetical world where <span class="math inline">\(T\)</span> has been <em>externally set</em> to <span class="math inline">\(t\)</span>, regardless of the usual data-generating mechanism for <span class="math inline">\(T\)</span>.</li>
+<li>The <em>observational conditional distribution</em> <span class="math inline">\(P(y \mid T{=}t)\)</span> is the distribution of <span class="math inline">\(Y\)</span> among the subpopulation of units for whom <span class="math inline">\(T = t\)</span> was <em>observed</em> to hold.</li>
 </ul>
-<p>These two distributions coincide only when <span class="math inline">\(T\)</span> is randomized (exogenous). In all other cases they differ, and the difference is <em>endogeneity bias</em>.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Exogeneity and Endogeneity
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Suppose the outcome is generated by the structural equation <span class="math inline">\(Y = f_Y(T, X, U)\)</span>, where <span class="math inline">\(T\)</span> is the treatment, <span class="math inline">\(X\)</span> are observed covariates, and <span class="math inline">\(U\)</span> represents unobserved common causes of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> (confounders).</p>
-<ul>
-<li>The treatment <span class="math inline">\(T\)</span> is <em>exogenous given <span class="math inline">\(X\)</span></em> if <span class="math inline">\(T \indep U \mid X\)</span>.</li>
-<li>The treatment <span class="math inline">\(T\)</span> is <em>endogenous given <span class="math inline">\(X\)</span></em> if <span class="math inline">\(T \nindep U \mid X\)</span>, so that some unobserved variable <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>.</li>
-</ul>
+<p>These two distributions coincide when <span class="math inline">\(T\)</span> is <em>exogenous</em> — that is, when <span class="math inline">\(T\)</span> shares no common causes with <span class="math inline">\(Y\)</span>. Whenever <span class="math inline">\(T\)</span> is endogenous, the two distributions differ, and the difference is <em>endogeneity bias</em>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -453,12 +467,12 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Does a new drug (<span class="math inline">\(T=1\)</span>) reduce blood pressure (<span class="math inline">\(Y\)</span>)? Suppose sicker patients are more likely to take the drug, so that unmeasured severity <span class="math inline">\(U\)</span> is a common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>. Then:</p>
+<p>Does a new drug (<span class="math inline">\(T=1\)</span>) reduce blood pressure (<span class="math inline">\(Y\)</span>)? Suppose sicker patients are more likely to take the drug, so unmeasured severity <span class="math inline">\(U\)</span> is a common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>. Then:</p>
 <ul>
 <li><em>Observational study</em>: <span class="math inline">\(\E[Y \mid T{=}1] &gt; \E[Y \mid T{=}0]\)</span>. Drug users have higher blood pressure on average. A naïve analyst concludes the drug is harmful.</li>
 <li><em>Randomized trial</em>: <span class="math inline">\(\E[Y \mid \doop(T{=}1)] &lt; \E[Y \mid \doop(T{=}0)]\)</span>. Forcing everyone to take the drug reduces blood pressure. The drug is beneficial.</li>
 </ul>
-<p>Same data. Different questions. Opposite answers. The entire discrepancy is caused by the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span>, which the observational quantity <span class="math inline">\(\E[Y \mid T{=}1]\)</span> cannot remove.</p>
+<p>Same data. Different questions. Opposite answers. The entire discrepancy is caused by the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
@@ -471,15 +485,44 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>We observe <span class="math inline">\(f(y \mid T{=}t)\)</span> directly from data. We want <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>. The goal of <em>identification theory</em> is to find conditions under which the former can be used to recover the latter.</p>
+<p>We observe <span class="math inline">\(P(y \mid T{=}t)\)</span> directly from data. We want <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span>. The goal of <em>identification theory</em> is to find conditions under which the former can be used to recover the latter.</p>
 </div>
 </div>
 </section>
 </section>
-<section id="the-causal-trinity-three-languages-for-one-idea" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="the-causal-trinity-three-languages-for-one-idea"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</h2>
-<p>The same causal question — what happens when we set <span class="math inline">\(T = t\)</span>? — can be expressed in three distinct but equivalent languages. Collectively, we call these the <strong>causal trinity</strong>: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. <a href="#fig-trinity" class="quarto-xref">Figure&nbsp;<span>1.1</span></a> depicts their relationships.</p>
+<section id="sec-trinity" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="sec-trinity"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</h2>
+<p>The same causal question can be expressed in three closely related languages: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. Collectively, we call these the <strong>causal trinity</strong>. Each language illuminates a different facet of the same underlying idea, and fluency in all three is essential for modern causal reasoning.</p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode tex code-with-copy"><code class="sourceCode latex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\usetikzlibrary</span>{arrows.meta, positioning, calc, shapes.geometric}</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\newcommand</span>{<span class="ex">\Gcal</span>}{<span class="fu">\mathcal</span>{G}}</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{isublue}{RGB}{30,56,100}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{accent}{RGB}{46,117,182}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{defbg}{RGB}{238,244,251}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{darkgrey}{RGB}{80,80,80}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{semcolor}{RGB}{30,56,100}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{dagcolor}{RGB}{26,122,58}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{pocolor}{RGB}{150,50,150}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  lang/.style={rectangle,rounded corners=6pt,draw,very thick,text width=3.0cm,align=center,minimum height=1.3cm,font=<span class="fu">\bfseries\small</span>},</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  sem/.style={lang,draw=semcolor,fill=semcolor!10,text=semcolor},</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  dag/.style={lang,draw=dagcolor,fill=dagcolor!10,text=dagcolor},</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  po/.style={lang,draw=pocolor,fill=pocolor!10,text=pocolor},</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  center/.style={ellipse,draw=accent,fill=defbg,thick,text width=2.6cm,align=center,font=<span class="fu">\small\itshape\color</span>{accent}},</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  trans/.style={&lt;-&gt;,thick,color=darkgrey,shorten &gt;=4pt,shorten &lt;=4pt},</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  tlabel/.style={font=<span class="fu">\footnotesize\itshape</span>,color=darkgrey,fill=white,inner sep=2pt}</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[po]  (PO)  at (90:3.8cm)   {Potential<span class="fu">\\</span>Outcomes<span class="fu">\\</span><span class="ss">$Y(t)$</span>};</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[sem] (SEM) at (210:3.8cm)  {SEM<span class="fu">\\</span><span class="ss">$Y=f_Y(T,U,</span><span class="sc">\varepsilon</span><span class="ss">)$</span>};</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[dag] (DAG) at (330:3.8cm)  {DAG <span class="fu">\&amp;\\</span>Graph Surgery<span class="fu">\\</span><span class="ss">$</span><span class="sc">\Gcal</span><span class="ss">,</span><span class="sc">\;\Gcal</span><span class="ss">_{</span><span class="sc">\overline</span><span class="ss">{T}}$</span>};</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[center] (C) at (0,0) {Set <span class="ss">$T=t$</span>?};</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[-{Stealth[length=5pt]},thick,color=pocolor!70,shorten &gt;=4pt,shorten &lt;=4pt] (PO)--(C);</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[-{Stealth[length=5pt]},thick,color=semcolor!70,shorten &gt;=4pt,shorten &lt;=4pt] (SEM)--(C);</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[-{Stealth[length=5pt]},thick,color=dagcolor!70,shorten &gt;=4pt,shorten &lt;=4pt] (DAG)--(C);</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[trans] (PO)--(SEM) node[tlabel,midway,left=2pt]{<span class="fu">\parbox</span>{2.2cm}{<span class="fu">\centering</span> consistency<span class="fu">\\</span>+ no interference}};</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[trans] (SEM)--(DAG) node[tlabel,midway,below=4pt]{<span class="fu">\parbox</span>{2.2cm}{<span class="fu">\centering</span> equation<span class="fu">\\</span><span class="ss">$</span><span class="sc">\leftrightarrow</span><span class="ss">$</span> arrow}};</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[trans] (DAG)--(PO) node[tlabel,midway,right=2pt]{<span class="fu">\parbox</span>{2.2cm}{<span class="fu">\centering</span> SUTVA<span class="fu">\\</span>+ graph structure}};</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-trinity" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -487,7 +530,7 @@ window.Quarto = {
 <embed src="chapter_01_files/figure-html/fig-trinity-1.pdf" class="img-fluid" width="480">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trinity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that express the same causal question from different vantage points. Potential outcomes define <em>what</em> we want to estimate; the DAG with graph surgery specifies <em>how</em> to identify it; the SEM provides the <em>generative mechanism</em> for likelihood construction.
+Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that express the same causal question from different vantage points. Potential outcomes define <em>what</em> we want to estimate; the DAG with graph surgery specifies <em>how</em> to identify it from observed data; the SEM provides the <em>generative mechanism</em> for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages.
 </figcaption>
 </figure>
 </div>
@@ -495,19 +538,8 @@ Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that expre
 </div>
 <section id="language-1-structural-equation-models" class="level3" data-number="1.2.1">
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="language-1-structural-equation-models"><span class="header-section-number">1.2.1</span> Language 1: Structural Equation Models</h3>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Structural Equation Model (SEM)
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A recursive SEM over variables <span class="math inline">\((U, T, Y)\)</span> is a system <span class="math display">\[U \sim p(u), \qquad T = f_T(U, \delta), \qquad Y = f_Y(T, U, \varepsilon),\]</span> where <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are mutually independent exogenous disturbances and <span class="math inline">\(U\)</span> is a confounding factor.</p>
-</div>
-</div>
+<p>A SEM represents the causal data-generating mechanism as a system of equations, one per variable, with a joint distribution over exogenous disturbances. A variable is <em>exogenous</em> if it is determined outside the system; a variable is <em>endogenous</em> if its value is produced by a structural equation within the model.</p>
+<p>The running setup for this chapter is a three-variable confounded SEM over <span class="math inline">\((U, T, Y)\)</span>: <span id="eq-sem-setup"><span class="math display">\[T = f_T(U, \delta), \qquad Y = f_Y(T, U, \varepsilon), \tag{1.1}\]</span></span> where <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are mutually independent exogenous disturbances and <span class="math inline">\(U\)</span> is an unobserved exogenous confounder.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -518,12 +550,11 @@ Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that expre
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The assumption that <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are mutually independent is a substantive restriction. Because <span class="math inline">\(U\)</span> is unobserved and enters both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, error independence does not remove the dependence between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span> induced by <span class="math inline">\(U\)</span>; it restricts only the additional channel of dependence running through the equation-specific errors. <span class="citation" data-cites="richardson2014ace">Richardson and Robins (2014)</span> call SEMs with this structure <em>Nonparametric Structural Equation Models with Independent Errors</em> (NPSEM-IEs).</p>
-<p>These notes adopt the NPSEM-IE framework throughout: error independence ensures the DAG’s Markov condition holds, making the Markov factorization of the joint density immediate.</p>
+<p>The assumption that the disturbances <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are <em>mutually independent</em> is a substantive restriction. Because <span class="math inline">\(U\)</span> is unobserved and enters both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, error independence does not remove the <span class="math inline">\(T\)</span>–<span class="math inline">\(Y(t)\)</span> dependence induced by <span class="math inline">\(U\)</span>; it restricts only the additional channel through the equation-specific errors <span class="math inline">\((\delta, \varepsilon)\)</span>. <span class="citation" data-cites="richardson2014ace">Richardson and Robins (2014)</span> call SEMs with this structure <em>Nonparametric Structural Equation Models with Independent Errors</em> (NPSEM-IEs). These notes adopt the NPSEM-IE framework throughout: it ensures the Markov condition holds and integrates cleanly with the graphical identification theory of later chapters.</p>
 </div>
 </div>
-<p><strong>Observational regime.</strong> <span class="math inline">\(T\)</span> is determined by <span class="math inline">\(f_T\)</span>; because <span class="math inline">\(U\)</span> enters both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, we have <span class="math inline">\(\mathrm{Cov}(T,\varepsilon) \neq 0\)</span> in general: this is endogeneity.</p>
-<p><strong>Interventional regime.</strong> The do-operator replaces the equation for <span class="math inline">\(T\)</span> with a constant <span class="math inline">\(t\)</span>, yielding the <em>mutilated system</em>: <span class="math display">\[U \sim p(u), \qquad T = t \text{ (fixed)}, \qquad Y = f_Y(t, U, \varepsilon).\]</span> We define the <em>potential outcome</em> as <span class="math inline">\(Y(t) := f_Y(t, U, \varepsilon)\)</span>; by construction, <span class="math inline">\(Y(t) \sim f(y \mid \doop(T{=}t))\)</span>.</p>
+<p><strong>Observational regime.</strong> Because <span class="math inline">\(U\)</span> enters both equations, conditioning on <span class="math inline">\(T\)</span> changes the distribution of <span class="math inline">\(U\)</span>, so <span class="math inline">\(P(y \mid T{=}t) \neq P(y \mid \doop(T{=}t))\)</span>. An analyst who regresses <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> without observing <span class="math inline">\(U\)</span> faces a residual correlated with <span class="math inline">\(T\)</span> — even though the structural error <span class="math inline">\(\varepsilon\)</span> is independent of <span class="math inline">\(T\)</span> by NPSEM-IE.</p>
+<p><strong>Interventional regime.</strong> The do-operator replaces the equation for <span class="math inline">\(T\)</span> with a constant <span class="math inline">\(t\)</span>, yielding the <em>mutilated system</em>: <span class="math inline">\(U \sim p(u)\)</span>, <span class="math inline">\(T = t\)</span> (fixed), <span class="math inline">\(Y = f_Y(t, U, \varepsilon)\)</span>. We define the <em>potential outcome</em> as <span class="math inline">\(Y(t) \mathrel{:}= f_Y(t, U, \varepsilon)\)</span>; by construction, <span class="math inline">\(Y(t) \sim P(y \mid \doop(T{=}t))\)</span>.</p>
 </section>
 <section id="language-2-directed-acyclic-graphs" class="level3" data-number="1.2.2">
 <h3 data-number="1.2.2" class="anchored" data-anchor-id="language-2-directed-acyclic-graphs"><span class="header-section-number">1.2.2</span> Language 2: Directed Acyclic Graphs</h3>
@@ -537,7 +568,7 @@ Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that expre
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In the observational DAG, arrows into <span class="math inline">\(T\)</span> encode the mechanisms that determine <span class="math inline">\(T\)</span>. Under <span class="math inline">\(\doop(T{=}t)\)</span>, all arrows into <span class="math inline">\(T\)</span> are <em>deleted</em>. The resulting mutilated graph <span class="math inline">\(\Gcal_T\)</span> has no back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>: the causal effect flows only along the direct path <span class="math inline">\(T \to Y\)</span>.</p>
+<p>In the observational DAG, arrows into <span class="math inline">\(T\)</span> encode the mechanisms that determine <span class="math inline">\(T\)</span>. Under <span class="math inline">\(\doop(T{=}t)\)</span>, all arrows into <span class="math inline">\(T\)</span> are <em>deleted</em>, producing the mutilated graph <span class="math inline">\(\Gcal_{\overline{T}}\)</span>. This severs spurious back-door paths while preserving directed causal pathways from <span class="math inline">\(T\)</span> to its descendants.</p>
 </div>
 </div>
 </section>
@@ -549,45 +580,45 @@ Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that expre
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Potential Outcome
+<span class="screen-reader-only">Note</span>Definition: Potential Outcome <span class="citation" data-cites="rubin1974estimating">(Rubin 1974)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="rubin1974estimating">(Rubin 1974)</span> In the SEM framework, <span class="math inline">\(Y(t) = f_Y(t, U, \varepsilon)\)</span> is the solution for <span class="math inline">\(Y\)</span> in the mutilated system; it is the outcome that <em>would have been observed</em> had <span class="math inline">\(T\)</span> been set to <span class="math inline">\(t\)</span>, possibly contrary to fact.</p>
-<p><strong>SUTVA</strong> (stable unit treatment value assumption): <span class="math inline">\(Y_i = Y_i(T_i)\)</span>, i.e., the observed outcome for unit <span class="math inline">\(i\)</span> equals the potential outcome at the actual treatment received. This rules out interference between units and multiple versions of treatment.</p>
+<p>In the SEM framework, <span class="math inline">\(Y(t) = f_Y(t, U, \varepsilon)\)</span> is the outcome that <em>would have been observed</em> had <span class="math inline">\(T\)</span> been set to <span class="math inline">\(t\)</span>, possibly contrary to fact.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: SUTVA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <em>stable unit treatment value assumption</em> (SUTVA) has two components: (i) <em>no interference</em> — unit <span class="math inline">\(i\)</span>’s potential outcome depends only on unit <span class="math inline">\(i\)</span>’s own treatment; and (ii) <em>no hidden versions of treatment</em> — each treatment level corresponds to a single, well-defined intervention. Under SUTVA, the <em>consistency</em> relation <span class="math inline">\(Y_i = Y_i(T_i)\)</span> holds. SUTVA is developed further in Chapter 4.</p>
 </div>
 </div>
 </section>
 <section id="roadmap-how-the-trinity-organizes-these-notes" class="level3" data-number="1.2.4">
 <h3 data-number="1.2.4" class="anchored" data-anchor-id="roadmap-how-the-trinity-organizes-these-notes"><span class="header-section-number">1.2.4</span> Roadmap: How the Trinity Organizes These Notes</h3>
-<p><strong>Part I — Foundations: the language of DAGs.</strong> DAGs and the do-operator are the primary language here because they make the interventional/observational distinction <em>syntactically explicit</em>: confounding is visible as an open back-door path, and identifying assumptions are visible as graph criteria.</p>
-<p><strong>Part II — Identification: bridging DAGs and observed data.</strong> Ignorability (<span class="math inline">\(Y(t) \indep T \mid X\)</span>) is the potential-outcomes counterpart of the back-door criterion; the propensity score <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span> operationalizes it in observed data.</p>
-<p><strong>Part III — Estimation: semiparametric and machine-learning methods.</strong> The semiparametric efficiency framework — efficient influence functions, doubly robust estimators, double machine learning — is largely language-neutral.</p>
+<p><strong>Part I — Foundations: the graphical language (Chapters 1–3).</strong> The DAG and the do-operator are the primary language here because they make the interventional/observational distinction <em>syntactically explicit</em>: confounding is visible as an open back-door path, and identifying assumptions are visible as graph criteria.</p>
+<p><strong>Part II — Identification: designs and research strategies (Chapters 4–9).</strong> Part II introduces the potential outcomes framework (Chapter 4) and then studies the specific research designs through which observational and experimental data support identification: randomization and back-door adjustment (Chapter 5), propensity score methods (Chapter 6), instrumental variables (Chapter 7), mediation and front-door identification (Chapter 8), and sensitivity analysis (Chapter 9). Ignorability (<span class="math inline">\(Y(t) \indep T \mid X\)</span>) is the potential-outcomes counterpart of the back-door criterion.</p>
+<p><strong>Part III — Estimation: semiparametric and machine-learning methods (Chapters 10–13).</strong> Once identification has been established, Part III turns to estimation. The semiparametric efficiency framework — estimating equations, influence functions, doubly robust estimators, and double machine learning — is largely language-neutral. Chapter 13 applies these tools to estimation under instrumental variables.</p>
 </section>
-<section id="sec-history" class="level3" data-number="1.2.5">
-<h3 data-number="1.2.5" class="anchored" data-anchor-id="sec-history"><span class="header-section-number">1.2.5</span> Historical Roots of the Causal Trinity</h3>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-timeline" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_01_files/figure-html/fig-timeline-1.pdf" class="img-fluid" width="624">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (top, blue) originates in genetics and econometrics; PO (middle, purple) in experimental statistics; DAG (bottom, green) in computer science and philosophy.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
+<section id="historical-roots-of-the-causal-trinity" class="level3" data-number="1.2.5">
+<h3 data-number="1.2.5" class="anchored" data-anchor-id="historical-roots-of-the-causal-trinity"><span class="header-section-number">1.2.5</span> Historical Roots of the Causal Trinity</h3>
+<p>The three languages did not emerge from a single research program but grew independently in different disciplines over more than a century.</p>
+<p><strong>Structural Equation Models: genetics and econometrics.</strong> Sewall Wright (1921) introduced <em>path analysis</em> to decompose correlations among hereditary traits. The framework was transplanted into economics by Haavelmo (1943), who argued that economic relationships should be modeled as autonomous structural equations robust to policy interventions. The Cowles Commission formalized simultaneous equation systems throughout the 1940s–50s. Lucas’s (1976) critique is essentially a statement of the interventional/observational distinction, decades before that phrase existed.</p>
+<p><strong>Potential Outcomes: experimental statistics and epidemiology.</strong> Neyman (1923) introduced the notation <span class="math inline">\(Y_i(t)\)</span> in the context of randomized agricultural experiments. The crucial extension to <em>observational</em> studies was made by Rubin (1974), who formalized the assignment mechanism and stated SUTVA explicitly. Holland’s (1986) <em>JASA</em> paper brought the framework to mainstream statistics. Robins (1986) extended potential outcomes to longitudinal treatments via <span class="math inline">\(g\)</span>-computation. Imbens and Angrist (1994) connected the framework to instrumental variables and defined the LATE.</p>
+<p><strong>DAGs and do-calculus: computer science and philosophy.</strong> Pearl developed Bayesian networks through the 1980s. The pivotal step came in Pearl (1995), where the <em>do-operator</em> was introduced. The 2000 monograph <em>Causality</em> synthesized DAGs, the do-calculus, identification theory, and connections to potential outcomes. Spirtes, Glymour, and Scheines (1993) — working from philosophy at Carnegie Mellon — developed constraint-based algorithms for learning causal structure from data.</p>
+<p><strong>Convergence.</strong> The three frameworks are closely related and often intertranslatable, but exact equivalence requires additional assumptions. These notes work mainly in an NPSEM-IE setting, where translation between the languages is especially clean.</p>
 </section>
 </section>
 <section id="sec-core" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="sec-core"><span class="header-section-number">1.3</span> The Core Distinction</h2>
-<p>We work within the SEM, now augmented with an observed exogenous variable <span class="math inline">\(X\)</span>:</p>
-<p><span id="eq-sem-core"><span class="math display">\[T = f_T(X, U, \delta), \qquad Y = f_Y(T, X, U, \varepsilon). \tag{1.1}\]</span></span></p>
-<p>The single most important inequality of this course is:</p>
-<p><span id="eq-core"><span class="math display">\[\underbrace{f\!\left(y \mid x,\, \doop(T{=}t)\right)}_{\text{interventional}} \;\neq\; \underbrace{f\!\left(y \mid x,\, T{=}t\right)}_{\text{observational}} \qquad \text{whenever } T \text{ is endogenous.} \tag{1.2}\]</span></span></p>
+<p>The single most important inequality of this course is: <span id="eq-core"><span class="math display">\[\underbrace{P\!\left(y \mid x,\, \doop(T{=}t)\right)}_{\text{interventional}} \;\neq\; \underbrace{P\!\left(y \mid x,\, T{=}t\right)}_{\text{observational}} \qquad \text{whenever } T \text{ is endogenous.} \tag{1.2}\]</span></span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -598,7 +629,7 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Given observed covariates <span class="math inline">\(X\)</span> and confounders <span class="math inline">\(U\)</span>, the treatment assignment is <em>conditionally exchangeable with the intervention</em> if <span class="math inline">\(Y(t) \indep T \mid X,\, U\)</span>, or equivalently, <span class="math display">\[f(y \mid x,\, T{=}t,\, U{=}u) \;=\; f(y \mid x,\, \doop(T{=}t),\, U{=}u).\]</span> This says that once we condition on all common causes <span class="math inline">\((X, U)\)</span> of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, observing <span class="math inline">\(T{=}t\)</span> and intervening to set <span class="math inline">\(T{=}t\)</span> produce the same distribution of <span class="math inline">\(Y\)</span>.</p>
+<p>Given observed covariates <span class="math inline">\(X\)</span> and confounders <span class="math inline">\(U\)</span>, the treatment assignment is <em>conditionally exchangeable with the intervention</em> if: <span class="math display">\[Y(t) \indep T \mid X,\, U, \qquad \text{or equivalently,} \qquad P(y \mid x,\, T{=}t,\, U{=}u) = P(y \mid x,\, \doop(T{=}t),\, U{=}u).\]</span> Once we condition on all common causes <span class="math inline">\((X, U)\)</span>, observing <span class="math inline">\(T{=}t\)</span> and intervening to set <span class="math inline">\(T{=}t\)</span> produce the same distribution of <span class="math inline">\(Y\)</span>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -611,7 +642,7 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The treatment assignment satisfies <em>positivity</em> if, for all <span class="math inline">\(t\)</span> in the support of <span class="math inline">\(T\)</span> and almost all <span class="math inline">\((x, u)\)</span>: <span class="math display">\[p(T{=}t \mid X{=}x,\, U{=}u) \;&gt;\; 0.\]</span></p>
+<p>The treatment assignment satisfies <em>positivity</em> if, for every treatment value <span class="math inline">\(t\)</span> of interest, <span class="math inline">\(p_{T \mid X, U}(t \mid x, u) &gt; 0\)</span> for almost all <span class="math inline">\((x, u)\)</span>. This ensures that <span class="math inline">\(P(y \mid x, T{=}t, U{=}u)\)</span> is well-defined for every treatment value of interest.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
@@ -624,11 +655,11 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under conditional exchangeability and positivity, <span class="math display">\[f(y \mid x,\, \doop(T{=}t)) \;=\; \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du.\]</span></p>
+<p>Under conditional exchangeability and positivity: <span id="eq-backdoor-formula"><span class="math display">\[P(y \mid x,\, \doop(T{=}t)) = \int P(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du. \tag{1.3}\]</span></span></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -637,9 +668,9 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>By positivity, <span class="math inline">\(f(y \mid x,\, T{=}t,\, U{=}u)\)</span> is well-defined. By the law of total probability: <span class="math display">\[f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, U{=}u,\, \doop(T{=}t))\; p(u \mid x)\; du.\]</span> The weight is <span class="math inline">\(p(u \mid x)\)</span>, not <span class="math inline">\(p(u \mid x, T{=}t)\)</span>, because under <span class="math inline">\(\doop(T{=}t)\)</span> the treatment carries no information about <span class="math inline">\(U\)</span>. By conditional exchangeability, <span class="math inline">\(f(y \mid x,\, U{=}u,\, \doop(T{=}t)) = f(y \mid x,\, T{=}t,\, U{=}u)\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>By positivity, <span class="math inline">\(P(y \mid x, T{=}t, U{=}u)\)</span> is well-defined. Applying the law of total probability to the interventional density: <span class="math display">\[P(y \mid x,\, \doop(T{=}t)) = \int P(y \mid x,\, U{=}u,\, \doop(T{=}t))\; p(u \mid x)\; du.\]</span> The weight is <span class="math inline">\(p(u \mid x)\)</span>, not <span class="math inline">\(p(u \mid x, T{=}t)\)</span>, because under <span class="math inline">\(\doop(T{=}t)\)</span> the treatment is set externally and carries no information about <span class="math inline">\(U\)</span>. By conditional exchangeability, <span class="math inline">\(P(y \mid x, U{=}u, \doop(T{=}t)) = P(y \mid x, T{=}t, U{=}u)\)</span>. Substituting completes the proof. <span class="math inline">\(\square\)</span></p>
 </div>
 </div>
 </div>
@@ -653,11 +684,13 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>What OLS estimates is the observational density, not the interventional density: <span class="math display">\[f(y \mid x,\, T{=}t) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x,\, T{=}t)\; du.\]</span> The kernel is the same as in <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a>, but averaged over the <em>selection-distorted</em> weight <span class="math inline">\(p(u \mid x, T{=}t)\)</span>. Because <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> are dependent through the back-door path, <span class="math inline">\(p(u \mid x, T{=}t) \neq p(u \mid x)\)</span>, and the gap is non-zero whenever <span class="math inline">\(T\)</span> is endogenous.</p>
+<p>What OLS estimates is the observational density <span class="math inline">\(P(y \mid x, T{=}t) = \int P(y \mid x, T{=}t, U{=}u)\; p(u \mid x, T{=}t)\; du\)</span>. The kernel <span class="math inline">\(P(y \mid x, T{=}t, U{=}u)\)</span> is the same as in <a href="#eq-backdoor-formula" class="quarto-xref">Equation&nbsp;<span>1.3</span></a>, but averaged over the <em>selection-distorted</em> weight <span class="math inline">\(p(u \mid x, T{=}t)\)</span> rather than the marginal <span class="math inline">\(p(u \mid x)\)</span>. The confounding discrepancy: <span class="math display">\[P(y \mid x,\, T{=}t) - P(y \mid x,\, \doop(T{=}t)) = \int P(y \mid x,\, T{=}t,\, U{=}u)\bigl[\, p(u \mid x,\, T{=}t) - p(u \mid x) \,\bigr]\, du\]</span> is nonzero when <span class="math inline">\(U\)</span> and <span class="math inline">\(T\)</span> are dependent <em>and</em> <span class="math inline">\(U\)</span> affects the conditional distribution of <span class="math inline">\(Y\)</span>.</p>
 </div>
 </div>
 <section id="two-scenarios-observed-vs.-unobserved-confounder" class="level3" data-number="1.3.1">
 <h3 data-number="1.3.1" class="anchored" data-anchor-id="two-scenarios-observed-vs.-unobserved-confounder"><span class="header-section-number">1.3.1</span> Two Scenarios: Observed vs.&nbsp;Unobserved Confounder</h3>
+<p><strong>Scenario 1: <span class="math inline">\(U\)</span> is observed (no unmeasured confounding).</strong> When every component of <span class="math inline">\(U\)</span> is recorded, both <span class="math inline">\(P(y \mid x, T{=}t, U{=}u)\)</span> and <span class="math inline">\(p(u \mid x)\)</span> can be estimated, and the back-door formula <a href="#eq-backdoor-formula" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> is a functional of the observable distribution. A special case is <em>unconfoundedness</em>: if <span class="math inline">\(U \indep T \mid X\)</span> already holds, then <span class="math inline">\(p(u \mid x, T{=}t) = p(u \mid x)\)</span>, and the formula reduces to <span class="math inline">\(\E[Y \mid X{=}x, T{=}t]\)</span>. This is the key assumption underlying regression adjustment and propensity score methods (Chapters 5 and 6).</p>
+<p><strong>Scenario 2: <span class="math inline">\(U\)</span> is unobserved (unmeasured confounding).</strong> When <span class="math inline">\(U\)</span> is latent, the back-door formula is not usable from data. The main identification strategies are <strong>instrumental variables</strong> (Chapter 7), the <strong>front-door criterion</strong> (Chapter 3, applied in Chapter 8), and <strong>sensitivity analysis</strong> (Chapter 9).</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -679,36 +712,30 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </tr>
 <tr class="even">
 <td>Back-door formula usable?</td>
-<td>Yes</td>
+<td>Yes: both terms estimable</td>
 <td>No: <span class="math inline">\(U\)</span> latent</td>
 </tr>
 <tr class="odd">
 <td>Identification route</td>
-<td>Back-door adjustment / standardization</td>
+<td>Back-door adjustment</td>
 <td>IV, front-door, …</td>
 </tr>
 <tr class="even">
 <td>Key assumption</td>
-<td>Unconfoundedness: <span class="math inline">\(U \indep T \mid X\)</span></td>
-<td>Exclusion restriction, monotonicity, …</td>
+<td><span class="math inline">\(Y(t) \indep T \mid X, U\)</span></td>
+<td>IV, front-door, or partial-identification assumptions</td>
 </tr>
 <tr class="odd">
 <td>Chapters in this course</td>
-<td>Chapters 2–6</td>
-<td>Chapter 7</td>
+<td>Chs. 3–6 (back-door); Chs. 10–11 (IPW, DR)</td>
+<td>Ch. 7 (IV); Ch. 8 (front-door); Ch. 9 (sensitivity)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Scenario 1: <span class="math inline">\(U\)</span> is observed.</strong> The back-door adjustment formula <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> is usable from data:</p>
-<p><span id="eq-backdoor-cont"><span class="math display">\[f(y \mid x,\, \doop(T{=}t)) = \int f(y \mid x,\, T{=}t,\, U{=}u)\; p(u \mid x)\; du. \tag{1.3}\]</span></span></p>
-<p>A special case is <em>unconfoundedness</em>: if <span class="math inline">\(U \indep T \mid X\)</span> already holds observationally, <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> reduces to the familiar regression <span class="math inline">\(\E[Y \mid X{=}x, T{=}t]\)</span>.</p>
-<p><strong>Scenario 2: <span class="math inline">\(U\)</span> is unobserved.</strong> <a href="#eq-backdoor-cont" class="quarto-xref">Equation&nbsp;<span>1.3</span></a> is not usable. Additional structure beyond <span class="math inline">\((Y, T, X)\)</span> must be imposed: <strong>instrumental variables</strong> (Chapter 7), the <strong>front-door criterion</strong> (Chapter 3), or <strong>sensitivity analysis</strong>.</p>
 </section>
 </section>
 <section id="sec-gaussian" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="sec-gaussian"><span class="header-section-number">1.4</span> The Gaussian Linear Confounded Model</h2>
-<section id="setup" class="level3" data-number="1.4.1">
-<h3 data-number="1.4.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">1.4.1</span> Setup</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -719,38 +746,60 @@ Figure&nbsp;1.2: Key milestones in the three schools of causal inference. SEM (t
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The structural equations are</p>
-<p><span id="eq-iv"><span class="math display">\[Y = \beta T + \gamma U + \varepsilon, \qquad T = \alpha U + \delta, \tag{1.4}\]</span></span></p>
-<p>where <span class="math inline">\(U\)</span> is an unobserved confounder and the three primitive variables are mutually independent: <span class="math inline">\(U \sim \mathcal{N}(0,\sigma_U^2)\)</span>, <span class="math inline">\(\varepsilon \sim \mathcal{N}(0,\sigma_\varepsilon^2)\)</span>, <span class="math inline">\(\delta \sim \mathcal{N}(0,\sigma_\delta^2)\)</span>.</p>
-<p>Here <span class="math inline">\(\beta\)</span> is the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>, <span class="math inline">\(\gamma\)</span> is the direct effect of <span class="math inline">\(U\)</span> on <span class="math inline">\(Y\)</span>, and <span class="math inline">\(\alpha\)</span> is the direct effect of <span class="math inline">\(U\)</span> on <span class="math inline">\(T\)</span>.</p>
+<p>The structural equations are: <span id="eq-iv"><span class="math display">\[Y = \beta T + \gamma U + \varepsilon, \qquad T = \alpha U + \delta, \tag{1.4}\]</span></span> where <span class="math inline">\(U \sim \mathcal{N}(0,\sigma_U^2)\)</span>, <span class="math inline">\(\varepsilon \sim \mathcal{N}(0,\sigma_\varepsilon^2)\)</span>, <span class="math inline">\(\delta \sim \mathcal{N}(0,\sigma_\delta^2)\)</span> are mutually independent. Here <span class="math inline">\(\beta\)</span> is the causal effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>, <span class="math inline">\(\gamma\)</span> is the direct effect of <span class="math inline">\(U\)</span> on <span class="math inline">\(Y\)</span>, and <span class="math inline">\(\alpha\)</span> is the direct effect of <span class="math inline">\(U\)</span> on <span class="math inline">\(T\)</span>.</p>
 </div>
 </div>
-<p>The endogeneity of <span class="math inline">\(T\)</span> is immediate: <span class="math inline">\(\mathrm{Cov}(T,\, \gamma U + \varepsilon) = \gamma\alpha\sigma_U^2 \neq 0\)</span> when <span class="math inline">\(\alpha \neq 0\)</span> and <span class="math inline">\(\gamma \neq 0\)</span>. Consequently, OLS regressing <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> does not estimate <span class="math inline">\(\beta\)</span>.</p>
+<p>The endogeneity of <span class="math inline">\(T\)</span> is immediate: <span class="math inline">\(\mathrm{Cov}(T,\, \gamma U + \varepsilon) = \gamma\alpha\sigma_U^2 \neq 0\)</span> whenever <span class="math inline">\(\alpha \neq 0\)</span> and <span class="math inline">\(\gamma \neq 0\)</span>. Consequently, OLS regressing <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> does not estimate <span class="math inline">\(\beta\)</span>.</p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode tex code-with-copy"><code class="sourceCode latex"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\usetikzlibrary</span>{arrows.meta, positioning}</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\newcommand</span>{<span class="ex">\doop</span>}{<span class="fu">\mathrm</span>{do}}</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{isublue}{RGB}{30,56,100}</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{defbg}{RGB}{238,244,251}</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{darkgrey}{RGB}{80,80,80}</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\tikzset</span>{</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  node/.style={circle,draw=isublue,fill=defbg,thick,minimum size=7mm,font=<span class="fu">\small\bfseries</span>},</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  unode/.style={circle,draw=darkgrey,fill=gray!10,dashed,thick,minimum size=7mm,font=<span class="fu">\small\bfseries</span>},</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  mnode/.style={rectangle,rounded corners=3pt,draw=darkgrey,fill=gray!15,thick,minimum size=7mm,font=<span class="fu">\small\bfseries</span>},</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  edge/.style={-{Stealth[length=5pt]},thick,color=isublue},</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  dedge/.style={-{Stealth[length=5pt]},thick,color=darkgrey,dashed}</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[node distance=1.8cm]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[node]  (T1) at (0.5,0)    {<span class="ss">$T$</span>};</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[node]  (Y1) at (2.5,0)    {<span class="ss">$Y$</span>};</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[unode] (U1) at (1.5,-1.3) {<span class="ss">$U$</span>};</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[edge]  (T1) -- (Y1);</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge] (U1) -- (T1);</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge] (U1) -- (Y1);</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[font=<span class="fu">\small\itshape</span>,color=darkgrey] at (1.5,-2.1) {Observational DAG};</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[mnode] (T2) at (5.5,0)    {<span class="ss">$t$</span>};</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[node]  (Y2) at (7.5,0)    {<span class="ss">$Y$</span>};</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[unode] (U2) at (6.5,-1.3) {<span class="ss">$U$</span>};</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[edge]  (T2) -- (Y2);</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge, opacity=0.25] (U2) -- (T2);</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge] (U2) -- (Y2);</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[font=<span class="fu">\small\itshape</span>,color=darkgrey] at (6.5,-2.1) {Mutilated DAG: <span class="ss">$</span><span class="sc">\doop</span><span class="ss">(T{=}t)$</span>};</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-surgery" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-surgery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_01_files/figure-html/fig-surgery-1.pdf" class="img-fluid" width="384">
+<embed src="chapter_01_files/figure-html/fig-surgery-1.pdf" class="img-fluid" width="432">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-surgery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.3: Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention <span class="math inline">\(\doop(T{=}t)\)</span>. The back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is eliminated; only the causal path <span class="math inline">\(T \to Y\)</span> remains active.
+Figure&nbsp;1.2: Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention <span class="math inline">\(\doop(T{=}t)\)</span>. The back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is eliminated; only the causal path <span class="math inline">\(T \to Y\)</span> remains active.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-</section>
-<section id="two-explicit-densities" class="level3" data-number="1.4.2">
-<h3 data-number="1.4.2" class="anchored" data-anchor-id="two-explicit-densities"><span class="header-section-number">1.4.2</span> Two Explicit Densities</h3>
+<section id="two-explicit-densities" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="two-explicit-densities"><span class="header-section-number">1.4.1</span> Two Explicit Densities</h3>
 <p>Write <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span> for the marginal variance of <span class="math inline">\(T\)</span>.</p>
-<p><strong>Interventional density.</strong> Set <span class="math inline">\(T = t\)</span> externally. <span class="math inline">\(U\)</span> is drawn from its marginal <span class="math inline">\(\mathcal{N}(0,\sigma_U^2)\)</span> independently. Hence</p>
-<p><span id="eq-int"><span class="math display">\[f\!\left(y \mid \doop(T{=}t)\right) = \mathcal{N}\!\left(\beta t,\;\; \gamma^2\sigma_U^2 + \sigma_\varepsilon^2\right). \tag{1.5}\]</span></span></p>
-<p><strong>Observational density.</strong> Since <span class="math inline">\((Y, T)\)</span> is jointly normal with <span class="math inline">\(\mathrm{Cov}(Y, T) = \beta\sigma_T^2 + \gamma\alpha\sigma_U^2\)</span>, the conditional normal formula gives:</p>
-<p><span id="eq-obs"><span class="math display">\[f\!\left(y \mid T{=}t\right) = \mathcal{N}\!\left(\left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t,\;\; \frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2} + \sigma_\varepsilon^2\right). \tag{1.6}\]</span></span></p>
+<p><strong>Interventional density.</strong> Set <span class="math inline">\(T = t\)</span> externally; the back-door path through <span class="math inline">\(U\)</span> is severed, so <span class="math inline">\(U \sim \mathcal{N}(0, \sigma_U^2)\)</span> independently: <span id="eq-int"><span class="math display">\[P\!\left(y \mid \doop(T{=}t)\right) = \mathcal{N}\!\left(\beta t,\;\; \gamma^2\sigma_U^2 + \sigma_\varepsilon^2\right). \tag{1.5}\]</span></span></p>
+<p><strong>Observational density.</strong> Since <span class="math inline">\((Y, T)\)</span> is jointly normal, <span class="math inline">\(\mathrm{Cov}(Y,T) = \beta\sigma_T^2 + \gamma\alpha\sigma_U^2\)</span>, giving: <span id="eq-obs"><span class="math display">\[P\!\left(y \mid T{=}t\right) = \mathcal{N}\!\left(\left(\beta + \frac{\gamma\alpha\sigma_U^2}{\sigma_T^2}\right)t,\;\; \frac{\gamma^2\sigma_U^2\sigma_\delta^2}{\sigma_T^2} + \sigma_\varepsilon^2\right). \tag{1.6}\]</span></span></p>
 </section>
-<section id="the-endogeneity-gap" class="level3" data-number="1.4.3">
-<h3 data-number="1.4.3" class="anchored" data-anchor-id="the-endogeneity-gap"><span class="header-section-number">1.4.3</span> The Endogeneity Gap</h3>
+<section id="the-endogeneity-gap" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="the-endogeneity-gap"><span class="header-section-number">1.4.2</span> The Endogeneity Gap</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -785,14 +834,19 @@ Figure&nbsp;1.3: Graph surgery on the Gaussian confounded model. The faded arrow
 <td>RCT (or IV, Chapter 7)</td>
 <td>OLS</td>
 </tr>
+<tr class="odd">
+<td><em>Equal when</em></td>
+<td><span class="math inline">\(\alpha = 0\)</span> or <span class="math inline">\(\gamma = 0\)</span> (no confounding)</td>
+<td></td>
+</tr>
 </tbody>
 </table>
-<p>The <em>endogeneity bias</em> of OLS is <span class="math inline">\(\gamma\alpha\sigma_U^2/\sigma_T^2\)</span>. Numerically, with <span class="math inline">\(\alpha = \gamma = 1\)</span> and <span class="math inline">\(\sigma_U^2 = \sigma_\delta^2 = 1\)</span>: bias <span class="math inline">\(= 1/2 = 0.5\)</span>.</p>
+<p>The <em>endogeneity bias</em> of OLS is <span class="math inline">\(\gamma\alpha\sigma_U^2/\sigma_T^2\)</span>. With <span class="math inline">\(\alpha = \gamma = 1\)</span> and <span class="math inline">\(\sigma_U^2 = \sigma_\delta^2 = 1\)</span>: bias <span class="math inline">\(= 1/(1+1) = 0.5\)</span>.</p>
 </section>
-<section id="lab-simulating-the-two-densities" class="level3" data-number="1.4.4">
-<h3 data-number="1.4.4" class="anchored" data-anchor-id="lab-simulating-the-two-densities"><span class="header-section-number">1.4.4</span> Lab: Simulating the Two Densities</h3>
-<p>The analytical results were verified by simulation using <span class="math inline">\(n = 10{,}000\)</span> draws with parameters <span class="math inline">\(\beta = 2\)</span>, <span class="math inline">\(\alpha = 1\)</span>, <span class="math inline">\(\gamma = 1\)</span>, <span class="math inline">\(\sigma_U = \sigma_\varepsilon = \sigma_\delta = 1\)</span>.</p>
-<p><strong>Experiment 1: OLS bias.</strong></p>
+<section id="lab-simulating-the-two-densities" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="lab-simulating-the-two-densities"><span class="header-section-number">1.4.3</span> Lab: Simulating the Two Densities</h3>
+<p>The analytical results were verified by simulation using <span class="math inline">\(n = 10{,}000\)</span> draws with parameters <span class="math inline">\(\beta = 2\)</span>, <span class="math inline">\(\alpha = 1\)</span>, <span class="math inline">\(\gamma = 1\)</span>, <span class="math inline">\(\sigma_U = \sigma_\varepsilon = \sigma_\delta = 1\)</span>. (R code: <code>chapter1_lab.R</code>.)</p>
+<p><strong>Experiment 1: OLS bias.</strong> By the omitted-variable bias formula, the OLS probability limit is <span class="math inline">\(\beta + \gamma\alpha\sigma_U^2/\sigma_T^2 = 2 + 0.5 = 2.5\)</span>.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -803,9 +857,9 @@ Figure&nbsp;1.3: Graph surgery on the Gaussian confounded model. The faded arrow
 <thead>
 <tr class="header">
 <th></th>
-<th><strong>Simulated</strong></th>
-<th><strong>Theory</strong></th>
-<th><strong>Formula</strong></th>
+<th>Simulated</th>
+<th>Theory</th>
+<th>Formula</th>
 </tr>
 </thead>
 <tbody>
@@ -829,63 +883,41 @@ Figure&nbsp;1.3: Graph surgery on the Gaussian confounded model. The faded arrow
 </tr>
 </tbody>
 </table>
-<p><strong>Experiment 2: Two-sample comparison at <span class="math inline">\(t_0 = 1\)</span>.</strong></p>
+<p>OLS overestimates the causal effect by 25%.</p>
+<p><strong>Experiment 2: Two-sample comparison at <span class="math inline">\(t_0 = 1\)</span>.</strong> The exact observational conditional distribution is <span class="math inline">\(\mathcal{N}(2.5,\, 1.5)\)</span>; the interventional distribution is <span class="math inline">\(\mathcal{N}(2,\, 2)\)</span>.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
 <th></th>
-<th><strong>Mean (Simulated)</strong></th>
-<th><strong>Mean (Theory)</strong></th>
-<th><strong>SD (Simulated)</strong></th>
-<th><strong>SD (Theory)</strong></th>
+<th>Mean (Sim / Theory)</th>
+<th>SD (Sim / Theory)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><span class="math inline">\(\E[Y \mid T{=}1]\)</span></td>
-<td>2.497</td>
-<td>2.500</td>
-<td>1.229</td>
-<td><span class="math inline">\(\sqrt{1.5} = 1.225\)</span></td>
+<td>2.497 / 2.500</td>
+<td>1.229 / <span class="math inline">\(\sqrt{1.5} = 1.225\)</span></td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\E[Y \mid \doop(T{=}1)]\)</span></td>
-<td>2.001</td>
-<td>2.000</td>
-<td>1.428</td>
-<td><span class="math inline">\(\sqrt{2} = 1.414\)</span></td>
+<td>2.001 / 2.000</td>
+<td>1.428 / <span class="math inline">\(\sqrt{2} = 1.414\)</span></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Experiment 3: Density overlay for varying <span class="math inline">\(\alpha\)</span>.</strong> <a href="#fig-density" class="quarto-xref">Figure&nbsp;<span>1.4</span></a> shows the interventional density (solid) and the observational density <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> (dashed), both evaluated at <span class="math inline">\(t_0 = 1\)</span>, for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span>.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-density" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_01_files/figure-html/fig-density-1.pdf" class="img-fluid" width="432">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.4: Interventional density <span class="math inline">\(\mathcal{N}(2,2)\)</span> (solid black) versus observational density for <span class="math inline">\(\alpha \in \{0, 0.3, 0.7, 1.0\}\)</span> (dashed), evaluated at <span class="math inline">\(t_0 = 1\)</span>. As <span class="math inline">\(\alpha\)</span> increases, the observational curve shifts rightward (growing bias) and narrows (reduced variance).
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
+<p>The variance reduction in the observational distribution reflects <span class="math inline">\(\sigma_{\mathrm{obs}}^2/\sigma_{\mathrm{int}}^2 = 1.5/2 = 0.75\)</span>: conditioning on <span class="math inline">\(T{=}1\)</span> pins down <span class="math inline">\(\alpha U + \delta\)</span>, restricting the spread of <span class="math inline">\(Y\)</span> through the correlation with <span class="math inline">\(\gamma U\)</span>.</p>
+<p><strong>Experiment 3: Density overlay for varying <span class="math inline">\(\alpha\)</span>.</strong> As <span class="math inline">\(\alpha\)</span> increases from 0 to 1.0, the observational density shifts rightward (growing bias) and narrows (reduced variance). The interventional density <span class="math inline">\(\mathcal{N}(2, 2)\)</span> is invariant to <span class="math inline">\(\alpha\)</span>.</p>
 </section>
 </section>
 <section id="sec-two-step" class="level2" data-number="1.5">
 <h2 data-number="1.5" class="anchored" data-anchor-id="sec-two-step"><span class="header-section-number">1.5</span> The Two-Step Paradigm</h2>
 <p>Causal inference is a two-step discipline. The two steps are logically distinct and require different tools.</p>
-<section id="step-1-identification" class="level3" data-number="1.5.1">
-<h3 data-number="1.5.1" class="anchored" data-anchor-id="step-1-identification"><span class="header-section-number">1.5.1</span> Step 1: Identification</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -899,78 +931,49 @@ Figure&nbsp;1.4: Interventional density <span class="math inline">\(\mathcal{N}(
 <p>A causal quantity <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span> is <em>identified</em> from the observational distribution <span class="math inline">\(P\)</span> if there exists a functional <span class="math inline">\(\Psi\)</span> such that <span class="math inline">\(P(y \mid \doop(T{=}t)) = \Psi(P)\)</span>, and <span class="math inline">\(\Psi(P)\)</span> depends only on the observable joint distribution.</p>
 </div>
 </div>
-<p>Identification is a purely mathematical question about the structure of the causal model: given the assumed graph and assumptions, can the interventional density be expressed as a function of the observed-data distribution? It does not depend on sample size.</p>
-<p>The main tools are the back-door criterion (Chapters 2–3, applied in Chapters 5–6), the front-door criterion (Chapter 3), the three rules of the do-calculus (Chapter 3), and IV assumptions (Chapter 7).</p>
-</section>
-<section id="step-2-estimation" class="level3" data-number="1.5.2">
-<h3 data-number="1.5.2" class="anchored" data-anchor-id="step-2-estimation"><span class="header-section-number">1.5.2</span> Step 2: Estimation</h3>
-<p>Once <span class="math inline">\(\Psi(P)\)</span> has been identified, the statistical problem is to estimate <span class="math inline">\(\Psi(P)\)</span> from <span class="math inline">\(n\)</span> observations <span class="math inline">\(O_1,\dots,O_n\)</span> as efficiently as possible. The main tools are efficient influence functions (EIF), inverse probability weighting (IPW), doubly robust estimators, and double machine learning (DML), all covered in Part III.</p>
-</section>
-<section id="sec-simpson" class="level3" data-number="1.5.3">
-<h3 data-number="1.5.3" class="anchored" data-anchor-id="sec-simpson"><span class="header-section-number">1.5.3</span> A Worked Example: Flu Vaccination and Infection</h3>
-<p><strong>Scenario.</strong> A public health agency observes 1,000 individuals over one flu season. Each person either received a flu vaccine (<span class="math inline">\(T=1\)</span>) or did not (<span class="math inline">\(T=0\)</span>), and either became infected (<span class="math inline">\(Y=1\)</span>) or did not (<span class="math inline">\(Y=0\)</span>). Age group <span class="math inline">\(X\)</span> (elderly <span class="math inline">\(= E\)</span>, young <span class="math inline">\(= Y\)</span>) is recorded for all individuals. Elderly people are more likely to be vaccinated and more susceptible to infection, so <span class="math inline">\(X\)</span> confounds the relationship between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-vaccination" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-vaccination-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_01_files/figure-html/fig-vaccination-1.pdf" class="img-fluid" width="336">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vaccination-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the causal path <span class="math inline">\(T \to Y\)</span>. The red dashed arrows form the back-door path <span class="math inline">\(T \leftarrow X \to Y\)</span>.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Observed data.</strong></p>
+<p><strong>Step 1: Identification</strong> is a purely mathematical question about the causal model: can the interventional density be expressed as a function of the observed-data distribution? It does not depend on sample size. The main tools are: the back-door criterion (Chapter 3, applied in Chapters 4–6), the front-door criterion (Chapter 3), the three rules of the do-calculus (Chapter 3), and IV assumptions (Chapter 7).</p>
+<p><strong>Step 2: Estimation.</strong> Once <span class="math inline">\(\Psi(P)\)</span> has been identified, the statistical problem is to estimate the functional <span class="math inline">\(\Psi(P)\)</span> from <span class="math inline">\(n\)</span> observations as efficiently as possible. The main tools are efficient influence functions (Part III), IPW (Part III), doubly robust estimators (Part III), and double machine learning (Part III).</p>
+<section id="worked-example-flu-vaccination-and-infection-simpsons-paradox" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="worked-example-flu-vaccination-and-infection-simpsons-paradox"><span class="header-section-number">1.5.1</span> Worked Example: Flu Vaccination and Infection (Simpson’s Paradox)</h3>
+<p>A public health agency observes 1,000 individuals. Each person either received a flu vaccine (<span class="math inline">\(T=1\)</span>) or not (<span class="math inline">\(T=0\)</span>), and either became infected (<span class="math inline">\(Y=1\)</span>) or not. Age group <span class="math inline">\(X\)</span> (elderly <span class="math inline">\(= E\)</span>, young <span class="math inline">\(= Y\)</span>) is recorded. Elderly people are both more likely to be vaccinated and more susceptible to infection, so <span class="math inline">\(X\)</span> confounds the <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> relationship. The causal DAG has paths: <span class="math inline">\(T \to Y\)</span> (causal) and <span class="math inline">\(T \leftarrow X \to Y\)</span> (back-door).</p>
+<p><strong>Observed data:</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
 <thead>
 <tr class="header">
 <th></th>
-<th><strong>Vaccinated (<span class="math inline">\(T=1\)</span>)</strong></th>
-<th></th>
-<th><strong>Unvaccinated (<span class="math inline">\(T=0\)</span>)</strong></th>
-<th></th>
+<th>Vaccinated (<span class="math inline">\(T=1\)</span>)</th>
+<th>Unvaccinated (<span class="math inline">\(T=0\)</span>)</th>
 <th>Total</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td><span class="math inline">\(n\)</span></td>
-<td>Infected</td>
-<td><span class="math inline">\(n\)</span></td>
-<td>Infected</td>
-<td></td>
-</tr>
-<tr class="even">
 <td>Elderly (<span class="math inline">\(X=E\)</span>)</td>
-<td>360</td>
-<td>108 (30%)</td>
-<td>40</td>
-<td>20 (50%)</td>
+<td>360, 30% infected</td>
+<td>40, 50% infected</td>
 <td>400</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Young (<span class="math inline">\(X=Y\)</span>)</td>
-<td>60</td>
-<td>3 (5%)</td>
-<td>540</td>
-<td>54 (10%)</td>
+<td>60, 5% infected</td>
+<td>540, 10% infected</td>
 <td>600</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><strong>Total</strong></td>
-<td>420</td>
-<td>111 (26.4%)</td>
-<td>580</td>
-<td>74 (12.8%)</td>
-<td>1,000</td>
+<td><strong>420, 26.4% infected</strong></td>
+<td><strong>580, 12.8% infected</strong></td>
+<td><strong>1,000</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Simpson’s paradox.</strong></p>
+<p><strong>Simpson’s paradox:</strong></p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -981,41 +984,41 @@ Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the 
 </colgroup>
 <thead>
 <tr class="header">
-<th><strong>Stratum</strong></th>
-<th><strong>Vaccinated</strong></th>
-<th><strong>Unvaccinated</strong></th>
-<th><strong>Difference</strong></th>
-<th><strong>Conclusion</strong></th>
+<th>Stratum</th>
+<th>Vaccinated</th>
+<th>Unvaccinated</th>
+<th>Difference</th>
+<th>Conclusion</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Elderly (<span class="math inline">\(X=E\)</span>)</td>
+<td>Elderly</td>
 <td>30%</td>
 <td>50%</td>
 <td><span class="math inline">\(-20\)</span> pp</td>
 <td>vaccine helps</td>
 </tr>
 <tr class="even">
-<td>Young (<span class="math inline">\(X=Y\)</span>)</td>
+<td>Young</td>
 <td>5%</td>
 <td>10%</td>
 <td><span class="math inline">\(-5\)</span> pp</td>
 <td>vaccine helps</td>
 </tr>
 <tr class="odd">
-<td><strong>Aggregate (raw)</strong></td>
+<td><strong>Aggregate</strong></td>
 <td><strong>26.4%</strong></td>
 <td><strong>12.8%</strong></td>
-<td><span class="math inline">\(+13.6\)</span> pp</td>
+<td><strong><span class="math inline">\(+13.6\)</span> pp</strong></td>
 <td><strong>vaccine harms??</strong></td>
 </tr>
 </tbody>
 </table>
-<p>Within every stratum the vaccine reduces infection. The reversal occurs because the vaccinated group is disproportionately elderly (86% vs.&nbsp;7%).</p>
-<p><strong>Step 1: Identification.</strong> The set <span class="math inline">\(\{X\}\)</span> satisfies the back-door criterion. By the back-door formula:</p>
-<p><span id="eq-backdoor"><span class="math display">\[P\!\left(Y{=}1 \mid \doop(T{=}t)\right) = \sum_{x \in \{E,Y\}} P(Y{=}1 \mid T{=}t, X{=}x)\,P(X{=}x). \tag{1.7}\]</span></span></p>
-<p><strong>Step 2: Estimation.</strong> <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}1)) = 0.30 \times 0.4 + 0.05 \times 0.6 = 0.15,\]</span> <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}0)) = 0.50 \times 0.4 + 0.10 \times 0.6 = 0.26.\]</span> The estimated causal risk difference is <span class="math inline">\(\hat{\Delta}_{\mathrm{causal}} = 0.15 - 0.26 = -0.11\)</span>: the vaccine causally reduces infection probability by 11 percentage points.</p>
+<p>Within every stratum the vaccine reduces infection. Yet in the aggregate the vaccinated group has a <em>higher</em> infection rate, because 86% of vaccinated are elderly vs.&nbsp;7% of unvaccinated.</p>
+<p><strong>Step 1 (Identification).</strong> The set <span class="math inline">\(\{X\}\)</span> satisfies the back-door criterion: <span class="math display">\[P\!\left(Y{=}1 \mid \doop(T{=}t)\right) = \sum_{x \in \{E,Y\}} P(Y{=}1 \mid T{=}t, X{=}x)\,P(X{=}x).\]</span></p>
+<p><strong>Step 2 (Estimation).</strong> With <span class="math inline">\(\hat{P}(X{=}E) = 0.4\)</span> and <span class="math inline">\(\hat{P}(X{=}Y) = 0.6\)</span>: <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}1)) = 0.30 \times 0.4 + 0.05 \times 0.6 = 0.15,\]</span> <span class="math display">\[\hat{P}(Y{=}1 \mid \doop(T{=}0)) = 0.50 \times 0.4 + 0.10 \times 0.6 = 0.26.\]</span></p>
+<p>The estimated causal risk difference is <span class="math inline">\(0.15 - 0.26 = -0.11\)</span>: the vaccine causally reduces infection probability by 11 percentage points.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1026,8 +1029,8 @@ Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the 
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Step 1 (identification)</strong> established — from the DAG alone — that the back-door formula <a href="chapter_05.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a> expresses the causal quantity as a functional of observable data. <strong>Step 2 (estimation)</strong> replaced the population probabilities with sample proportions.</p>
-<p>These two steps are logically separate: Step 1 is a mathematical argument about the causal model that does not depend on sample size; Step 2 is a statistical argument about finite-sample estimation that does not depend on the causal model.</p>
+<p><strong>Step 1 (identification)</strong> established — from the DAG alone — that the back-door formula expresses the causal quantity as a functional of observable data. <strong>Step 2 (estimation)</strong> replaced the population probabilities in that formula with sample proportions.</p>
+<p>These two steps are logically separate: Step 1 is a mathematical argument about the causal model that does not depend on sample size; Step 2 is a statistical problem conditional on the identification formula. A researcher who skips Step 1 and reports the raw difference conflates the two and draws the wrong conclusion.</p>
 </div>
 </div>
 </section>
@@ -1035,12 +1038,12 @@ Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the 
 <section id="summary" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">1.6</span> Summary</h2>
 <ol type="1">
-<li><p><strong>Interventional vs.&nbsp;observational distribution.</strong> Causal inference answers questions about interventions <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>, not about observations <span class="math inline">\(f(y \mid T{=}t)\)</span>. These two distributions coincide only under exogeneity; whenever <span class="math inline">\(T\)</span> is endogenous they differ, and the difference is endogeneity bias.</p></li>
-<li><p><strong>The causal trinity.</strong> The same causal question can be expressed in three languages — SEM (equation surgery), DAG (graph surgery), and potential outcomes (<span class="math inline">\(Y(t)\)</span>). In the SEM framework, <span class="math inline">\(Y(t)\)</span> is defined as the solution for <span class="math inline">\(Y\)</span> in the mutilated system, so <span class="math inline">\(Y(t) \sim f(y \mid \doop(T{=}t))\)</span> by construction. Fluency in all three is essential for modern causal reasoning.</p></li>
-<li><p><strong>Endogeneity bias in the Gaussian confounded model.</strong> In the Gaussian linear confounded model, the coefficient of <span class="math inline">\(T\)</span> in the observational mean <span class="math inline">\(\E[Y \mid T{=}t]\)</span> differs from the causal coefficient <span class="math inline">\(\beta\)</span> by <span class="math inline">\(\gamma\alpha\sigma_U^2/\sigma_T^2\)</span>, where <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span>. This is the omitted-variable bias.</p></li>
-<li><p><strong>Two-step paradigm.</strong> Causal inference is a two-step discipline: <em>identification</em> (expressing <span class="math inline">\(\Psi(P)\)</span> as a functional of observable data, a mathematical question about the causal model) followed by <em>estimation</em> (constructing <span class="math inline">\(\hat{\Psi}_n\)</span> efficiently from <span class="math inline">\(n\)</span> observations, a statistical question about finite samples). The two steps are logically independent.</p></li>
+<li><p><strong>Interventional vs.&nbsp;observational distribution.</strong> Causal inference answers questions about interventions <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span>, not about observations <span class="math inline">\(P(y \mid T{=}t)\)</span>. In the Gaussian confounded model, the two densities coincide only when <span class="math inline">\(\alpha = 0\)</span> or <span class="math inline">\(\gamma = 0\)</span>.</p></li>
+<li><p><strong>The causal trinity.</strong> The same causal question can be expressed in three languages — SEM (equation surgery), DAG (graph surgery), and potential outcomes (<span class="math inline">\(Y(t)\)</span>). In the SEM framework, <span class="math inline">\(Y(t)\)</span> is defined as the solution for <span class="math inline">\(Y\)</span> in the mutilated system.</p></li>
+<li><p><strong>Endogeneity bias in the Gaussian confounded model.</strong> The coefficient of <span class="math inline">\(T\)</span> in <span class="math inline">\(\E[Y \mid T{=}t]\)</span> differs from the causal coefficient <span class="math inline">\(\beta\)</span> by <span class="math inline">\(\gamma\alpha\sigma_U^2/\sigma_T^2\)</span>. The observational variance <span class="math inline">\(\gamma^2\sigma_U^2\sigma_\delta^2/\sigma_T^2 + \sigma_\varepsilon^2\)</span> is smaller than the interventional variance <span class="math inline">\(\gamma^2\sigma_U^2 + \sigma_\varepsilon^2\)</span>.</p></li>
+<li><p><strong>Two-step paradigm.</strong> Causal inference is: <em>identification</em> (expressing <span class="math inline">\(\Psi(P)\)</span> as a functional of observable data — a mathematical question) followed by <em>estimation</em> (constructing <span class="math inline">\(\hat{\Psi}_n\)</span> efficiently — a statistical question). The two steps are analytically separate.</p></li>
 </ol>
-<p><em>Causal inference is the study of when the observational distribution contains enough information to recover the interventional distribution.</em> Everything in this course — the back-door criterion, do-calculus, instrumental variables, doubly robust estimation — is an answer to that question in a particular setting.</p>
+<p><em>Causal inference is the study of when the observational distribution contains enough information to recover the interventional distribution.</em></p>
 </section>
 <section id="problems" class="level2" data-number="1.7">
 <h2 data-number="1.7" class="anchored" data-anchor-id="problems"><span class="header-section-number">1.7</span> Problems</h2>
@@ -1051,7 +1054,7 @@ Figure&nbsp;1.5: Causal DAG for the vaccination example. The green arrow is the 
 <li>“Among students who attended tutoring, the average exam score was 85.”</li>
 <li>“If we enrolled all students in tutoring, the average exam score would be 85.”</li>
 </ol>
-<p><strong>2. Deriving the observational density.</strong> In the Gaussian confounded model, verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> by carrying out the following steps. Let <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span>.</p>
+<p><strong>2. Deriving the observational density.</strong> In the Gaussian confounded model (<a href="#eq-iv" class="quarto-xref">Equation&nbsp;<span>1.4</span></a>), verify <a href="#eq-obs" class="quarto-xref">Equation&nbsp;<span>1.6</span></a> by carrying out the following steps. Let <span class="math inline">\(\sigma_T^2 = \alpha^2\sigma_U^2 + \sigma_\delta^2\)</span>.</p>
 <ol type="a">
 <li>Show that <span class="math inline">\((Y, T)\)</span> is jointly normal by writing both as linear combinations of the independent normals <span class="math inline">\((U, \varepsilon, \delta)\)</span>.</li>
 <li>Compute <span class="math inline">\(\mathrm{Cov}(Y, T)\)</span> and <span class="math inline">\(\mathrm{Var}(T)\)</span>.</li>
