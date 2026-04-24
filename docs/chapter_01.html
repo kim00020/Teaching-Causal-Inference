@@ -23,41 +23,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -493,48 +458,69 @@ window.Quarto = {
 <section id="sec-trinity" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="sec-trinity"><span class="header-section-number">1.2</span> The Causal Trinity: Three Languages for One Idea</h2>
 <p>The same causal question can be expressed in three closely related languages: the <em>structural equation model</em> (SEM), the <em>directed acyclic graph</em> (DAG) with graph surgery, and the <em>potential outcomes</em> framework. Collectively, we call these the <strong>causal trinity</strong>. Each language illuminates a different facet of the same underlying idea, and fluency in all three is essential for modern causal reasoning.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode tex code-with-copy"><code class="sourceCode latex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\usetikzlibrary</span>{arrows.meta, positioning, calc, shapes.geometric}</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\newcommand</span>{<span class="ex">\Gcal</span>}{<span class="fu">\mathcal</span>{G}}</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{isublue}{RGB}{30,56,100}</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{accent}{RGB}{46,117,182}</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{defbg}{RGB}{238,244,251}</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{darkgrey}{RGB}{80,80,80}</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{semcolor}{RGB}{30,56,100}</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{dagcolor}{RGB}{26,122,58}</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{pocolor}{RGB}{150,50,150}</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  lang/.style={rectangle,rounded corners=6pt,draw,very thick,text width=3.0cm,align=center,minimum height=1.3cm,font=<span class="fu">\bfseries\small</span>},</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  sem/.style={lang,draw=semcolor,fill=semcolor!10,text=semcolor},</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  dag/.style={lang,draw=dagcolor,fill=dagcolor!10,text=dagcolor},</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  po/.style={lang,draw=pocolor,fill=pocolor!10,text=pocolor},</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  center/.style={ellipse,draw=accent,fill=defbg,thick,text width=2.6cm,align=center,font=<span class="fu">\small\itshape\color</span>{accent}},</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  trans/.style={&lt;-&gt;,thick,color=darkgrey,shorten &gt;=4pt,shorten &lt;=4pt},</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  tlabel/.style={font=<span class="fu">\footnotesize\itshape</span>,color=darkgrey,fill=white,inner sep=2pt}</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[po]  (PO)  at (90:3.8cm)   {Potential<span class="fu">\\</span>Outcomes<span class="fu">\\</span><span class="ss">$Y(t)$</span>};</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[sem] (SEM) at (210:3.8cm)  {SEM<span class="fu">\\</span><span class="ss">$Y=f_Y(T,U,</span><span class="sc">\varepsilon</span><span class="ss">)$</span>};</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[dag] (DAG) at (330:3.8cm)  {DAG <span class="fu">\&amp;\\</span>Graph Surgery<span class="fu">\\</span><span class="ss">$</span><span class="sc">\Gcal</span><span class="ss">,</span><span class="sc">\;\Gcal</span><span class="ss">_{</span><span class="sc">\overline</span><span class="ss">{T}}$</span>};</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[center] (C) at (0,0) {Set <span class="ss">$T=t$</span>?};</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[-{Stealth[length=5pt]},thick,color=pocolor!70,shorten &gt;=4pt,shorten &lt;=4pt] (PO)--(C);</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[-{Stealth[length=5pt]},thick,color=semcolor!70,shorten &gt;=4pt,shorten &lt;=4pt] (SEM)--(C);</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[-{Stealth[length=5pt]},thick,color=dagcolor!70,shorten &gt;=4pt,shorten &lt;=4pt] (DAG)--(C);</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[trans] (PO)--(SEM) node[tlabel,midway,left=2pt]{<span class="fu">\parbox</span>{2.2cm}{<span class="fu">\centering</span> consistency<span class="fu">\\</span>+ no interference}};</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[trans] (SEM)--(DAG) node[tlabel,midway,below=4pt]{<span class="fu">\parbox</span>{2.2cm}{<span class="fu">\centering</span> equation<span class="fu">\\</span><span class="ss">$</span><span class="sc">\leftrightarrow</span><span class="ss">$</span> arrow}};</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[trans] (DAG)--(PO) node[tlabel,midway,right=2pt]{<span class="fu">\parbox</span>{2.2cm}{<span class="fu">\centering</span> SUTVA<span class="fu">\\</span>+ graph structure}};</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
 <div id="fig-trinity" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trinity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_01_files/figure-html/fig-trinity-1.pdf" class="img-fluid" width="480">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trinity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that express the same causal question from different vantage points. Potential outcomes define <em>what</em> we want to estimate; the DAG with graph surgery specifies <em>how</em> to identify it from observed data; the SEM provides the <em>generative mechanism</em> for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages.
-</figcaption>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 520 420" width="100%" style="max-width:520px;font-family:sans-serif;">
+  <defs>
+    <marker id="arr" markerwidth="8" markerheight="8" refx="6" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#555"></path>
+    </marker>
+    <marker id="arr2" markerwidth="8" markerheight="8" refx="2" refy="3" orient="auto">
+      <path d="M8,0 L8,6 L0,3 z" fill="#555"></path>
+    </marker>
+  </defs>
+  <!-- Center ellipse -->
+  <ellipse cx="260" cy="210" rx="72" ry="38" fill="#EEF4FB" stroke="#2E74B6" stroke-width="2"></ellipse>
+  <text x="260" y="205" text-anchor="middle" fill="#2E74B6" font-style="italic" font-size="13">Set</text>
+  <text x="260" y="221" text-anchor="middle" fill="#2E74B6" font-style="italic" font-size="13"><tspan font-style="italic">T</tspan> = <tspan font-style="italic">t</tspan> ?</text>
+  <!-- PO box (top, purple) -->
+  <rect x="170" y="14" width="180" height="68" rx="8" fill="#F9EEF9" stroke="#963296" stroke-width="2.5"></rect>
+  <text x="260" y="36" text-anchor="middle" fill="#963296" font-weight="bold" font-size="14">Potential</text>
+  <text x="260" y="52" text-anchor="middle" fill="#963296" font-weight="bold" font-size="14">Outcomes</text>
+  <text x="260" y="72" text-anchor="middle" fill="#963296" font-size="13" font-style="italic">Y(t)</text>
+  <!-- SEM box (bottom-left, blue) -->
+  <rect x="14" y="292" width="180" height="68" rx="8" fill="#EEF0F9" stroke="#1E3864" stroke-width="2.5"></rect>
+  <text x="104" y="314" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="14">SEM</text>
+  <text x="104" y="333" text-anchor="middle" fill="#1E3864" font-size="12" font-style="italic">Y = f</text>
+  <text x="145" y="333" text-anchor="middle" fill="#1E3864" font-size="10">Y</text>
+  <text x="172" y="333" text-anchor="middle" fill="#1E3864" font-size="12" font-style="italic">(T,U,ε)</text>
+  <!-- DAG box (bottom-right, green) -->
+  <rect x="326" y="292" width="180" height="68" rx="8" fill="#EEF7EE" stroke="#1A7A3A" stroke-width="2.5"></rect>
+  <text x="416" y="314" text-anchor="middle" fill="#1A7A3A" font-weight="bold" font-size="14">DAG &amp; Graph</text>
+  <text x="416" y="333" text-anchor="middle" fill="#1A7A3A" font-weight="bold" font-size="14">Surgery</text>
+  <text x="416" y="352" text-anchor="middle" fill="#1A7A3A" font-size="13" font-style="italic">𝒢, 𝒢</text>
+  <text x="447" y="348" text-anchor="start" fill="#1A7A3A" font-size="10">T̄</text>
+  <!-- Arrow PO → center -->
+  <line x1="260" y1="82" x2="260" y2="171" stroke="#963296" stroke-width="2" stroke-opacity="0.7" marker-end="url(#arr)"></line>
+  <!-- Arrow SEM → center -->
+  <line x1="180" y1="326" x2="210" y2="237" stroke="#1E3864" stroke-width="2" stroke-opacity="0.7" marker-end="url(#arr)"></line>
+  <!-- Arrow DAG → center -->
+  <line x1="326" y1="326" x2="309" y2="237" stroke="#1A7A3A" stroke-width="2" stroke-opacity="0.7" marker-end="url(#arr)"></line>
+  <!-- Bidirectional: PO ↔ SEM -->
+  <line x1="195" y1="76" x2="128" y2="292" stroke="#555" stroke-width="1.5" marker-start="url(#arr2)" marker-end="url(#arr)"></line>
+  <rect x="80" y="174" width="112" height="34" rx="4" fill="white" opacity="0.9"></rect>
+  <text x="136" y="188" text-anchor="middle" fill="#555" font-size="10" font-style="italic">consistency</text>
+  <text x="136" y="202" text-anchor="middle" fill="#555" font-size="10" font-style="italic">+ no interference</text>
+  <!-- Bidirectional: SEM ↔ DAG -->
+  <line x1="194" y1="342" x2="326" y2="342" stroke="#555" stroke-width="1.5" marker-start="url(#arr2)" marker-end="url(#arr)"></line>
+  <rect x="202" y="351" width="116" height="34" rx="4" fill="white" opacity="0.9"></rect>
+  <text x="260" y="365" text-anchor="middle" fill="#555" font-size="10" font-style="italic">equation</text>
+  <text x="260" y="379" text-anchor="middle" fill="#555" font-size="10" font-style="italic">↔ arrow</text>
+  <!-- Bidirectional: DAG ↔ PO -->
+  <line x1="393" y1="292" x2="326" y2="76" stroke="#555" stroke-width="1.5" marker-start="url(#arr2)" marker-end="url(#arr)"></line>
+  <rect x="320" y="174" width="104" height="34" rx="4" fill="white" opacity="0.9"></rect>
+  <text x="372" y="188" text-anchor="middle" fill="#555" font-size="10" font-style="italic">SUTVA</text>
+  <text x="372" y="202" text-anchor="middle" fill="#555" font-size="10" font-style="italic">+ graph structure</text>
+</svg>
+<figcaption>**Figure 1.1:** The **causal trinity**: three languages that express the same causal question from different vantage points. Potential outcomes define *what* we want to estimate; the DAG with graph surgery specifies *how* to identify it from observed data; the SEM provides the *generative mechanism* for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages.</figcaption>
 </figure>
 </div>
-</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-trinity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1
+</figcaption>
+</figure>
 </div>
 <section id="language-1-structural-equation-models" class="level3" data-number="1.2.1">
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="language-1-structural-equation-models"><span class="header-section-number">1.2.1</span> Language 1: Structural Equation Models</h3>
@@ -750,47 +736,64 @@ Figure&nbsp;1.1: The <strong>causal trinity</strong>: three languages that expre
 </div>
 </div>
 <p>The endogeneity of <span class="math inline">\(T\)</span> is immediate: <span class="math inline">\(\mathrm{Cov}(T,\, \gamma U + \varepsilon) = \gamma\alpha\sigma_U^2 \neq 0\)</span> whenever <span class="math inline">\(\alpha \neq 0\)</span> and <span class="math inline">\(\gamma \neq 0\)</span>. Consequently, OLS regressing <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> does not estimate <span class="math inline">\(\beta\)</span>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode tex code-with-copy"><code class="sourceCode latex"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\usetikzlibrary</span>{arrows.meta, positioning}</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\newcommand</span>{<span class="ex">\doop</span>}{<span class="fu">\mathrm</span>{do}}</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{isublue}{RGB}{30,56,100}</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{defbg}{RGB}{238,244,251}</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">\definecolor</span>{darkgrey}{RGB}{80,80,80}</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\tikzset</span>{</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  node/.style={circle,draw=isublue,fill=defbg,thick,minimum size=7mm,font=<span class="fu">\small\bfseries</span>},</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  unode/.style={circle,draw=darkgrey,fill=gray!10,dashed,thick,minimum size=7mm,font=<span class="fu">\small\bfseries</span>},</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  mnode/.style={rectangle,rounded corners=3pt,draw=darkgrey,fill=gray!15,thick,minimum size=7mm,font=<span class="fu">\small\bfseries</span>},</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  edge/.style={-{Stealth[length=5pt]},thick,color=isublue},</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  dedge/.style={-{Stealth[length=5pt]},thick,color=darkgrey,dashed}</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[node distance=1.8cm]</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[node]  (T1) at (0.5,0)    {<span class="ss">$T$</span>};</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[node]  (Y1) at (2.5,0)    {<span class="ss">$Y$</span>};</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[unode] (U1) at (1.5,-1.3) {<span class="ss">$U$</span>};</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[edge]  (T1) -- (Y1);</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge] (U1) -- (T1);</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge] (U1) -- (Y1);</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[font=<span class="fu">\small\itshape</span>,color=darkgrey] at (1.5,-2.1) {Observational DAG};</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[mnode] (T2) at (5.5,0)    {<span class="ss">$t$</span>};</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[node]  (Y2) at (7.5,0)    {<span class="ss">$Y$</span>};</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[unode] (U2) at (6.5,-1.3) {<span class="ss">$U$</span>};</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[edge]  (T2) -- (Y2);</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge, opacity=0.25] (U2) -- (T2);</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[dedge] (U2) -- (Y2);</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[font=<span class="fu">\small\itshape</span>,color=darkgrey] at (6.5,-2.1) {Mutilated DAG: <span class="ss">$</span><span class="sc">\doop</span><span class="ss">(T{=}t)$</span>};</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
 <div id="fig-surgery" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-surgery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_01_files/figure-html/fig-surgery-1.pdf" class="img-fluid" width="432">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-surgery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.2: Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention <span class="math inline">\(\doop(T{=}t)\)</span>. The back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is eliminated; only the causal path <span class="math inline">\(T \to Y\)</span> remains active.
-</figcaption>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 500 160" width="100%" style="max-width:500px;font-family:sans-serif;">
+  <defs>
+    <marker id="sarr" markerwidth="8" markerheight="8" refx="6" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#1E3864"></path>
+    </marker>
+    <marker id="darr" markerwidth="8" markerheight="8" refx="6" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#888"></path>
+    </marker>
+    <marker id="darr-faded" markerwidth="8" markerheight="8" refx="6" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#bbb"></path>
+    </marker>
+  </defs>
+  <!-- LEFT: Observational DAG -->
+  <!-- T node -->
+  <circle cx="72" cy="52" r="22" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"></circle>
+  <text x="72" y="57" text-anchor="middle" font-weight="bold" font-size="14" fill="#1E3864">T</text>
+  <!-- Y node -->
+  <circle cx="178" cy="52" r="22" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"></circle>
+  <text x="178" y="57" text-anchor="middle" font-weight="bold" font-size="14" fill="#1E3864">Y</text>
+  <!-- U node (dashed) -->
+  <circle cx="125" cy="118" r="20" fill="#F5F5F5" stroke="#888" stroke-width="2" stroke-dasharray="5,3"></circle>
+  <text x="125" y="123" text-anchor="middle" font-size="13" fill="#888">U</text>
+  <!-- T → Y -->
+  <line x1="94" y1="52" x2="155" y2="52" stroke="#1E3864" stroke-width="2" marker-end="url(#sarr)"></line>
+  <!-- U → T -->
+  <line x1="110" y1="103" x2="87" y2="70" stroke="#888" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr)"></line>
+  <!-- U → Y -->
+  <line x1="140" y1="103" x2="163" y2="70" stroke="#888" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr)"></line>
+  <text x="125" y="152" text-anchor="middle" font-size="11" fill="#888" font-style="italic">Observational DAG</text>
+  <!-- RIGHT: Mutilated DAG -->
+  <!-- t rectangle (intervention) -->
+  <rect x="282" y="32" width="40" height="38" rx="5" fill="#E8E8E8" stroke="#888" stroke-width="1.8"></rect>
+  <text x="302" y="56" text-anchor="middle" font-size="13" fill="#555" font-style="italic">t</text>
+  <!-- Y node -->
+  <circle cx="428" cy="52" r="22" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"></circle>
+  <text x="428" y="57" text-anchor="middle" font-weight="bold" font-size="14" fill="#1E3864">Y</text>
+  <!-- U node (dashed) -->
+  <circle cx="375" cy="118" r="20" fill="#F5F5F5" stroke="#888" stroke-width="2" stroke-dasharray="5,3"></circle>
+  <text x="375" y="123" text-anchor="middle" font-size="13" fill="#888">U</text>
+  <!-- t → Y -->
+  <line x1="322" y1="52" x2="404" y2="52" stroke="#1E3864" stroke-width="2" marker-end="url(#sarr)"></line>
+  <!-- U → t (faded/severed) -->
+  <line x1="361" y1="103" x2="315" y2="70" stroke="#ccc" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr-faded)"></line>
+  <!-- U → Y -->
+  <line x1="390" y1="103" x2="413" y2="70" stroke="#888" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr)"></line>
+  <text x="375" y="152" text-anchor="middle" font-size="11" fill="#888" font-style="italic">Mutilated DAG: do(T = t)</text>
+</svg>
+<figcaption>**Figure 1.2:** Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention do(T = t). The back-door path T ← U → Y is eliminated; only the causal path T → Y remains active.</figcaption>
 </figure>
 </div>
-</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-surgery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.2
+</figcaption>
+</figure>
 </div>
 <section id="two-explicit-densities" class="level3" data-number="1.4.1">
 <h3 data-number="1.4.1" class="anchored" data-anchor-id="two-explicit-densities"><span class="header-section-number">1.4.1</span> Two Explicit Densities</h3>

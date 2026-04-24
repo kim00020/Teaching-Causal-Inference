@@ -54,9 +54,75 @@ We observe $P(y \mid T{=}t)$ directly from data. We want $P(y \mid \doop(T{=}t))
 
 The same causal question can be expressed in three closely related languages: the *structural equation model* (SEM), the *directed acyclic graph* (DAG) with graph surgery, and the *potential outcomes* framework. Collectively, we call these the **causal trinity**. Each language illuminates a different facet of the same underlying idea, and fluency in all three is essential for modern causal reasoning.
 
+::: {.content-visible when-format="html"}
+
+::: {#fig-trinity}
+```{=html}
+<figure style="text-align:center;margin:1.5em auto;">
+<svg viewBox="0 0 520 420" width="100%" style="max-width:520px;font-family:sans-serif;">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#555"/>
+    </marker>
+    <marker id="arr2" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto">
+      <path d="M8,0 L8,6 L0,3 z" fill="#555"/>
+    </marker>
+  </defs>
+  <!-- Center ellipse -->
+  <ellipse cx="260" cy="210" rx="72" ry="38" fill="#EEF4FB" stroke="#2E74B6" stroke-width="2"/>
+  <text x="260" y="205" text-anchor="middle" fill="#2E74B6" font-style="italic" font-size="13">Set</text>
+  <text x="260" y="221" text-anchor="middle" fill="#2E74B6" font-style="italic" font-size="13"><tspan font-style="italic">T</tspan> = <tspan font-style="italic">t</tspan> ?</text>
+  <!-- PO box (top, purple) -->
+  <rect x="170" y="14" width="180" height="68" rx="8" fill="#F9EEF9" stroke="#963296" stroke-width="2.5"/>
+  <text x="260" y="36" text-anchor="middle" fill="#963296" font-weight="bold" font-size="14">Potential</text>
+  <text x="260" y="52" text-anchor="middle" fill="#963296" font-weight="bold" font-size="14">Outcomes</text>
+  <text x="260" y="72" text-anchor="middle" fill="#963296" font-size="13" font-style="italic">Y(t)</text>
+  <!-- SEM box (bottom-left, blue) -->
+  <rect x="14" y="292" width="180" height="68" rx="8" fill="#EEF0F9" stroke="#1E3864" stroke-width="2.5"/>
+  <text x="104" y="314" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="14">SEM</text>
+  <text x="104" y="333" text-anchor="middle" fill="#1E3864" font-size="12" font-style="italic">Y = f</text>
+  <text x="145" y="333" text-anchor="middle" fill="#1E3864" font-size="10">Y</text>
+  <text x="172" y="333" text-anchor="middle" fill="#1E3864" font-size="12" font-style="italic">(T,U,ε)</text>
+  <!-- DAG box (bottom-right, green) -->
+  <rect x="326" y="292" width="180" height="68" rx="8" fill="#EEF7EE" stroke="#1A7A3A" stroke-width="2.5"/>
+  <text x="416" y="314" text-anchor="middle" fill="#1A7A3A" font-weight="bold" font-size="14">DAG &amp; Graph</text>
+  <text x="416" y="333" text-anchor="middle" fill="#1A7A3A" font-weight="bold" font-size="14">Surgery</text>
+  <text x="416" y="352" text-anchor="middle" fill="#1A7A3A" font-size="13" font-style="italic">𝒢, 𝒢</text>
+  <text x="447" y="348" text-anchor="start" fill="#1A7A3A" font-size="10">T̄</text>
+  <!-- Arrow PO → center -->
+  <line x1="260" y1="82" x2="260" y2="171" stroke="#963296" stroke-width="2" stroke-opacity="0.7" marker-end="url(#arr)"/>
+  <!-- Arrow SEM → center -->
+  <line x1="180" y1="326" x2="210" y2="237" stroke="#1E3864" stroke-width="2" stroke-opacity="0.7" marker-end="url(#arr)"/>
+  <!-- Arrow DAG → center -->
+  <line x1="326" y1="326" x2="309" y2="237" stroke="#1A7A3A" stroke-width="2" stroke-opacity="0.7" marker-end="url(#arr)"/>
+  <!-- Bidirectional: PO ↔ SEM -->
+  <line x1="195" y1="76" x2="128" y2="292" stroke="#555" stroke-width="1.5" marker-start="url(#arr2)" marker-end="url(#arr)"/>
+  <rect x="80" y="174" width="112" height="34" rx="4" fill="white" opacity="0.9"/>
+  <text x="136" y="188" text-anchor="middle" fill="#555" font-size="10" font-style="italic">consistency</text>
+  <text x="136" y="202" text-anchor="middle" fill="#555" font-size="10" font-style="italic">+ no interference</text>
+  <!-- Bidirectional: SEM ↔ DAG -->
+  <line x1="194" y1="342" x2="326" y2="342" stroke="#555" stroke-width="1.5" marker-start="url(#arr2)" marker-end="url(#arr)"/>
+  <rect x="202" y="351" width="116" height="34" rx="4" fill="white" opacity="0.9"/>
+  <text x="260" y="365" text-anchor="middle" fill="#555" font-size="10" font-style="italic">equation</text>
+  <text x="260" y="379" text-anchor="middle" fill="#555" font-size="10" font-style="italic">↔ arrow</text>
+  <!-- Bidirectional: DAG ↔ PO -->
+  <line x1="393" y1="292" x2="326" y2="76" stroke="#555" stroke-width="1.5" marker-start="url(#arr2)" marker-end="url(#arr)"/>
+  <rect x="320" y="174" width="104" height="34" rx="4" fill="white" opacity="0.9"/>
+  <text x="372" y="188" text-anchor="middle" fill="#555" font-size="10" font-style="italic">SUTVA</text>
+  <text x="372" y="202" text-anchor="middle" fill="#555" font-size="10" font-style="italic">+ graph structure</text>
+</svg>
+<figcaption>**Figure 1.1:** The **causal trinity**: three languages that express the same causal question from different vantage points. Potential outcomes define *what* we want to estimate; the DAG with graph surgery specifies *how* to identify it from observed data; the SEM provides the *generative mechanism* for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages.</figcaption>
+</figure>
+```
+:::
+
+:::
+
+::: {.content-visible when-format="pdf"}
+
 ```{tikz}
 #| label: fig-trinity
-#| fig-cap: "The **causal trinity**: three languages that express the same causal question from different vantage points. Potential outcomes define *what* we want to estimate; the DAG with graph surgery specifies *how* to identify it from observed data; the SEM provides the *generative mechanism* for likelihood construction. Double-headed arrows show the translation assumptions connecting adjacent languages."
+#| fig-cap: "The **causal trinity**: three languages that express the same causal question from different vantage points."
 #| fig-width: 5
 \usetikzlibrary{arrows.meta, positioning, calc, shapes.geometric}
 \newcommand{\Gcal}{\mathcal{G}}
@@ -72,7 +138,7 @@ The same causal question can be expressed in three closely related languages: th
   sem/.style={lang,draw=semcolor,fill=semcolor!10,text=semcolor},
   dag/.style={lang,draw=dagcolor,fill=dagcolor!10,text=dagcolor},
   po/.style={lang,draw=pocolor,fill=pocolor!10,text=pocolor},
-  center/.style={ellipse,draw=accent,fill=defbg,thick,text width=2.6cm,align=center,font=\small\itshape\color{accent}},
+  center/.style={ellipse,draw=accent,fill=defbg,thick,text width=2.6cm,align=center,font=\small\itshape,text=accent},
   trans/.style={<->,thick,color=darkgrey,shorten >=4pt,shorten <=4pt},
   tlabel/.style={font=\footnotesize\itshape,color=darkgrey,fill=white,inner sep=2pt}
 ]
@@ -88,6 +154,8 @@ The same causal question can be expressed in three closely related languages: th
 \draw[trans] (DAG)--(PO) node[tlabel,midway,right=2pt]{\parbox{2.2cm}{\centering SUTVA\\+ graph structure}};
 \end{tikzpicture}
 ```
+
+:::
 
 ### Language 1: Structural Equation Models
 
@@ -217,6 +285,67 @@ where $U \sim \mathcal{N}(0,\sigma_U^2)$, $\varepsilon \sim \mathcal{N}(0,\sigma
 
 The endogeneity of $T$ is immediate: $\mathrm{Cov}(T,\, \gamma U + \varepsilon) = \gamma\alpha\sigma_U^2 \neq 0$ whenever $\alpha \neq 0$ and $\gamma \neq 0$. Consequently, OLS regressing $Y$ on $T$ does not estimate $\beta$.
 
+::: {.content-visible when-format="html"}
+
+::: {#fig-surgery}
+```{=html}
+<figure style="text-align:center;margin:1.5em auto;">
+<svg viewBox="0 0 500 160" width="100%" style="max-width:500px;font-family:sans-serif;">
+  <defs>
+    <marker id="sarr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#1E3864"/>
+    </marker>
+    <marker id="darr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+    </marker>
+    <marker id="darr-faded" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#bbb"/>
+    </marker>
+  </defs>
+  <!-- LEFT: Observational DAG -->
+  <!-- T node -->
+  <circle cx="72" cy="52" r="22" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"/>
+  <text x="72" y="57" text-anchor="middle" font-weight="bold" font-size="14" fill="#1E3864">T</text>
+  <!-- Y node -->
+  <circle cx="178" cy="52" r="22" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"/>
+  <text x="178" y="57" text-anchor="middle" font-weight="bold" font-size="14" fill="#1E3864">Y</text>
+  <!-- U node (dashed) -->
+  <circle cx="125" cy="118" r="20" fill="#F5F5F5" stroke="#888" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="125" y="123" text-anchor="middle" font-size="13" fill="#888">U</text>
+  <!-- T → Y -->
+  <line x1="94" y1="52" x2="155" y2="52" stroke="#1E3864" stroke-width="2" marker-end="url(#sarr)"/>
+  <!-- U → T -->
+  <line x1="110" y1="103" x2="87" y2="70" stroke="#888" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr)"/>
+  <!-- U → Y -->
+  <line x1="140" y1="103" x2="163" y2="70" stroke="#888" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr)"/>
+  <text x="125" y="152" text-anchor="middle" font-size="11" fill="#888" font-style="italic">Observational DAG</text>
+  <!-- RIGHT: Mutilated DAG -->
+  <!-- t rectangle (intervention) -->
+  <rect x="282" y="32" width="40" height="38" rx="5" fill="#E8E8E8" stroke="#888" stroke-width="1.8"/>
+  <text x="302" y="56" text-anchor="middle" font-size="13" fill="#555" font-style="italic">t</text>
+  <!-- Y node -->
+  <circle cx="428" cy="52" r="22" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"/>
+  <text x="428" y="57" text-anchor="middle" font-weight="bold" font-size="14" fill="#1E3864">Y</text>
+  <!-- U node (dashed) -->
+  <circle cx="375" cy="118" r="20" fill="#F5F5F5" stroke="#888" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="375" y="123" text-anchor="middle" font-size="13" fill="#888">U</text>
+  <!-- t → Y -->
+  <line x1="322" y1="52" x2="404" y2="52" stroke="#1E3864" stroke-width="2" marker-end="url(#sarr)"/>
+  <!-- U → t (faded/severed) -->
+  <line x1="361" y1="103" x2="315" y2="70" stroke="#ccc" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr-faded)"/>
+  <!-- U → Y -->
+  <line x1="390" y1="103" x2="413" y2="70" stroke="#888" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#darr)"/>
+  <text x="375" y="152" text-anchor="middle" font-size="11" fill="#888" font-style="italic">Mutilated DAG: do(T = t)</text>
+</svg>
+<figcaption>**Figure 1.2:** Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention do(T = t). The back-door path T ← U → Y is eliminated; only the causal path T → Y remains active.</figcaption>
+</figure>
+```
+:::
+
+:::
+
+::: {.content-visible when-format="pdf"}
+
 ```{tikz}
 #| label: fig-surgery
 #| fig-cap: "Graph surgery on the Gaussian confounded model. The faded arrow in the mutilated DAG has been severed by the intervention $\\doop(T{=}t)$. The back-door path $T \\leftarrow U \\to Y$ is eliminated; only the causal path $T \\to Y$ remains active."
@@ -250,6 +379,8 @@ The endogeneity of $T$ is immediate: $\mathrm{Cov}(T,\, \gamma U + \varepsilon) 
   \node[font=\small\itshape,color=darkgrey] at (6.5,-2.1) {Mutilated DAG: $\doop(T{=}t)$};
 \end{tikzpicture}
 ```
+
+:::
 
 ### Two Explicit Densities
 
