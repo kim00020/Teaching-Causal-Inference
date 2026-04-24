@@ -347,7 +347,7 @@ window.Quarto = {
   <li><a href="#overlap-and-positivity" id="toc-overlap-and-positivity" class="nav-link" data-scroll-target="#overlap-and-positivity"><span class="header-section-number">4.4.4</span> Overlap and Positivity</a></li>
   </ul></li>
   <li><a href="#sec-comparison" id="toc-sec-comparison" class="nav-link" data-scroll-target="#sec-comparison"><span class="header-section-number">4.5</span> Where the Frameworks Agree and Diverge</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">4.6</span> Summary</a></li>
+  <li><a href="#sec-summary" id="toc-sec-summary" class="nav-link" data-scroll-target="#sec-summary"><span class="header-section-number">4.6</span> Summary</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">4.7</span> Problems</a></li>
   </ul>
 </nav>
@@ -396,18 +396,39 @@ window.Quarto = {
 </div>
 <section id="sec-motivation" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">4.1</span> Motivation: A Third Language for Causality</h2>
-<p>The first three chapters developed causal inference primarily in the languages of structural equations and directed acyclic graphs. In this chapter we introduce a third language: the potential outcomes framework of <span class="citation" data-cites="neyman1923application">Neyman (1923)</span> and <span class="citation" data-cites="rubin1974estimating">Rubin (1974)</span>.</p>
-<p>Potential outcomes provide a direct language for defining causal estimands. Quantities such as the average treatment effect, the average treatment effect on the treated, and related causal contrasts are most naturally written in terms of counterfactual outcomes <span class="math inline">\(Y(1)\)</span>, <span class="math inline">\(Y(0)\)</span>, and more generally <span class="math inline">\(Y(t)\)</span>. The two frameworks should be viewed as complementary rather than competing: potential outcomes define the causal quantities of interest, while DAGs and the do-calculus clarify identification.</p>
-<p>The purpose of this chapter is therefore not to replace the graphical viewpoint developed earlier, but to connect it to the potential-outcomes notation that dominates much of the applied literature. We first define potential outcomes and the standard causal estimands built from them. We then show how ignorability and positivity together identify the average treatment effect, and how the back-door criterion provides the graphical justification for that identification. For readers who want a formal graphical representation of counterfactual variables, Appendix B introduces single world intervention graphs (SWIGs).</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><embed src="chapter_04_files/figure-html/unnamed-chunk-1-1.pdf" class="img-fluid" width="576"></p>
+<p>The first three chapters developed causal inference primarily in the languages of structural equations and directed acyclic graphs. Those languages are especially effective for expressing interventions syntactically: the SEM shows how an intervention replaces an assignment mechanism, and the DAG shows how it deletes incoming arrows. This chapter introduces a third language: the <em>potential outcomes framework</em> of <span class="citation" data-cites="neyman1923application">Neyman (1923)</span> and <span class="citation" data-cites="rubin1974estimating">Rubin (1974)</span>.</p>
+<p>Potential outcomes provide a direct language for defining causal estimands. Quantities such as the average treatment effect, the average treatment effect on the treated, and related contrasts are most naturally written in terms of counterfactual outcomes <span class="math inline">\(Y(1)\)</span>, <span class="math inline">\(Y(0)\)</span>, and more generally <span class="math inline">\(Y(t)\)</span>. For this reason, the potential outcomes framework has become standard in statistics, biostatistics, epidemiology, and much of econometrics.</p>
+<p>Assumptions such as ignorability, positivity, and exclusion can be stated in this language, but DAGs and the do-operator often make their structural content more transparent. The two frameworks should be viewed as complementary rather than competing: <em>potential outcomes define the causal quantities of interest, while DAGs and the do-calculus clarify identification</em>.</p>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 640 100" width="100%" style="max-width:640px;font-family:sans-serif;">
+  <defs>
+    <marker id="pa" markerwidth="8" markerheight="8" refx="6" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2E74B6"></path>
+    </marker>
+  </defs>
+  <!-- Foundations box -->
+  <rect x="5" y="20" width="145" height="55" rx="6" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"></rect>
+  <text x="77" y="42" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="12">Foundations</text>
+  <text x="77" y="57" text-anchor="middle" fill="#1E3864" font-size="10">Chs. 1–3</text>
+  <!-- PO box (highlighted) -->
+  <rect x="173" y="20" width="155" height="55" rx="6" fill="#EEF4FB" stroke="#2E74B6" stroke-width="2.5"></rect>
+  <text x="250" y="40" text-anchor="middle" fill="#2E74B6" font-weight="bold" font-size="12">Potential Outcomes</text>
+  <text x="250" y="55" text-anchor="middle" fill="#2E74B6" font-size="10">Ch. 4 ← here</text>
+  <!-- Designs box -->
+  <rect x="351" y="20" width="138" height="55" rx="6" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"></rect>
+  <text x="420" y="42" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="12">Designs</text>
+  <text x="420" y="57" text-anchor="middle" fill="#1E3864" font-size="10">Chs. 5–9</text>
+  <!-- Estimation box -->
+  <rect x="513" y="20" width="122" height="55" rx="6" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"></rect>
+  <text x="574" y="42" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="12">Estimation</text>
+  <text x="574" y="57" text-anchor="middle" fill="#1E3864" font-size="10">Part III</text>
+  <!-- Arrows -->
+  <line x1="150" y1="47" x2="170" y2="47" stroke="#2E74B6" stroke-width="2" marker-end="url(#pa)"></line>
+  <line x1="328" y1="47" x2="348" y2="47" stroke="#2E74B6" stroke-width="2" marker-end="url(#pa)"></line>
+  <line x1="489" y1="47" x2="510" y2="47" stroke="#2E74B6" stroke-width="2" marker-end="url(#pa)"></line>
+</svg>
+<figcaption style="font-size:0.9em;color:#555">Chapter 4 bridges the graphical framework of Chapters 1–3 to the applied designs of Part II and the estimation methods of Part III.</figcaption>
 </figure>
-</div>
-</div>
-</div>
 </section>
 <section id="sec-po" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="sec-po"><span class="header-section-number">4.2</span> The Neyman–Rubin Potential Outcomes Framework</h2>
@@ -419,26 +440,26 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Potential Outcome
+<span class="screen-reader-only">Note</span>Definition: Potential Outcome <span class="citation" data-cites="neyman1923application rubin1974estimating">(Neyman 1923; Rubin 1974)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="neyman1923application rubin1974estimating">(Neyman 1923; Rubin 1974)</span> For each unit <span class="math inline">\(i\)</span> and each possible treatment value <span class="math inline">\(t \in \mathcal{T}\)</span>, the <em>potential outcome</em> <span class="math inline">\(Y_i(t)\)</span> is the value of the outcome that unit <span class="math inline">\(i\)</span> <em>would have exhibited</em> had its treatment been set to <span class="math inline">\(t\)</span>, possibly contrary to fact.</p>
+<p>For each unit <span class="math inline">\(i\)</span> and each possible treatment value <span class="math inline">\(t \in \mathcal{T}\)</span>, the <em>potential outcome</em> <span class="math inline">\(Y_i(t)\)</span> is the value of the outcome that unit <span class="math inline">\(i\)</span> <em>would have exhibited</em> had its treatment been set to <span class="math inline">\(t\)</span>, possibly contrary to fact.</p>
 <p>The collection <span class="math inline">\(\{Y_i(t) : t \in \mathcal{T}\}\)</span> is called the <em>schedule of potential outcomes</em> for unit <span class="math inline">\(i\)</span>. In the binary case <span class="math inline">\(\mathcal{T} = \{0,1\}\)</span>, the schedule is <span class="math inline">\((Y_i(0),\, Y_i(1))\)</span>.</p>
 </div>
 </div>
-<p><span class="math inline">\(Y_i(1)\)</span> is the outcome unit <span class="math inline">\(i\)</span> would achieve <em>under treatment</em>; <span class="math inline">\(Y_i(0)\)</span> is the outcome under <em>control</em>. Only one of these is ever observed for any given unit. The unobserved potential outcome is called the <em>counterfactual</em>.</p>
+<p><span class="math inline">\(Y_i(1)\)</span> is the outcome unit <span class="math inline">\(i\)</span> would achieve under treatment; <span class="math inline">\(Y_i(0)\)</span> is the outcome under control. Only one of these is ever observed for any given unit. The unobserved potential outcome is called the <em>counterfactual</em>.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>The Fundamental Problem of Causal Inference
+<span class="screen-reader-only">Warning</span>The Fundamental Problem of Causal Inference <span class="citation" data-cites="holland1986statistics">(Holland 1986)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="holland1986statistics">(Holland 1986)</span> For any unit <span class="math inline">\(i\)</span>, at most one potential outcome <span class="math inline">\(Y_i(t)\)</span> is observed. The individual-level causal effect <span class="math inline">\(Y_i(1) - Y_i(0)\)</span> is therefore <em>never directly observable</em>. Causal inference is an inference problem precisely because this quantity must be recovered from a population of units rather than from a single unit.</p>
+<p>For any unit <span class="math inline">\(i\)</span>, at most one potential outcome <span class="math inline">\(Y_i(t)\)</span> is observed. The individual-level causal effect <span class="math inline">\(Y_i(1) - Y_i(0)\)</span> is therefore <em>never directly observable</em>. Causal inference is an inference problem precisely because this quantity must be recovered from a population of units rather than a single unit.</p>
 </div>
 </div>
 </section>
@@ -450,24 +471,22 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: SUTVA
+<span class="screen-reader-only">Note</span>Definition: SUTVA <span class="citation" data-cites="rubin1980randomization">(Rubin 1980)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="rubin1980randomization">(Rubin 1980)</span> The <em>stable unit treatment value assumption</em> has two components:</p>
+<p>The <em>stable unit treatment value assumption</em> has two components:</p>
 <ol type="1">
-<li><strong>No interference.</strong> The potential outcome <span class="math inline">\(Y_i(t)\)</span> depends only on unit <span class="math inline">\(i\)</span>’s own treatment, not on the treatments of other units: <span class="math inline">\(Y_i(t_1, \ldots, t_n) = Y_i(t_i)\)</span>.</li>
-<li><strong>No hidden versions.</strong> For each treatment level <span class="math inline">\(t\)</span>, there is a single well-defined version.</li>
+<li><strong>No interference.</strong> The potential outcome <span class="math inline">\(Y_i(t)\)</span> depends only on unit <span class="math inline">\(i\)</span>’s own treatment: <span class="math inline">\(Y_i(t_1, \ldots, t_n) = Y_i(t_i)\)</span>.</li>
+<li><strong>No hidden versions.</strong> For each treatment level <span class="math inline">\(t\)</span>, there is a single well-defined version. If two units both receive <span class="math inline">\(T=1\)</span>, the treatment is the same in both cases.</li>
 </ol>
 </div>
 </div>
-<p><strong>The consistency equation.</strong> Under SUTVA, the observed outcome <span class="math inline">\(Y_i\)</span> equals the potential outcome at the treatment actually received:</p>
-<p><span id="eq-consistency"><span class="math display">\[Y_i \;=\; Y_i(T_i). \tag{4.1}\]</span></span></p>
-<p>This equation is the bridge between the potential outcome world and the observed data world. It fails whenever SUTVA fails: if treatment spills over between units (e.g., vaccination provides herd immunity), or if the treatment label <span class="math inline">\(T=1\)</span> covers multiple distinct interventions.</p>
+<p>Under SUTVA, the observed outcome equals the potential outcome at the treatment actually received: <span id="eq-consistency"><span class="math display">\[Y_i = Y_i(T_i). \tag{4.1}\]</span></span></p>
+<p>This <em>consistency equation</em> is the bridge between the potential outcome world and the observed data world. It fails whenever SUTVA fails: if treatment spills over between units (e.g., vaccination provides herd immunity), or if the treatment label <span class="math inline">\(T=1\)</span> covers multiple distinct interventions.</p>
 </section>
 <section id="connection-to-the-do-operator" class="level3" data-number="4.2.3">
 <h3 data-number="4.2.3" class="anchored" data-anchor-id="connection-to-the-do-operator"><span class="header-section-number">4.2.3</span> Connection to the Do-Operator</h3>
-<p>The notation <span class="math inline">\(Y(t)\)</span> and the expression <span class="math inline">\(P(Y \mid \doop(T{=}t))\)</span> refer to the same causal idea viewed from two complementary angles. Under the structural causal framework adopted in these notes, together with consistency and no interference, these two descriptions coincide.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -478,28 +497,24 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under the structural causal model of Chapters 1–3, together with consistency and no interference (SUTVA),</p>
-<p><span id="eq-po-do"><span class="math display">\[Y(t) \;\overset{d}{=}\; Y \mid \doop(T{=}t), \tag{4.2}\]</span></span></p>
-<p>so that <span class="math inline">\(P(Y(t) \le y) = P(Y \le y \mid \doop(T{=}t))\)</span> for every <span class="math inline">\(y\)</span>. Equivalently, <span class="math inline">\(\E[Y(t)] = \E[Y \mid \doop(T{=}t)]\)</span>.</p>
+<p>Under the structural causal model of Chapters 1–3, together with consistency and no interference (SUTVA): <span id="eq-po-do"><span class="math display">\[Y(t) \;\overset{d}{=}\; Y \mid \doop(T{=}t), \tag{4.2}\]</span></span> so that <span class="math inline">\(P(Y(t) \le y) = P(Y \le y \mid \doop(T{=}t))\)</span> for every <span class="math inline">\(y\)</span>. Equivalently, <span class="math inline">\(\E[Y(t)] = \E[Y \mid \doop(T{=}t)]\)</span>.</p>
 </div>
 </div>
+<p><em>Proof sketch.</em> In the mutilated SEM <span class="math inline">\(\mathcal{G}_{\overline{T}}\)</span>, the structural equation for <span class="math inline">\(T\)</span> is replaced by <span class="math inline">\(T := t\)</span> for every unit. The structural model then determines <span class="math inline">\(Y\)</span> from <span class="math inline">\(t\)</span> and unit <span class="math inline">\(i\)</span>’s own background variables — which is precisely what the potential outcomes framework defines as <span class="math inline">\(Y_i(t)\)</span>. SUTVA’s no-interference condition ensures <span class="math inline">\(Y_i(t)\)</span> does not depend on other units’ treatment values, so the marginal distribution of <span class="math inline">\(Y\)</span> in <span class="math inline">\(\mathcal{G}_{\overline{T}}\)</span> equals the marginal distribution of <span class="math inline">\(Y(t)\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>This equivalence lets us move freely between two notational traditions. When defining estimands such as <span class="math inline">\(\E[Y(1) - Y(0)]\)</span>, potential-outcome notation is most natural. When proving identification results from a graph, the do-operator is often more transparent: <span class="math inline">\(P(y \mid \doop(t)) \neq P(y \mid T{=}t)\)</span> whenever <span class="math inline">\(T\)</span> is endogenous (established in Chapter 1), whereas <span class="math inline">\(Y(t)\)</span> carries no syntactic marker for this gap.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof Sketch
+<span class="screen-reader-only">Note</span>Remark
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>In the mutilated SEM <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, the structural equation for <span class="math inline">\(T\)</span> is replaced by <span class="math inline">\(T := t\)</span> for every unit. The structural model then determines the value of <span class="math inline">\(Y\)</span> for unit <span class="math inline">\(i\)</span> from <span class="math inline">\(t\)</span> and unit <span class="math inline">\(i\)</span>’s own background variables — which is precisely what the potential outcomes framework defines as <span class="math inline">\(Y_i(t)\)</span>. SUTVA’s no-interference condition ensures <span class="math inline">\(Y_i(t)\)</span> does not depend on other units’ treatment values, so the marginal distribution of <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal_{\overline{T}}\)</span> equals the marginal distribution of <span class="math inline">\(Y(t)\)</span>. By definition of the do-operator, the former is <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>The SEM representation <span class="math inline">\(Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i})\)</span> clarifies why the two frameworks are equivalent in content but different in emphasis. The do-calculus works with the interventional distribution <span class="math inline">\(P(y \mid \doop(t))\)</span> as a population-level object and asks when it can be recovered from observational data. The potential outcomes framework works with unit-level quantities <span class="math inline">\(Y_i(t)\)</span> and asks what population summaries (ATE, ATT) are scientifically meaningful. The SEM ties the two together.</p>
 </div>
 </div>
-</div>
-<p>This equivalence lets us move freely between two notational traditions. When defining estimands such as <span class="math inline">\(\E[Y(1) - Y(0)]\)</span>, potential-outcome notation is often most natural. When proving identification results from a graph, the do-operator is often more transparent: <span class="math inline">\(f(y \mid \doop(t)) \neq f(y \mid T{=}t)\)</span> whenever <span class="math inline">\(T\)</span> is endogenous, whereas <span class="math inline">\(Y(t)\)</span> carries no such syntactic marker.</p>
 </section>
 </section>
 <section id="sec-estimands" class="level2" data-number="4.3">
@@ -518,48 +533,20 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>For a binary treatment <span class="math inline">\(T \in \{0,1\}\)</span>:</p>
 <ul>
-<li>The <em>average treatment effect</em> (ATE) is <span class="math inline">\(\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)]\)</span>.</li>
-<li>The <em>average treatment effect on the treated</em> (ATT) is <span class="math inline">\(\tau_{\mathrm{ATT}} = \E[Y(1) - Y(0) \mid T{=}1]\)</span>.</li>
+<li>The <em>average treatment effect</em> (ATE): <span class="math inline">\(\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)]\)</span>.</li>
+<li>The <em>average treatment effect on the treated</em> (ATT): <span class="math inline">\(\tau_{\mathrm{ATT}} = \E[Y(1) - Y(0) \mid T{=}1]\)</span>.</li>
 </ul>
 </div>
 </div>
-<p>The ATE and ATT coincide only when the treatment effect does not depend on who selected into treatment. The naïve estimator <span class="math inline">\(\hat\tau_{\mathrm{naive}} = \bar{Y}_{T=1} - \bar{Y}_{T=0}\)</span> estimates <span class="math inline">\(\E[Y \mid T{=}1] - \E[Y \mid T{=}0] \neq \E[Y(1)] - \E[Y(0)]\)</span>, with the gap being the selection bias induced by endogeneity.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>ATE and ATT coincide when <span class="math inline">\(\E[Y(t) \mid T] = \E[Y(t)]\)</span> for <span class="math inline">\(t \in \{0,1\}\)</span>, i.e., when treatment assignment is mean-independent of potential outcomes. In a randomized experiment, this holds by design.</p>
-</div>
-</div>
+<p>The ATE and ATT coincide only when the treatment effect does not depend on who selected into treatment — i.e., when <span class="math inline">\(\E[Y(t) \mid T] = \E[Y(t)]\)</span> for <span class="math inline">\(t \in \{0,1\}\)</span>. In a randomized experiment this holds by design.</p>
+<p>Neither quantity is directly observable. The naïve estimator <span class="math inline">\(\hat\tau_{\mathrm{naive}} = \bar{Y}_{T=1} - \bar{Y}_{T=0}\)</span> estimates <span class="math inline">\(\E[Y \mid T{=}1] - \E[Y \mid T{=}0] \neq \E[Y(1)] - \E[Y(0)]\)</span>, with the gap being the selection bias induced by endogeneity.</p>
 </section>
 <section id="sec-sem-po" class="level3" data-number="4.3.2">
 <h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-sem-po"><span class="header-section-number">4.3.2</span> Causal Estimands as Functionals of the Structural Equation</h3>
-<p><strong>From structural equation to potential outcome.</strong> In the SEM, the outcome is determined by a structural equation <span class="math inline">\(Y = g(T, \mathbf{X}, U_Y)\)</span>. The potential outcome under <span class="math inline">\(\doop(T{=}t)\)</span> is:</p>
-<p><span id="eq-po-from-sem"><span class="math display">\[Y_i(t) \;=\; g(t,\, \mathbf{X}_i,\, U_{Y,i}). \tag{4.3}\]</span></span></p>
-<p><strong>ATE and ATT as structural parameters.</strong></p>
-<p><span id="eq-ate-sem"><span class="math display">\[\tau_{\mathrm{ATE}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y)\right], \tag{4.4}\]</span></span></p>
-<p><span id="eq-att-sem"><span class="math display">\[\tau_{\mathrm{ATT}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y) \mid T{=}1\right]. \tag{4.5}\]</span></span></p>
-<p><strong>The linear SEM as a special case.</strong> In the Gaussian linear SEM <span class="math inline">\(Y = \beta T + \boldsymbol{\gamma}^{\top}\mathbf{X} + \varepsilon\)</span>, the unit-level effect is <span class="math inline">\(Y_i(1) - Y_i(0) = \beta\)</span> for every unit. Consequently, <span class="math inline">\(\tau_{\mathrm{ATE}} = \tau_{\mathrm{ATT}} = \beta\)</span>.</p>
-<p><strong>Heterogeneous effects.</strong> In the nonparametric SEM <a href="#eq-po-from-sem" class="quarto-xref">Equation&nbsp;<span>4.3</span></a>, the unit-level effect varies across units. The ATE and ATT differ whenever treatment selection correlates with the individual effect size.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The SEM representation <a href="#eq-po-from-sem" class="quarto-xref">Equation&nbsp;<span>4.3</span></a> clarifies why the potential outcomes framework and the do-calculus are <em>equivalent in content but different in emphasis</em>. The do-calculus works with the interventional distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> as a population-level object. The potential outcomes framework works with unit-level quantities <span class="math inline">\(Y_i(t)\)</span> and asks what population summaries (ATE, ATT) are scientifically meaningful. The SEM ties the two together.</p>
-</div>
-</div>
+<p>In the SEM framework, the outcome is determined by a structural equation <span class="math inline">\(Y = g(T, \mathbf{X}, U_Y)\)</span>, where <span class="math inline">\(U_Y\)</span> collects all sources of variation not accounted for by <span class="math inline">\((T, \mathbf{X})\)</span>. The potential outcome under <span class="math inline">\(\doop(T{=}t)\)</span> is: <span id="eq-po-from-sem"><span class="math display">\[Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i}). \tag{4.3}\]</span></span></p>
+<p>Substituting into the definitions: <span id="eq-ate-sem"><span class="math display">\[\tau_{\mathrm{ATE}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y)\right], \qquad \tau_{\mathrm{ATT}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y) \mid T{=}1\right]. \tag{4.4}\]</span></span></p>
+<p><strong>The linear SEM as a special case.</strong> In the Gaussian linear SEM <span class="math inline">\(Y = \beta T + \boldsymbol{\gamma}^\top\mathbf{X} + \varepsilon\)</span>, the unit-level effect is <span class="math inline">\(Y_i(1) - Y_i(0) = \beta\)</span> for every unit. Consequently, <span class="math inline">\(\tau_{\mathrm{ATE}} = \tau_{\mathrm{ATT}} = \beta\)</span>. The structural coefficient <span class="math inline">\(\beta\)</span> <em>is</em> the average treatment effect. This homogeneity is a special property of the linear additive model, not a general feature.</p>
+<p><strong>Heterogeneous effects.</strong> In the nonparametric SEM, the unit-level effect <span class="math inline">\(g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})\)</span> varies across units. The ATE and ATT differ whenever treatment selection correlates with individual effect size — i.e., whenever units who benefit more also tend to self-select into treatment.</p>
 </section>
 </section>
 <section id="sec-ignorability" class="level2" data-number="4.4">
@@ -573,13 +560,13 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Strong Ignorability
+<span class="screen-reader-only">Note</span>Definition: Strong Ignorability <span class="citation" data-cites="rosenbaum1983central">(Rosenbaum and Rubin 1983)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="rosenbaum1983central">(Rosenbaum and Rubin 1983)</span> The treatment assignment <span class="math inline">\(T\)</span> is <em>strongly ignorable</em> given <span class="math inline">\(X\)</span> if:</p>
+<p>The treatment assignment <span class="math inline">\(T\)</span> is <em>strongly ignorable</em> given <span class="math inline">\(X\)</span> if:</p>
 <ol type="1">
-<li><strong>Unconfoundedness:</strong> <span class="math inline">\(\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X\)</span>.</li>
+<li><strong>Unconfoundedness:</strong> <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span>.</li>
 <li><strong>Overlap (positivity):</strong> <span class="math inline">\(0 &lt; P(T{=}1 \mid X{=}x) &lt; 1\)</span> for all <span class="math inline">\(x\)</span> in the support of <span class="math inline">\(X\)</span>.</li>
 </ol>
 </div>
@@ -587,25 +574,8 @@ window.Quarto = {
 </section>
 <section id="adjustment-formula-under-ignorability" class="level3" data-number="4.4.2">
 <h3 data-number="4.4.2" class="anchored" data-anchor-id="adjustment-formula-under-ignorability"><span class="header-section-number">4.4.2</span> Adjustment Formula under Ignorability</h3>
-<p>Under strong ignorability, the ATE is identified by the standardization formula:</p>
-<p><span id="eq-ate-id"><span class="math display">\[\tau_{\mathrm{ATE}} \;=\; \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right]. \tag{4.6}\]</span></span></p>
-<p>This is the back-door adjustment formula of Chapter 3 written in potential-outcome notation.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Derivation
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>For each treatment level <span class="math inline">\(t \in \{0,1\}\)</span>, by the law of iterated expectations: <span class="math display">\[\E[Y(t)] = \E_X\!\left[\E[Y(t) \mid X]\right].\]</span> Under unconfoundedness, conditioning on <span class="math inline">\(X\)</span> renders the potential outcome mean-independent of treatment assignment: <span class="math display">\[\E[Y(t) \mid X] = \E[Y(t) \mid T{=}t,\, X].\]</span> By consistency, <span class="math inline">\(\E[Y(t) \mid T{=}t,\, X] = \E[Y \mid T{=}t,\, X]\)</span>. Therefore: <span class="math display">\[\E[Y(t)] = \E_X\!\left[\E[Y \mid T{=}t,\, X]\right].\]</span> Applying this once for <span class="math inline">\(t = 1\)</span> and once for <span class="math inline">\(t = 0\)</span>, and taking the difference, yields <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>. Overlap ensures that the conditional means on the right-hand side are well-defined for all covariate values. <span class="math inline">\(\square\)</span></p>
-</div>
-</div>
-</div>
+<p>Under strong ignorability, the ATE is identified by the standardization formula: <span id="eq-ate-id"><span class="math display">\[\tau_{\mathrm{ATE}} = \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right]. \tag{4.5}\]</span></span></p>
+<p><em>Derivation.</em> For each treatment level <span class="math inline">\(t\)</span>, by the law of iterated expectations: <span class="math display">\[\E[Y(t)] = \E_X\!\left[\E[Y(t) \mid X]\right].\]</span> Under unconfoundedness, <span class="math inline">\(\E[Y(t) \mid X] = \E[Y(t) \mid T{=}t, X]\)</span>. By consistency, <span class="math inline">\(\E[Y(t) \mid T{=}t, X] = \E[Y \mid T{=}t, X]\)</span>. Therefore <span class="math inline">\(\E[Y(t)] = \E_X[\E[Y \mid T{=}t, X]]\)</span>. Applying once for <span class="math inline">\(t=1\)</span> and once for <span class="math inline">\(t=0\)</span> and taking the difference yields <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.5</span></a>. <span class="math inline">\(\square\)</span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -616,14 +586,35 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Suppose <span class="math inline">\(X \in \{0,1\}\)</span> with <span class="math inline">\(P(X{=}1) = 0.4\)</span> and <span class="math inline">\(P(X{=}0) = 0.6\)</span>, and the observed conditional means are <span class="math inline">\(\E[Y \mid T{=}1, X{=}1] = 8\)</span>, <span class="math inline">\(\E[Y \mid T{=}0, X{=}1] = 6\)</span>, <span class="math inline">\(\E[Y \mid T{=}1, X{=}0] = 5\)</span>, <span class="math inline">\(\E[Y \mid T{=}0, X{=}0] = 4\)</span>.</p>
-<p>Under ignorability and positivity, <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.6</span></a> gives: <span class="math display">\[\E[Y(1)] = 0.4\times 8 + 0.6\times 5 = 6.2, \qquad \E[Y(0)] = 0.4\times 6 + 0.6\times 4 = 4.8.\]</span> Hence <span class="math inline">\(\tau_{\mathrm{ATE}} = 6.2 - 4.8 = 1.4\)</span>.</p>
+<p>Let <span class="math inline">\(X \in \{0,1\}\)</span> with <span class="math inline">\(P(X{=}1) = 0.4\)</span>, <span class="math inline">\(P(X{=}0) = 0.6\)</span>, and observed conditional means:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><span class="math inline">\(T=1\)</span></th>
+<th><span class="math inline">\(T=0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(X=1\)</span></td>
+<td><span class="math inline">\(\E[Y \mid T=1, X=1] = 8\)</span></td>
+<td><span class="math inline">\(\E[Y \mid T=0, X=1] = 6\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(X=0\)</span></td>
+<td><span class="math inline">\(\E[Y \mid T=1, X=0] = 5\)</span></td>
+<td><span class="math inline">\(\E[Y \mid T=0, X=0] = 4\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Under ignorability and positivity: <span class="math display">\[\E[Y(1)] = 0.4 \times 8 + 0.6 \times 5 = 6.2, \qquad \E[Y(0)] = 0.4 \times 6 + 0.6 \times 4 = 4.8.\]</span> Hence <span class="math inline">\(\tau_{\mathrm{ATE}} = 6.2 - 4.8 = 1.4\)</span>. The formula works by comparing treated and control outcomes within each stratum and averaging those within-stratum comparisons over the marginal distribution of <span class="math inline">\(X\)</span>.</p>
 </div>
 </div>
 </section>
 <section id="back-door-interpretation" class="level3" data-number="4.4.3">
 <h3 data-number="4.4.3" class="anchored" data-anchor-id="back-door-interpretation"><span class="header-section-number">4.4.3</span> Back-Door Interpretation</h3>
-<p>The potential-outcomes assumption <span class="math inline">\((Y(0), Y(1)) \;\indep\; T \mid X\)</span> is the counterfactual expression of the idea that, after conditioning on <span class="math inline">\(X\)</span>, treatment assignment carries no residual information about the outcome. In the language of DAGs, the closely related idea is that <span class="math inline">\(X\)</span> blocks all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</p>
+<p>The potential-outcomes assumption <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> is the counterfactual expression of the idea that, after conditioning on <span class="math inline">\(X\)</span>, treatment assignment carries no residual information about the outcome that would be observed under intervention <span class="math inline">\(T{=}t\)</span>. In DAG language, the closely related condition is that <span class="math inline">\(X\)</span> blocks all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -634,25 +625,10 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under the Markov assumption for <span class="math inline">\(\Gcal\)</span>, if <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> — that is, (1) no node in <span class="math inline">\(X\)</span> is a descendant of <span class="math inline">\(T\)</span>, and (2) <span class="math inline">\(X\)</span> blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> — then unconfoundedness <span class="math inline">\((Y(t) \indep T \mid X)\)</span> holds for all <span class="math inline">\(t\)</span>.</p>
+<p>Under the NPSEM/SWIG semantics adopted in these notes, if <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> — i.e., (1) no node in <span class="math inline">\(X\)</span> is a descendant of <span class="math inline">\(T\)</span>, and (2) <span class="math inline">\(X\)</span> blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> — then unconfoundedness <span class="math inline">\((Y(t) \indep T \mid X)\)</span> holds for all <span class="math inline">\(t\)</span>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof Sketch
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>In the mutilated graph <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, all arrows into <span class="math inline">\(T\)</span> are deleted, severing every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. The back-door criterion guarantees that <span class="math inline">\(X\)</span> blocks all remaining non-causal paths between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal_{\overline{T}}\)</span>. By the Markov property for the interventional model represented by <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, this yields conditional independence between treatment and outcome under intervention. Under the structural causal interpretation adopted in these notes, that interventional independence corresponds to <span class="math inline">\(Y(t) \;\indep\; T \mid X\)</span> for all <span class="math inline">\(t\)</span>. A fully explicit graphical version of this translation is given in Appendix B using SWIGs. <span class="math inline">\(\square\)</span></p>
-</div>
-</div>
-</div>
+<p><em>Proof sketch.</em> The target statement <span class="math inline">\(Y(t) \indep T \mid X\)</span> is <em>cross-world</em>: it mixes the counterfactual <span class="math inline">\(Y(t)\)</span> with the factual treatment <span class="math inline">\(T\)</span>, and is not a d-separation statement in <span class="math inline">\(\mathcal{G}\)</span> itself. The rigorous translation proceeds through the single-world intervention graph <span class="math inline">\(\mathcal{G}(t)\)</span> (Appendix B). Under the NPSEM semantics, <span class="math inline">\(Y(t)\)</span> and <span class="math inline">\(T\)</span> depend on disjoint exogenous errors together with their own ancestors, and the back-door criterion is precisely the d-separation condition on <span class="math inline">\(\mathcal{G}(t)\)</span> that makes these conditionally independent given <span class="math inline">\(X\)</span>. See Appendix B for the explicit SWIG derivation. <span class="math inline">\(\square\)</span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -663,7 +639,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This is the direction most important for practice: a graphical adjustment set justifies the counterfactual independence needed for standardization, regression adjustment, and propensity-score methods, requiring only the Markov property. The converse — whether every ignorability statement corresponds to a back-door condition — additionally requires faithfulness and is established in Appendix B via the SWIG construction.</p>
+<p>This is the direction most important for practice: a graphical adjustment set justifies the counterfactual independence needed for standardization, regression adjustment, and propensity-score methods. The converse — whether every ignorability statement corresponds to a back-door condition — is more delicate; see Appendix B.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -676,11 +652,10 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="lalonde1986evaluating dehejia1999causal">(LaLonde 1986; Dehejia and Wahba 1999)</span> Let <span class="math inline">\(T\)</span> = receipt of job training, <span class="math inline">\(Y\)</span> = earnings two years later, <span class="math inline">\(X\)</span> = (age, education, prior earnings, race, marital status).</p>
+<p>Following <span class="citation" data-cites="lalonde1986evaluating">LaLonde (1986)</span> and <span class="citation" data-cites="dehejia1999causal">Dehejia and Wahba (1999)</span>, let <span class="math inline">\(T\)</span> = receipt of job training, <span class="math inline">\(Y\)</span> = earnings two years later, <span class="math inline">\(X\)</span> = (age, education, prior earnings, race, marital status).</p>
 <p>The back-door path <span class="math inline">\(T \leftarrow X \to Y\)</span> is blocked by conditioning on <span class="math inline">\(X\)</span>, leaving only the causal path <span class="math inline">\(T \to Y\)</span>. Ignorability holds if this DAG is correctly specified. If there is an unobserved variable <span class="math inline">\(U\)</span> (motivation, ability) that affects both training participation and earnings, <span class="math inline">\(X\)</span> fails the back-door criterion and ignorability fails.</p>
 </div>
 </div>
-<p>Together, ignorability and positivity identify the ATE via <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>, and the back-door criterion provides the graphical justification for why that formula recovers the causal effect. Appendix B provides a formal graphical representation of this connection through SWIGs.</p>
 </section>
 <section id="overlap-and-positivity" class="level3" data-number="4.4.4">
 <h3 data-number="4.4.4" class="anchored" data-anchor-id="overlap-and-positivity"><span class="header-section-number">4.4.4</span> Overlap and Positivity</h3>
@@ -694,7 +669,8 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Without overlap, some covariate strata contain only treated or only control units. In those strata, <span class="math inline">\(\E[Y \mid T{=}0, X{=}x]\)</span> or <span class="math inline">\(\E[Y \mid T{=}1, X{=}x]\)</span> is unobservable, and <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.6</span></a> cannot be evaluated at those values of <span class="math inline">\(x\)</span>. Identification of the ATE fails not because the causal structure is wrong, but because the data do not span the support needed. The ATT may remain identified even when full overlap fails, because ATT averages only over the treated population where <span class="math inline">\(P(T{=}1 \mid X) &gt; 0\)</span> by construction.</p>
+<p>Without overlap, some covariate strata contain only treated or only control units. In those strata, <span class="math inline">\(\E[Y \mid T{=}0, X{=}x]\)</span> or <span class="math inline">\(\E[Y \mid T{=}1, X{=}x]\)</span> is unobservable, and <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.5</span></a> cannot be evaluated at those values of <span class="math inline">\(x\)</span>. Identification of the ATE fails not because the causal structure is wrong, but because the data do not span the support needed.</p>
+<p>The ATT can remain identified under a <em>weaker, one-sided</em> overlap condition: <span class="math inline">\(P(T{=}0 \mid X{=}x) &gt; 0\)</span> almost surely on the support of <span class="math inline">\(X\)</span> in the treated subpopulation. Full two-sided overlap is not required for ATT, because ATT averages only over the treated population.</p>
 </div>
 </div>
 </section>
@@ -718,37 +694,43 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Define causal estimands (ATE, ATT)</td>
-<td>✓ Especially natural notation</td>
+<td>Define ATE, ATT</td>
+<td>✓ Most natural notation</td>
 <td>Via <span class="math inline">\(\E[Y \mid \doop(t)]\)</span></td>
 <td>Via structural equations</td>
 </tr>
 <tr class="even">
 <td>Encode causal assumptions</td>
-<td>Assumptions typically stated informally; causal graph implicit</td>
+<td>Typically informal; graph implicit</td>
 <td>✓ Explicit directed edges</td>
 <td>✓ Structural equations</td>
 </tr>
 <tr class="odd">
 <td>Read conditional independence</td>
-<td>Requires auxiliary graph or model</td>
+<td>Requires auxiliary graph</td>
 <td>✓ d-separation</td>
 <td>With graph only</td>
 </tr>
 <tr class="even">
-<td>Identification from observational data</td>
-<td>Via ignorability assumptions</td>
+<td>Identification from data</td>
+<td>Via ignorability</td>
 <td>✓ Back-door, front-door, do-calculus</td>
 <td>✓ Via exclusion restrictions</td>
 </tr>
 <tr class="odd">
-<td>Cross-world assumptions (e.g., monotonicity)</td>
-<td>✓ Natural to state</td>
-<td>See Appendix B (SWIGs)</td>
-<td>Implicit in structural model</td>
+<td>Likelihood construction</td>
+<td>Estimating equations / semiparametric</td>
+<td>Observational functionals only</td>
+<td>✓ Structural model</td>
 </tr>
 <tr class="even">
-<td>Standard in statistics/epidemiology</td>
+<td>Cross-world assumptions</td>
+<td>✓ Natural to state</td>
+<td>See Appendix B</td>
+<td>Implicit in model</td>
+</tr>
+<tr class="odd">
+<td>Standard in statistics</td>
 <td>✓ Dominant</td>
 <td>Growing rapidly</td>
 <td>Econometrics</td>
@@ -765,50 +747,50 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Both frameworks are indispensable. We use <em>potential outcomes</em> to <em>define</em> causal estimands. We use the <em>do-calculus and DAGs</em> for <em>identification</em>. The back-door criterion is the graphical condition that justifies conditional ignorability and hence the adjustment formula through which causal effects are identified. For a formal graphical representation that hosts both frameworks simultaneously, see Appendix B.</p>
-<p>The do-operator language is preferred throughout this course because it makes the interventional/observational distinction <em>syntactically enforced</em>: <span class="math inline">\(f(y \mid \doop(t))\)</span> cannot be confused with <span class="math inline">\(f(y \mid T{=}t)\)</span>, whereas <span class="math inline">\(\E[Y(t)]\)</span> carries no such syntactic marker.</p>
+<p>Both frameworks are indispensable. We use <em>potential outcomes</em> to <em>define</em> causal estimands. We use the <em>do-calculus and DAGs</em> for <em>identification</em>. The back-door criterion is the graphical condition that justifies conditional ignorability and hence the adjustment formula. The do-operator language is preferred throughout this course because it makes the interventional/observational distinction <em>syntactically enforced</em>: <span class="math inline">\(P(y \mid \doop(t))\)</span> cannot be confused with <span class="math inline">\(P(y \mid T{=}t)\)</span>, whereas <span class="math inline">\(\E[Y(t)]\)</span> carries no such syntactic marker.</p>
 </div>
 </div>
 </section>
-<section id="summary" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">4.6</span> Summary</h2>
+<section id="sec-summary" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="sec-summary"><span class="header-section-number">4.6</span> Summary</h2>
+<p><strong>Causal inference = counterfactual questions + graphical assumptions + statistical estimation.</strong></p>
 <ol type="1">
-<li><p>The potential outcome <span class="math inline">\(Y(t)\)</span> is the outcome that would be observed under the intervention <span class="math inline">\(T = t\)</span>. Under consistency, no interference, and the structural causal semantics adopted in these notes, the observed outcome satisfies <span class="math inline">\(Y_i = Y_i(T_i)\)</span>, and the potential outcome <span class="math inline">\(Y(t)\)</span> has the same distribution as the outcome under the intervention <span class="math inline">\(\doop(T{=}t)\)</span>.</p></li>
-<li><p>The ATE and ATT are averages of the unit-level causal effect <span class="math inline">\(Y_i(1) - Y_i(0) = g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})\)</span> over the full population and the treated subpopulation respectively. In the linear SEM, both equal the structural coefficient <span class="math inline">\(\beta\)</span>. They diverge under heterogeneous effects when treatment selection correlates with individual effect size.</p></li>
-<li><p>Strong ignorability <span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span> with overlap identifies the ATE via <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption used in adjustment formulas.</p></li>
-<li><p>SWIGs <span class="citation" data-cites="richardson2014ace">(Richardson and Robins 2014)</span> provide a formal graphical representation of counterfactual variables, making ignorability a d-separation statement in a single diagram that hosts both potential outcomes and the natural treatment. This material is developed in Appendix B and is not required for a first-pass understanding of adjustment.</p></li>
-<li><p>The frameworks are complementary: potential outcomes define estimands; the do-calculus identifies them. The back-door criterion connects the two by providing the graphical condition under which adjustment recovers the causal effect.</p></li>
+<li>The potential outcome <span class="math inline">\(Y(t)\)</span> is the outcome that would be observed under intervention <span class="math inline">\(T = t\)</span>. Under consistency, no interference, and the structural causal semantics adopted in these notes, the observed outcome satisfies <span class="math inline">\(Y_i = Y_i(T_i)\)</span>, and <span class="math inline">\(Y(t)\)</span> has the same distribution as <span class="math inline">\(Y \mid \doop(T{=}t)\)</span>.</li>
+<li>The ATE and ATT are averages of the unit-level causal effect <span class="math inline">\(g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})\)</span> over the full population and the treated subpopulation respectively. In the linear SEM, both equal <span class="math inline">\(\beta\)</span>. They diverge under heterogeneous effects when treatment selection correlates with individual effect size.</li>
+<li>Strong ignorability <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> with overlap identifies the ATE via <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.5</span></a>. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption.</li>
+<li>Single world intervention graphs <span class="citation" data-cites="richardson2014ace">(Richardson and Robins 2014)</span> provide a formal graphical representation of counterfactual variables, making ignorability a d-separation statement (Appendix B).</li>
+<li>The frameworks are complementary: potential outcomes define estimands; the do-calculus identifies them. The back-door criterion connects the two by providing the graphical condition under which adjustment recovers the causal effect.</li>
 </ol>
-<hr>
-<p><em>In observational studies, ignorability must be justified by substantive knowledge encoded in a causal graph. Randomized experiments provide a fundamentally different solution: when treatment is assigned randomly, <span class="math inline">\((Y(0),Y(1)) \indep T\)</span> holds by design, guaranteeing ignorability without any covariate adjustment. Chapter 5 studies randomized experiments as the canonical design where causal effects are identifiable directly from the data-generating mechanism.</em></p>
+<p><strong>From ignorability to randomization.</strong> In observational studies, ignorability must be justified by substantive knowledge encoded in a causal graph. Randomized experiments provide a different solution: when treatment is assigned randomly, <span class="math inline">\((Y(0), Y(1)) \indep T\)</span> holds by design, guaranteeing ignorability <em>without any covariate adjustment</em>. Chapter 5 studies this design.</p>
+<p><strong>Identification vs.&nbsp;estimation.</strong> Chapters 1–4 have focused on <em>identification</em>: whether <span class="math inline">\(\tau = \E[Y(1) - Y(0)]\)</span> can be written as a functional <span class="math inline">\(\Phi(P(Y,T,X))\)</span> of the observed distribution. Estimation — constructing <span class="math inline">\(\hat\tau\)</span> from a finite sample to approximate <span class="math inline">\(\Phi(P)\)</span> — is studied in Part III, covering regression adjustment, IPW, doubly robust estimators, and instrumental variables.</p>
 </section>
 <section id="problems" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="problems"><span class="header-section-number">4.7</span> Problems</h2>
 <p><strong>1. SUTVA and consistency.</strong> Suppose <span class="math inline">\(n = 3\)</span> units receive binary treatments <span class="math inline">\((T_1, T_2, T_3)\)</span> and unit <span class="math inline">\(i\)</span>’s outcome may depend on all three treatments: <span class="math inline">\(Y_i = Y_i(T_1, T_2, T_3)\)</span>.</p>
 <ol type="a">
 <li>How many potential outcomes does unit 1 have? Write them out explicitly.</li>
-<li>SUTVA imposes no interference: <span class="math inline">\(Y_i(T_1,T_2,T_3) = Y_i(T_i)\)</span>. How many distinct potential outcomes remain?</li>
+<li>SUTVA imposes no interference: <span class="math inline">\(Y_i(T_1, T_2, T_3) = Y_i(T_i)\)</span>. How many distinct potential outcomes remain?</li>
 <li>Give a real-world example where no-interference plausibly holds and one where it plausibly fails. In the latter case, explain what identification strategy (if any) remains available.</li>
 </ol>
-<p><strong>2. ATE, ATT, and selection bias.</strong> Let <span class="math inline">\((Y(0), Y(1), T) \sim P\)</span> with <span class="math inline">\(P(T{=}1) = 0.5\)</span>. Suppose <span class="math inline">\(\E[Y(1)] = 3\)</span>, <span class="math inline">\(\E[Y(0)] = 1\)</span>, <span class="math inline">\(\E[Y(1) \mid T{=}1] = 4\)</span>, <span class="math inline">\(\E[Y(0) \mid T{=}1] = 2\)</span>, <span class="math inline">\(\E[Y(1) \mid T{=}0] = 2\)</span>, <span class="math inline">\(\E[Y(0) \mid T{=}0] = 0\)</span>.</p>
+<p><strong>2. ATE, ATT, and selection bias.</strong> Let <span class="math inline">\((Y(0), Y(1), T) \sim P\)</span> with <span class="math inline">\(P(T{=}1) = 0.5\)</span>, <span class="math inline">\(\E[Y(1)] = 3\)</span>, <span class="math inline">\(\E[Y(0)] = 1\)</span>, <span class="math inline">\(\E[Y(1) \mid T{=}1] = 4\)</span>, <span class="math inline">\(\E[Y(0) \mid T{=}1] = 2\)</span>, <span class="math inline">\(\E[Y(1) \mid T{=}0] = 2\)</span>, <span class="math inline">\(\E[Y(0) \mid T{=}0] = 0\)</span>.</p>
 <ol type="a">
 <li>Compute the ATE and ATT. Are they equal?</li>
 <li>Compute the naïve estimator <span class="math inline">\(\E[Y \mid T{=}1] - \E[Y \mid T{=}0]\)</span>. Decompose the gap between this and the ATE into a selection bias term and an ATT–ATE difference.</li>
 <li>Under what graphical condition on the DAG would the naïve estimator equal the ATE? State this condition in both potential outcome language (ignorability) and do-calculus language (back-door criterion).</li>
 </ol>
-<p><strong>3. Causal estimands from the structural equation.</strong> Consider the nonparametric SEM <span class="math inline">\(Y = g(T, X, U_Y)\)</span> with binary treatment <span class="math inline">\(T \in \{0,1\}\)</span>, observed covariate <span class="math inline">\(X\)</span>, and unobserved error <span class="math inline">\(U_Y\)</span> independent of <span class="math inline">\((T, X)\)</span> in the mutilated graph.</p>
+<p><strong>3. Causal estimands from the structural equation.</strong> Consider the nonparametric SEM <span class="math inline">\(Y = g(T, X, U_Y)\)</span> with binary <span class="math inline">\(T \in \{0,1\}\)</span>, observed covariate <span class="math inline">\(X\)</span>, and <span class="math inline">\(U_Y\)</span> independent of <span class="math inline">\((T, X)\)</span> in the mutilated graph.</p>
 <ol type="a">
 <li>Write <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> and <span class="math inline">\(\tau_{\mathrm{ATT}}\)</span> as expectations of <span class="math inline">\(g(1, X, U_Y) - g(0, X, U_Y)\)</span> over the appropriate distribution. Under what condition do they coincide?</li>
 <li>Specialize to the linear SEM <span class="math inline">\(g(t, x, u) = \alpha + \beta t + \gamma x + u\)</span>. Show that the unit-level causal effect <span class="math inline">\(Y_i(1) - Y_i(0)\)</span> is constant across all units, and hence <span class="math inline">\(\tau_{\mathrm{ATE}} = \tau_{\mathrm{ATT}} = \beta\)</span>.</li>
 <li>Now consider the heterogeneous SEM <span class="math inline">\(g(t, x, u) = (\alpha + u)\,t + \gamma x\)</span>, where <span class="math inline">\(U_Y \sim \mathcal{N}(0, \sigma^2)\)</span>, <span class="math inline">\(\mathrm{Cov}(U_Y, T) = \rho\)</span>, and <span class="math inline">\(P(T{=}1) = p \in (0,1)\)</span>. Compute <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> and <span class="math inline">\(\tau_{\mathrm{ATT}}\)</span>. Show that they differ when <span class="math inline">\(\rho \neq 0\)</span>, and interpret this difference.</li>
-<li>In part (c), explain why OLS estimation of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> and <span class="math inline">\(X\)</span> does not recover either <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> or <span class="math inline">\(\tau_{\mathrm{ATT}}\)</span> when <span class="math inline">\(\rho \neq 0\)</span>.</li>
+<li>In part (c), show that the population OLS slope on <span class="math inline">\(T\)</span> in the regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((1, T, X)\)</span> equals <span class="math inline">\(\alpha + \rho/p = \tau_{\mathrm{ATT}}\)</span>, not <span class="math inline">\(\tau_{\mathrm{ATE}} = \alpha\)</span>. What additional structure would be needed to identify <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span>?</li>
 </ol>
 <p><strong>4. SWIGs and ignorability.</strong> <em>(Requires Appendix B.)</em> Consider the DAG: <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(T \to Y\)</span>, with <span class="math inline">\(X\)</span> fully observed.</p>
 <ol type="a">
-<li>Construct the SWIG <span class="math inline">\(\Gcal(t)\)</span> by splitting <span class="math inline">\(T\)</span> into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome <span class="math inline">\(Y(t)\)</span>.</li>
-<li>In <span class="math inline">\(\Gcal(t)\)</span>, identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>. Apply the SWIG d-separation rules to determine which paths are blocked and which are open before conditioning.</li>
-<li>Use d-separation in <span class="math inline">\(\Gcal(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\Gcal(t)}\)</span> holds. Conclude that <span class="math inline">\(X\)</span> satisfies the back-door criterion, confirming the proposition above.</li>
-<li>Now add a hidden common cause <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure (if any) would be needed for identification.</li>
+<li>Construct the SWIG <span class="math inline">\(\mathcal{G}(t)\)</span> by splitting <span class="math inline">\(T\)</span> into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome <span class="math inline">\(Y(t)\)</span>.</li>
+<li>In <span class="math inline">\(\mathcal{G}(t)\)</span>, identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>. Determine which are blocked and which are open before conditioning.</li>
+<li>Use d-separation in <span class="math inline">\(\mathcal{G}(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\mathcal{G}(t)}\)</span> holds. Conclude that <span class="math inline">\(X\)</span> satisfies the back-door criterion, confirming <span class="citation" data-cites="prop-ign-bd">(<strong>prop-ign-bd?</strong>)</span>.</li>
+<li>Now add a hidden common cause <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure would be needed for identification.</li>
 </ol>
 
 
