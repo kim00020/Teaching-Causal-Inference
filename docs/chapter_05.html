@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -331,34 +350,33 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#the-do-calculus-of-randomization" id="toc-the-do-calculus-of-randomization" class="nav-link" data-scroll-target="#the-do-calculus-of-randomization"><span class="header-section-number">5.1.1</span> The Do-Calculus of Randomization</a></li>
   <li><a href="#estimation-of-the-ate-in-a-randomized-experiment" id="toc-estimation-of-the-ate-in-a-randomized-experiment" class="nav-link" data-scroll-target="#estimation-of-the-ate-in-a-randomized-experiment"><span class="header-section-number">5.1.2</span> Estimation of the ATE in a Randomized Experiment</a></li>
+  <li><a href="#fishers-randomization-inference-vs.-neymans-repeated-sampling" id="toc-fishers-randomization-inference-vs.-neymans-repeated-sampling" class="nav-link" data-scroll-target="#fishers-randomization-inference-vs.-neymans-repeated-sampling"><span class="header-section-number">5.1.3</span> Fisher’s Randomization Inference vs.&nbsp;Neyman’s Repeated Sampling</a></li>
   </ul></li>
-  <li><a href="#sec-ignorability" id="toc-sec-ignorability" class="nav-link" data-scroll-target="#sec-ignorability"><span class="header-section-number">5.2</span> Ignorability and the Back-Door Formula</a>
+  <li><a href="#sec-ignorability" id="toc-sec-ignorability" class="nav-link" data-scroll-target="#sec-ignorability"><span class="header-section-number">5.2</span> Ignorability</a>
   <ul class="collapse">
-  <li><a href="#randomization-vs.-observational-studies" id="toc-randomization-vs.-observational-studies" class="nav-link" data-scroll-target="#randomization-vs.-observational-studies"><span class="header-section-number">5.2.1</span> Randomization vs.&nbsp;Observational Studies</a></li>
-  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">5.2.2</span> Definition</a></li>
-  <li><a href="#graphical-interpretation" id="toc-graphical-interpretation" class="nav-link" data-scroll-target="#graphical-interpretation"><span class="header-section-number">5.2.3</span> Graphical Interpretation</a></li>
-  <li><a href="#from-ignorability-to-identification" id="toc-from-ignorability-to-identification" class="nav-link" data-scroll-target="#from-ignorability-to-identification"><span class="header-section-number">5.2.4</span> From Ignorability to Identification</a></li>
+  <li><a href="#two-routes-to-the-same-estimand" id="toc-two-routes-to-the-same-estimand" class="nav-link" data-scroll-target="#two-routes-to-the-same-estimand"><span class="header-section-number">5.2.1</span> Two Routes to the Same Estimand</a></li>
+  <li><a href="#terminology" id="toc-terminology" class="nav-link" data-scroll-target="#terminology"><span class="header-section-number">5.2.2</span> Terminology</a></li>
+  <li><a href="#three-languages-for-ignorability" id="toc-three-languages-for-ignorability" class="nav-link" data-scroll-target="#three-languages-for-ignorability"><span class="header-section-number">5.2.3</span> Three Languages for Ignorability</a></li>
+  <li><a href="#what-ignorability-requires" id="toc-what-ignorability-requires" class="nav-link" data-scroll-target="#what-ignorability-requires"><span class="header-section-number">5.2.4</span> What Ignorability Requires</a></li>
+  <li><a href="#sec-identification" id="toc-sec-identification" class="nav-link" data-scroll-target="#sec-identification"><span class="header-section-number">5.2.5</span> From Ignorability to Identification</a></li>
+  <li><a href="#sec-pretreatment" id="toc-sec-pretreatment" class="nav-link" data-scroll-target="#sec-pretreatment"><span class="header-section-number">5.2.6</span> Which Variables to Condition On: The Pre-Treatment Requirement</a></li>
   </ul></li>
-  <li><a href="#sec-regression" id="toc-sec-regression" class="nav-link" data-scroll-target="#sec-regression"><span class="header-section-number">5.3</span> Regression Adjustment</a>
+  <li><a href="#sec-regression" id="toc-sec-regression" class="nav-link" data-scroll-target="#sec-regression"><span class="header-section-number">5.3</span> Regression Adjustment and Standardization</a>
   <ul class="collapse">
-  <li><a href="#the-outcome-regression-or-estimator" id="toc-the-outcome-regression-or-estimator" class="nav-link" data-scroll-target="#the-outcome-regression-or-estimator"><span class="header-section-number">5.3.1</span> The Outcome Regression (OR) Estimator</a></li>
-  <li><a href="#sec-std" id="toc-sec-std" class="nav-link" data-scroll-target="#sec-std"><span class="header-section-number">5.3.2</span> Standardization as a Special Case</a></li>
-  <li><a href="#regression-adjustment-in-randomized-experiments-lin-2013" id="toc-regression-adjustment-in-randomized-experiments-lin-2013" class="nav-link" data-scroll-target="#regression-adjustment-in-randomized-experiments-lin-2013"><span class="header-section-number">5.3.3</span> Regression Adjustment in Randomized Experiments: Lin (2013)</a></li>
+  <li><a href="#the-common-three-step-logic" id="toc-the-common-three-step-logic" class="nav-link" data-scroll-target="#the-common-three-step-logic"><span class="header-section-number">5.3.1</span> The Common Three-Step Logic</a></li>
+  <li><a href="#a-worked-example" id="toc-a-worked-example" class="nav-link" data-scroll-target="#a-worked-example"><span class="header-section-number">5.3.2</span> A Worked Example</a></li>
+  <li><a href="#sec-standardization" id="toc-sec-standardization" class="nav-link" data-scroll-target="#sec-standardization"><span class="header-section-number">5.3.3</span> Standardization as a Special Case</a></li>
+  <li><a href="#model-specification-and-what-can-go-wrong" id="toc-model-specification-and-what-can-go-wrong" class="nav-link" data-scroll-target="#model-specification-and-what-can-go-wrong"><span class="header-section-number">5.3.4</span> Model Specification and What Can Go Wrong</a></li>
+  <li><a href="#regression-adjustment-in-randomized-experiments-lin-2013" id="toc-regression-adjustment-in-randomized-experiments-lin-2013" class="nav-link" data-scroll-target="#regression-adjustment-in-randomized-experiments-lin-2013"><span class="header-section-number">5.3.5</span> Regression Adjustment in Randomized Experiments: Lin (2013)</a></li>
   </ul></li>
-  <li><a href="#sec-stratification" id="toc-sec-stratification" class="nav-link" data-scroll-target="#sec-stratification"><span class="header-section-number">5.4</span> Stratification</a>
-  <ul class="collapse">
-  <li><a href="#the-idea" id="toc-the-idea" class="nav-link" data-scroll-target="#the-idea"><span class="header-section-number">5.4.1</span> The Idea</a></li>
-  <li><a href="#the-stratified-estimator" id="toc-the-stratified-estimator" class="nav-link" data-scroll-target="#the-stratified-estimator"><span class="header-section-number">5.4.2</span> The Stratified Estimator</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations"><span class="header-section-number">5.4.3</span> Limitations</a></li>
-  </ul></li>
+  <li><a href="#sec-stratification" id="toc-sec-stratification" class="nav-link" data-scroll-target="#sec-stratification"><span class="header-section-number">5.4</span> Stratification</a></li>
   <li><a href="#sec-simpson" id="toc-sec-simpson" class="nav-link" data-scroll-target="#sec-simpson"><span class="header-section-number">5.5</span> Simpson’s Paradox</a>
   <ul class="collapse">
-  <li><a href="#when-should-you-not-condition-on-x" id="toc-when-should-you-not-condition-on-x" class="nav-link" data-scroll-target="#when-should-you-not-condition-on-x"><span class="header-section-number">5.5.1</span> When Should You <em>Not</em> Condition on <span class="math inline">\(X\)</span>?</a></li>
+  <li><a href="#sec-simpson-collider" id="toc-sec-simpson-collider" class="nav-link" data-scroll-target="#sec-simpson-collider"><span class="header-section-number">5.5.1</span> When Should You <em>Not</em> Condition on <span class="math inline">\(X\)</span>?</a></li>
   </ul></li>
   <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">5.6</span> Lab: Simulation Study of the Outcome Regression Estimator</a></li>
-  <li><a href="#sec-propensity-preview" id="toc-sec-propensity-preview" class="nav-link" data-scroll-target="#sec-propensity-preview"><span class="header-section-number">5.7</span> Where the Propensity Score Fits</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.8</span> Summary</a></li>
-  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">5.9</span> Problems</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">5.7</span> Chapter Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">5.8</span> Problems</a></li>
   </ul>
 </nav>
     </div>
@@ -397,7 +415,7 @@ window.Quarto = {
 <p>By the end of this chapter, students should be able to:</p>
 <ol type="1">
 <li>Explain in do-calculus terms why a randomized experiment makes <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span>, and identify the graphical feature that produces this equality.</li>
-<li>State the ignorability (unconfoundedness) assumption in both potential-outcomes and graphical language, and distinguish weak from strong ignorability.</li>
+<li>State the ignorability assumption in both potential-outcomes and graphical language, and distinguish weak from strong ignorability.</li>
 <li>Apply the regression-adjusted estimator to reduce variance in a randomized experiment, and explain why consistency holds even under model misspecification.</li>
 <li>Derive and compute the standardization (g-formula) estimator of the ATE from a contingency table or regression output.</li>
 <li>Explain the method of stratification (subclassification) and describe when and why it removes confounding bias.</li>
@@ -410,7 +428,7 @@ window.Quarto = {
 <h2 data-number="5.1" class="anchored" data-anchor-id="sec-rct"><span class="header-section-number">5.1</span> Randomized Experiments</h2>
 <section id="the-do-calculus-of-randomization" class="level3" data-number="5.1.1">
 <h3 data-number="5.1.1" class="anchored" data-anchor-id="the-do-calculus-of-randomization"><span class="header-section-number">5.1.1</span> The Do-Calculus of Randomization</h3>
-<p>The defining feature of a randomized experiment is that the analyst <em>sets</em> the treatment for each unit, independently of all background variables. In do-calculus terms, the observed data come from the mutilated distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> rather than the observational distribution <span class="math inline">\(f(y \mid T{=}t)\)</span>.</p>
+<p>The defining feature of a randomized experiment is that the analyst <em>sets</em> the treatment for each unit, independently of all background variables. In do-calculus terms, the data come from the mutilated distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> rather than the observational distribution <span class="math inline">\(f(y \mid T{=}t)\)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -421,31 +439,69 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In a completely randomized experiment, <span class="math inline">\(T\)</span> is assigned independently of all pre-treatment variables. The DAG has no arrows into <span class="math inline">\(T\)</span>: every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> is severed. Consequently: <span id="eq-fund-eq"><span class="math display">\[f\!\left(y \mid \doop(T{=}t)\right) \;=\; f\!\left(y \mid T{=}t\right). \tag{5.1}\]</span></span> The interventional and observational conditional distributions coincide.</p>
+<p>In a completely randomized experiment, <span class="math inline">\(T\)</span> is assigned independently of all pre-treatment variables. In the DAG, this means there are <em>no arrows into <span class="math inline">\(T\)</span></em>: the treatment node has no parents. By Rule 2 of the do-calculus, with <span class="math inline">\(X = \varnothing\)</span>, <span class="math inline">\(Z = T\)</span>, <span class="math inline">\(W = \varnothing\)</span>, the graphical condition <span class="math inline">\((Y \indep T)_{\mathcal{G}_{\underline{T}}}\)</span> holds because <span class="math inline">\(T\)</span> is isolated in <span class="math inline">\(\mathcal{G}_{\underline{T}}\)</span> (no parents in <span class="math inline">\(\mathcal{G}\)</span>, and the outgoing edge <span class="math inline">\(T \to Y\)</span> is deleted). Rule 2 therefore gives: <span id="eq-fund-eq"><span class="math display">\[f\!\bigl(y \mid \doop(T{=}t)\bigr) = f(y \mid T{=}t). \tag{5.1}\]</span></span> In a randomized experiment, observing <span class="math inline">\(T = t\)</span> is the same as intervening to set <span class="math inline">\(T = t\)</span>.</p>
 </div>
 </div>
-<p>In a completely randomized design (CRD), the treatment node <span class="math inline">\(T\)</span> has no parents in the DAG. Graphically, this means:</p>
-<ul>
-<li>No back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> exist.</li>
-<li><span class="math inline">\(T\)</span> is independent of all pre-treatment covariates: <span class="math inline">\(T \indep (X, U)\)</span>.</li>
-<li>In the mutilated graph <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, nothing changes relative to the original DAG because <span class="math inline">\(T\)</span> already had no parents.</li>
-</ul>
-<p><a href="#fig-randomization-dag" class="quarto-xref">Figure&nbsp;<span>5.1</span></a> illustrates the contrast between the observational DAG (with back-door paths) and the randomized DAG (all arrows into <span class="math inline">\(T\)</span> severed).</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-randomization-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-randomization-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_05_files/figure-html/fig-randomization-dag-1.pdf" class="img-fluid" width="528">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-randomization-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the observational DAG, the unobserved confounder <span class="math inline">\(U\)</span> and observed covariate <span class="math inline">\(X\)</span> both have arrows into <span class="math inline">\(T\)</span>, creating back-door paths. <strong>Right</strong>: randomization physically severs all arrows into <span class="math inline">\(T\)</span> (marked <span class="math inline">\(\times\)</span>) and replaces them with an exogenous coin flip. The resulting graph is the mutilated graph <span class="math inline">\(\mathcal{G}_{\overline{T}}\)</span>, in which no back-door paths exist.
-</figcaption>
+<p><strong>What the equality assumes beyond the graph.</strong> The fundamental equality <a href="#eq-fund-eq" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> relies on more than deletion of arrows into <span class="math inline">\(T\)</span>. Two further conditions are needed. First, SUTVA (no interference and no hidden treatment versions), which licenses the consistency equation <span class="math inline">\(Y_i = Y_i(T_i)\)</span>. Second, the realized treatment must equal the assigned treatment for every unit (full compliance); when this fails, <span class="math inline">\(f(y \mid T{=}t)\)</span> describes outcomes among those who <em>actually</em> received <span class="math inline">\(t\)</span> rather than those who were <em>assigned</em> <span class="math inline">\(t\)</span>. When compliance fails, the intent-to-treat versus per-protocol distinction becomes substantive (Chapters 7 and 13).</p>
+<p><strong>Graphical argument.</strong> In the observational DAG, arrows into <span class="math inline">\(T\)</span> from observed covariates <span class="math inline">\(X\)</span> and unobserved confounders <span class="math inline">\(U\)</span> create back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. Randomization <em>physically</em> severs these arrows: assignment is determined by a coin flip, not by <span class="math inline">\(X\)</span> or <span class="math inline">\(U\)</span>. The mutilated graph <span class="math inline">\(\mathcal{G}_{\overline{T}}\)</span> is, in a randomized experiment, the <em>actual</em> data-generating graph. There are no back-door paths to block, because none exist.</p>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 520 190" width="100%" style="max-width:520px;font-family:sans-serif;font-size:13px;">
+  <defs>
+    <marker id="ba" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path>
+    </marker>
+    <marker id="ra" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#C00"></path>
+    </marker>
+    <marker id="ga" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#1A7A3A"></path>
+    </marker>
+  </defs>
+  <!-- LEFT: Observational DAG -->
+  <circle cx="52" cy="90" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="52" y="95" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="152" cy="90" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="152" y="95" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <circle cx="102" cy="38" r="20" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"></circle>
+  <text x="102" y="43" text-anchor="middle" fill="#C00">U</text>
+  <circle cx="102" cy="142" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="102" y="147" text-anchor="middle" fill="#2E74B6">X</text>
+  <line x1="86" y1="50" x2="65" y2="75" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ra)"></line>
+  <line x1="118" y1="50" x2="139" y2="75" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ra)"></line>
+  <line x1="89" y1="133" x2="66" y2="107" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba)"></line>
+  <line x1="115" y1="133" x2="138" y2="107" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba)"></line>
+  <line x1="72" y1="90" x2="130" y2="90" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba)"></line>
+  <text x="102" y="178" text-anchor="middle" fill="#444" font-style="italic" font-size="11">Observational DAG</text>
+  <!-- Arrow between panels -->
+  <text x="200" y="97" text-anchor="middle" font-size="20" fill="#555">→</text>
+  <text x="200" y="112" text-anchor="middle" fill="#555" font-size="10">randomize</text>
+  <!-- RIGHT: Randomized DAG -->
+  <rect x="238" y="72" width="40" height="36" rx="5" fill="#E8F7EA" stroke="#1A7A3A" stroke-width="1.5"></rect>
+  <text x="258" y="87" text-anchor="middle" fill="#1A7A3A" font-size="10">coin</text>
+  <text x="258" y="101" text-anchor="middle" fill="#1A7A3A" font-size="10">flip</text>
+  <circle cx="342" cy="90" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="342" y="95" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="442" cy="90" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="442" y="95" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <circle cx="392" cy="38" r="20" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"></circle>
+  <text x="392" y="43" text-anchor="middle" fill="#C00">U</text>
+  <circle cx="392" cy="142" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="392" y="147" text-anchor="middle" fill="#2E74B6">X</text>
+  <!-- Severed arrows (faded) -->
+  <line x1="376" y1="50" x2="355" y2="75" stroke="#ccc" stroke-width="1.5" stroke-dasharray="5,3"></line>
+  <text x="365" y="62" text-anchor="middle" fill="#C00" font-weight="bold" font-size="14">×</text>
+  <line x1="379" y1="133" x2="356" y2="107" stroke="#ccc" stroke-width="1.5" stroke-dasharray="5,3"></line>
+  <text x="367" y="120" text-anchor="middle" fill="#C00" font-weight="bold" font-size="14">×</text>
+  <!-- Active arrows -->
+  <line x1="278" y1="90" x2="320" y2="90" stroke="#1A7A3A" stroke-width="1.5" marker-end="url(#ga)"></line>
+  <line x1="362" y1="90" x2="420" y2="90" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba)"></line>
+  <line x1="408" y1="50" x2="429" y2="75" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ra)"></line>
+  <line x1="405" y1="133" x2="428" y2="107" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba)"></line>
+  <text x="392" y="178" text-anchor="middle" fill="#444" font-style="italic" font-size="11">Randomized DAG (𝒢<tspan font-size="8" dy="3">T̄</tspan>)</text>
+</svg>
+<figcaption>Randomization as graph surgery. <strong>Left</strong>: in the observational DAG, both $U$ and $X$ have arrows into $T$, creating back-door paths. <strong>Right</strong>: randomization severs all arrows into $T$ (marked ×) and replaces them with an exogenous coin flip. The mutilated graph $\mathcal{G}_{\overline{T}}$ has no back-door paths.</figcaption>
 </figure>
-</div>
-</div>
-</div>
-<p><strong>Potential outcomes statement.</strong> In the potential outcomes language, randomization implies <span class="math inline">\((Y(0),\, Y(1)) \;\indep\; T\)</span>. The potential outcomes are independent of assignment <em>unconditionally</em> — no covariate adjustment is needed.</p>
+<p><strong>Potential outcomes statement.</strong> In the potential outcomes language, randomization implies <span class="math inline">\((Y(0), Y(1)) \indep T\)</span> unconditionally — no covariate adjustment is needed. This is the strongest possible version of ignorability.</p>
 </section>
 <section id="estimation-of-the-ate-in-a-randomized-experiment" class="level3" data-number="5.1.2">
 <h3 data-number="5.1.2" class="anchored" data-anchor-id="estimation-of-the-ate-in-a-randomized-experiment"><span class="header-section-number">5.1.2</span> Estimation of the ATE in a Randomized Experiment</h3>
@@ -459,78 +515,175 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under complete randomization, <span id="eq-rct-id"><span class="math display">\[\E\bigl[Y(t)\bigr] \;=\; \E\bigl[Y \mid T{=}t\bigr], \qquad t \in \{0,1\}. \tag{5.2}\]</span></span></p>
+<p>Under complete randomization, <span class="math inline">\(\E[Y(t)] = \E[Y \mid T{=}t]\)</span>, <span class="math inline">\(t \in \{0,1\}\)</span>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>By Proposition 4.1, <span class="math inline">\(Y(t)\)</span> has the same distribution as <span class="math inline">\(Y\)</span> under <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>, so <span class="math inline">\(\E[Y(t)] = \E[Y \mid \doop(T{=}t)]\)</span>. In a completely randomized experiment, the treatment node has no parents in the DAG, so <a href="#eq-fund-eq" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> gives <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span>. Therefore <span class="math inline">\(\E[Y(t)] = \E[Y \mid T{=}t]\)</span>. <span class="math inline">\(\square\)</span></p>
-</div>
-</div>
-</div>
-<p>Under complete randomization, the ATE is estimated by the <em>difference-in-means</em> (DIM) estimator: <span class="math display">\[\hat\tau_{\mathrm{DIM}} = \bar{Y}_1 - \bar{Y}_0 = \frac{1}{n_1}\sum_{i:\, T_i=1} Y_i - \frac{1}{n_0}\sum_{i:\, T_i=0} Y_i.\]</span></p>
+<p><em>Proof.</em> By the PO–do equivalence, <span class="math inline">\(\E[Y(t)] = \E[Y \mid \doop(T{=}t)]\)</span>. The treatment node has no parents, so <a href="#eq-fund-eq" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> gives <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>Under complete randomization, the ATE is estimated by the <em>difference-in-means</em> (DIM) estimator: <span class="math display">\[\hat\tau_{\mathrm{DIM}} = \bar Y_1 - \bar Y_0 = \frac{1}{n_1}\sum_{i:\, T_i=1} Y_i - \frac{1}{n_0}\sum_{i:\, T_i=0} Y_i.\]</span></p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Unbiasedness and Variance of <span class="math inline">\(\hat\tau_{\mathrm{DIM}}\)</span>
+<span class="screen-reader-only">Tip</span>Theorem: Neyman’s Theorem for the Difference-in-Means Estimator
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\sigma_t^2 = \mathrm{Var}(Y(t))\)</span> for <span class="math inline">\(t \in \{0,1\}\)</span>. Under complete randomization: <span class="math display">\[\E\bigl[\hat\tau_{\mathrm{DIM}}\bigr] = \tau_{\mathrm{ATE}},\]</span> <span class="math display">\[\mathrm{Var}\bigl(\hat\tau_{\mathrm{DIM}}\bigr) = \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0}.\]</span></p>
+<p>Under complete randomization, let <span class="math inline">\(\mathcal{F}_N = \{(Y_i(0), Y_i(1))\}\)</span> be the potential outcomes (fixed), and let expectations be over the randomization distribution. Define the finite-population variances <span class="math inline">\(S_t^2 = \frac{1}{n-1}\sum_i (Y_i(t) - \bar Y(t))^2\)</span>, cross-variance <span class="math inline">\(S_{01} = \frac{1}{n-1}\sum_i (Y_i(0)-\bar Y(0))(Y_i(1)-\bar Y(1))\)</span>, and effect variance <span class="math inline">\(S_\tau^2 = \frac{1}{n-1}\sum_i (\tau_i - \bar\tau_n)^2\)</span>. Then:</p>
+<ol type="1">
+<li><strong>Unbiasedness.</strong> <span class="math inline">\(\E[\hat\tau_{\mathrm{DIM}} \mid \mathcal{F}_N] = \bar Y(1) - \bar Y(0) = \bar\tau_n\)</span>.</li>
+<li><strong>Design variance.</strong> <span id="eq-neyman-variance"><span class="math display">\[\mathrm{Var}(\hat\tau_{\mathrm{DIM}} \mid \mathcal{F}_N) = \frac{S_1^2}{n_1} + \frac{S_0^2}{n_0} - \frac{S_\tau^2}{n}. \tag{5.2}\]</span></span></li>
+<li><strong>Conservative variance estimator.</strong> The within-arm sample variance estimator <span class="math inline">\(\hat V = \hat S_1^2/n_1 + \hat S_0^2/n_0\)</span> satisfies <span class="math inline">\(\E[\hat V \mid \mathcal{F}_N] - \mathrm{Var}(\hat\tau_{\mathrm{DIM}} \mid \mathcal{F}_N) = S_\tau^2/n \geq 0\)</span>. It is exact when the unit-level treatment effects <span class="math inline">\(\tau_i\)</span> are constant.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof of Neyman’s Theorem
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Throughout we condition on <span class="math inline">\(\mathcal{F}_N\)</span>. Under CRE, <span class="math inline">\(\E[T_i \mid \mathcal{F}_N] = n_1/n\)</span> for all <span class="math inline">\(i\)</span>, and: <span class="math display">\[\mathrm{Cov}(T_i, T_j \mid \mathcal{F}_N) = \begin{cases} f_1(1-f_1) &amp; i = j, \\ -f_1(1-f_1)/(n-1) &amp; i \neq j, \end{cases}\]</span> where <span class="math inline">\(f_1 = n_1/n\)</span>. The <span class="math inline">\(i \neq j\)</span> expression follows from sampling <span class="math inline">\(n_1\)</span> units without replacement.</p>
+<p><strong>(i) Unbiasedness.</strong> <span class="math inline">\(\E[n_1^{-1}\sum_i T_i Y_i(1) \mid \mathcal{F}_N] = \bar Y(1)\)</span> by <span class="math inline">\(\E[T_i \mid \mathcal{F}_N] = n_1/n\)</span>; the control arm is symmetric.</p>
+<p><strong>(ii) Variance.</strong> Writing <span class="math inline">\(Z_i(t) = Y_i(t) - \bar Y(t)\)</span> and using the covariance formula: <span class="math display">\[\mathrm{Var}\!\left(\frac{1}{n_1}\sum_i T_i Y_i(1)\right) = \frac{f_1(1-f_1)}{n_1^2}\cdot\frac{n}{n-1}\sum_i Z_i(1)^2 = \frac{n_0}{n_1 n} S_1^2,\]</span> and the cross-arm covariance yields <span class="math inline">\(-S_{01}/n\)</span>. Combining gives the first form of <a href="#eq-neyman-variance" class="quarto-xref">Equation&nbsp;<span>5.2</span></a>. Rearranging using <span class="math inline">\(n_0/(n_1 n) = 1/n_1 - 1/n\)</span> gives the second form.</p>
+<p><strong>(iii) Conservatism.</strong> By finite-population sampling theory, <span class="math inline">\(\E[\hat S_t^2 \mid \mathcal{F}_N] = S_t^2\)</span>. Therefore <span class="math inline">\(\E[\hat V \mid \mathcal{F}_N] = S_1^2/n_1 + S_0^2/n_0\)</span>, and subtracting <a href="#eq-neyman-variance" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> gives <span class="math inline">\(S_\tau^2/n \geq 0\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Why the Conservatism Cannot Be Removed
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The correction term <span class="math inline">\(S_\tau^2/n\)</span> depends on the unit-level effect variance. Computing <span class="math inline">\(S_\tau^2\)</span> requires both <span class="math inline">\(Y_i(0)\)</span> and <span class="math inline">\(Y_i(1)\)</span> for every unit — precisely what the fundamental problem of causal inference forbids. The estimator <span class="math inline">\(\hat V\)</span> is not merely pragmatic; it is the sharpest variance estimator based on observed data alone without further modelling assumptions.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Superpopulation Variance as a Corollary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under i.i.d. superpopulation draws with arm variances <span class="math inline">\((\sigma_0^2, \sigma_1^2)\)</span>, the total variance has two phases: randomization variance (given <span class="math inline">\(\mathcal{F}_N\)</span>) and sampling variance (over draws of <span class="math inline">\(\mathcal{F}_N\)</span>). The law of total variance gives: <span id="eq-dim-var-superpop"><span class="math display">\[\mathrm{Var}(\hat\tau_{\mathrm{DIM}}) = \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0}. \tag{5.3}\]</span></span> The Neyman correction <span class="math inline">\(S_\tau^2/n\)</span> in <a href="#eq-neyman-variance" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> is exactly cancelled by the sampling variance of <span class="math inline">\(\bar\tau_n\)</span> when averaging over superpopulation draws. See <span class="citation" data-cites="ding2023first">Ding (<a href="references.html#ref-ding2023first" role="doc-biblioref">2024</a>)</span> for a complete treatment.</p>
+</div>
+</div>
+</section>
+<section id="fishers-randomization-inference-vs.-neymans-repeated-sampling" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="fishers-randomization-inference-vs.-neymans-repeated-sampling"><span class="header-section-number">5.1.3</span> Fisher’s Randomization Inference vs.&nbsp;Neyman’s Repeated Sampling</h3>
+<p>Fisher’s framework tests the <em>sharp null</em> <span class="math inline">\(Y_i(1) = Y_i(0)\)</span> for all <span class="math inline">\(i\)</span>: under this null, every missing potential outcome is known, making the exact randomization distribution of any test statistic computable over all <span class="math inline">\(\binom{n}{n_1}\)</span> assignments. Neyman’s framework studies the repeated-sampling behavior of estimators like <span class="math inline">\(\hat\tau_{\mathrm{DIM}}\)</span> for average causal effects.</p>
+<p>Fisher’s approach is aligned with exact hypothesis testing under a sharp null; Neyman’s is aligned with point estimation and uncertainty quantification. Both rely on the treatment assignment mechanism but answer different questions.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Randomization Licenses Inference Without Population Assumptions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Randomization licenses causal inference <em>without any assumption about a population model</em>. In Fisher’s design-based framework, the potential outcomes <span class="math inline">\(\{Y_i(0), Y_i(1)\}\)</span> are fixed numbers; the only source of randomness is the assignment vector <span class="math inline">\(\mathbf{T}\)</span>, drawn uniformly from all <span class="math inline">\(\binom{n}{n_1}\)</span> possible assignments. Probability statements refer to this mechanism — not to repeated draws from a population. Units need not be a random sample; they can be a convenience sample, a census, or a targeted group. Observational methods, by contrast, must invoke either an i.i.d. sampling assumption or a superpopulation framework, because no analogous physical mechanism anchors probability statements.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Fisher’s Sharp Null — Unidentifiable Effects, Exactly Testable Hypothesis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Individual causal effects <span class="math inline">\(\tau_i = Y_i(1) - Y_i(0)\)</span> are unidentifiable for any unit. Yet the sharp null <span class="math inline">\(H_0: Y_i(1) = Y_i(0)\)</span> for all <span class="math inline">\(i\)</span> is exactly testable. The resolution: under <span class="math inline">\(H_0\)</span>, the sharp null completely specifies the joint potential outcome table — <span class="math inline">\(Y_i(1) = Y_i(0) = Y_i^{\mathrm{obs}}\)</span> regardless of assignment — so the full <span class="math inline">\(2n\)</span>-vector of potential outcomes is known, and the permutation distribution of any test statistic is computable from observed data with no estimation step.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Further Reading
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="ding2023first">Ding (<a href="references.html#ref-ding2023first" role="doc-biblioref">2024</a>)</span> provides a comprehensive graduate-level treatment of CRE, stratified experiments, and regression adjustment. <span class="citation" data-cites="li2017general">Li and Ding (<a href="references.html#ref-li2017general" role="doc-biblioref">2017</a>)</span> works out the asymptotic theory underlying confidence intervals for <span class="math inline">\(\hat\tau_{\mathrm{DIM}}\)</span> via a finite-population CLT requiring neither i.i.d. observations nor a superpopulation model. <span class="citation" data-cites="ding2016randomization">Ding et al. (<a href="references.html#ref-ding2016randomization" role="doc-biblioref">2016</a>)</span> develop randomization-based tests for treatment effect heterogeneity.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="sec-ignorability" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="sec-ignorability"><span class="header-section-number">5.2</span> Ignorability and the Back-Door Formula</h2>
-<section id="randomization-vs.-observational-studies" class="level3" data-number="5.2.1">
-<h3 data-number="5.2.1" class="anchored" data-anchor-id="randomization-vs.-observational-studies"><span class="header-section-number">5.2.1</span> Randomization vs.&nbsp;Observational Studies</h3>
-<p>In a randomized experiment, identification is guaranteed by the design. In an observational study, the analyst has no control over treatment assignment, and back-door paths through unobserved variables may remain open. The question shifts from <em>does</em> identification hold to <em>when</em> does it hold.</p>
-<p>The two routes to identification differ in their logical structure. Randomization <em>guarantees</em> identification by design: the analyst removes all arrows into <span class="math inline">\(T\)</span>, so the fundamental equality <a href="#eq-fund-eq" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> holds automatically. The observational route requires a substantive assumption: the analyst must argue, from subject-matter knowledge encoded in a DAG, that all confounders have been measured and that the back-door criterion is satisfied.</p>
+<h2 data-number="5.2" class="anchored" data-anchor-id="sec-ignorability"><span class="header-section-number">5.2</span> Ignorability</h2>
+<section id="two-routes-to-the-same-estimand" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="two-routes-to-the-same-estimand"><span class="header-section-number">5.2.1</span> Two Routes to the Same Estimand</h3>
+<p>Section <a href="#sec-rct" class="quarto-xref"><span>Section 5.1</span></a> established that randomization achieves <a href="#eq-fund-eq" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> and that DIM is unbiased for the ATE without covariate adjustment. In observational studies, no such physical severance occurs: treatment is selected based on characteristics that may include unmeasured variables <span class="math inline">\(U\)</span> affecting the outcome.</p>
+<p>Both settings target the same estimand — the ATE <span class="math inline">\(\E[Y(1) - Y(0)]\)</span> — but reach it by fundamentally different routes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Randomized experiment</strong></th>
+<th><strong>Observational study</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>How ignorability arises</td>
+<td>By design: researcher severs all arrows into <span class="math inline">\(T\)</span></td>
+<td>By assumption: analyst asserts no unmeasured confounders</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span></td>
+<td><em>Guaranteed</em> — holds unconditionally</td>
+<td><em>Assumed</em> — requires <span class="math inline">\(X\)</span> to capture every confounder</td>
+</tr>
+<tr class="odd">
+<td>Credibility</td>
+<td>As strong as the randomization protocol</td>
+<td>As strong as substantive knowledge of the DGP</td>
+</tr>
+<tr class="even">
+<td>Testability</td>
+<td>Can audit the assignment mechanism</td>
+<td>Cannot be verified from data alone</td>
+</tr>
+<tr class="odd">
+<td>Failure mode</td>
+<td>Protocol violations, non-compliance</td>
+<td>Any unmeasured variable affecting both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Statistical adjustment can <em>implement</em> ignorability once assumed, but cannot <em>create</em> it. No covariate adjustment — however flexible — can close a back-door path through an unmeasured variable. This is why a well-conducted RCT is considered more credible than even the most carefully adjusted observational study.</p>
 </section>
-<section id="definition" class="level3" data-number="5.2.2">
-<h3 data-number="5.2.2" class="anchored" data-anchor-id="definition"><span class="header-section-number">5.2.2</span> Definition</h3>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Ignorability (Unconfoundedness)
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(X\)</span> denote a vector of pre-treatment covariates. We say that treatment assignment is <strong>weakly ignorable</strong> given <span class="math inline">\(X\)</span> if: <span class="math display">\[Y(t) \;\indep\; T \;\Big|\; X, \qquad t \in \{0,1\}.\]</span> We say assignment is <strong>strongly ignorable</strong> given <span class="math inline">\(X\)</span> <span class="citation" data-cites="rosenbaum1983central">(Rosenbaum and Rubin 1983)</span> if, in addition, the overlap condition holds: <span class="math display">\[0 &lt; P(T{=}1 \mid X) &lt; 1 \quad \text{almost surely.}\]</span></p>
-</div>
-</div>
-<p>Ignorability is also called <em>unconfoundedness</em>, <em>selection on observables</em>, <em>no unmeasured confounders</em>, or <em>conditional exchangeability</em>. In a randomized experiment, weak ignorability holds <em>unconditionally</em> — <span class="math inline">\(X\)</span> is not needed, and the condition reduces to <span class="math inline">\((Y(0), Y(1)) \indep T\)</span>.</p>
+<section id="terminology" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="terminology"><span class="header-section-number">5.2.2</span> Terminology</h3>
+<p>Strong ignorability was defined in Chapter 4: joint unconfoundedness <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> together with overlap <span class="math inline">\(0 &lt; P(T{=}1 \mid X) &lt; 1\)</span> a.s. <span class="citation" data-cites="rosenbaum1983central">(<a href="references.html#ref-rosenbaum1983central" role="doc-biblioref">Rosenbaum and Rubin 1983</a>)</span>. The pointwise (weak) form <span class="math inline">\(Y(t) \indep T \mid X\)</span> for each <span class="math inline">\(t\)</span> separately is what identification of <span class="math inline">\(\E[Y(t)]\)</span> actually uses. Equivalent names in the literature: <em>unconfoundedness</em>, <em>selection on observables</em>, <em>no unmeasured confounders</em>, <em>conditional exchangeability</em>.</p>
 </section>
-<section id="graphical-interpretation" class="level3" data-number="5.2.3">
-<h3 data-number="5.2.3" class="anchored" data-anchor-id="graphical-interpretation"><span class="header-section-number">5.2.3</span> Graphical Interpretation</h3>
-<p>In the DAG language, ignorability corresponds exactly to the back-door criterion. A set <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> if: (1) <span class="math inline">\(X\)</span> blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>, and (2) <span class="math inline">\(X\)</span> contains no descendant of <span class="math inline">\(T\)</span>. When <span class="math inline">\(X\)</span> satisfies the back-door criterion, <span class="math inline">\(Y(t) \indep T \mid X\)</span> holds and the back-door adjustment formula identifies the causal effect.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Three Languages for Ignorability
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="three-languages-for-ignorability" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="three-languages-for-ignorability"><span class="header-section-number">5.2.3</span> Three Languages for Ignorability</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -545,11 +698,11 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 <tbody>
 <tr class="odd">
 <td>SEM</td>
-<td>The structural error <span class="math inline">\(\varepsilon_Y\)</span> in the outcome equation <span class="math inline">\(Y = f_Y(T, X, \varepsilon_Y)\)</span> is independent of <span class="math inline">\(T\)</span> given <span class="math inline">\(X\)</span>: no unobserved variable enters both the equation that determines <span class="math inline">\(T\)</span> and the equation that determines <span class="math inline">\(Y\)</span>.</td>
+<td>In <span class="math inline">\(Y = f_Y(T, X, U_Y)\)</span> with <span class="math inline">\(T = f_T(X, U_T)\)</span>, the exogenous factor <span class="math inline">\(U_Y\)</span> is independent of <span class="math inline">\(T\)</span> given <span class="math inline">\(X\)</span> — no unobserved common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> remains after conditioning on <span class="math inline">\(X\)</span>.</td>
 </tr>
 <tr class="even">
 <td>DAG / do-calculus</td>
-<td><span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>: <span class="math inline">\(X\)</span> blocks all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> and contains no descendant of <span class="math inline">\(T\)</span>.</td>
+<td><span class="math inline">\(X\)</span> satisfies the back-door criterion for <span class="math inline">\((T, Y)\)</span>: <span class="math inline">\(X\)</span> blocks all back-door paths and contains no descendant of <span class="math inline">\(T\)</span>.</td>
 </tr>
 <tr class="odd">
 <td>Potential outcomes</td>
@@ -557,9 +710,10 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </tr>
 </tbody>
 </table>
-<p>The three statements are equivalent under the standard bridge assumptions between frameworks (consistency and no interference).</p>
-</div>
-</div>
+<p>These three forms are closely aligned under NPSEM-IE semantics together with consistency and no interference.</p>
+</section>
+<section id="what-ignorability-requires" class="level3" data-number="5.2.4">
+<h3 data-number="5.2.4" class="anchored" data-anchor-id="what-ignorability-requires"><span class="header-section-number">5.2.4</span> What Ignorability Requires</h3>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -570,80 +724,262 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>No statistical test can confirm or refute unconfoundedness using observed data alone. If an unobserved variable <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open, and conditioning on any set of observed variables cannot close it. Sensitivity analysis can quantify how large such an unobserved confounder would have to be to overturn a conclusion, but cannot confirm the assumption itself.</p>
+<p>No statistical test can confirm or refute unconfoundedness using observed data alone. If an unobserved variable <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open, and conditioning on any set of observed variables cannot close it. Sensitivity analysis <span class="citation" data-cites="rosenbaum2002observational">(<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span> can quantify how large such an unobserved confounder would have to be to overturn a conclusion, but cannot confirm the assumption itself.</p>
 </div>
 </div>
 </section>
-<section id="from-ignorability-to-identification" class="level3" data-number="5.2.4">
-<h3 data-number="5.2.4" class="anchored" data-anchor-id="from-ignorability-to-identification"><span class="header-section-number">5.2.4</span> From Ignorability to Identification</h3>
-<p>Under strong ignorability, the ATE is identified: <span id="eq-backdoor"><span class="math display">\[\tau_{\mathrm{ATE}} \;=\; \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right]. \tag{5.3}\]</span></span></p>
-<p>This is the back-door adjustment formula of Chapter 3 written in potential-outcome notation. Chapter 4 supplied the proof via the law of iterated expectations, consistency, and unconfoundedness.</p>
-</section>
-</section>
-<section id="sec-regression" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="sec-regression"><span class="header-section-number">5.3</span> Regression Adjustment</h2>
-<section id="the-outcome-regression-or-estimator" class="level3" data-number="5.3.1">
-<h3 data-number="5.3.1" class="anchored" data-anchor-id="the-outcome-regression-or-estimator"><span class="header-section-number">5.3.1</span> The Outcome Regression (OR) Estimator</h3>
-<p>Given the identifying formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a>, the natural estimator replaces the population conditional means with their sample analogs.</p>
-<p><strong>Step 1.</strong> Fit a model <span class="math inline">\(\hat\mu(t, x) \approx \E[Y \mid T{=}t, X{=}x]\)</span> using the observed data.</p>
-<p><strong>Step 2.</strong> For each unit <span class="math inline">\(i\)</span>, impute both potential outcome predictions: <span class="math inline">\(\hat\mu(1, X_i)\)</span> and <span class="math inline">\(\hat\mu(0, X_i)\)</span>.</p>
-<p><strong>Step 3.</strong> Average the imputed treatment effects: <span id="eq-or"><span class="math display">\[\hat\tau_{\mathrm{ATE}} = \frac{1}{n}\sum_{i=1}^n \bigl[\hat\mu(1, X_i) - \hat\mu(0, X_i)\bigr]. \tag{5.4}\]</span></span></p>
-<p>This three-step recipe is also called the <em>G-formula estimator</em> or the <em>regression-adjusted estimator</em>.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Worked Outcome Regression
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A study compares earnings (<span class="math inline">\(Y\)</span>, in thousands) between job-training participants (<span class="math inline">\(T{=}1\)</span>) and non-participants (<span class="math inline">\(T{=}0\)</span>), with education level <span class="math inline">\(X \in \{0, 1\}\)</span> as a confounder. Among the 200 treated and 200 control units, 70% of treated units have <span class="math inline">\(X{=}1\)</span> vs.&nbsp;30% of control units.</p>
-<p>The estimated conditional means are <span class="math inline">\(\hat\mu(1, 0) = 42\)</span>, <span class="math inline">\(\hat\mu(1, 1) = 58\)</span>, <span class="math inline">\(\hat\mu(0, 0) = 35\)</span>, <span class="math inline">\(\hat\mu(0, 1) = 50\)</span>.</p>
-<p>The within-stratum effects are <span class="math inline">\(42 - 35 = 7\)</span> (for <span class="math inline">\(X{=}0\)</span> units) and <span class="math inline">\(58 - 50 = 8\)</span> (for <span class="math inline">\(X{=}1\)</span> units). Since 50% of the full sample has <span class="math inline">\(X{=}0\)</span> and 50% has <span class="math inline">\(X{=}1\)</span>: <span class="math display">\[\hat\tau_{\mathrm{ATE}} = 7 \times 0.5 + 8 \times 0.5 = 7.5.\]</span></p>
-<p>After adjusting for <span class="math inline">\(X\)</span>, the estimated treatment effect is 7.5 — not the naïve difference-in-means, which conflates the treatment effect with the higher baseline earnings of <span class="math inline">\(X{=}1\)</span> units who happen to be treated more often.</p>
-</div>
-</div>
-</section>
-<section id="sec-std" class="level3" data-number="5.3.2">
-<h3 data-number="5.3.2" class="anchored" data-anchor-id="sec-std"><span class="header-section-number">5.3.2</span> Standardization as a Special Case</h3>
-<p>When <span class="math inline">\(X\)</span> is categorical, no parametric model for <span class="math inline">\(\mu(t,x)\)</span> is needed: the conditional mean <span class="math inline">\(\hat\mu(t,x)\)</span> is simply the sample mean of <span class="math inline">\(Y\)</span> within each cell <span class="math inline">\((T{=}t, X{=}x)\)</span> (a fully saturated outcome model). The resulting estimator is:</p>
-<p><span id="eq-std"><span class="math display">\[\hat\tau_{\mathrm{STD}} = \sum_{x \in \mathcal{X}} \bigl[\hat\mu(1,x) - \hat\mu(0,x)\bigr]\,\hat{p}(x), \tag{5.5}\]</span></span></p>
-<p>where <span class="math inline">\(\hat\mu(t,x) = \bar{Y}_{t,x}\)</span> and <span class="math inline">\(\hat{p}(x) = n_x/n\)</span>. This is algebraically identical to <a href="#eq-or" class="quarto-xref">Equation&nbsp;<span>5.4</span></a> when <span class="math inline">\(X\)</span> is categorical. The formula is also known as the <em>g-formula</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span> or <em>direct standardization</em> in epidemiology.</p>
-</section>
-<section id="regression-adjustment-in-randomized-experiments-lin-2013" class="level3" data-number="5.3.3">
-<h3 data-number="5.3.3" class="anchored" data-anchor-id="regression-adjustment-in-randomized-experiments-lin-2013"><span class="header-section-number">5.3.3</span> Regression Adjustment in Randomized Experiments: Lin (2013)</h3>
-<p>In a <em>randomized</em> experiment, outcome regression can be used to reduce variance even though covariate adjustment is not needed for unbiasedness. The <em>regression-adjusted estimator</em> of <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span> fits the fully interacted OLS model: <span class="math display">\[Y_i = \alpha + \beta T_i + \gamma^\top \tilde{X}_i + \delta^\top (T_i \cdot \tilde{X}_i) + \varepsilon_i,\]</span> where <span class="math inline">\(\tilde{X}_i = X_i - \bar{X}\)</span> are mean-centered covariates. The OLS coefficient <span class="math inline">\(\hat\beta\)</span> is the ATE estimator.</p>
+<section id="sec-identification" class="level3" data-number="5.2.5">
+<h3 data-number="5.2.5" class="anchored" data-anchor-id="sec-identification"><span class="header-section-number">5.2.5</span> From Ignorability to Identification</h3>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Design-Consistency of the Regression-Adjusted Estimator
+<span class="screen-reader-only">Tip</span>Lemma: Identification of <span class="math inline">\(\E[Y(t)]\)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="lin2013agnostic">(Lin 2013)</span> Under complete randomization, <span class="math inline">\(\hat\beta\)</span> from the interacted regression is consistent for <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> regardless of whether the linear model is correctly specified.</p>
+<p>Suppose: (i) <em>weak ignorability</em> <span class="math inline">\(Y(t) \indep T \mid X\)</span>; (ii) <em>overlap</em> <span class="math inline">\(P(T{=}t \mid X{=}x) &gt; 0\)</span> a.s.; (iii) <em>consistency</em> <span class="math inline">\(Y = Y(T)\)</span>. Then: <span id="eq-ident-pot"><span class="math display">\[\E[Y(t)] = \E\bigl[\E[Y \mid T{=}t, X]\bigr] = \int \E[Y \mid T{=}t, X{=}x]\, p(x)\, dx. \tag{5.4}\]</span></span></p>
 </div>
 </div>
+<p><em>Proof.</em> Apply the law of iterated expectations, then use each assumption in turn: <span class="math display">\[\E[Y(t)] \overset{\mathrm{LIE}}{=} \E[\E[Y(t) \mid X]] \overset{(i)}{=} \E[\E[Y(t) \mid T{=}t, X]] \overset{(iii)}{=} \E[\E[Y \mid T{=}t, X]]. \quad\square\]</span> Overlap (ii) guarantees <span class="math inline">\(\E[Y \mid T{=}t, X{=}x]\)</span> is well-defined everywhere in the support of <span class="math inline">\(X\)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof Sketch
+<span class="screen-reader-only">Note</span>Remark: Two Languages, One Formula
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="quarto-unresolved-ref">?lem-ident</span> and the back-door theorem (Chapter 3) are two proofs of the same formula in different languages. The graphical proof applies Rules 2 and 3 to the mutilated graph; the potential-outcomes proof applies the law of iterated expectations to counterfactual variables. The bridge is the structural causal semantics: under NPSEM-IE, <span class="math inline">\(Y(t)\)</span> has the same distribution as <span class="math inline">\(Y\)</span> under <span class="math inline">\(\doop(T{=}t)\)</span> (Chapter 4). Consistency connects <span class="math inline">\(\E[Y(t) \mid T{=}t, X]\)</span> to the observed <span class="math inline">\(\E[Y \mid T{=}t, X]\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Identification of the ATE and ATT
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the same three assumptions: <span id="eq-backdoor"><span class="math display">\[\tau_{\mathrm{ATE}} = \int [\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)]\, p(x)\, dx, \tag{5.5}\]</span></span> <span id="eq-backdoor-att"><span class="math display">\[\tau_{\mathrm{ATT}} = \int [\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)]\, p(x \mid T{=}1)\, dx. \tag{5.6}\]</span></span></p>
+</div>
+</div>
+<p><em>Proof.</em> Apply <span class="quarto-unresolved-ref">?lem-ident</span> separately to <span class="math inline">\(t=1\)</span> and <span class="math inline">\(t=0\)</span> and subtract. For the ATT, replace <span class="math inline">\(p(x)\)</span> by <span class="math inline">\(p(x \mid T{=}1)\)</span>. <span class="math inline">\(\square\)</span></p>
+<p><strong>Assumption traceability.</strong> Each step in the proof invokes exactly one assumption:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Proof step</th>
+<th>Assumption invoked</th>
+<th>Failure mode</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\E[Y(t) \mid X] = \E[Y(t) \mid T{=}t, X]\)</span></td>
+<td>Weak ignorability</td>
+<td>Unmeasured confounder: <span class="math inline">\(Y(t)\)</span> depends on <span class="math inline">\(T\)</span> within <span class="math inline">\(X\)</span>-strata</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\E[Y \mid T{=}t, X{=}x]\)</span> is well-defined</td>
+<td>Overlap</td>
+<td>Empty stratum: no units with <span class="math inline">\(T{=}t\)</span> at <span class="math inline">\(x\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\E[Y(t) \mid T{=}t, X] = \E[Y \mid T{=}t, X]\)</span></td>
+<td>Consistency</td>
+<td>Interference or hidden treatment versions</td>
+</tr>
+</tbody>
+</table>
+<p>Overlap is <em>testable</em> from data (check support of <span class="math inline">\(X \mid T{=}1\)</span> vs.&nbsp;<span class="math inline">\(X \mid T{=}0\)</span>). Weak ignorability and consistency are not testable from data alone.</p>
+</section>
+<section id="sec-pretreatment" class="level3" data-number="5.2.6">
+<h3 data-number="5.2.6" class="anchored" data-anchor-id="sec-pretreatment"><span class="header-section-number">5.2.6</span> Which Variables to Condition On: The Pre-Treatment Requirement</h3>
+<p>Before estimating anything, there is a prior graphical question: <em>which variables should be in <span class="math inline">\(X\)</span>?</em> The answer is not “all available variables.” Conditioning on the wrong variable introduces bias.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Never Condition on a Post-Treatment Variable
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A variable <span class="math inline">\(L\)</span> is <em>post-treatment</em> if <span class="math inline">\(T \to L\)</span> in the DAG. Including <span class="math inline">\(L\)</span> in <span class="math inline">\(X\)</span> can bias the estimated treatment effect through two mechanisms:</p>
+<ol type="1">
+<li><strong>Blocking a causal pathway.</strong> If <span class="math inline">\(L\)</span> is a mediator (<span class="math inline">\(T \to L \to Y\)</span>), conditioning on <span class="math inline">\(L\)</span> blocks part of the causal effect of <span class="math inline">\(T\)</span>. The result estimates a direct effect, not the total effect.</li>
+<li><strong>Opening a collider path.</strong> If <span class="math inline">\(L\)</span> is a collider (<span class="math inline">\(T \to L \leftarrow U \to Y\)</span>), conditioning on <span class="math inline">\(L\)</span> opens a previously blocked path, creating a spurious <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> association through the unobserved <span class="math inline">\(U\)</span>.</li>
+</ol>
+<p>In both cases, including <span class="math inline">\(L\)</span> violates Condition 1 of the back-door criterion: <em><span class="math inline">\(X\)</span> must contain no descendant of <span class="math inline">\(T\)</span></em>. The back-door criterion is not merely a sufficiency condition for identification — it is the correct filter for deciding which variables to include.</p>
+</div>
+</div>
+<p>The practical rule: before running any regression, classify every candidate covariate as pre-treatment or post-treatment using the causal graph. Only pre-treatment variables satisfying the back-door criterion belong in <span class="math inline">\(X\)</span>.</p>
+</section>
+</section>
+<section id="sec-regression" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="sec-regression"><span class="header-section-number">5.3</span> Regression Adjustment and Standardization</h2>
+<section id="the-common-three-step-logic" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="the-common-three-step-logic"><span class="header-section-number">5.3.1</span> The Common Three-Step Logic</h3>
+<p>Both regression adjustment and standardization implement the same back-door formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.5</span></a>. They differ only in how they estimate <span class="math inline">\(\mu(t, x) = \E[Y \mid T{=}t, X{=}x]\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Three-Step Recipe: Outcome Regression / G-Formula
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p><strong>Estimate the outcome model.</strong> Fit a model for <span class="math inline">\(\mu(t,x) = \E[Y \mid T{=}t, X{=}x]\)</span> using observed data. Any regression method may be used: OLS, logistic regression, or a flexible nonparametric estimator.</p></li>
+<li><p><strong>Predict both potential outcomes for every unit.</strong> For each unit <span class="math inline">\(i\)</span> — <em>regardless of treatment actually received</em> — compute: <span class="math display">\[\hat{Y}_i(1) = \hat\mu(1, X_i), \qquad \hat{Y}_i(0) = \hat\mu(0, X_i).\]</span> For a treated unit, <span class="math inline">\(\hat{Y}_i(0)\)</span> is the predicted outcome had that unit been assigned to control; for a control unit, <span class="math inline">\(\hat{Y}_i(1)\)</span> is the predicted outcome had that unit been treated.</p></li>
+<li><p><strong>Average the individual treatment effect estimates.</strong> <span id="eq-or"><span class="math display">\[\hat\tau_{\mathrm{OR}} = \frac{1}{n}\sum_{i=1}^n [\hat\mu(1, X_i) - \hat\mu(0, X_i)]. \tag{5.7}\]</span></span> To estimate the ATT, average only over the <span class="math inline">\(n_1\)</span> treated units.</p></li>
+</ol>
+</div>
+</div>
+<p>This is the <em>outcome regression</em> (OR) or <em>G-computation</em> estimator <span class="citation" data-cites="robins1986new">(<a href="references.html#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span>. Step 3 averages out <span class="math inline">\(X\)</span> using the empirical distribution — exactly what <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> requires: <span class="math inline">\(\tau_{\mathrm{ATE}} = \int [\mu(1,x) - \mu(0,x)] p(x)\, dx\)</span>.</p>
+</section>
+<section id="a-worked-example" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="a-worked-example"><span class="header-section-number">5.3.2</span> A Worked Example</h3>
+<p>Binary covariate <span class="math inline">\(X\)</span> (e.g., sex), continuous outcome <span class="math inline">\(Y\)</span> (e.g., earnings). High-<span class="math inline">\(X\)</span> units are overrepresented in the treated arm (70% treated vs.&nbsp;30% control).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Treated (<span class="math inline">\(T=1\)</span>)</th>
+<th>Control (<span class="math inline">\(T=0\)</span>)</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(X=0\)</span></td>
+<td><span class="math inline">\(n=30\)</span>, <span class="math inline">\(\bar Y = 42\)</span></td>
+<td><span class="math inline">\(n=70\)</span>, <span class="math inline">\(\bar Y = 35\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(X=1\)</span></td>
+<td><span class="math inline">\(n=70\)</span>, <span class="math inline">\(\bar Y = 58\)</span></td>
+<td><span class="math inline">\(n=30\)</span>, <span class="math inline">\(\bar Y = 50\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>All</strong></td>
+<td><span class="math inline">\(n=100\)</span>, <span class="math inline">\(\bar Y = 53.2\)</span></td>
+<td><span class="math inline">\(n=100\)</span>, <span class="math inline">\(\bar Y = 38.5\)</span></td>
+<td>Unadjusted diff = 14.7</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 1.</strong> <span class="math inline">\(\hat\mu(1,0) = 42\)</span>, <span class="math inline">\(\hat\mu(1,1) = 58\)</span>, <span class="math inline">\(\hat\mu(0,0) = 35\)</span>, <span class="math inline">\(\hat\mu(0,1) = 50\)</span>.</p>
+<p><strong>Step 2.</strong> Within-stratum effects: <span class="math inline">\(42 - 35 = 7\)</span> (for <span class="math inline">\(X{=}0\)</span>), <span class="math inline">\(58 - 50 = 8\)</span> (for <span class="math inline">\(X{=}1\)</span>).</p>
+<p><strong>Step 3.</strong> Averaging over the <em>marginal</em> distribution of <span class="math inline">\(X\)</span>: 50% of the full sample has <span class="math inline">\(X{=}0\)</span>, 50% has <span class="math inline">\(X{=}1\)</span>: <span class="math display">\[\hat\tau_{\mathrm{ATE}} = 7 \times 0.5 + 8 \times 0.5 = 7.5.\]</span></p>
+<p>After adjusting for <span class="math inline">\(X\)</span>, the estimated treatment effect is 7.5, not 14.7. The unadjusted comparison conflates the treatment effect with the higher baseline earnings of <span class="math inline">\(X{=}1\)</span> units who happen to be treated more often.</p>
+</section>
+<section id="sec-standardization" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="sec-standardization"><span class="header-section-number">5.3.3</span> Standardization as a Special Case</h3>
+<p>When <span class="math inline">\(X\)</span> is categorical, standardization computes <span class="math inline">\(\hat\mu(t,x)\)</span> as the within-cell sample mean — a fully saturated model: <span id="eq-std"><span class="math display">\[\hat\tau_{\mathrm{STD}} = \sum_{x \in \mathcal{X}} [\hat\mu(1,x) - \hat\mu(0,x)]\,\hat{p}(x). \tag{5.8}\]</span></span> This is <em>algebraically identical</em> to <a href="#eq-or" class="quarto-xref">Equation&nbsp;<span>5.7</span></a> when <span class="math inline">\(X\)</span> is categorical: standardization is regression adjustment with a saturated outcome model. The formula is also known as the <em>G-formula</em> <span class="citation" data-cites="robins1986new">(<a href="references.html#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span> and as <em>direct standardization</em> in epidemiology.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Regression adjustment</strong></th>
+<th><strong>Standardization</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>How <span class="math inline">\(\hat\mu(t,x)\)</span> is estimated</td>
+<td>Parametric model: OLS, logistic, or flexible learner</td>
+<td>Cell means: <span class="math inline">\(\bar Y\)</span> within <span class="math inline">\((T{=}t, X{=}x)\)</span></td>
+</tr>
+<tr class="even">
+<td>Works when <span class="math inline">\(X\)</span> is</td>
+<td>Continuous or high-dimensional</td>
+<td>Discrete and low-dimensional</td>
+</tr>
+<tr class="odd">
+<td>Bias if wrong</td>
+<td>Model misspecification</td>
+<td>Sparse cells (some <span class="math inline">\((t,x)\)</span> strata empty)</td>
+</tr>
+<tr class="even">
+<td>Steps 2–3</td>
+<td>Identical: predict both POs, average</td>
+<td>Identical: predict both POs, average</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="model-specification-and-what-can-go-wrong" class="level3" data-number="5.3.4">
+<h3 data-number="5.3.4" class="anchored" data-anchor-id="model-specification-and-what-can-go-wrong"><span class="header-section-number">5.3.4</span> Model Specification and What Can Go Wrong</h3>
+<p>The OR estimator is consistent if and only if <span class="math inline">\(\hat\mu(t,x) \to \mu(t,x)\)</span> as <span class="math inline">\(n \to \infty\)</span> — i.e., if the outcome model is correctly specified.</p>
+<p><strong>Misspecification bias.</strong> If the true <span class="math inline">\(\mu(t,x)\)</span> is nonlinear but a linear model is used, the estimated treatment effect absorbs the functional form error. Flexible machine learning estimators reduce this risk, at the cost of requiring cross-fitting to avoid overfitting bias (Chapter 11).</p>
+<p><strong>Extrapolation.</strong> Step 2 predicts <span class="math inline">\(\hat{Y}_i(0)\)</span> for treated units whose covariate values may lie outside the support of the control group. The propensity score overlap condition (Chapter 6) formalizes when extrapolation is unavoidable.</p>
+</section>
+<section id="regression-adjustment-in-randomized-experiments-lin-2013" class="level3" data-number="5.3.5">
+<h3 data-number="5.3.5" class="anchored" data-anchor-id="regression-adjustment-in-randomized-experiments-lin-2013"><span class="header-section-number">5.3.5</span> Regression Adjustment in Randomized Experiments: Lin (2013)</h3>
+<p>In a <em>randomized</em> experiment, outcome regression can reduce variance even though adjustment is not needed for unbiasedness. The <em>regression-adjusted estimator</em> of <span class="citation" data-cites="lin2013agnostic">Lin (<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span> fits the fully interacted OLS model: <span id="eq-lin-reg"><span class="math display">\[Y_i = \alpha + \beta T_i + \gamma^\top \tilde{X}_i + \delta^\top (T_i \cdot \tilde{X}_i) + \varepsilon_i, \tag{5.9}\]</span></span> where <span class="math inline">\(\tilde{X}_i = X_i - \bar{X}\)</span> are mean-centered covariates, and takes <span class="math inline">\(\hat\beta\)</span> as the ATE estimate.</p>
+<p><strong>Why <span class="math inline">\(\hat\beta\)</span> equals the three-step OR estimator.</strong> The interacted regression <a href="#eq-lin-reg" class="quarto-xref">Equation&nbsp;<span>5.9</span></a> fits arm-specific linear models with centered covariates. Under centering, the OLS intercept equals the regression-adjusted estimator of <span class="math inline">\(\E[Y(t)]\)</span>, so <span class="math inline">\(\hat\beta = \hat\mu_{1,\mathrm{reg}} - \hat\mu_{0,\mathrm{reg}} = \hat\tau_{\mathrm{reg}}\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Design-Consistency of the Regression-Adjusted Estimator <span class="citation" data-cites="lin2013agnostic">(<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">Lin 2013</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under complete randomization, <span class="math inline">\(\hat\beta\)</span> from the interacted regression <a href="#eq-lin-reg" class="quarto-xref">Equation&nbsp;<span>5.9</span></a> is consistent for <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> regardless of whether the linear model is correctly specified.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Because <span class="math inline">\(T \indep X\)</span> under randomization, the projection of <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, X, T \cdot \tilde{X})\)</span> recovers the treatment coefficient without confounding bias even if the true <span class="math inline">\(\mu\)</span> is not linear. The interaction terms ensure that the estimated treatment effect is the sample analog of the semiparametric efficient estimator. For the full proof see <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span> or <span class="citation" data-cites="freedman2008regression">Freedman (2008)</span>. <span class="math inline">\(\square\)</span></p>
+<p>Work in the design-based framework of <span class="quarto-unresolved-ref">?thm-dim</span>: potential outcomes fixed, only <span class="math inline">\(\mathbf{T}\)</span> random. Let <span class="math inline">\(\mathbf{B}_1 = (\sum_i \mathbf{x}_i \mathbf{x}_i^\top)^{-1}\sum_i \mathbf{x}_i Y_i(1)\)</span> be the full-population OLS coefficient (fixed under randomization), and let <span class="math inline">\(e_i(1) = Y_i(1) - \mathbf{x}_i^\top \mathbf{B}_1\)</span>. By normal equations, <span class="math inline">\(\sum_i e_i(1) = 0\)</span> and <span class="math inline">\(\frac{1}{N}\sum_i \mathbf{x}_i^\top \mathbf{B}_1 = \bar Y(1)\)</span>.</p>
+<p><strong>Linearization.</strong> A short algebraic manipulation using normal equations gives: <span id="eq-lin-linearization"><span class="math display">\[\hat\mu_{1,\mathrm{reg}} = \bar Y(1) + \frac{1}{N_1}\sum_{i=1}^N T_i e_i(1) + O_p(N^{-1}). \tag{5.10}\]</span></span> The remainder term <span class="math inline">\(R_N\)</span> is <span class="math inline">\(O_p(N^{-1})\)</span> because the covariate-balance gap is <span class="math inline">\(O_p(N^{-1/2})\)</span> by design, and <span class="math inline">\(\hat{\boldsymbol\beta}_1 - \mathbf{B}_1 = O_p(N^{-1/2})\)</span> by standard within-arm OLS theory.</p>
+<p><strong>Consistency.</strong> Under CRE, each unit has <span class="math inline">\(\Pr(T_i=1 \mid \mathcal{F}_N) = N_1/N\)</span>, so <span class="math inline">\(\E[N_1^{-1}\sum_i T_i e_i(1) \mid \mathcal{F}_N] = 0\)</span> by <span class="math inline">\(\sum_i e_i(1) = 0\)</span>. The conditional variance is <span class="math inline">\(O(N^{-1})\)</span> by finite-population sampling theory; by Chebyshev, <span class="math inline">\(N_1^{-1}\sum_i T_i e_i(1) \to_p 0\)</span>. By <a href="#eq-lin-linearization" class="quarto-xref">Equation&nbsp;<span>5.10</span></a>, <span class="math inline">\(\hat\mu_{1,\mathrm{reg}} - \bar Y(1) \to_p 0\)</span>. Symmetrically, <span class="math inline">\(\hat\mu_{0,\mathrm{reg}} - \bar Y(0) \to_p 0\)</span>. Therefore <span class="math inline">\(\hat\beta \to_p \bar Y(1) - \bar Y(0) = \tau_{\mathrm{ATE}}\)</span>.</p>
+<p>Crucially, the probability limit of <span class="math inline">\(\hat{\boldsymbol\beta}_1\)</span> never enters: consistency comes from the randomization distribution, not from correctness of the linear model. <span class="math inline">\(\square\)</span></p>
 </div>
 </div>
 </div>
+<p><strong>Byproduct: variance reduction.</strong> Equation <a href="#eq-lin-linearization" class="quarto-xref">Equation&nbsp;<span>5.10</span></a> shows that the regression estimator is approximately <span class="math inline">\(\bar\tau + N_1^{-1}\sum_i T_i e_i(1) - N_0^{-1}\sum_i (1-T_i) e_i(0)\)</span>. The variance reduction relative to DIM comes from replacing raw outcomes by residuals: when the linear model explains a meaningful share of <span class="math inline">\(Y_i(t)\)</span>’s variation, <span class="math inline">\(S_{e(t)}^2 &lt; S_{Y(t)}^2\)</span> and the design variance shrinks.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -654,8 +990,7 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In a randomized experiment the regression model serves one purpose only: <em>variance reduction</em>. Unbiasedness is guaranteed by the randomization alone, regardless of whether the outcome model is correctly specified. The plain DIM estimator is already design-consistent; the only reason to add covariates is to reduce <span class="math inline">\(\mathrm{Var}(\hat\tau)\)</span> by absorbing residual variation in <span class="math inline">\(Y\)</span> unrelated to <span class="math inline">\(T\)</span>.</p>
-<p>This stands in sharp contrast to the observational setting, where the regression model carries a <em>double</em> burden: it must both adjust for confounding (unbiasedness) and fit the outcome surface well (efficiency). Misspecification in an observational study threatens <em>both</em> properties simultaneously. In a randomized experiment, it threatens only efficiency.</p>
+<p>In a randomized experiment, the regression model serves <em>one purpose only</em>: variance reduction. It does not contribute to unbiasedness. DIM is already design-consistent; adding covariates reduces <span class="math inline">\(\mathrm{Var}(\hat\tau)\)</span> by absorbing residual variation in <span class="math inline">\(Y\)</span> unrelated to <span class="math inline">\(T\)</span>. If the model fits well, the residual variance shrinks and the estimator becomes more precise. If misspecified or covariates are weakly predictive, the variance reduction is small or zero, but <em>no bias is introduced</em>. This stands in sharp contrast to the observational setting, where the regression model carries a double burden: it must both adjust for confounding (unbiasedness) and fit the outcome surface (efficiency). Misspecification in an observational study threatens <em>both</em> properties simultaneously.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -668,36 +1003,16 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The design-consistency result in the theorem above was established in the survey sampling literature decades before <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span>. <span class="citation" data-cites="isaki1982survey">Isaki and Fuller (1982)</span> introduced the <em>generalized regression (GREG) estimator</em> for finite-population means under general probability sampling designs and proved it is design-consistent even when the assisting regression model is misspecified. <span class="citation" data-cites="deville1992calibration">Deville and Särndal (1992)</span> extended this class to <em>calibration estimators</em>, which adjust sampling weights so that weighted sample totals match known population totals for auxiliary variables. <span class="citation" data-cites="lin2013agnostic">Lin (2013)</span> restated and proved this result within the Neyman–Rubin potential-outcomes framework, connected it to semiparametric efficiency theory, and showed that the Huber–White sandwich variance estimator yields asymptotically valid confidence intervals under the randomization distribution.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Lin’s consistency result is specific to randomized experiments. In an observational study, <span class="math inline">\(\hat\tau_{\mathrm{OR}}\)</span> is consistent only if <span class="math inline">\(\hat\mu\)</span> converges to the true <span class="math inline">\(\mu\)</span>. The doubly-robust (AIPW) estimator of Chapter 10 achieves consistency if <em>either</em> the outcome model or the propensity score model is correctly specified.</p>
+<p>The design-consistency result in <span class="quarto-unresolved-ref">?thm-lin</span> — model-agnostic consistency under the randomization distribution — was established in the survey sampling literature decades before <span class="citation" data-cites="lin2013agnostic">Lin (<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span>. <span class="citation" data-cites="isaki1982survey">Isaki and Fuller (<a href="references.html#ref-isaki1982survey" role="doc-biblioref">1982</a>)</span> proved this for the generalized regression (GREG) estimator under general probability sampling designs. A CRE is structurally equivalent to simple random sampling from the finite population of potential outcomes, so their result directly implies <span class="quarto-unresolved-ref">?thm-lin</span>. <span class="citation" data-cites="deville1992calibration">Deville and Särndal (<a href="references.html#ref-deville1992calibration" role="doc-biblioref">1992</a>)</span> extended this to calibration estimators. <span class="citation" data-cites="lin2013agnostic">Lin (<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span>’s contribution was restating and proving this within the Neyman–Rubin framework for the experimental causal inference audience.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="sec-stratification" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="sec-stratification"><span class="header-section-number">5.4</span> Stratification</h2>
-<section id="the-idea" class="level3" data-number="5.4.1">
-<h3 data-number="5.4.1" class="anchored" data-anchor-id="the-idea"><span class="header-section-number">5.4.1</span> The Idea</h3>
-<p>Stratification (subclassification) is a non-parametric implementation of the back-door formula. Rather than modeling <span class="math inline">\(\E[Y \mid T, X]\)</span>, the analyst divides the sample into <em>strata</em> — subgroups of units with the same or similar values of <span class="math inline">\(X\)</span> — and estimates the treatment effect within each stratum.</p>
-<p>Within a stratum <span class="math inline">\(\mathcal{S}_k = \{i : X_i \in B_k\}\)</span>, if the stratum is narrow enough, ignorability holds approximately and the within-stratum difference in means: <span class="math display">\[\hat\tau_k = \bar{Y}_{1,k} - \bar{Y}_{0,k}\]</span> is an approximately unbiased estimate of the stratum-specific ATE.</p>
-</section>
-<section id="the-stratified-estimator" class="level3" data-number="5.4.2">
-<h3 data-number="5.4.2" class="anchored" data-anchor-id="the-stratified-estimator"><span class="header-section-number">5.4.2</span> The Stratified Estimator</h3>
-<p>The overall ATE is estimated as a weighted average of within-stratum estimates:</p>
-<p><span id="eq-strat"><span class="math display">\[\hat\tau_{\mathrm{STRAT}} = \sum_{k=1}^K \hat\tau_k \cdot \frac{n_k}{n}, \tag{5.6}\]</span></span></p>
-<p>where <span class="math inline">\(K\)</span> is the number of strata, <span class="math inline">\(n_k\)</span> is the number of units in stratum <span class="math inline">\(k\)</span>, and <span class="math inline">\(n = \sum_k n_k\)</span>. Cochran (1968) showed that with <span class="math inline">\(K = 5\)</span> strata of equal size, roughly 90% of the bias from a single continuous confounder is removed; with <span class="math inline">\(K = 10\)</span> strata, over 95%.</p>
+<p>Stratification (subclassification) is a non-parametric implementation of the back-door formula. Rather than modeling <span class="math inline">\(\E[Y \mid T, X]\)</span>, the analyst divides the sample into <em>strata</em> — subgroups with similar values of <span class="math inline">\(X\)</span> — and estimates the treatment effect within each stratum.</p>
+<p>Within stratum <span class="math inline">\(\mathcal{S}_k\)</span>, the treated and control units have similar covariate distributions. If the stratum is narrow enough, ignorability holds approximately, and the within-stratum DIM: <span class="math display">\[\hat\tau_k = \bar Y_{1,k} - \bar Y_{0,k}\]</span> is approximately unbiased for the stratum-specific ATE. The overall ATE is estimated as: <span id="eq-strat"><span class="math display">\[\hat\tau_{\mathrm{STRAT}} = \sum_{k=1}^K \hat\tau_k \cdot \frac{n_k}{n}. \tag{5.11}\]</span></span></p>
+<p><span class="citation" data-cites="cochran1968effectiveness">Cochran (<a href="references.html#ref-cochran1968effectiveness" role="doc-biblioref">1968</a>)</span> showed that with <span class="math inline">\(K = 5\)</span> equal-size strata, roughly 90% of the bias from a single continuous confounder is removed; with <span class="math inline">\(K = 10\)</span>, over 95%.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -708,26 +1023,18 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>When <span class="math inline">\(X\)</span> is categorical, the stratified estimator <a href="#eq-strat" class="quarto-xref">Equation&nbsp;<span>5.6</span></a> and the standardization estimator <a href="#eq-std" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> are algebraically identical. The two names reflect disciplinary tradition rather than a methodological distinction.</p>
-<p>In the survey sampling literature, <em>stratification</em> is a design-stage decision while <em>post-stratification</em> is an analysis-stage adjustment. Standardization in causal inference corresponds to post-stratification: stratum membership is recorded after sampling, and the estimator is reweighted by marginal stratum counts. Standardization is therefore regression adjustment with a saturated outcome model.</p>
+<p>When <span class="math inline">\(X\)</span> is categorical, the stratified estimator <a href="#eq-strat" class="quarto-xref">Equation&nbsp;<span>5.11</span></a> and the standardization estimator <a href="#eq-std" class="quarto-xref">Equation&nbsp;<span>5.8</span></a> are algebraically identical: both compute within-cell treatment effect estimates and aggregate with marginal weights <span class="math inline">\(n_k/n\)</span>. The names reflect disciplinary tradition.</p>
+<p>When <span class="math inline">\(X\)</span> is continuous, stratification estimates <span class="math inline">\(\hat\mu(t,x)\)</span> by a piecewise-constant step function; regression fits a smooth model. In the survey sampling literature, <em>stratification</em> (design-stage: divide before sampling) and <em>post-stratification</em> (analysis-stage: reweight after sampling) are distinct. Standardization in causal inference corresponds to post-stratification.</p>
 </div>
 </div>
-</section>
-<section id="limitations" class="level3" data-number="5.4.3">
-<h3 data-number="5.4.3" class="anchored" data-anchor-id="limitations"><span class="header-section-number">5.4.3</span> Limitations</h3>
-<p>Stratification faces the <em>curse of dimensionality</em>: with <span class="math inline">\(p\)</span> binary covariates there are <span class="math inline">\(2^p\)</span> cells, many of which will be empty in practice. This motivates two solutions:</p>
-<ul>
-<li><strong>Regression adjustment / standardization</strong> imposes parametric structure on <span class="math inline">\(\hat\mu(t,x)\)</span>, allowing interpolation across cells.</li>
-<li><strong>Propensity score stratification</strong> (Chapter 6) collapses the multivariate <span class="math inline">\(X\)</span> to a scalar <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span> and stratifies on the scalar.</li>
-</ul>
-</section>
+<p><strong>Limitations.</strong> Stratification faces the <em>curse of dimensionality</em>: with <span class="math inline">\(p\)</span> binary covariates, there are <span class="math inline">\(2^p\)</span> cells, many empty in practice. Two solutions: regression adjustment, which imposes parametric structure on <span class="math inline">\(\hat\mu(t,x)\)</span>; and propensity score stratification (Chapter 6), which collapses multivariate <span class="math inline">\(X\)</span> to a scalar <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span>.</p>
 </section>
 <section id="sec-simpson" class="level2" data-number="5.5">
 <h2 data-number="5.5" class="anchored" data-anchor-id="sec-simpson"><span class="header-section-number">5.5</span> Simpson’s Paradox</h2>
-<p>Simpson’s paradox — the reversal of an association when conditioning on a third variable — was introduced in Chapter 1, where a flu-vaccination example showed that the vaccine appeared harmful in the aggregate yet beneficial within every age stratum, because elderly individuals were disproportionately vaccinated. This chapter’s development gives that example a second layer of interpretation: the back-door formula used in Chapter 1 is precisely the standardization estimator <a href="#eq-std" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> — within-stratum conditional means averaged over the <em>marginal</em> distribution of the confounder rather than its treatment-conditional distribution. The weighted average corrects the confounding; the pooled association does not, because it weights strata by <span class="math inline">\(P(X \mid T)\)</span> instead of <span class="math inline">\(P(X)\)</span>.</p>
-<section id="when-should-you-not-condition-on-x" class="level3" data-number="5.5.1">
-<h3 data-number="5.5.1" class="anchored" data-anchor-id="when-should-you-not-condition-on-x"><span class="header-section-number">5.5.1</span> When Should You <em>Not</em> Condition on <span class="math inline">\(X\)</span>?</h3>
-<p>Simpson’s paradox also has a mirror image: conditioning on a variable can <em>create</em> a spurious association or make a true causal effect disappear. This occurs when <span class="math inline">\(X\)</span> is a <em>mediator</em> or a <em>collider</em>. The back-door criterion gives the correct prescription: include <span class="math inline">\(X\)</span> in the adjustment set only if it blocks back-door paths <em>without</em> opening collider paths.</p>
+<p>Simpson’s paradox — the reversal of an association when conditioning on a third variable — was introduced in Chapter 1. This chapter’s development gives it a second layer of interpretation. The back-door formula used in Chapter 1 is precisely the standardization estimator <a href="#eq-std" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>: within-stratum conditional means averaged over the <em>marginal</em> distribution of the confounder rather than its treatment-conditional distribution. The pooled association does not do this — it weights strata by <span class="math inline">\(P(X \mid T)\)</span> instead of <span class="math inline">\(P(X)\)</span>.</p>
+<section id="sec-simpson-collider" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="sec-simpson-collider"><span class="header-section-number">5.5.1</span> When Should You <em>Not</em> Condition on <span class="math inline">\(X\)</span>?</h3>
+<p>Simpson’s paradox has a mirror image: conditioning can <em>create</em> a spurious association or make a true causal effect disappear. This occurs when <span class="math inline">\(X\)</span> is a mediator or a collider. The back-door criterion gives the correct prescription: include <span class="math inline">\(X\)</span> only if it blocks back-door paths <em>without</em> opening collider paths.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -738,134 +1045,151 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Adjusting for a post-treatment variable <span class="math inline">\(X\)</span> that lies on a causal pathway <span class="math inline">\(T \to X \to Y\)</span> blocks part of the causal effect of <span class="math inline">\(T\)</span>, producing a downward-biased estimate of the total effect. Adjusting for a collider <span class="math inline">\(X\)</span> with <span class="math inline">\(T \to X \leftarrow Y\)</span> opens a spurious association between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> that does not exist in the population. Neither mistake is detectable from the data alone; the DAG is essential.</p>
+<p>Adjusting for a post-treatment variable <span class="math inline">\(X\)</span> that lies on a causal pathway <span class="math inline">\(T \to X \to Y\)</span> blocks part of the causal effect, producing a downward-biased estimate of the total effect. Adjusting for a collider <span class="math inline">\(X\)</span> with <span class="math inline">\(T \to X \leftarrow Y\)</span> opens a spurious association that does not exist in the population. Neither mistake is detectable from the data alone; the DAG is essential.</p>
 </div>
 </div>
-<p>The mediator case will be revisited in detail in Chapter 8. The collider case was covered in Chapter 2.</p>
 </section>
 </section>
 <section id="sec-lab" class="level2" data-number="5.6">
 <h2 data-number="5.6" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">5.6</span> Lab: Simulation Study of the Outcome Regression Estimator</h2>
-<p>The identification results in <a href="#sec-ignorability" class="quarto-xref"><span>Section 5.2</span></a> and the estimation recipes in <a href="#sec-regression" class="quarto-xref"><span>Section 5.3</span></a> rest on two assumptions that pull in opposite directions: the outcome model <span class="math inline">\(\hat\mu(t,x)\)</span> must be correctly specified for the linear OR estimator to be consistent in an observational study, yet a more flexible nonparametric estimator pays a variance penalty for that flexibility.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>DGP for Lab 5
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(X \sim \mathrm{Uniform}(0,1)\)</span> be a single pre-treatment covariate and <span class="math inline">\(\varepsilon \sim \mathcal{N}(0,1)\)</span> independent of <span class="math inline">\(X\)</span>. The potential outcome surfaces are: <span id="eq-dgp"><span class="math display">\[Y(t) \;=\; t \;+\; 3(1+t)X^2 \;+\; \varepsilon, \qquad t \in \{0,1\}. \tag{5.7}\]</span></span></p>
-<p>The conditional average treatment effect is <span class="math inline">\(\tau(x) = 1 + 3x^2\)</span>, so <span id="eq-tau"><span class="math display">\[\tau_{\mathrm{ATE}} = \E[1 + 3X^2] = 1 + 1 = 2. \tag{5.8}\]</span></span></p>
-<p>Two assignment mechanisms are studied:</p>
+<p>This simulation compares the linear and local-linear OR estimators across two designs and illustrates the bias-variance tradeoff.</p>
+<p><strong>Data-generating process.</strong> <span class="math inline">\(X \sim \mathrm{Uniform}(0,1)\)</span>, <span class="math inline">\(\varepsilon \sim \mathcal{N}(0,1)\)</span> independent of <span class="math inline">\(X\)</span>. Potential outcomes: <span id="eq-lab-dgp"><span class="math display">\[Y(t) = t + 3(1+t)X^2 + \varepsilon, \qquad t \in \{0,1\}. \tag{5.12}\]</span></span> The conditional ATE is <span class="math inline">\(\tau(x) = 1 + 3x^2\)</span>, so <span class="math inline">\(\tau_{\mathrm{ATE}} = 1 + 3\E[X^2] = 1 + 1 = 2\)</span>.</p>
+<p><strong>Two assignment mechanisms:</strong></p>
 <ul>
-<li><strong>CRD:</strong> <span class="math inline">\(T \sim \mathrm{Bern}(0.5)\)</span>, independent of <span class="math inline">\(X\)</span>.</li>
-<li><strong>Observational:</strong> <span class="math inline">\(T \mid X \sim \mathrm{Bern}(\mathrm{expit}(-2 + 5X))\)</span>, giving <span class="math inline">\(\pi(0) \approx 0.12\)</span>, <span class="math inline">\(\pi(0.5) \approx 0.62\)</span>, <span class="math inline">\(\pi(1) \approx 0.95\)</span>. Strong confounding: high-<span class="math inline">\(X\)</span> units are nearly always treated.</li>
+<li><strong>CRD</strong>: <span class="math inline">\(T \sim \mathrm{Bern}(0.5)\)</span>, independent of <span class="math inline">\(X\)</span>.</li>
+<li><strong>Observational</strong>: <span class="math inline">\(T \mid X \sim \mathrm{Bern}(\mathrm{expit}(-2 + 5X))\)</span>, giving <span class="math inline">\(\pi(0) \approx 0.12\)</span>, <span class="math inline">\(\pi(0.5) \approx 0.62\)</span>, <span class="math inline">\(\pi(1) \approx 0.95\)</span>. Strong confounding: high-<span class="math inline">\(X\)</span> units are nearly always treated.</li>
 </ul>
-</div>
-</div>
-<p>Two outcome regression estimators of the form <a href="#eq-or" class="quarto-xref">Equation&nbsp;<span>5.4</span></a> are compared: a <strong>Linear OR</strong> (simple linear regression, misspecified because the true <span class="math inline">\(\mu\)</span> contains a quadratic term), and a <strong>Local-linear OR</strong> (local linear regression with bandwidth <span class="math inline">\(h = 0.5 \cdot n^{-1/5}\)</span>, correctly flexible).</p>
+<p>Strong ignorability holds in both: under CRD by design; under the observational mechanism because <span class="math inline">\(T\)</span> depends only on <span class="math inline">\(X\)</span> through a known stochastic function, leaving no unmeasured variable affecting both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p><strong>Estimators.</strong> <em>Linear OR</em>: within each arm, fit OLS of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> (misspecified: true conditional mean is quadratic with a <span class="math inline">\(TX^2\)</span> interaction). <em>Local-linear OR</em>: within each arm, fit local linear regression with Gaussian kernel, bandwidth <span class="math inline">\(h = 0.5 \cdot n^{-1/5}\)</span>.</p>
+<p><strong>Results</strong> (<span class="math inline">\(n = 1000\)</span>, <span class="math inline">\(B = 2000\)</span> replications, seed 2024):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Design</strong></th>
+<th><strong>Estimator</strong></th>
+<th><strong>Mean</strong></th>
+<th><strong>Bias</strong></th>
+<th><strong>SD</strong></th>
+<th><strong>RMSE</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CRD</td>
+<td>Linear OR</td>
+<td>2.0013</td>
+<td>+0.0013</td>
+<td>0.0679</td>
+<td>0.0678</td>
+</tr>
+<tr class="even">
+<td>CRD</td>
+<td>Local-linear OR</td>
+<td>2.0333</td>
+<td>+0.0333</td>
+<td>0.0659</td>
+<td>0.0738</td>
+</tr>
+<tr class="odd">
+<td>Observational</td>
+<td>Linear OR</td>
+<td>1.9602</td>
+<td>−0.0398</td>
+<td>0.0851</td>
+<td>0.0939</td>
+</tr>
+<tr class="even">
+<td>Observational</td>
+<td>Local-linear OR</td>
+<td>2.0240</td>
+<td>+0.0240</td>
+<td>0.0923</td>
+<td>0.0953</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lesson 1: Under CRD, the linear OR is unbiased regardless of model specification.</strong> This confirms <span class="quarto-unresolved-ref">?thm-lin</span>: under complete randomization, the linear OR converges to <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> even with a wrong outcome model. The randomization distribution, not the model, does the identification work.</p>
+<p><strong>Lesson 2: Under an observational design, the misspecified linear OR is biased.</strong> The bias grows from <span class="math inline">\(+0.0013\)</span> under CRD to <span class="math inline">\(-0.0398\)</span> under the observational design. The omitted <span class="math inline">\(X^2\)</span> and <span class="math inline">\(TX^2\)</span> terms cause <span class="math inline">\(\hat\mu(t,x)\)</span> to misrepresent the outcome surface; because high-<span class="math inline">\(X\)</span> units are predominantly treated, the misfit is systematically amplified in the direction of confounding. Under CRD, the balanced assignment averages out the same misfit.</p>
+<p><strong>Lesson 3: The local-linear OR nearly eliminates bias at the cost of higher variance.</strong> Under the observational design, local-linear OR reduces bias from <span class="math inline">\(-0.0398\)</span> to <span class="math inline">\(+0.0240\)</span> but its SD is 0.0923 vs.&nbsp;0.0851 for the linear model. The RMSE comparison (0.0939 vs.&nbsp;0.0953) favors the linear estimator in MSE, even though it is biased — the classic bias-variance tradeoff.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Key Finding: Model Misspecification Is Harmless under Randomization, Harmful under Confounding
+<span class="screen-reader-only">Warning</span>Model Misspecification and Confounding Interact
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under CRD, the linear OR estimator is consistent despite misspecification (Theorem above): the fitting and evaluation distributions coincide, so pointwise errors cancel on average.</p>
-<p>Under the observational design, the fitting and evaluation distributions diverge. High-<span class="math inline">\(X\)</span> units are almost always treated and low-<span class="math inline">\(X\)</span> units almost never. The model for arm <span class="math inline">\(t=1\)</span> is fit on a sample concentrated at high <span class="math inline">\(X\)</span>, and the model for arm <span class="math inline">\(t=0\)</span> on a sample concentrated at low <span class="math inline">\(X\)</span>. The fitted lines are tuned to different parts of the covariate space, so when both are evaluated at the full marginal of <span class="math inline">\(X\)</span>, the pointwise errors no longer cancel. Model misspecification is harmless under randomization; it becomes a source of bias precisely when confounding is present.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: What This Lab Does Not Show
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The simulation fixes the bandwidth <span class="math inline">\(h = 0.5 \cdot n^{-1/5}\)</span> and does not perform data-driven bandwidth selection. The lab also studies only a scalar <span class="math inline">\(X\)</span>; with a multivariate covariate, the curse of dimensionality would make local linear regression impractical, which is one motivation for the propensity score approach of Chapter 6.</p>
+<p>The linear OR bias is <span class="math inline">\(+0.0013\)</span> under CRD and <span class="math inline">\(-0.0398\)</span> under the observational design. The misspecification is identical in both cases — the difference comes entirely from the assignment mechanism. Under CRD, <span class="math inline">\(T \indep X\)</span>, so <span class="math inline">\(X\)</span> within each arm is <span class="math inline">\(\mathrm{Uniform}(0,1)\)</span>. The population OLS pointwise error <span class="math inline">\(b(x) = -\tfrac{1}{2} + 3x - 3x^2\)</span> integrates to exactly zero over <span class="math inline">\(U(0,1)\)</span>: <span class="math inline">\(\E[b(X)] = \int_0^1 (-\tfrac{1}{2}+3x-3x^2)\, dx = 0\)</span>. This cancellation is structural: the population OLS line is the linear projection of <span class="math inline">\(\tau(X)\)</span> onto <span class="math inline">\(\{1, X\}\)</span> under <span class="math inline">\(U(0,1)\)</span>, and a linear projection always preserves the mean. Under the observational design, the within-arm distributions of <span class="math inline">\(X\)</span> are distorted by the propensity score, so the same cancellation fails.</p>
 </div>
 </div>
 </section>
-<section id="sec-propensity-preview" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="sec-propensity-preview"><span class="header-section-number">5.7</span> Where the Propensity Score Fits</h2>
-<p>The three methods — regression adjustment, standardization, and stratification — all implement the same identifying formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.3</span></a>. They differ in how they deal with the conditioning on the high-dimensional covariate vector <span class="math inline">\(X\)</span>:</p>
+<section id="chapter-summary" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">5.7</span> Chapter Summary</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
 </colgroup>
 <thead>
 <tr class="header">
-<th><strong>Method</strong></th>
-<th><strong>How it handles <span class="math inline">\(X\)</span></strong></th>
+<th><strong>Estimand</strong></th>
+<th><strong>Identification</strong></th>
 <th><strong>Key assumption</strong></th>
+<th><strong>Method</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Regression / standardization</td>
-<td>Models <span class="math inline">\(\E[Y \mid T,X]\)</span> parametrically</td>
-<td>Outcome model correctly specified</td>
+<td>ATE under CRD</td>
+<td><span class="math inline">\(\E[Y(t)] = \E[Y \mid T{=}t]\)</span></td>
+<td>Randomization protocol</td>
+<td>DIM, regression-adjusted DIM</td>
 </tr>
 <tr class="even">
-<td>Stratification</td>
-<td>Groups units by <span class="math inline">\(X\)</span>; estimates effect in each cell</td>
-<td>Strata narrow enough for approximate balance</td>
+<td>ATE under observability</td>
+<td><a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.5</span></a></td>
+<td>Ignorability + overlap</td>
+<td>OR, standardization, stratification</td>
 </tr>
 <tr class="odd">
+<td>ATT</td>
+<td><a href="#eq-backdoor-att" class="quarto-xref">Equation&nbsp;<span>5.6</span></a></td>
+<td>Same, one-sided overlap for <span class="math inline">\(t=0\)</span></td>
+<td>Same methods, weighted over treated</td>
+</tr>
+<tr class="even">
 <td>Propensity score (Ch. 6)</td>
-<td>Reduces <span class="math inline">\(X\)</span> to scalar <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span></td>
-<td>Propensity model correctly specified</td>
+<td>Reduces <span class="math inline">\(X\)</span> to scalar <span class="math inline">\(\pi(X)\)</span></td>
+<td>Correctly specified PS model</td>
+<td>IPW, matching, PS stratification</td>
 </tr>
 </tbody>
 </table>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Bridge to Chapter 6
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Chapter 6 takes up the propensity score idea formally. It proves the balancing property (<span class="math inline">\(T \indep X \mid \pi(X)\)</span>), derives the Propensity Score Theorem (strong ignorability given <span class="math inline">\(X\)</span> implies strong ignorability given <span class="math inline">\(\pi(X)\)</span> alone), and develops three estimation strategies: inverse probability weighting (IPW), matching, and propensity score stratification. Matching need not rely on the propensity score: covariate-distance methods such as Mahalanobis-distance matching and nearest-neighbor matching on <span class="math inline">\(X\)</span> directly are equally valid.</p>
-</div>
-</div>
-</section>
-<section id="summary" class="level2" data-number="5.8">
-<h2 data-number="5.8" class="anchored" data-anchor-id="summary"><span class="header-section-number">5.8</span> Summary</h2>
 <ol type="1">
-<li><p><strong>Randomization as graph surgery.</strong> A randomized experiment removes all arrows into <span class="math inline">\(T\)</span>, so the fundamental equality <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span> holds and the difference-in-means estimator is unbiased for the ATE without covariate adjustment.</p></li>
-<li><p><strong>Ignorability is the key assumption.</strong> Under unconfoundedness <span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span>, the back-door adjustment formula identifies the ATE. This assumption is substantive, design-determined, and untestable from observational data.</p></li>
-<li><p><strong>Three estimation strategies.</strong> Regression adjustment (G-formula), standardization, and stratification all implement the same identifying formula via different modeling choices. All require correct specification of either an outcome model (for regression/standardization) or a stratification scheme fine enough to achieve balance.</p></li>
-<li><p><strong>Simpson’s paradox.</strong> Pooled associations can reverse within subgroups when a confounder determines treatment selection. The correct causal estimate requires standardization over the marginal covariate distribution, guided by the back-door criterion.</p></li>
-<li><p><strong>The propensity score dimension reduction.</strong> When <span class="math inline">\(X\)</span> is high-dimensional, direct stratification or cell-by-cell standardization breaks down. The propensity score <span class="math inline">\(\pi(X)\)</span> provides a scalar sufficient statistic for adjustment. Chapter 6 develops the theory and estimation methods.</p></li>
+<li><strong>Randomization as graph surgery.</strong> A randomized experiment removes all arrows into <span class="math inline">\(T\)</span>, so <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span> and DIM is unbiased for the ATE without covariate adjustment.</li>
+<li><strong>Ignorability is the key assumption.</strong> Under unconfoundedness <span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span>, the back-door adjustment formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> identifies the ATE. This assumption is substantive, design-determined in RCTs, and untestable from observational data.</li>
+<li><strong>Three estimation strategies.</strong> Regression adjustment (G-formula), standardization, and stratification all implement <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> via different modeling choices. Under a randomized experiment, regression adjustment is design-consistent for the ATE even when the outcome model is misspecified (<span class="quarto-unresolved-ref">?thm-lin</span>); in observational studies, it is consistent only when the outcome model is.</li>
+<li><strong>Simpson’s paradox.</strong> Pooled associations can reverse within subgroups when a confounder determines treatment selection. The correct causal estimate requires standardization over the <em>marginal</em> covariate distribution, guided by the back-door criterion.</li>
+<li><strong>The propensity score dimension reduction.</strong> When <span class="math inline">\(X\)</span> is high-dimensional, direct stratification or cell-by-cell standardization breaks down. The propensity score <span class="math inline">\(\pi(X)\)</span> provides a scalar sufficient statistic for adjustment. Chapter 6 develops the theory and estimation methods.</li>
 </ol>
 </section>
-<section id="problems" class="level2" data-number="5.9">
-<h2 data-number="5.9" class="anchored" data-anchor-id="problems"><span class="header-section-number">5.9</span> Problems</h2>
-<p><strong>1. Randomization and the do-calculus.</strong> Let the observational DAG be <span class="math inline">\(\{U \to T,\; U \to Y,\; X \to T,\; T \to Y\}\)</span> with <span class="math inline">\(U\)</span> unobserved.</p>
+<section id="problems" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="problems"><span class="header-section-number">5.8</span> Problems</h2>
+<p><strong>1. Randomization and the do-calculus.</strong> Let the observational DAG be <span class="math inline">\(\{U \to T, U \to Y, X \to T, T \to Y\}\)</span> with <span class="math inline">\(U\)</span> unobserved.</p>
 <ol type="a">
 <li>Identify all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</li>
 <li>Does <span class="math inline">\(X\)</span> satisfy the back-door criterion? Does <span class="math inline">\(U\)</span>? Explain.</li>
-<li>Now suppose treatment is randomized. Draw the modified DAG and identify all back-door paths. Show that <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span> holds in the randomized DAG using Rule 2 of the do-calculus.</li>
+<li>Now suppose treatment is randomized. Draw the modified DAG and identify all back-door paths. Show that <span class="math inline">\(f(y \mid \doop(T{=}t)) = f(y \mid T{=}t)\)</span> holds using Rule 2 of the do-calculus. (<em>Hint</em>: identify the appropriate <span class="math inline">\((X, Z, W)\)</span> instantiation, construct <span class="math inline">\(\mathcal{G}_{\underline{T}}\)</span>, and verify <span class="math inline">\((Y \indep T)_{\mathcal{G}_{\underline{T}}}\)</span>.)</li>
 <li>Under randomization, is covariate adjustment on <span class="math inline">\(X\)</span> necessary for unbiasedness? Is it ever beneficial? Explain.</li>
 </ol>
-<p><strong>2. Ignorability and the back-door criterion.</strong> Consider the DAG <span class="math inline">\(\{X \to T,\; X \to Y,\; T \to Y,\; U \to Y\}\)</span> with <span class="math inline">\(U\)</span> unobserved.</p>
+<p><strong>2. Ignorability and the back-door criterion.</strong> Consider the DAG <span class="math inline">\(\{X \to T, X \to Y, T \to Y, U \to Y\}\)</span> with <span class="math inline">\(U\)</span> unobserved.</p>
 <ol type="a">
 <li>Does <span class="math inline">\(\{X\}\)</span> satisfy the back-door criterion? Write out the identifying formula for <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span>.</li>
-<li>Now add the edge <span class="math inline">\(U \to T\)</span> to the DAG. Does <span class="math inline">\(\{X\}\)</span> still satisfy the back-door criterion? What does the back-door criterion require when both <span class="math inline">\(X\)</span> and <span class="math inline">\(U\)</span> affect <span class="math inline">\(T\)</span>?</li>
+<li>Now add the edge <span class="math inline">\(U \to T\)</span> to the DAG. Does <span class="math inline">\(\{X\}\)</span> still satisfy the back-door criterion? What does the criterion require when both <span class="math inline">\(X\)</span> and <span class="math inline">\(U\)</span> affect <span class="math inline">\(T\)</span>?</li>
 <li>Explain in words what “unconfoundedness given <span class="math inline">\(X\)</span>” means about the role of <span class="math inline">\(U\)</span> in the data-generating process.</li>
 </ol>
 <p><strong>3. Standardization.</strong> A study of job training (<span class="math inline">\(T\)</span>) and earnings (<span class="math inline">\(Y\)</span>, in thousands) produces the following cell means, with <span class="math inline">\(P(X{=}0) = 0.4\)</span> and <span class="math inline">\(P(X{=}1) = 0.6\)</span>:</p>
@@ -894,25 +1218,57 @@ Figure&nbsp;5.1: Randomization as graph surgery. <strong>Left</strong>: in the o
 </tbody>
 </table>
 <ol type="a">
-<li>Compute <span class="math inline">\(\hat\tau_{\mathrm{ATE}}\)</span> using the standardization formula.</li>
-<li>Compute <span class="math inline">\(\hat\tau_{\mathrm{ATT}}\)</span>, given that all treated units come from <span class="math inline">\(X{=}1\)</span>.</li>
+<li>Compute <span class="math inline">\(\hat\tau_{\mathrm{ATE}}\)</span> using the standardization formula <a href="#eq-std" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>.</li>
+<li>Compute <span class="math inline">\(\hat\tau_{\mathrm{ATT}}\)</span>, given that all treated units come from <span class="math inline">\(X{=}1\)</span> — i.e., <span class="math inline">\(P(X{=}1 \mid T{=}1) = 1\)</span>.</li>
 <li>The unadjusted difference in means is <span class="math inline">\(33 - 25 = 8\)</span>. Compare to your answers in (a) and (b) and explain the discrepancy.</li>
 </ol>
-<p><strong>4. Stratification and Cochran’s rule.</strong> You have a binary confounder <span class="math inline">\(X \in \{0,1\}\)</span> and form two strata. Within stratum <span class="math inline">\(X{=}0\)</span>: <span class="math inline">\(n_0 = 600\)</span>, <span class="math inline">\(\bar{Y}_1 = 10\)</span>, <span class="math inline">\(\bar{Y}_0 = 8\)</span>. Within stratum <span class="math inline">\(X{=}1\)</span>: <span class="math inline">\(n_1 = 400\)</span>, <span class="math inline">\(\bar{Y}_1 = 15\)</span>, <span class="math inline">\(\bar{Y}_0 = 12\)</span>.</p>
+<p><strong>4. Stratification and Cochran’s rule.</strong> You have a binary confounder <span class="math inline">\(X \in \{0,1\}\)</span> and form two strata. Within stratum <span class="math inline">\(X{=}0\)</span>: <span class="math inline">\(n_0 = 600\)</span>, <span class="math inline">\(\bar Y_1 = 10\)</span>, <span class="math inline">\(\bar Y_0 = 8\)</span>. Within stratum <span class="math inline">\(X{=}1\)</span>: <span class="math inline">\(n_1 = 400\)</span>, <span class="math inline">\(\bar Y_1 = 15\)</span>, <span class="math inline">\(\bar Y_0 = 12\)</span>.</p>
 <ol type="a">
-<li>Compute the stratified ATE estimator <span class="math inline">\(\hat\tau_{\mathrm{STRAT}}\)</span>.</li>
-<li>Suppose an unadjusted difference-in-means gives <span class="math inline">\(\hat\tau_{\mathrm{DIM}} = 5.5\)</span>. Explain why the two estimates differ and which one is the appropriate causal estimate.</li>
+<li>Compute the stratified ATE estimator <span class="math inline">\(\hat\tau_{\mathrm{STRAT}}\)</span> via <a href="#eq-strat" class="quarto-xref">Equation&nbsp;<span>5.11</span></a>.</li>
+<li>Suppose an unadjusted DIM gives <span class="math inline">\(\hat\tau_{\mathrm{DIM}} = 5.5\)</span>. Explain why the two estimates differ and which is the appropriate causal estimate.</li>
 <li>Describe one limitation that would arise if <span class="math inline">\(X\)</span> were a continuous variable with 15 dimensions.</li>
 </ol>
-<p><strong>5. Simpson’s paradox.</strong> A hospital reports that patients who receive intensive care (ICU admission, <span class="math inline">\(T{=}1\)</span>) have a higher mortality rate than those who do not (<span class="math inline">\(T{=}0\)</span>): <span class="math inline">\(P(Y{=}1 \mid T{=}1) = 0.30\)</span> vs.&nbsp;<span class="math inline">\(P(Y{=}1 \mid T{=}0) = 0.10\)</span>.</p>
+<p><strong>5. Simpson’s paradox.</strong> A hospital reports that ICU patients (<span class="math inline">\(T{=}1\)</span>) have higher mortality than others (<span class="math inline">\(T{=}0\)</span>): <span class="math inline">\(P(Y{=}1 \mid T{=}1) = 0.30\)</span> vs.&nbsp;<span class="math inline">\(P(Y{=}1 \mid T{=}0) = 0.10\)</span>.</p>
 <ol type="a">
-<li>Construct a numerical example (a <span class="math inline">\(2 \times 2 \times 2\)</span> table with disease severity <span class="math inline">\(X \in \{\text{mild}, \text{severe}\}\)</span> as the confounder) that is consistent with the above pooled numbers and yet shows ICU admission <em>reduces</em> mortality within both severity strata.</li>
+<li>Construct a numerical example (a <span class="math inline">\(2 \times 2 \times 2\)</span> table with disease severity <span class="math inline">\(X\)</span> as the confounder) consistent with the pooled numbers yet showing ICU admission <em>reduces</em> mortality within both severity strata.</li>
 <li>Compute the standardized ATE using the marginal distribution of <span class="math inline">\(X\)</span>.</li>
-<li>Draw the DAG for this example. Identify the back-door path that the pooled comparison fails to block.</li>
-<li>A colleague suggests that since the hospital treats patients with both mild and severe illness, the pooled statistic is the right answer. Explain, using potential outcomes notation, why this argument is incorrect.</li>
+<li>Draw the DAG. Identify the back-door path that the pooled comparison fails to block.</li>
+<li>A colleague argues the pooled statistic is the right answer since the hospital treats patients with both mild and severe illness. Explain, using potential outcomes notation, why this argument is incorrect.</li>
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-cochran1968effectiveness" class="csl-entry" role="listitem">
+Cochran, William G. 1968. <span>“The Effectiveness of Adjustment by Subclassification in Removing Bias in Observational Studies.”</span> <em>Biometrics</em> 24 (2): 295–313. <a href="https://doi.org/10.2307/2528036">https://doi.org/10.2307/2528036</a>.
+</div>
+<div id="ref-deville1992calibration" class="csl-entry" role="listitem">
+Deville, Jean-Claude, and Carl-Erik Särndal. 1992. <span>“Calibration Estimators in Survey Sampling.”</span> <em>Journal of the American Statistical Association</em> 87 (418): 376–82.
+</div>
+<div id="ref-ding2023first" class="csl-entry" role="listitem">
+Ding, Peng. 2024. <em>A First Course in Causal Inference</em>. CRC Press.
+</div>
+<div id="ref-ding2016randomization" class="csl-entry" role="listitem">
+Ding, Peng, Avi Feller, and Luke Miratrix. 2016. <span>“Randomization Inference for Treatment Effect Variation.”</span> <em>Journal of the Royal Statistical Society: Series B</em> 78 (3): 655–71.
+</div>
+<div id="ref-isaki1982survey" class="csl-entry" role="listitem">
+Isaki, Cary T., and Wayne A. Fuller. 1982. <span>“Survey Design Under the Regression Superpopulation Model.”</span> <em>Journal of the American Statistical Association</em> 77 (377): 89–96.
+</div>
+<div id="ref-li2017general" class="csl-entry" role="listitem">
+Li, Xinran, and Peng Ding. 2017. <span>“General Forms of Finite Population Central Limit Theorems with Applications to Causal Inference.”</span> <em>Journal of the American Statistical Association</em> 112 (520): 1759–69.
+</div>
+<div id="ref-lin2013agnostic" class="csl-entry" role="listitem">
+Lin, Winston. 2013. <span>“Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining <span>Freedman</span>’s Critique.”</span> <em>The Annals of Applied Statistics</em> 7 (1): 295–318.
+</div>
+<div id="ref-robins1986new" class="csl-entry" role="listitem">
+Robins, James M. 1986. <span>“A New Approach to Causal Inference in Mortality Studies with a Sustained Exposure Period—Application to Control of the Healthy Worker Survivor Effect.”</span> <em>Mathematical Modelling</em> 7 (9–12): 1393–512.
+</div>
+<div id="ref-rosenbaum2002observational" class="csl-entry" role="listitem">
+Rosenbaum, Paul R. 2002. <em>Observational Studies</em>. 2nd ed. Springer. <a href="https://doi.org/10.1007/978-1-4757-3692-2">https://doi.org/10.1007/978-1-4757-3692-2</a>.
+</div>
+<div id="ref-rosenbaum1983central" class="csl-entry" role="listitem">
+Rosenbaum, Paul R., and Donald B. Rubin. 1983. <span>“The Central Role of the Propensity Score in Observational Studies for Causal Effects.”</span> <em>Biometrika</em> 70 (1): 41–55.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
