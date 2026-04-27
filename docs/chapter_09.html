@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>9&nbsp; Estimating Equations and Influence Functions – Theory and Methods in Causal Inference</title>
+<title>9&nbsp; Sensitivity Analysis and Partial Identification – Theory and Methods in Causal Inference</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -149,7 +168,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_04.html">Identification</a></li><li class="breadcrumb-item"><a href="./chapter_09.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_04.html">Identification</a></li><li class="breadcrumb-item"><a href="./chapter_09.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -254,7 +273,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapter_09.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
   </div>
 </li>
       </ul>
@@ -327,44 +346,62 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">9.1</span> Why Estimation Needs Its Own Theory</a></li>
-  <li><a href="#sec-ate" id="toc-sec-ate" class="nav-link" data-scroll-target="#sec-ate"><span class="header-section-number">9.2</span> A Running Example: The Average Treatment Effect</a></li>
-  <li><a href="#sec-ee" id="toc-sec-ee" class="nav-link" data-scroll-target="#sec-ee"><span class="header-section-number">9.3</span> Estimating Equations</a></li>
-  <li><a href="#sec-asymlin" id="toc-sec-asymlin" class="nav-link" data-scroll-target="#sec-asymlin"><span class="header-section-number">9.4</span> From Estimating Equations to Asymptotic Linearity</a></li>
-  <li><a href="#sec-if-intuition" id="toc-sec-if-intuition" class="nav-link" data-scroll-target="#sec-if-intuition"><span class="header-section-number">9.5</span> Influence Functions: Intuition</a>
+  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">9.1</span> Why Sensitivity Analysis?</a>
   <ul class="collapse">
-  <li><a href="#statistical-functionals" id="toc-statistical-functionals" class="nav-link" data-scroll-target="#statistical-functionals"><span class="header-section-number">9.5.1</span> Statistical Functionals</a></li>
-  <li><a href="#influence-functions" id="toc-influence-functions" class="nav-link" data-scroll-target="#influence-functions"><span class="header-section-number">9.5.2</span> Influence Functions</a></li>
+  <li><a href="#sec-sampling-vs-id" id="toc-sec-sampling-vs-id" class="nav-link" data-scroll-target="#sec-sampling-vs-id"><span class="header-section-number">9.1.1</span> Sampling Uncertainty vs.&nbsp;Identification Uncertainty</a></li>
+  <li><a href="#sec-role" id="toc-sec-role" class="nav-link" data-scroll-target="#sec-role"><span class="header-section-number">9.1.2</span> The Role of Sensitivity Analysis</a></li>
   </ul></li>
-  <li><a href="#sec-if-causal" id="toc-sec-if-causal" class="nav-link" data-scroll-target="#sec-if-causal"><span class="header-section-number">9.6</span> Influence Functions for Simple Causal Estimators</a>
+  <li><a href="#sec-framework" id="toc-sec-framework" class="nav-link" data-scroll-target="#sec-framework"><span class="header-section-number">9.2</span> A General Framework for Sensitivity Analysis</a></li>
+  <li><a href="#sec-unmeasured" id="toc-sec-unmeasured" class="nav-link" data-scroll-target="#sec-unmeasured"><span class="header-section-number">9.3</span> Sensitivity to Unmeasured Confounding</a>
   <ul class="collapse">
-  <li><a href="#known-outcome-regression" id="toc-known-outcome-regression" class="nav-link" data-scroll-target="#known-outcome-regression"><span class="header-section-number">9.6.1</span> Known Outcome Regression</a></li>
-  <li><a href="#known-propensity-score" id="toc-known-propensity-score" class="nav-link" data-scroll-target="#known-propensity-score"><span class="header-section-number">9.6.2</span> Known Propensity Score</a></li>
+  <li><a href="#sec-bias-decomp" id="toc-sec-bias-decomp" class="nav-link" data-scroll-target="#sec-bias-decomp"><span class="header-section-number">9.3.1</span> The Bias Decomposition</a></li>
+  <li><a href="#sec-linear-sens" id="toc-sec-linear-sens" class="nav-link" data-scroll-target="#sec-linear-sens"><span class="header-section-number">9.3.2</span> A Simple Linear Sensitivity Model</a></li>
+  <li><a href="#sec-binary-U" id="toc-sec-binary-U" class="nav-link" data-scroll-target="#sec-binary-U"><span class="header-section-number">9.3.3</span> Binary Unmeasured Confounder</a></li>
+  <li><a href="#sec-sens-table" id="toc-sec-sens-table" class="nav-link" data-scroll-target="#sec-sens-table"><span class="header-section-number">9.3.4</span> A Sensitivity Table</a></li>
   </ul></li>
-  <li><a href="#sec-nuisance" id="toc-sec-nuisance" class="nav-link" data-scroll-target="#sec-nuisance"><span class="header-section-number">9.7</span> Z-Estimation with Nuisance Parameters</a>
+  <li><a href="#sec-three-models" id="toc-sec-three-models" class="nav-link" data-scroll-target="#sec-three-models"><span class="header-section-number">9.4</span> Three Canonical Sensitivity Models</a>
   <ul class="collapse">
-  <li><a href="#the-stacked-estimating-equation-framework" id="toc-the-stacked-estimating-equation-framework" class="nav-link" data-scroll-target="#the-stacked-estimating-equation-framework"><span class="header-section-number">9.7.1</span> The Stacked Estimating Equation Framework</a></li>
-  <li><a href="#working-example-ipw-with-estimated-propensity-score" id="toc-working-example-ipw-with-estimated-propensity-score" class="nav-link" data-scroll-target="#working-example-ipw-with-estimated-propensity-score"><span class="header-section-number">9.7.2</span> Working Example: IPW with Estimated Propensity Score</a></li>
+  <li><a href="#sec-rosenbaum" id="toc-sec-rosenbaum" class="nav-link" data-scroll-target="#sec-rosenbaum"><span class="header-section-number">9.4.1</span> Rosenbaum’s <span class="math inline">\(\Gamma\)</span>-Sensitivity Model</a></li>
+  <li><a href="#sec-evalue" id="toc-sec-evalue" class="nav-link" data-scroll-target="#sec-evalue"><span class="header-section-number">9.4.2</span> The E-Value and the VanderWeele–Ding Bound</a></li>
+  <li><a href="#sec-msm" id="toc-sec-msm" class="nav-link" data-scroll-target="#sec-msm"><span class="header-section-number">9.4.3</span> The Marginal Sensitivity Model</a></li>
+  <li><a href="#sec-comparing-three" id="toc-sec-comparing-three" class="nav-link" data-scroll-target="#sec-comparing-three"><span class="header-section-number">9.4.4</span> Comparing the Three Models</a></li>
   </ul></li>
-  <li><a href="#sec-variance" id="toc-sec-variance" class="nav-link" data-scroll-target="#sec-variance"><span class="header-section-number">9.8</span> Variance Estimation and Confidence Intervals</a></li>
-  <li><a href="#sec-efficiency" id="toc-sec-efficiency" class="nav-link" data-scroll-target="#sec-efficiency"><span class="header-section-number">9.9</span> Toward Efficiency: Semiparametric Models and the EIF</a>
+  <li><a href="#sec-benchmarking" id="toc-sec-benchmarking" class="nav-link" data-scroll-target="#sec-benchmarking"><span class="header-section-number">9.5</span> Benchmarking Sensitivity Parameters</a>
   <ul class="collapse">
-  <li><a href="#semiparametric-models" id="toc-semiparametric-models" class="nav-link" data-scroll-target="#semiparametric-models"><span class="header-section-number">9.9.1</span> Semiparametric Models</a></li>
-  <li><a href="#regular-estimators" id="toc-regular-estimators" class="nav-link" data-scroll-target="#regular-estimators"><span class="header-section-number">9.9.2</span> Regular Estimators</a></li>
-  <li><a href="#the-semiparametric-efficiency-bound-and-the-eif" id="toc-the-semiparametric-efficiency-bound-and-the-eif" class="nav-link" data-scroll-target="#the-semiparametric-efficiency-bound-and-the-eif"><span class="header-section-number">9.9.3</span> The Semiparametric Efficiency Bound and the EIF</a></li>
-  <li><a href="#the-efficient-influence-function-for-the-ate" id="toc-the-efficient-influence-function-for-the-ate" class="nav-link" data-scroll-target="#the-efficient-influence-function-for-the-ate"><span class="header-section-number">9.9.4</span> The Efficient Influence Function for the ATE</a></li>
+  <li><a href="#benchmarking-against-observed-covariates" id="toc-benchmarking-against-observed-covariates" class="nav-link" data-scroll-target="#benchmarking-against-observed-covariates"><span class="header-section-number">9.5.1</span> Benchmarking Against Observed Covariates</a></li>
   </ul></li>
-  <li><a href="#sec-summary" id="toc-sec-summary" class="nav-link" data-scroll-target="#sec-summary"><span class="header-section-number">9.10</span> Chapter Summary</a></li>
-  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">9.11</span> Problems</a></li>
+  <li><a href="#sec-partial" id="toc-sec-partial" class="nav-link" data-scroll-target="#sec-partial"><span class="header-section-number">9.6</span> Partial Identification and Bounds</a>
+  <ul class="collapse">
+  <li><a href="#point-identification-vs.-partial-identification" id="toc-point-identification-vs.-partial-identification" class="nav-link" data-scroll-target="#point-identification-vs.-partial-identification"><span class="header-section-number">9.6.1</span> Point Identification vs.&nbsp;Partial Identification</a></li>
+  <li><a href="#sec-manski" id="toc-sec-manski" class="nav-link" data-scroll-target="#sec-manski"><span class="header-section-number">9.6.2</span> Manski’s No-Assumption Bound</a></li>
+  </ul></li>
+  <li><a href="#sec-positivity" id="toc-sec-positivity" class="nav-link" data-scroll-target="#sec-positivity"><span class="header-section-number">9.7</span> Sensitivity to Positivity and Overlap Violations</a>
+  <ul class="collapse">
+  <li><a href="#sec-trimming" id="toc-sec-trimming" class="nav-link" data-scroll-target="#sec-trimming"><span class="header-section-number">9.7.1</span> Trimming as a Sensitivity Analysis</a></li>
+  </ul></li>
+  <li><a href="#sec-iv" id="toc-sec-iv" class="nav-link" data-scroll-target="#sec-iv"><span class="header-section-number">9.8</span> Sensitivity to Invalid Instruments</a>
+  <ul class="collapse">
+  <li><a href="#sec-direct-effect" id="toc-sec-direct-effect" class="nav-link" data-scroll-target="#sec-direct-effect"><span class="header-section-number">9.8.1</span> Direct-Effect Violation of Exclusion</a></li>
+  <li><a href="#sec-iv-late" id="toc-sec-iv-late" class="nav-link" data-scroll-target="#sec-iv-late"><span class="header-section-number">9.8.2</span> Connection to LATE and Monotonicity</a></li>
+  </ul></li>
+  <li><a href="#sec-mediation" id="toc-sec-mediation" class="nav-link" data-scroll-target="#sec-mediation"><span class="header-section-number">9.9</span> Sensitivity in Mediation Analysis</a>
+  <ul class="collapse">
+  <li><a href="#sec-rho" id="toc-sec-rho" class="nav-link" data-scroll-target="#sec-rho"><span class="header-section-number">9.9.1</span> Residual-Correlation Sensitivity Parameter</a></li>
+  </ul></li>
+  <li><a href="#sec-modern" id="toc-sec-modern" class="nav-link" data-scroll-target="#sec-modern"><span class="header-section-number">9.10</span> Sensitivity Analysis and Modern Estimators</a></li>
+  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">9.11</span> Lab: A Tipping-Point Analysis for an Observational ATE</a></li>
+  <li><a href="#sec-reporting" id="toc-sec-reporting" class="nav-link" data-scroll-target="#sec-reporting"><span class="header-section-number">9.12</span> Practical Reporting Guidelines</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">9.13</span> Chapter Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">9.14</span> Problems</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_04.html">Identification</a></li><li class="breadcrumb-item"><a href="./chapter_09.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_04.html">Identification</a></li><li class="breadcrumb-item"><a href="./chapter_09.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></h1>
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></h1>
 </div>
 
 
@@ -393,115 +430,166 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter, students should be able to:</p>
 <ol type="1">
-<li>Explain why identification of a causal parameter does not automatically yield a statistically reliable estimator, and articulate the distinct questions that an estimation theory must address.</li>
-<li>Define an estimating equation and verify the population moment condition for standard examples (sample mean, OLS, IPW).</li>
-<li>State the definition of an asymptotically linear estimator and derive the influence function from a generic first-order expansion of an estimating equation.</li>
-<li>Compute the influence function for simple causal estimators when nuisance functions are known, and interpret it as the infinitesimal contribution of a single observation.</li>
-<li>Describe how estimation error in nuisance functions propagates into the target estimator, and explain why this is the central statistical challenge in causal inference.</li>
-<li>Use the influence function to construct a consistent variance estimator and an approximate Wald confidence interval.</li>
-<li>Define efficiency in the class of regular estimators and explain the role of the efficient influence function as the foundation for doubly robust estimation in Chapter 10.</li>
+<li>Distinguish sampling uncertainty, model misspecification, and identification uncertainty, and explain why confidence intervals do not measure the credibility of identifying assumptions.</li>
+<li>Formulate a sensitivity analysis by introducing a sensitivity parameter <span class="math inline">\(\lambda\)</span> and reporting the sensitivity curve, bounds, or tipping point associated with it.</li>
+<li>Carry out a sensitivity analysis for unmeasured confounding under back-door adjustment, including the linear bias decomposition and the binary-confounder formula.</li>
+<li>State and use the three canonical sensitivity models: the Rosenbaum <span class="math inline">\(\Gamma\)</span>-sensitivity model, the E-value of <span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="references.html#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span>, and the marginal sensitivity model of <span class="citation" data-cites="tan2006distributional">Tan (<a href="references.html#ref-tan2006distributional" role="doc-biblioref">2006</a>)</span> and <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span>.</li>
+<li>Interpret sensitivity parameters through benchmarking with observed covariates.</li>
+<li>State and prove Manski’s no-assumption bound on the average treatment effect, and contrast point identification with partial identification.</li>
+<li>Recognize positivity and overlap violations as a form of identification failure, and interpret trimming as a change of estimand.</li>
+<li>Explain why weak-instrument diagnostics do not address exogeneity or exclusion violations, and apply the IV bias formula for a scalar instrument.</li>
+<li>Describe how sensitivity analysis applies to mediation assumptions through a residual-correlation parameter.</li>
+<li>Recognize sensitivity analysis as complementary to the modern estimation methods of Chapters 10–13: orthogonality and cross-fitting protect against nuisance-estimation error, not against violations of causal identification assumptions.</li>
 </ol>
 </div>
 </div>
 <section id="sec-motivation" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">9.1</span> Why Estimation Needs Its Own Theory</h2>
-<p>So far the focus has been on <em>identification</em>: under what assumptions can a causal parameter be written as a functional of the observed-data distribution? Identification does not by itself provide a statistically reliable estimator. Once a causal parameter is identified, several distinct questions remain: How should the estimator be constructed from the observed sample? How does estimation of nuisance functions affect the target estimator? What is the large-sample distribution of the estimator? How can we compute valid standard errors and confidence intervals?</p>
-<p>These questions motivate a separate theory of <em>estimation and inference</em>. In causal inference this issue is especially important because identified parameters often depend on auxiliary, or <em>nuisance</em>, functions such as the outcome regression <span class="math inline">\(\mu_t(x) = \E(Y \mid T=t,\, X=x)\)</span> or the propensity score <span class="math inline">\(\pi(x) = P(T=1 \mid X=x)\)</span>. Even when the causal parameter is identified, different estimation strategies may behave quite differently in terms of robustness, efficiency, and sensitivity to model misspecification.</p>
-<p>The goal of this chapter is to introduce a general framework for estimation based on <em>estimating equations</em> and <em>influence functions</em>. This framework will serve as the foundation for the doubly robust and semiparametric methods developed in Chapter 10; see also <span class="citation" data-cites="imbens2015causal">Imbens and Rubin (2015)</span> and <span class="citation" data-cites="hernan2020causal">Hernán and Robins (2020)</span> for complementary treatments.</p>
-</section>
-<section id="sec-ate" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="sec-ate"><span class="header-section-number">9.2</span> A Running Example: The Average Treatment Effect</h2>
-<p>Throughout this chapter we use the ATE <span class="math inline">\(\psi = \E\{Y(1) - Y(0)\}\)</span> as a running example. Under consistency, conditional exchangeability, and positivity, the ATE is identified by the back-door formula (Chapter 5): <span class="math display">\[\psi = \E[\mu_1(X) - \mu_0(X)], \qquad \mu_t(x) = \E(Y \mid T=t,\, X=x),\quad t\in\{0,1\}.\]</span></p>
-<p>This identity tells us what the target parameter is, but it does not uniquely determine how to estimate it. One may consider: a <em>regression-based</em> estimator using models for <span class="math inline">\(\mu_1(x)\)</span> and <span class="math inline">\(\mu_0(x)\)</span>; a <em>weighting</em> estimator based on the propensity score <span class="math inline">\(\pi(x)\)</span> (Chapter 6); or an <em>augmented</em> estimator combining both. All of these estimators may target the same causal parameter yet differ in their statistical properties.</p>
-</section>
-<section id="sec-ee" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="sec-ee"><span class="header-section-number">9.3</span> Estimating Equations</h2>
-<p>A broad class of estimators can be defined as solutions to <em>estimating equations</em>. Let <span class="math inline">\(O_1,\dots,O_n\)</span> be i.i.d. observations from a distribution <span class="math inline">\(P\)</span>, and let <span class="math inline">\(\theta\)</span> denote a finite-dimensional target parameter. Write <span class="math inline">\(\mathbb{P}_n f = \frac{1}{n}\sum_{i=1}^n f(O_i)\)</span> for the empirical average.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
+<h2 data-number="9.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">9.1</span> Why Sensitivity Analysis?</h2>
+<p>Chapters 5–8 developed a sequence of identification strategies: back-door adjustment, propensity-score re-weighting, instrumental variables, and front-door and mediation analysis. Each strategy identifies a causal parameter as a functional of the observed-data distribution under a corresponding set of assumptions. Each set of assumptions is, however, stated in terms of unobserved quantities — potential outcomes, hypothetical interventions, or unmeasured variables — and cannot be verified from the data alone.</p>
+<p>The chapter ahead (Chapter 10) opens by noting that <em>identification does not by itself provide a statistically reliable estimator</em>: once a parameter is identified, a separate theory of estimation and inference is still needed. The present chapter makes the complementary point, which closes out Part II:</p>
+<blockquote class="blockquote">
+<p><em>Statistical reliability does not by itself validate identification.</em></p>
+</blockquote>
+<p>A confidence interval reports sampling variation <em>conditional on</em> a maintained identification assumption. It is silent about whether that assumption is correct. A causal analysis is credible only if both components — identification and estimation — are credible. Sensitivity analysis is the tool for reporting how much the conclusion depends on the first.</p>
+<section id="sec-sampling-vs-id" class="level3" data-number="9.1.1">
+<h3 data-number="9.1.1" class="anchored" data-anchor-id="sec-sampling-vs-id"><span class="header-section-number">9.1.1</span> Sampling Uncertainty vs.&nbsp;Identification Uncertainty</h3>
+<p>Consider an analyst who reports <span class="math inline">\(\hat\tau = 2.0\)</span>, 95% CI <span class="math inline">\(= [1.2,\; 2.8]\)</span>. This interval answers one question and only one:</p>
+<blockquote class="blockquote">
+<p><em>If the identifying assumptions are correct, what range of values of <span class="math inline">\(\tau\)</span> is consistent with the observed sampling variation?</em></p>
+</blockquote>
+<p>As <span class="math inline">\(n \to \infty\)</span> the interval will shrink around <span class="math inline">\(\tau\)</span>, provided the identifying assumptions hold. If the assumptions do not hold, the interval will instead shrink around a biased target. More data drawn from the same observational regime do not remove this bias.</p>
+<p>Formally, there are three distinct sources of error:</p>
+<ul>
+<li><strong>Sampling uncertainty:</strong> <span class="math inline">\(\hat P_n \neq P\)</span>. The empirical distribution differs from the population. Vanishes as <span class="math inline">\(n \to \infty\)</span>.</li>
+<li><strong>Model misspecification:</strong> the working parametric or semiparametric model for a nuisance function is incorrect. Partly addressable by flexible modeling, doubly robust construction, and cross-fitting (Chapters 10–12).</li>
+<li><strong>Identification uncertainty:</strong> the causal parameter <span class="math inline">\(\psi\)</span> is not in fact identified by the functional <span class="math inline">\(\Psi(P)\)</span> assumed by the analysis. Does not vanish merely by increasing the sample size from the same observational regime; can be reduced only by adding new assumptions, new design information, or new measurements.</li>
+</ul>
+<p>The usual confidence interval addresses only the first; the estimation chapters to come address primarily the second; this chapter addresses the third.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Estimating Equation
+<span class="screen-reader-only">Warning</span>Statistical Significance and Causal Credibility
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>An <strong>estimating equation</strong> for a parameter <span class="math inline">\(\theta\)</span> is an equation of the form <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\} = 0\)</span>, where the <strong>population moment condition</strong> <span class="math inline">\(\E\{U(O;\theta_0)\} = 0\)</span> holds at the true parameter value <span class="math inline">\(\theta_0\)</span>. The function <span class="math inline">\(U(O;\theta)\)</span> is called the <strong>estimating function</strong>.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Sample Mean
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\theta = \E(Y)\)</span>. The sample mean <span class="math inline">\(\hat\theta = \bar Y\)</span> solves <span class="math inline">\(\mathbb{P}_n(Y-\theta) = 0\)</span>. The estimating function is <span class="math inline">\(U(O;\theta) = Y - \theta\)</span>.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Ordinary Least Squares
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(O = (X,Y)\)</span> and suppose <span class="math inline">\(\beta\)</span> is defined by the linear moment condition <span class="math inline">\(\E[X\{Y - X^\top\beta\}] = 0\)</span>. Then the OLS estimator solves <span class="math inline">\(\mathbb{P}_n\bigl[X\{Y - X^\top\beta\}\bigr] = 0\)</span>.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: A Simple IPW Estimating Equation
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Suppose <span class="math inline">\(\pi(X)\)</span> is known and <span class="math inline">\(\psi = \E\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\}\)</span>. Then <span class="math inline">\(\psi\)</span> solves <span class="math inline">\(\E\!\left[\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \psi\right] = 0\)</span>.</p>
+<p>A narrow, highly significant confidence interval is not evidence that the identifying assumptions are correct. It is evidence that, <em>if they are correct</em>, <span class="math inline">\(\psi\)</span> is close to the estimate. A sensitivity analysis is required to assess the second “if.”</p>
 </div>
 </div>
 </section>
-<section id="sec-asymlin" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="sec-asymlin"><span class="header-section-number">9.4</span> From Estimating Equations to Asymptotic Linearity</h2>
-<p>Under suitable regularity conditions, an estimator solving an estimating equation can typically be approximated as: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1)\]</span> for some mean-zero function <span class="math inline">\(\varphi(O)\)</span>.</p>
+<section id="sec-role" class="level3" data-number="9.1.2">
+<h3 data-number="9.1.2" class="anchored" data-anchor-id="sec-role"><span class="header-section-number">9.1.2</span> The Role of Sensitivity Analysis</h3>
+<p>Sensitivity analysis is a structured way to vary the strength of violations of identifying assumptions and to report how the causal conclusion responds. It is not a test of the assumptions — they involve unobserved quantities and are therefore not testable. It is a statement of <em>conditional robustness</em>: how far can the assumptions be violated before the substantive conclusion changes?</p>
+<p>Three reporting objects:</p>
+<ul>
+<li><em>Sensitivity curve.</em> A plot of the estimand against a single sensitivity parameter <span class="math inline">\(\lambda\)</span>, with <span class="math inline">\(\lambda=0\)</span> recovering the baseline identifying assumption.</li>
+<li><em>Sensitivity bounds.</em> The range of estimand values consistent with any <span class="math inline">\(\lambda\)</span> in a specified plausibility set <span class="math inline">\(\Lambda\)</span>.</li>
+<li><em>Tipping point.</em> The smallest violation magnitude sufficient to change the sign, magnitude, or statistical significance of the conclusion.</li>
+</ul>
+</section>
+</section>
+<section id="sec-framework" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="sec-framework"><span class="header-section-number">9.2</span> A General Framework for Sensitivity Analysis</h2>
+<p>The three views of sensitivity analysis — curves, bounds, tipping points — all arise from a single construction. Let <span class="math inline">\(\psi\)</span> be the causal estimand and <span class="math inline">\(A_0\)</span> the baseline identifying assumption with <span class="math inline">\(\psi = \Psi(P)\)</span>. A <strong>sensitivity model</strong> is a one-parameter relaxation <span class="math inline">\(\{A_\lambda : \lambda \in \Lambda\}\)</span> of <span class="math inline">\(A_0\)</span>, with <span class="math inline">\(A_0\)</span> recovered at <span class="math inline">\(\lambda = 0\)</span>. Under <span class="math inline">\(A_\lambda\)</span>: <span id="eq-sens-functional"><span class="math display">\[\psi(\lambda) = \Psi(P;\, \lambda), \qquad \Psi(P;\, 0) = \Psi(P). \tag{9.1}\]</span></span></p>
+<p>The key reporting object is the set <span class="math inline">\(\{\psi(\lambda) : \lambda \in \Lambda\}\)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Asymptotic Linearity and Influence Function
+<span class="screen-reader-only">Note</span>Definition: Sensitivity Model
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>An estimator <span class="math inline">\(\hat\theta\)</span> is <strong>asymptotically linear</strong> with <strong>influence function</strong> <span class="math inline">\(\varphi(O)\)</span> if: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1), \qquad \E\{\varphi(O)\} = 0.\]</span></p>
+<p>A <em>sensitivity model</em> for the causal estimand <span class="math inline">\(\psi\)</span> and baseline identifying assumption <span class="math inline">\(A_0\)</span> is a pair <span class="math inline">\((\{A_\lambda\}_{\lambda \in \Lambda},\, \Psi(\cdot;\cdot))\)</span> such that (i) <span class="math inline">\(A_0\)</span> is recovered at <span class="math inline">\(\lambda = 0\)</span>; (ii) under <span class="math inline">\(A_\lambda\)</span> and the observable restrictions, <span class="math inline">\(\psi = \Psi(P;\lambda)\)</span>; and (iii) <span class="math inline">\(\Psi(\cdot;\lambda)\)</span> is a continuous function of <span class="math inline">\(\lambda\)</span>.</p>
 </div>
 </div>
-<p>This representation immediately implies asymptotic normality. When <span class="math inline">\(\theta \in \mathbb{R}^p\)</span>: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) \overset{d}{\longrightarrow} N\!\left(\mathbf{0},\; \Sigma\right), \qquad \Sigma = \E\bigl[\varphi(O)\varphi(O)^\top\bigr].\]</span></p>
+<p><strong>Sensitivity parameters used in this chapter:</strong></p>
+<ul>
+<li><span class="math inline">\(\lambda\)</span> = strength of unmeasured confounding (odds-ratio bound, E-value, or likelihood-ratio bound).</li>
+<li><span class="math inline">\(\delta\)</span> = magnitude of a structural outcome-effect coefficient treated as zero under the baseline assumption (used both for <span class="math inline">\(U\)</span>-outcome effect and for IV exclusion violations).</li>
+<li><span class="math inline">\(\alpha\)</span> = propensity-score trimming threshold.</li>
+<li><span class="math inline">\(\rho\)</span> = residual correlation between mediator and outcome disturbances.</li>
+</ul>
+<p><strong>Sensitivity curve:</strong> <span class="math inline">\(\lambda \mapsto \hat\psi(\lambda)\)</span>. Useful when the reader wants to see the effect deform as the assumption is relaxed.</p>
+<p><strong>Sensitivity bounds:</strong> <span class="math inline">\(\psi_L = \inf_\Lambda \psi(\lambda)\)</span>, <span class="math inline">\(\psi_U = \sup_\Lambda \psi(\lambda)\)</span>.</p>
+<p><strong>Tipping point:</strong> <span class="math inline">\(\lambda^\star = \inf\{\lambda \in \Lambda : \psi(\lambda) = 0\}\)</span>, or <span class="math inline">\(\lambda^\star_{\mathrm{CI}} = \inf\{\lambda : 0 \in \widehat{\mathrm{CI}}(\lambda)\}\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Tipping-Point Reading
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose <span class="math inline">\(\hat\psi(0) = 1.8\)</span> with 95% CI <span class="math inline">\([1.1, 2.5]\)</span>, and the sensitivity model produces <span class="math inline">\(\hat\psi(\lambda) = 1.8 - 2.0\lambda\)</span>. Then: the sensitivity curve is linear in <span class="math inline">\(\lambda\)</span>; the tipping point for the sign is <span class="math inline">\(\lambda^\star = 0.9\)</span>; and the tipping point for significance is <span class="math inline">\(\lambda^\star_{\mathrm{CI}} = 0.55\)</span> (the value at which the lower CI endpoint <span class="math inline">\(1.1 - 2.0\lambda\)</span> hits zero). The significance tipping point is always at least as strict as the sign tipping point.</p>
+</div>
+</div>
+</section>
+<section id="sec-unmeasured" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="sec-unmeasured"><span class="header-section-number">9.3</span> Sensitivity to Unmeasured Confounding</h2>
+<p>The most common application is to unmeasured confounding under the back-door framework. The baseline assumption is conditional exchangeability <span class="math inline">\(Y(t) \indep T \mid X\)</span> together with consistency and positivity. Sensitivity analysis contemplates a world with an unobserved <span class="math inline">\(U\)</span> such that <span class="math inline">\(Y(t) \indep T \mid X, U\)</span> but <span class="math inline">\(Y(t) \nindep T \mid X\)</span>.</p>
+<figure style="text-align:center;margin:1em auto;" class="figure">
+<svg viewbox="0 0 380 160" width="100%" style="max-width:380px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="ba9" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path>
+    </marker>
+    <marker id="ra9" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#888"></path>
+    </marker>
+    <marker id="ga9" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#1A7A3A"></path>
+    </marker>
+  </defs>
+  <!-- X -->
+  <circle cx="60" cy="38" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="60" y="43" text-anchor="middle" fill="#2E74B6" font-weight="bold">X</text>
+  <!-- U -->
+  <circle cx="240" cy="38" r="22" fill="#FFF0F0" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3"></circle>
+  <text x="240" y="43" text-anchor="middle" fill="#888">U</text>
+  <!-- T -->
+  <circle cx="120" cy="120" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="120" y="125" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <!-- Y -->
+  <circle cx="300" cy="120" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="300" y="125" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <!-- X→T -->
+  <line x1="69" y1="57" x2="109" y2="101" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba9)"></line>
+  <!-- X→Y -->
+  <path d="M 79 47 Q 180 10 281 108" fill="none" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba9)"></path>
+  <!-- U→T -->
+  <line x1="224" y1="55" x2="135" y2="103" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ra9)"></line>
+  <!-- U→Y -->
+  <line x1="253" y1="57" x2="287" y2="99" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ra9)"></line>
+  <!-- T→Y (causal) -->
+  <line x1="142" y1="120" x2="276" y2="120" stroke="#1A7A3A" stroke-width="2" marker-end="url(#ga9)"></line>
+</svg>
+<figcaption>The unmeasured-confounding DAG. Observed covariate $X$ is adjusted for; $U$ is an unobserved common cause (dashed). Back-door adjustment for $X$ alone closes the $X$ path but leaves $T \leftarrow U \to Y$ open. The causal effect $T \to Y$ (green) is the target.</figcaption>
+</figure>
+<section id="sec-bias-decomp" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="sec-bias-decomp"><span class="header-section-number">9.3.1</span> The Bias Decomposition</h3>
+<p>Let <span class="math inline">\(\Delta_{\mathrm{obs}} = \E\{\E(Y \mid T=1, X) - \E(Y \mid T=0, X)\}\)</span> denote the observed adjusted contrast. Under ignorability given <span class="math inline">\(X\)</span> alone, <span class="math inline">\(\Delta_{\mathrm{obs}} = \tau\)</span>. Under the relaxed condition, the contrast departs from <span class="math inline">\(\tau\)</span> by a bias <span class="math inline">\(B\)</span>.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Proposition: Generic First-Order Expansion
+<span class="screen-reader-only">Tip</span>Theorem: Bias Decomposition under Unmeasured Confounding
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under smoothness and regularity conditions, an estimator <span class="math inline">\(\hat\theta\)</span> solving <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\}=0\)</span> admits a first-order expansion: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = -A^{-1}\,\frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1),\]</span> where <span class="math inline">\(A = \E\!\left\{\frac{\partial}{\partial\theta^\top}U(O;\theta_0)\right\}\)</span>. Hence the influence function is <span class="math inline">\(\varphi(O) = -A^{-1}U(O;\theta_0)\)</span>.</p>
+<p>Suppose <span class="math inline">\(Y(t) \indep T \mid X, U\)</span> holds along with consistency and positivity. Define <span class="math inline">\(m_t(x,u) = \E(Y \mid T=t, X=x, U=u)\)</span> and <span class="math inline">\(g_t(x,u) = P(u \mid T=t, X=x) - P(u \mid X=x)\)</span>. Then: <span id="eq-delta-tau-B"><span class="math display">\[\Delta_{\mathrm{obs}} = \tau + B, \tag{9.2}\]</span></span> where the <em>confounding bias</em> is: <span id="eq-B-general"><span class="math display">\[B = \E\!\left\{\sum_t (-1)^{1-t} \int m_t(X, u)\, g_t(X, u)\, du\right\}. \tag{9.3}\]</span></span></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -510,47 +598,10 @@ window.Quarto = {
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A Taylor expansion of the sample moment condition around <span class="math inline">\(\theta_0\)</span> gives: <span class="math display">\[0 = \mathbb{P}_n\{U(O;\hat\theta)\} \approx \mathbb{P}_n\{U(O;\theta_0)\} + \mathbb{P}_n\!\left\{\frac{\partial}{\partial\theta^\top} U(O;\theta_0)\right\}(\hat\theta - \theta_0).\]</span> By the law of large numbers, <span class="math inline">\(\mathbb{P}_n\{\partial_{\theta^\top} U(O;\theta_0)\} \to A\)</span> in probability. Rearranging and multiplying by <span class="math inline">\(\sqrt{n}\)</span> yields the stated expansion. <span class="math inline">\(\square\)</span></p>
+<p>Under conditional exchangeability given <span class="math inline">\((X, U)\)</span> and consistency: <span class="math display">\[\E[Y(t)] = \E\!\left\{\int m_t(X, u)\, P(u \mid X)\, du\right\}.\]</span> The conditional mean given <span class="math inline">\((T, X)\)</span> marginalizes <span class="math inline">\(U\)</span> over its distribution <em>conditional on</em> <span class="math inline">\(T\)</span>: <span class="math display">\[\E(Y \mid T=t, X) = \int m_t(X, u)\, P(u \mid T=t, X)\, du.\]</span> Taking expectations over <span class="math inline">\(X\)</span> and subtracting: <span class="math display">\[\Delta_{\mathrm{obs}} - \tau = \E\!\left\{\int m_1(X, u)\,[P(u \mid T=1, X) - P(u \mid X)]\, du\right\} - \E\!\left\{\int m_0(X, u)\,[P(u \mid T=0, X) - P(u \mid X)]\, du\right\} = B. \quad\square\]</span></p>
 </div>
-</div>
-</div>
-</section>
-<section id="sec-if-intuition" class="level2" data-number="9.5">
-<h2 data-number="9.5" class="anchored" data-anchor-id="sec-if-intuition"><span class="header-section-number">9.5</span> Influence Functions: Intuition</h2>
-<section id="statistical-functionals" class="level3" data-number="9.5.1">
-<h3 data-number="9.5.1" class="anchored" data-anchor-id="statistical-functionals"><span class="header-section-number">9.5.1</span> Statistical Functionals</h3>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Statistical Functional
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A <strong>statistical functional</strong> is a map <span class="math inline">\(\Psi : \mathcal{P} \longrightarrow \mathbb{R}^p\)</span> that assigns a parameter value <span class="math inline">\(\psi = \Psi(P)\)</span> to each distribution <span class="math inline">\(P \in \mathcal{P}\)</span>. The <strong>plug-in estimator</strong> of <span class="math inline">\(\psi\)</span> is <span class="math inline">\(\hat\psi = \Psi(\mathbb{P}_n)\)</span>.</p>
-</div>
-</div>
-<p>The mean, OLS coefficient, and ATE are all statistical functionals. A functional <span class="math inline">\(\Psi\)</span> is <em>linear</em> if <span class="math inline">\(\Psi((1-\epsilon)P + \epsilon Q) = (1-\epsilon)\Psi(P) + \epsilon\Psi(Q)\)</span>. The mean is linear; the variance, OLS coefficient, and ATE are nonlinear, requiring local linearization — precisely what the influence function provides.</p>
-</section>
-<section id="influence-functions" class="level3" data-number="9.5.2">
-<h3 data-number="9.5.2" class="anchored" data-anchor-id="influence-functions"><span class="header-section-number">9.5.2</span> Influence Functions</h3>
-<p>Influence functions describe the first-order sensitivity of a statistical functional to small perturbations of the underlying distribution.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Influence Function
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\psi = \Psi(P)\)</span> be a scalar parameter. A function <span class="math inline">\(\varphi(O)\)</span> is called an <strong>influence function</strong> for <span class="math inline">\(\Psi\)</span> if it has mean zero under <span class="math inline">\(P\)</span> and: <span class="math display">\[\hat\psi - \psi = \frac{1}{n}\sum_{i=1}^n \varphi(O_i) + o_p(n^{-1/2}).\]</span></p>
-<p><em>The influence function is the infinitesimal contribution of a single observation to the first-order behavior of the estimator.</em></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -559,98 +610,149 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Formal Derivation via Pathwise Derivatives
+<span class="screen-reader-only">Note</span>Remark: Bias in Words
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The influence function can be defined formally through the <em>pathwise (Gateaux) derivative</em>: if <span class="math inline">\(P_\epsilon = (1-\epsilon)P + \epsilon\delta_O\)</span> is the <span class="math inline">\(\epsilon\)</span>-mixture of <span class="math inline">\(P\)</span> with a point mass at <span class="math inline">\(O\)</span>, then: <span class="math display">\[\varphi(O) = \left.\frac{d}{d\epsilon}\Psi(P_\epsilon)\right|_{\epsilon=0}.\]</span> This derivative-based definition is the starting point for semiparametric efficiency theory, developed formally in Appendix C.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Influence Function of the OLS Slope
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For the OLS coefficient <span class="math inline">\(\beta = [\E(XX^\top)]^{-1}\E(XY)\)</span>:</p>
-<p><strong>Step 1.</strong> Construct the perturbed distribution <span class="math inline">\(P_\epsilon = (1-\epsilon)P + \epsilon\delta_O\)</span>: <span class="math display">\[\Psi(P_\epsilon) = \bigl[(1-\epsilon)\E(XX^\top) + \epsilon XX^\top\bigr]^{-1} \bigl[(1-\epsilon)\E(XY) + \epsilon XY\bigr].\]</span></p>
-<p><strong>Step 2.</strong> Differentiate with respect to <span class="math inline">\(\epsilon\)</span> at <span class="math inline">\(\epsilon = 0\)</span>, using <span class="math inline">\(\frac{d}{d\epsilon}M(\epsilon)^{-1}\big|_0 = -[\E(XX^\top)]^{-1}(XX^\top - \E(XX^\top))[\E(XX^\top)]^{-1}\)</span> and the product rule:</p>
-<p><span class="math display">\[\varphi(O) = [\E(XX^\top)]^{-1} X(Y - X^\top\beta).\]</span></p>
-<p><strong>Verification.</strong> <span class="math inline">\(\E[\varphi(O)] = [\E(XX^\top)]^{-1}\E[X(Y - X^\top\beta)] = 0\)</span> by definition of <span class="math inline">\(\beta\)</span>.</p>
-<p><em>Connection to estimating equations:</em> The OLS estimating function is <span class="math inline">\(U(O;\beta) = X(Y - X^\top\beta)\)</span>, <span class="math inline">\(A = -\E(XX^\top)\)</span>, and Proposition 1 gives the same <span class="math inline">\(\varphi(O) = [\E(XX^\top)]^{-1}X(Y - X^\top\beta)\)</span>.</p>
+<p>The observed adjusted contrast is the true effect plus a term controlled by (<em>the <span class="math inline">\(U\)</span>-outcome association</em>) <span class="math inline">\(\times\)</span> (<em>the <span class="math inline">\(U\)</span>-treatment imbalance</em>). Every sensitivity model in <a href="#sec-three-models" class="quarto-xref"><span>Section 9.4</span></a> is a formal version of this slogan.</p>
 </div>
 </div>
 </section>
-</section>
-<section id="sec-if-causal" class="level2" data-number="9.6">
-<h2 data-number="9.6" class="anchored" data-anchor-id="sec-if-causal"><span class="header-section-number">9.6</span> Influence Functions for Simple Causal Estimators</h2>
-<section id="known-outcome-regression" class="level3" data-number="9.6.1">
-<h3 data-number="9.6.1" class="anchored" data-anchor-id="known-outcome-regression"><span class="header-section-number">9.6.1</span> Known Outcome Regression</h3>
-<p>Suppose <span class="math inline">\(\psi = \E[\mu_1(X) - \mu_0(X)]\)</span> and the functions <span class="math inline">\(\mu_1(\cdot)\)</span> and <span class="math inline">\(\mu_0(\cdot)\)</span> are known. The natural plug-in estimator is <span class="math inline">\(\hat\psi = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}\)</span>. Its influence function is: <span class="math display">\[\varphi(O) = \mu_1(X) - \mu_0(X) - \psi.\]</span></p>
-</section>
-<section id="known-propensity-score" class="level3" data-number="9.6.2">
-<h3 data-number="9.6.2" class="anchored" data-anchor-id="known-propensity-score"><span class="header-section-number">9.6.2</span> Known Propensity Score</h3>
-<p>Suppose <span class="math inline">\(\pi(X)\)</span> is known and <span class="math inline">\(\psi = \E\!\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\}\)</span>. The empirical analogue is the Horvitz–Thompson estimator, and its influence function is: <span class="math display">\[\varphi(O) = \frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \psi.\]</span></p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Nuisance Functions and the Influence Function
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>When nuisance functions are <em>known</em>, the influence function is simply the centered estimating function. This observation becomes much more consequential in the next section, where nuisance functions are unknown and must be estimated from data.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Estimating Function, Influence Function, and Efficient Influence Function
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>These three objects are closely related but not the same.</p>
-<ol type="1">
-<li>An <em>estimating function</em> defines an estimator through a sample moment equation <span class="math inline">\(\mathbb{P}_n\{\phi(O;\theta)\} = 0\)</span>.</li>
-<li>An <em>influence function</em> describes the first-order asymptotic behavior of an estimator: <span class="math inline">\(\sqrt{n}(\hat\theta - \theta_0) = n^{-1/2}\sum_i \varphi(O_i) + o_p(1)\)</span>.</li>
-<li>The <em>efficient influence function</em> is the influence function with the smallest possible asymptotic variance among regular estimators in the statistical model.</li>
-</ol>
-<p>In simple examples with known nuisance functions, the centered estimating function often coincides with the influence function. This is not automatic when nuisance parameters are estimated.</p>
-</div>
-</div>
-</section>
-</section>
-<section id="sec-nuisance" class="level2" data-number="9.7">
-<h2 data-number="9.7" class="anchored" data-anchor-id="sec-nuisance"><span class="header-section-number">9.7</span> Z-Estimation with Nuisance Parameters</h2>
-<p>In real applications, nuisance functions must be estimated from the same data used to estimate the target parameter. Once this happens, the first-order expansion of <span class="math inline">\(\hat\psi\)</span> is no longer obtained by simply centering the estimating function with the nuisance held fixed. Z-estimation provides the correct framework: it treats both the target parameter and the nuisance parameter as components of a single stacked estimating equation.</p>
-<section id="the-stacked-estimating-equation-framework" class="level3" data-number="9.7.1">
-<h3 data-number="9.7.1" class="anchored" data-anchor-id="the-stacked-estimating-equation-framework"><span class="header-section-number">9.7.1</span> The Stacked Estimating Equation Framework</h3>
-<p>Suppose the target parameter <span class="math inline">\(\psi \in \mathbb{R}\)</span> depends on an unknown nuisance parameter <span class="math inline">\(\alpha \in \mathbb{R}^q\)</span>. Both are estimated by solving a stacked system: <span id="eq-stacked"><span class="math display">\[\mathbb{P}_n\bigl\{U_1(O;\psi,\alpha)\bigr\} = 0, \qquad \mathbb{P}_n\bigl\{U_2(O;\alpha)\bigr\} = 0. \tag{9.1}\]</span></span></p>
-<p>Write <span class="math inline">\(\theta = (\psi^\top, \alpha^\top)^\top\)</span> and <span class="math inline">\(U(O;\theta) = (U_1(O;\psi,\alpha),\, U_2(O;\alpha))^\top\)</span>.</p>
+<section id="sec-linear-sens" class="level3" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="sec-linear-sens"><span class="header-section-number">9.3.2</span> A Simple Linear Sensitivity Model</h3>
+<p>In the fully linear model <span class="math inline">\(Y = \alpha + \tau T + \gamma^\top X + \delta U + \varepsilon\)</span> with <span class="math inline">\(T = h(X, U, \eta)\)</span>:</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Z-Estimation Theorem (Stacked Equations)
+<span class="screen-reader-only">Tip</span>Lemma: Linear Sensitivity Bias
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Suppose the true parameter value is <span class="math inline">\(\theta_0 = (\psi_0,\alpha_0^\top)^\top\)</span> and the population moment condition <span class="math inline">\(\E\{U(O;\theta_0)\}=0\)</span> holds, the Jacobian <span class="math inline">\(\mathcal{A} = \E\{\partial_{\theta^\top} U(O;\theta_0)\}\)</span> is invertible, and regularity conditions hold. Then <span class="math inline">\(\hat\theta\)</span> is consistent for <span class="math inline">\(\theta_0\)</span> and: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = -\mathcal{A}^{-1}\, \frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1).\]</span> The influence function of <span class="math inline">\(\hat\psi\)</span> is: <span id="eq-if-corrected"><span class="math display">\[\varphi(O) = -A_{11}^{-1}\,U_1(O;\psi_0,\alpha_0) + A_{11}^{-1}A_{12}A_{22}^{-1}\,U_2(O;\alpha_0), \tag{9.2}\]</span></span> where <span class="math inline">\(A_{11} = \E\{\partial_\psi U_1\}\)</span>, <span class="math inline">\(A_{12} = \E\{\partial_{\alpha^\top} U_1\}\)</span>, <span class="math inline">\(A_{22} = \E\{\partial_{\alpha^\top} U_2\}\)</span>.</p>
+<p>Under the linear outcome model and conditional exchangeability given <span class="math inline">\((X, U)\)</span>: <span id="eq-linear-B"><span class="math display">\[B = \delta \cdot \E\!\left\{\E(U \mid T=1, X) - \E(U \mid T=0, X)\right\}. \tag{9.4}\]</span></span></p>
+</div>
+</div>
+<p><em>Proof.</em> In the linear model, <span class="math inline">\(m_t(x, u) = \alpha + \tau t + \gamma^\top x + \delta u\)</span>. The components of <span class="math inline">\(m_t\)</span> not depending on <span class="math inline">\(u\)</span> multiply integrals of <span class="math inline">\(g_t(X, u)\)</span>, which integrate to zero. The <span class="math inline">\(\delta u\)</span> term gives <a href="#eq-linear-B" class="quarto-xref">Equation&nbsp;<span>9.4</span></a>. <span class="math inline">\(\square\)</span></p>
+<p>This gives the canonical teaching decomposition: <span id="eq-canonical-bias"><span class="math display">\[\text{bias} \approx \underbrace{\delta}_{U\text{-outcome effect}} \;\times\; \underbrace{\E\{\E(U \mid T=1, X) - \E(U \mid T=0, X)\}}_{U\text{-treatment imbalance}}. \tag{9.5}\]</span></span></p>
+<p>Both factors are sensitivity parameters because <span class="math inline">\(U\)</span> is unobserved.</p>
+</section>
+<section id="sec-binary-U" class="level3" data-number="9.3.3">
+<h3 data-number="9.3.3" class="anchored" data-anchor-id="sec-binary-U"><span class="header-section-number">9.3.3</span> Binary Unmeasured Confounder</h3>
+<p>When <span class="math inline">\(U \in \{0,1\}\)</span>, define <span class="math inline">\(p_t(x) = P(U=1 \mid T=t, X=x)\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Lemma: Binary-Confounder Bias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(U \in \{0,1\}\)</span> and the <span class="math inline">\(U\)</span>-outcome contrast is constant across <span class="math inline">\((t, x)\)</span> at value <span class="math inline">\(\delta\)</span>, then: <span id="eq-binary-B"><span class="math display">\[B = \delta \cdot \E\{p_1(X) - p_0(X)\}. \tag{9.6}\]</span></span></p>
+</div>
+</div>
+<p><em>Proof.</em> With <span class="math inline">\(U \in \{0,1\}\)</span>, <span class="math inline">\(m_t(x,u) = m_t(x,0) + u\,\delta\)</span>. Substituting into <a href="#eq-B-general" class="quarto-xref">Equation&nbsp;<span>9.3</span></a>: <span class="math inline">\(B = \delta\,\E\{P(U{=}1 \mid T{=}1, X) - P(U{=}1 \mid T{=}0, X)\}\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>Formula <a href="#eq-binary-B" class="quarto-xref">Equation&nbsp;<span>9.6</span></a> is the workhorse of applied sensitivity analysis. A sensitivity analysis consists of computing <span class="math inline">\(\hat\tau_{\mathrm{sens}} = \hat\Delta_{\mathrm{obs}} - \hat B\)</span> over a grid of <span class="math inline">\((\delta,\, \E\{p_1-p_0\})\)</span> values.</p>
+</section>
+<section id="sec-sens-table" class="level3" data-number="9.3.4">
+<h3 data-number="9.3.4" class="anchored" data-anchor-id="sec-sens-table"><span class="header-section-number">9.3.4</span> A Sensitivity Table</h3>
+<p>For reporting, a table tabulates the adjusted effect over a grid. Here for observed adjusted effect <span class="math inline">\(\hat\Delta_{\mathrm{obs}} = 2.0\)</span> (cells show <span class="math inline">\(\hat\tau_{\mathrm{sens}} = \hat\Delta_{\mathrm{obs}} - \delta(p_1-p_0)\)</span>):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(U\)</span>-outcome effect <span class="math inline">\(\delta\)</span></th>
+<th><span class="math inline">\(p_1 - p_0 = 0.10\)</span></th>
+<th><span class="math inline">\(p_1 - p_0 = 0.30\)</span></th>
+<th><span class="math inline">\(p_1 - p_0 = 0.50\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>weak (<span class="math inline">\(\delta = 2\)</span>)</td>
+<td>1.80</td>
+<td>1.40</td>
+<td>1.00</td>
+</tr>
+<tr class="even">
+<td>moderate (<span class="math inline">\(\delta = 4\)</span>)</td>
+<td>1.60</td>
+<td>0.80</td>
+<td>0.00</td>
+</tr>
+<tr class="odd">
+<td>strong (<span class="math inline">\(\delta = 8\)</span>)</td>
+<td>1.20</td>
+<td>−0.40</td>
+<td>−2.00</td>
+</tr>
+</tbody>
+</table>
+<p>The tipping point for the sign is the diagonal cell <span class="math inline">\((\delta=4,\, p_1-p_0=0.5)\)</span>.</p>
+</section>
+</section>
+<section id="sec-three-models" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="sec-three-models"><span class="header-section-number">9.4</span> Three Canonical Sensitivity Models</h2>
+<p>The bias decomposition <a href="#eq-B-general" class="quarto-xref">Equation&nbsp;<span>9.3</span></a> is a general identity. Three canonical <em>models</em> specialize it by imposing a structural restriction on either <span class="math inline">\(g_t\)</span> or on the induced observed-data relationships. They are presented in order of increasing generality of the estimator they support.</p>
+<section id="sec-rosenbaum" class="level3" data-number="9.4.1">
+<h3 data-number="9.4.1" class="anchored" data-anchor-id="sec-rosenbaum"><span class="header-section-number">9.4.1</span> Rosenbaum’s <span class="math inline">\(\Gamma\)</span>-Sensitivity Model</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: <span class="math inline">\(\Gamma\)</span>-Sensitivity Model <span class="citation" data-cites="rosenbaum2002observational">(<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <span class="math inline">\(\Gamma\)</span>-sensitivity model at level <span class="math inline">\(\Gamma \geq 1\)</span> is the set of distributions <span class="math inline">\(P(U \mid T, X)\)</span> satisfying: <span id="eq-gamma-bound"><span class="math display">\[\frac{1}{\Gamma} \leq \frac{P(T=1 \mid X, U=u)/P(T=0 \mid X, U=u)}{P(T=1 \mid X, U=u')/P(T=0 \mid X, U=u')} \leq \Gamma. \tag{9.7}\]</span></span></p>
+<p><span class="math inline">\(\Gamma = 1\)</span> recovers conditional exchangeability given <span class="math inline">\(X\)</span> alone. <span class="math inline">\(\Gamma = 2\)</span> states units with the same <span class="math inline">\(X\)</span> may differ by up to a factor of 2 in treatment odds due to unmeasured <span class="math inline">\(U\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: <span class="math inline">\(\Gamma\)</span>-Bounds on the Rank Statistic <span class="citation" data-cites="rosenbaum2002observational">(<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a matched-pair design, the null distribution of the sign-rank statistic under the <span class="math inline">\(\Gamma\)</span>-model is bounded by Binomial reference distributions with treatment probabilities <span class="math inline">\(\Gamma/(1+\Gamma)\)</span> and <span class="math inline">\(1/(1+\Gamma)\)</span>.</p>
+</div>
+</div>
+<p>The practical outcome is a tipping <span class="math inline">\(\Gamma^\star\)</span>: the smallest <span class="math inline">\(\Gamma\)</span> at which the test fails to reject. Small <span class="math inline">\(\Gamma^\star\)</span> (near 1) indicates a fragile conclusion; large <span class="math inline">\(\Gamma^\star\)</span> indicates a robust one.</p>
+</section>
+<section id="sec-evalue" class="level3" data-number="9.4.2">
+<h3 data-number="9.4.2" class="anchored" data-anchor-id="sec-evalue"><span class="header-section-number">9.4.2</span> The E-Value and the VanderWeele–Ding Bound</h3>
+<p><span class="citation" data-cites="ding2016sensitivity">Ding and VanderWeele (<a href="references.html#ref-ding2016sensitivity" role="doc-biblioref">2016</a>)</span> and <span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="references.html#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span> proposed a sensitivity summary that requires no matched design and takes the form of a single closed-form number. It has become the most widely reported sensitivity summary in the applied literature.</p>
+<p>Define two risk-ratio sensitivity parameters: <span class="math inline">\(\mathrm{RR}_{TU} = \max_x P(U=1 \mid T=1, X=x)/P(U=1 \mid T=0, X=x)\)</span> (maximum RR of <span class="math inline">\(U\)</span> with <span class="math inline">\(T\)</span>), and <span class="math inline">\(\mathrm{RR}_{UY} = \max_{t,x} P(Y=1 \mid T=t, X=x, U=1)/P(Y=1 \mid T=t, X=x, U=0)\)</span> (maximum RR of <span class="math inline">\(U\)</span> with <span class="math inline">\(Y\)</span>). The <em>bias factor</em> is: <span id="eq-bias-factor"><span class="math display">\[B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) = \frac{\mathrm{RR}_{TU}\, \mathrm{RR}_{UY}}{\mathrm{RR}_{TU} + \mathrm{RR}_{UY} - 1}. \tag{9.8}\]</span></span></p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: VanderWeele–Ding Bound
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\mathrm{RR}_{TY \mid X}^{\mathrm{true}} \geq \mathrm{RR}_{TY \mid X}^{\mathrm{obs}} / B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})\)</span>.</p>
+<p>The observed risk ratio can be explained away only if both <span class="math inline">\(\mathrm{RR}_{TU}\)</span> and <span class="math inline">\(\mathrm{RR}_{UY}\)</span> are at least as large as the <strong>E-value</strong>: <span id="eq-evalue"><span class="math display">\[\mathrm{EV} = \mathrm{RR}_{TY \mid X}^{\mathrm{obs}} + \sqrt{\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}\,(\mathrm{RR}_{TY \mid X}^{\mathrm{obs}} - 1)}. \tag{9.9}\]</span></span></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -659,9 +761,10 @@ window.Quarto = {
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Partitioning <span class="math inline">\(\mathcal{A}\)</span> conformably with <span class="math inline">\((\psi, \alpha)\)</span>: <span class="math display">\[\mathcal{A} = \begin{pmatrix} A_{11} &amp; A_{12} \\ 0 &amp; A_{22} \end{pmatrix}, \qquad \mathcal{A}^{-1} = \begin{pmatrix} A_{11}^{-1} &amp; -A_{11}^{-1}A_{12}A_{22}^{-1} \\ 0 &amp; A_{22}^{-1} \end{pmatrix}.\]</span> The lower-left block is zero because <span class="math inline">\(U_2\)</span> does not depend on <span class="math inline">\(\psi\)</span>. Reading off the first row of <span class="math inline">\(-\mathcal{A}^{-1}U(O;\theta_0)\)</span> gives <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a>. <span class="math inline">\(\square\)</span></p>
+<p>Fix <span class="math inline">\(x\)</span> and write <span class="math inline">\(p_t = P(U{=}1 \mid T{=}t, X{=}x)\)</span> and <span class="math inline">\(r_t\)</span> for the outcome risk ratio of <span class="math inline">\(U\)</span> at arm <span class="math inline">\(t\)</span>. The ratio of observed to causal risk ratio is <span class="math inline">\([1 + p_1(r_1 - 1)][1 + p(r_0 - 1)] / \{[1 + p(r_1 - 1)][1 + p_0(r_0 - 1)]\}\)</span>. Maximizing over admissible <span class="math inline">\((p_0, p_1, p, r_0, r_1)\)</span> subject to <span class="math inline">\(\max p_1/p_0 \le \mathrm{RR}_{TU}\)</span> and <span class="math inline">\(\max r_t \le \mathrm{RR}_{UY}\)</span>, the maximum is attained at <span class="math inline">\(p_0 = 0\)</span>, <span class="math inline">\(r_0 = 1\)</span>, giving the bound <a href="#eq-bias-factor" class="quarto-xref">Equation&nbsp;<span>9.8</span></a>.</p>
+<p>For <a href="#eq-evalue" class="quarto-xref">Equation&nbsp;<span>9.9</span></a>: set <span class="math inline">\(\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = e\)</span> and ask for the smallest <span class="math inline">\(e\)</span> such that <span class="math inline">\(B(e,e) = R\)</span> (where <span class="math inline">\(R = \mathrm{RR}_{TY|X}^{\mathrm{obs}}\)</span>). This gives <span class="math inline">\(e^2/(2e-1) = R\)</span>, so <span class="math inline">\(e = R + \sqrt{R(R-1)}\)</span>. <span class="math inline">\(\square\)</span></p>
 </div>
 </div>
 </div>
@@ -671,49 +774,150 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Interpreting the Correction Term
+<span class="screen-reader-only">Note</span>Example: An E-Value Calculation
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a> decomposes the influence function into two parts. The first term, <span class="math inline">\(-A_{11}^{-1}U_1(O;\psi_0,\alpha_0)\)</span>, is exactly what we would obtain if <span class="math inline">\(\alpha_0\)</span> were known. The second term, <span class="math inline">\(A_{11}^{-1}A_{12}A_{22}^{-1}U_2(O;\alpha_0)\)</span>, is a <em>nuisance correction</em> that accounts for the additional variability introduced by estimating <span class="math inline">\(\alpha\)</span>. If <span class="math inline">\(A_{12}=0\)</span>, the target estimating function <span class="math inline">\(U_1\)</span> does not depend on <span class="math inline">\(\alpha\)</span> at <span class="math inline">\(\alpha_0\)</span>, and the correction vanishes. This is the key condition exploited by <em>doubly robust</em> estimators in Chapter 10.</p>
+<p>An observational study reports <span class="math inline">\(\mathrm{RR}_{TY|X}^{\mathrm{obs}} = 2.5\)</span> with 95% CI <span class="math inline">\([1.7, 3.7]\)</span>.</p>
+<p><span class="math inline">\(\mathrm{EV} = 2.5 + \sqrt{2.5 \times 1.5} \approx 4.44\)</span>. To reduce the point estimate to the null, an unmeasured confounder must have both a RR association with treatment <em>and</em> an outcome-conditional RR association of at least 4.4.</p>
+<p><span class="math inline">\(\mathrm{EV}_{\mathrm{CL}} = 1.7 + \sqrt{1.7 \times 0.7} \approx 2.79\)</span>. To reduce the lower CI to the null, the associations must each be at least 2.8.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Why a Single Number
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The E-value collapses the two parameters to one by asking about the symmetric diagonal <span class="math inline">\(\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = e\)</span>. This is conservative: asymmetric configurations can also explain away the effect. The E-value is reported because it is a single interpretable scalar, not because it is the tightest possible summary.</p>
 </div>
 </div>
 </section>
-<section id="working-example-ipw-with-estimated-propensity-score" class="level3" data-number="9.7.2">
-<h3 data-number="9.7.2" class="anchored" data-anchor-id="working-example-ipw-with-estimated-propensity-score"><span class="header-section-number">9.7.2</span> Working Example: IPW with Estimated Propensity Score</h3>
-<p>Assume a logistic regression model <span class="math inline">\(\pi(X;\alpha) = \mathrm{expit}(X^\top\alpha)\)</span>. The IPW estimating equation for <span class="math inline">\(\psi\)</span> is <span class="math inline">\(U_1(O;\psi,\alpha) = \frac{TY}{\pi(X;\alpha)} - \frac{(1-T)Y}{1-\pi(X;\alpha)} - \psi\)</span>, and the score for the logistic regression is <span class="math inline">\(U_2(O;\alpha) = X\{T - \pi(X;\alpha)\}\)</span>.</p>
-<p>Computing the Jacobian blocks: <span class="math inline">\(A_{11} = -1\)</span>, <span class="math inline">\(A_{22} = -\Sigma_\pi := -\E\{\pi(X;\alpha_0)(1-\pi(X;\alpha_0))XX^\top\}\)</span>. After computing <span class="math inline">\(A_{12}\)</span>, the corrected influence function is: <span id="eq-if-ipw-corrected"><span class="math display">\[\varphi(O) = U_1(O;\psi_0,\alpha_0) + A_{12}\,\Sigma_\pi^{-1}\,U_2(O;\alpha_0). \tag{9.3}\]</span></span></p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Variance Reduction from ML Estimation of Propensity Score
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We show that estimating <span class="math inline">\(\alpha\)</span> by maximum likelihood can only <em>reduce</em> the asymptotic variance relative to using the true <span class="math inline">\(\alpha_0\)</span>.</p>
-<p>Write <span class="math inline">\(\sigma_1^2 = \E[U_1^2]\)</span> for the variance of the naive IPW estimating function. Two Bartlett-type identities are the key:</p>
-<p><strong>Identity 1</strong> (Bartlett for ML score): <span class="math inline">\(\E[U_2 U_2^\top] = \Sigma_\pi\)</span>.</p>
-<p><strong>Identity 2</strong> (cross-identity): <span class="math inline">\(A_{12} = -\E[U_1 U_2^\top]\)</span>.</p>
-<p>Substituting into <span class="math inline">\(\E[\varphi(O)^2] = \sigma_1^2 + 2A_{12}\Sigma_\pi^{-1}\E[U_1 U_2] + A_{12}\Sigma_\pi^{-1}\E[U_2 U_2^\top]\Sigma_\pi^{-1}A_{12}^\top\)</span>: <span class="math display">\[\E[\varphi(O)^2] = \sigma_1^2 - A_{12}\Sigma_\pi^{-1}A_{12}^\top \leq \sigma_1^2.\]</span> Since <span class="math inline">\(\Sigma_\pi\)</span> is positive definite, the variance is reduced. <em>ML estimation of the propensity score parameters reduces the asymptotic variance of the IPW estimator</em> — the <em>estimated propensity score paradox</em> <span class="citation" data-cites="robins1986new">(Robins 1986)</span>.</p>
-</div>
-</div>
-</div>
+<section id="sec-msm" class="level3" data-number="9.4.3">
+<h3 data-number="9.4.3" class="anchored" data-anchor-id="sec-msm"><span class="header-section-number">9.4.3</span> The Marginal Sensitivity Model</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Sandwich Variance Estimator
+<span class="screen-reader-only">Note</span>Definition: Marginal Sensitivity Model <span class="citation" data-cites="tan2006distributional">(<a href="references.html#ref-tan2006distributional" role="doc-biblioref">Tan 2006</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a> provides the basis for the <em>sandwich variance estimator</em>: <span class="math inline">\(\hat V = n^{-2}\sum_{i=1}^n \hat\varphi_i^2\)</span>, where <span class="math inline">\(\hat\varphi_i\)</span> is <span class="math inline">\(\varphi(O_i)\)</span> evaluated at <span class="math inline">\((\hat\psi,\hat\alpha)\)</span>. This estimator automatically accounts for nuisance estimation uncertainty. Standard errors from a logistic regression routine that ignores the link between <span class="math inline">\(\hat\alpha\)</span> and <span class="math inline">\(\hat\psi\)</span> will in general be <em>incorrect</em>.</p>
+<p>The <em>marginal sensitivity model</em> at level <span class="math inline">\(\Lambda \geq 1\)</span> bounds the odds ratio between the nominal propensity <span class="math inline">\(\pi(x) = P(T=1 \mid X=x)\)</span> and the true propensity <span class="math inline">\(\pi^{\mathrm{true}}(x,u) = P(T=1 \mid X=x, U=u)\)</span>: <span id="eq-msm-bound"><span class="math display">\[\frac{1}{\Lambda} \leq \frac{\{1-\pi^{\mathrm{true}}(X,U)\}\,\pi(X)}{\pi^{\mathrm{true}}(X,U)\,\{1-\pi(X)\}} \leq \Lambda \quad\text{a.s.} \tag{9.10}\]</span></span></p>
+<p><span class="math inline">\(\Lambda = 1\)</span> recovers no unmeasured confounding.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: MSM Bounds on the ATE <span class="citation" data-cites="zhao2019sensitivity">(<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">Zhao et al. 2019</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the marginal sensitivity model at level <span class="math inline">\(\Lambda\)</span>, the ATE satisfies <span class="math inline">\(\tau_L(\Lambda) \leq \tau \leq \tau_U(\Lambda)\)</span>, where the sharp bounds are obtained by solving linear programs over the admissible weight perturbations induced by <a href="#eq-msm-bound" class="quarto-xref">Equation&nbsp;<span>9.10</span></a>.</p>
+</div>
+</div>
+<p><em>Proof sketch.</em> The true IPW weights equal the nominal weights multiplied by a perturbation factor <span class="math inline">\(\phi_i \in [\Lambda^{-1}, \Lambda]\)</span>. Because the target is linear in <span class="math inline">\(\phi\)</span>, the extrema are attained at <span class="math inline">\(\phi_i \in \{\Lambda^{-1}, \Lambda\}\)</span>. <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span> give closed-form percentile expressions. <span class="math inline">\(\square\)</span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: MSM as the Estimation-Oriented Sensitivity Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The MSM is the natural model to pair with IPW, AIPW, TMLE, and DML (Chapters 10–12), because it bounds the violation on the <em>weight</em> scale rather than on the unobservable <span class="math inline">\(P(T \mid X, U)\)</span>. The sensitivity analysis reduces to a perturbation of the nominal weights by a factor in <span class="math inline">\([\Lambda^{-1}, \Lambda]\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="sec-comparing-three" class="level3" data-number="9.4.4">
+<h3 data-number="9.4.4" class="anchored" data-anchor-id="sec-comparing-three"><span class="header-section-number">9.4.4</span> Comparing the Three Models</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Rosenbaum <span class="math inline">\(\Gamma\)</span></strong></th>
+<th><strong>E-value</strong></th>
+<th><strong>MSM (<span class="math inline">\(\Lambda\)</span>)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Parameter bounds</td>
+<td>odds ratio of treatment given <span class="math inline">\(X, U\)</span></td>
+<td>pair of risk-ratio associations <span class="math inline">\(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}\)</span></td>
+<td>odds ratio of nominal to true propensity</td>
+</tr>
+<tr class="even">
+<td>Natural estimator</td>
+<td>matched-pair and weighted rank tests</td>
+<td>any relative-effect summary</td>
+<td>IPW, AIPW</td>
+</tr>
+<tr class="odd">
+<td>One-number summary</td>
+<td>tipping <span class="math inline">\(\Gamma^\star\)</span></td>
+<td><span class="math inline">\(\mathrm{EV}\)</span> (symmetric diagonal)</td>
+<td>bounds <span class="math inline">\([\tau_L, \tau_U]\)</span> or tipping <span class="math inline">\(\Lambda^\star\)</span></td>
+</tr>
+<tr class="even">
+<td>Primary reference</td>
+<td><span class="citation" data-cites="rosenbaum2002observational">Rosenbaum (<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">2002</a>)</span></td>
+<td><span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="references.html#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span></td>
+<td><span class="citation" data-cites="tan2006distributional">Tan (<a href="references.html#ref-tan2006distributional" role="doc-biblioref">2006</a>)</span>; <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Which Model to Report
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Reporting more than one summary is common and useful. The E-value is almost always included because it is a single number that is widely understood; the <span class="math inline">\(\Gamma\)</span>-value is reported in matched or rank-based analyses; and the MSM bounds are reported when the primary estimator is IPW or AIPW. The three are not substitutes: each bounds a different object.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-benchmarking" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="sec-benchmarking"><span class="header-section-number">9.5</span> Benchmarking Sensitivity Parameters</h2>
+<p>Every sensitivity model has parameters that are not identified by the data. A sensitivity curve of the form “at <span class="math inline">\(\lambda = 0.2\)</span> the effect is halved” is mathematically precise but scientifically empty until <span class="math inline">\(\lambda = 0.2\)</span> has been anchored to something concrete. <em>Benchmarking</em> gives sensitivity parameters an empirical referent by comparing them to the analogous quantities computed for the <em>observed</em> covariates <span class="citation" data-cites="cinelli2020making">(<a href="references.html#ref-cinelli2020making" role="doc-biblioref">Cinelli and Hazlett 2020</a>)</span>.</p>
+<section id="benchmarking-against-observed-covariates" class="level3" data-number="9.5.1">
+<h3 data-number="9.5.1" class="anchored" data-anchor-id="benchmarking-against-observed-covariates"><span class="header-section-number">9.5.1</span> Benchmarking Against Observed Covariates</h3>
+<p>For the binary-confounder setup, compute for each observed covariate <span class="math inline">\(X_j\)</span>: the coefficient on <span class="math inline">\(X_j\)</span> in a regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, X_1, \ldots)\)</span> (the role of <span class="math inline">\(\delta\)</span>), and the difference in conditional means of <span class="math inline">\(X_j\)</span> across treatment arms (the role of the imbalance). Plot these against the tipping contour.</p>
+<p>For the E-value, for each <span class="math inline">\(X_j\)</span> compute the bias factor: <span class="math display">\[B_j = \frac{\mathrm{RR}_{TX_j}\,\mathrm{RR}_{X_jY}}{\mathrm{RR}_{TX_j} + \mathrm{RR}_{X_jY} - 1}.\]</span> If <span class="math inline">\(B_j &lt; \mathrm{EV}\)</span> for every observed covariate, an unmeasured confounder inducing the observed effect would have to be at least as strong as some observed covariate. <span class="citation" data-cites="cinelli2020making">Cinelli and Hazlett (<a href="references.html#ref-cinelli2020making" role="doc-biblioref">2020</a>)</span> develop partial-<span class="math inline">\(R^2\)</span> benchmarks for the linear regression setting.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Benchmarked Reporting Language
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The estimated effect of the job-training program on annual earnings is $1,800 with 95% CI <span class="math inline">\([\$900, \$2,700]\)</span>. The E-value for the lower confidence limit is 2.3. Among the observed covariates, the largest bias factor is that of prior-year earnings, at <span class="math inline">\(B = 2.0\)</span>; baseline education has <span class="math inline">\(B = 1.5\)</span>. The conclusion is robust to an unmeasured confounder as strong as any observed covariate, but could be overturned by a confounder approximately 15% stronger than the strongest observed one.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
@@ -722,163 +926,309 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>The Central Challenge in Causal Estimation
+<span class="screen-reader-only">Warning</span>Sensitivity without Benchmarking
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The primary difficulty in practice is often not identifying the target parameter, but <em>correctly accounting for the effect of nuisance estimation</em> on the asymptotic distribution of the final estimator. Treating <span class="math inline">\(\hat\alpha\)</span> as if it were the true <span class="math inline">\(\alpha_0\)</span> yields correct point estimates under a correctly specified propensity score model but <em>incorrect standard errors</em>. The Z-estimation framework resolves this variance-accounting issue whenever the nuisance model is correctly specified and the nuisance estimator converges at rate <span class="math inline">\(n^{-1/2}\)</span>.</p>
+<p>Reporting “the effect is robust up to <span class="math inline">\(\Gamma = 2\)</span>” without a statement of whether <span class="math inline">\(\Gamma = 2\)</span> is plausible in the study at hand is the sensitivity-analysis analog of reporting a confidence interval without stating the confidence level: technically complete, but uninformative.</p>
 </div>
 </div>
+</section>
+</section>
+<section id="sec-partial" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="sec-partial"><span class="header-section-number">9.6</span> Partial Identification and Bounds</h2>
+<p>The sensitivity models of <a href="#sec-three-models" class="quarto-xref"><span>Section 9.4</span></a> each restrict the magnitude of a violation by a single parameter. A more radical approach imposes no parametric restriction at all — asking what the observed data can say about the causal parameter without any untestable identifying assumption. The answer is a set of values: the theory of <em>partial identification</em> <span class="citation" data-cites="manski1990nonparametric manski2003partial">(<a href="references.html#ref-manski1990nonparametric" role="doc-biblioref">Manski 1990</a>, <a href="references.html#ref-manski2003partial" role="doc-biblioref">2003</a>)</span>.</p>
+<section id="point-identification-vs.-partial-identification" class="level3" data-number="9.6.1">
+<h3 data-number="9.6.1" class="anchored" data-anchor-id="point-identification-vs.-partial-identification"><span class="header-section-number">9.6.1</span> Point Identification vs.&nbsp;Partial Identification</h3>
+<p>Under <em>point identification</em>, <span class="math inline">\(\psi = \Psi(P)\)</span>. Under <em>partial identification</em>, the assumptions pin down a set: <span id="eq-partial-id"><span class="math display">\[\psi \in \Psi_A(P) = \{\text{values of }\psi\text{ consistent with assumption set }A\text{ and distribution }P\}. \tag{9.11}\]</span></span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Machine Learning for Nuisance Estimation
+<span class="screen-reader-only">Note</span>Definition: Sharp and Conservative Bounds
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The Z-estimation theorem as stated requires <span class="math inline">\(\hat\alpha\)</span> to converge at rate <span class="math inline">\(n^{-1/2}\)</span>, which holds for finite-dimensional parametric models but fails for nonparametric or machine-learning estimators. When flexible methods are used for <span class="math inline">\(\pi(x)\)</span> or <span class="math inline">\(\mu_t(x)\)</span>, the correction term in <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>9.2</span></a> no longer has the simple form derived here. This is the starting point for the doubly robust and debiased machine-learning estimators introduced in Chapter 11.</p>
+<p>A bound <span class="math inline">\([\psi_L, \psi_U]\)</span> is <em>sharp</em> under assumption set <span class="math inline">\(A\)</span> if it equals <span class="math inline">\([\inf \Psi_A(P),\, \sup \Psi_A(P)]\)</span>. It is <em>conservative</em> (valid) if it contains the identified set but may be wider. Sharp bounds cannot be improved without adding assumptions; conservative bounds can sometimes be tightened by a more careful derivation.</p>
 </div>
 </div>
 </section>
-</section>
-<section id="sec-variance" class="level2" data-number="9.8">
-<h2 data-number="9.8" class="anchored" data-anchor-id="sec-variance"><span class="header-section-number">9.8</span> Variance Estimation and Confidence Intervals</h2>
-<p>Once an estimator admits the asymptotic linear representation, its asymptotic variance is <span class="math inline">\(\mathrm{Var}(\hat\psi) \approx n^{-1}\,\mathrm{Var}\{\varphi(O)\}\)</span>. A natural estimator is: <span id="eq-var-est"><span class="math display">\[\hat V = \frac{1}{n^2}\sum_{i=1}^n \hat\varphi_i^2 = \frac{1}{n(n-1)}\sum_{i=1}^n (\hat\varphi_i - \bar\varphi)^2. \tag{9.4}\]</span></span></p>
-<p>This yields the approximate Wald confidence interval <span class="math inline">\(\hat\psi \pm z_{1-\alpha/2}\,\sqrt{\hat V}\)</span>.</p>
+<section id="sec-manski" class="level3" data-number="9.6.2">
+<h3 data-number="9.6.2" class="anchored" data-anchor-id="sec-manski"><span class="header-section-number">9.6.2</span> Manski’s No-Assumption Bound</h3>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Proposition: Variance from the Influence Function
+<span class="screen-reader-only">Tip</span>Theorem: Manski’s No-Assumption Bound <span class="citation" data-cites="manski1990nonparametric">(<a href="references.html#ref-manski1990nonparametric" role="doc-biblioref">Manski 1990</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>If <span class="math inline">\(\sqrt{n}(\hat\psi - \psi) = n^{-1/2}\sum_{i=1}^n \varphi(O_i) + o_p(1)\)</span> with <span class="math inline">\(\E\{\varphi(O)\} = 0\)</span> and <span class="math inline">\(\E\{\varphi(O)^2\} &lt; \infty\)</span>, then: <span class="math display">\[\sqrt{n}(\hat\psi - \psi) \overset{d}{\longrightarrow} N\!\left(0,\, \E[\varphi(O)^2]\right), \qquad \mathrm{Var}(\hat\psi) = \frac{1}{n}\,\E[\varphi(O)^2] + o(n^{-1}).\]</span></p>
+<p>Suppose <span class="math inline">\(Y \in [y_L, y_U]\)</span> a.s. and <span class="math inline">\(p = P(T=1)\)</span>. Then <span class="math inline">\(\tau \in [\tau_L, \tau_U]\)</span> with: <span id="eq-manski-lower"><span class="math display">\[\tau_L = [\E(Y \mid T=1)\,p + y_L\,(1-p)] - [\E(Y \mid T=0)\,(1-p) + y_U\,p], \tag{9.12}\]</span></span> <span id="eq-manski-upper"><span class="math display">\[\tau_U = [\E(Y \mid T=1)\,p + y_U\,(1-p)] - [\E(Y \mid T=0)\,(1-p) + y_L\,p]. \tag{9.13}\]</span></span></p>
+<p>These bounds are <strong>sharp</strong>, and the width of the identified set is: <span id="eq-manski-width"><span class="math display">\[\tau_U - \tau_L = y_U - y_L. \tag{9.14}\]</span></span></p>
 </div>
 </div>
-</section>
-<section id="sec-efficiency" class="level2" data-number="9.9">
-<h2 data-number="9.9" class="anchored" data-anchor-id="sec-efficiency"><span class="header-section-number">9.9</span> Toward Efficiency: Semiparametric Models and the EIF</h2>
-<p>Different regular estimators of the same parameter may have different large-sample variances. What is the smallest achievable asymptotic variance among all regular estimators? Answering that question leads to semiparametric efficiency theory. The formal machinery — regular parametric submodels, scores, tangent spaces, and the characterization of the EIF as a canonical gradient — is developed in Appendix C.</p>
-<section id="semiparametric-models" class="level3" data-number="9.9.1">
-<h3 data-number="9.9.1" class="anchored" data-anchor-id="semiparametric-models"><span class="header-section-number">9.9.1</span> Semiparametric Models</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>By the law of total probability: <span class="math inline">\(\E\{Y(1)\} = \E\{Y(1) \mid T=1\}\,p + \E\{Y(1) \mid T=0\}\,(1-p)\)</span> and <span class="math inline">\(\E\{Y(0)\} = \E\{Y(0) \mid T=1\}\,p + \E\{Y(0) \mid T=0\}\,(1-p)\)</span>. Consistency identifies <span class="math inline">\(\E\{Y(1) \mid T=1\} = \E(Y \mid T=1)\)</span> and <span class="math inline">\(\E\{Y(0) \mid T=0\} = \E(Y \mid T=0)\)</span>. The unobserved counterfactual means <span class="math inline">\(\E\{Y(1) \mid T=0\}\)</span> and <span class="math inline">\(\E\{Y(0) \mid T=1\}\)</span> are restricted only to <span class="math inline">\([y_L, y_U]\)</span>. Taking the Minkowski difference of the resulting intervals for <span class="math inline">\(\E\{Y(1)\}\)</span> and <span class="math inline">\(\E\{Y(0)\}\)</span> gives <a href="#eq-manski-lower" class="quarto-xref">Equation&nbsp;<span>9.12</span></a>–<a href="#eq-manski-upper" class="quarto-xref">Equation&nbsp;<span>9.13</span></a>. Sharpness follows from the existence of degenerate potential-outcome distributions attaining each extreme. Width: <span class="math inline">\(\tau_U - \tau_L = [y_U - y_L](1-p) + [y_U-y_L]p = y_U - y_L\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Semiparametric Model
+<span class="screen-reader-only">Note</span>Example: Manski Bound in a Binary Outcome
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A <strong>semiparametric model</strong> is a statistical model <span class="math inline">\(\mathcal{P}\)</span> for the distribution <span class="math inline">\(P\)</span> of the observed data in which (i) the <strong>parameter of interest</strong> <span class="math inline">\(\psi = \Psi(P) \in \mathbb{R}^p\)</span> is finite-dimensional, and (ii) the remaining aspects of <span class="math inline">\(P\)</span> — collectively called the <strong>nuisance parameter</strong> — are infinite-dimensional.</p>
+<p>Suppose <span class="math inline">\(Y \in \{0,1\}\)</span>, <span class="math inline">\(P(T=1) = 0.4\)</span>, <span class="math inline">\(\E(Y \mid T=1) = 0.6\)</span>, <span class="math inline">\(\E(Y \mid T=0) = 0.3\)</span>. Then: <span class="math inline">\(\tau_L = (0.6)(0.4) + (0)(0.6) - [(0.3)(0.6) + (1)(0.4)] = 0.24 - 0.58 = -0.34\)</span>; <span class="math inline">\(\tau_U = (0.6)(0.4) + (1)(0.6) - [(0.3)(0.6) + (0)(0.4)] = 0.84 - 0.18 = 0.66\)</span>. The identified set <span class="math inline">\(\tau \in [-0.34, 0.66]\)</span> includes zero: the observed positive association of 0.3 is consistent with a causal effect anywhere from a meaningful harm to a substantial benefit.</p>
 </div>
 </div>
-<p>The canonical example is the nonparametric model <span class="math inline">\(\mathcal{P} = \{P : 0 &lt; \pi(x) &lt; 1\ \forall x\}\)</span> with target parameter <span class="math inline">\(\psi = \E[Y(1)-Y(0)]\)</span>. The nuisance consists of <span class="math inline">\(\mu_t(x)\)</span>, <span class="math inline">\(\pi(x)\)</span>, and the marginal distribution of <span class="math inline">\(X\)</span>.</p>
-</section>
-<section id="regular-estimators" class="level3" data-number="9.9.2">
-<h3 data-number="9.9.2" class="anchored" data-anchor-id="regular-estimators"><span class="header-section-number">9.9.2</span> Regular Estimators</h3>
+<p>The no-assumption bound is as wide as the support of the outcome — typically too wide to be informative. Productive partial identification therefore proceeds by adding <em>shape restrictions</em> that narrow the set.</p>
+<p><strong>Monotone treatment response</strong> (<span class="math inline">\(Y(1) \geq Y(0)\)</span> a.s.) tightens the bounds. <strong>Monotone treatment selection</strong> (<span class="math inline">\(\E\{Y(t) \mid T=1\} \geq \E\{Y(t) \mid T=0\}\)</span>) is another common restriction. Combining these produces informative bounds even when neither alone suffices <span class="citation" data-cites="manski2003partial">(<a href="references.html#ref-manski2003partial" role="doc-biblioref">Manski 2003</a>)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Regular Estimator (informal)
+<span class="screen-reader-only">Note</span>Bounds as Sensitivity Analysis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>An estimator <span class="math inline">\(\hat\psi\)</span> is called <strong>regular</strong> at <span class="math inline">\(P_0\)</span> if, along every smooth parametric submodel <span class="math inline">\(\{P_t\}\)</span> with <span class="math inline">\(P_0 = P_{t=0}\)</span>, the limiting distribution of <span class="math inline">\(\sqrt{n}(\hat\psi - \psi_t)\)</span> under <span class="math inline">\(P_t = P_{1/\sqrt{n}}\)</span> does not depend on the submodel.</p>
+<p>Partial identification and sensitivity analysis are two views of the same underlying object. A sensitivity model with bounds <span class="math inline">\([\psi_L(\Lambda), \psi_U(\Lambda)]\)</span> is a parametric partial-identification analysis; Manski’s no-assumption bound is the limit when <span class="math inline">\(\Lambda\)</span> permits arbitrary violations. Intermediate models (the <span class="math inline">\(\Gamma\)</span>-model, the MSM) lie between these extremes, trading informativeness for robustness.</p>
 </div>
 </div>
-<p>Regularity rules out pathological “superefficient” estimators. All estimators in this course — regression, IPW, and their augmented variants — are regular.</p>
 </section>
-<section id="the-semiparametric-efficiency-bound-and-the-eif" class="level3" data-number="9.9.3">
-<h3 data-number="9.9.3" class="anchored" data-anchor-id="the-semiparametric-efficiency-bound-and-the-eif"><span class="header-section-number">9.9.3</span> The Semiparametric Efficiency Bound and the EIF</h3>
+</section>
+<section id="sec-positivity" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="sec-positivity"><span class="header-section-number">9.7</span> Sensitivity to Positivity and Overlap Violations</h2>
+<p>Chapter 6 introduced positivity as a structural requirement for the identification formulas underlying propensity-score methods. When <span class="math inline">\(\pi(x_0) = 0\)</span>, the counterfactual mean <span class="math inline">\(\E\{Y(1) \mid X=x_0\}\)</span> is not identified, and the ATE may not be point-identified over the full covariate support. When positivity holds but weakly, IPW weights <span class="math inline">\(1/\pi(X)\)</span> generate extreme values that destabilize estimates.</p>
+<section id="sec-trimming" class="level3" data-number="9.7.1">
+<h3 data-number="9.7.1" class="anchored" data-anchor-id="sec-trimming"><span class="header-section-number">9.7.1</span> Trimming as a Sensitivity Analysis</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Trimmed ATE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span id="eq-trimmed-ate"><span class="math display">\[\tau_\alpha = \E\{Y(1) - Y(0) \mid \alpha \leq \pi(X) \leq 1-\alpha\}, \tag{9.15}\]</span></span> for <span class="math inline">\(\alpha \in [0, 0.5)\)</span>. The choice <span class="math inline">\(\alpha = 0\)</span> recovers the full-population ATE.</p>
+</div>
+</div>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Semiparametric Convolution Theorem
+<span class="screen-reader-only">Tip</span>Lemma: Trimmed Estimand Identity
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="bickel1993">(Bickel et al. 1993)</span> In a semiparametric model <span class="math inline">\(\mathcal{P}\)</span>, the asymptotic distribution of any regular estimator <span class="math inline">\(\hat\psi\)</span> of <span class="math inline">\(\psi_0\)</span> satisfies: <span class="math display">\[\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\longrightarrow} N(0, V^*) * M\]</span> for some distribution <span class="math inline">\(M\)</span>, where <span class="math inline">\(V^* = \E_P\!\bigl[\varphi^*(O)\,\varphi^*(O)^\top\bigr]\)</span> is the <strong>semiparametric efficiency bound</strong>. The function <span class="math inline">\(\varphi^*(O)\)</span> with <span class="math inline">\(\E[\varphi^*(O)] = 0\)</span> and <span class="math inline">\(\E[\varphi^*(O)^2] = V^*\)</span> is called the <strong>efficient influence function</strong> (EIF). An estimator achieves <span class="math inline">\(V^*\)</span> if and only if it is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span>.</p>
+<p>Let <span class="math inline">\(S_\alpha = \{X : \alpha \leq \pi(X) \leq 1-\alpha\}\)</span> and <span class="math inline">\(q_\alpha = P(X \in S_\alpha) &gt; 0\)</span>. Under ignorability: <span id="eq-trimmed-id"><span class="math display">\[\tau_\alpha = \frac{1}{q_\alpha}\,\E\!\left\{[\mu_1(X) - \mu_0(X)]\,\mathbf{1}\{X \in S_\alpha\}\right\}. \tag{9.16}\]</span></span> On the trimmed population, the IPW weights are bounded: <span class="math inline">\(w(T,X) \leq 1/\alpha\)</span> on <span class="math inline">\(S_\alpha\)</span>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
+<p><em>Proof.</em> Conditional on <span class="math inline">\(X \in S_\alpha\)</span>, positivity holds with slack <span class="math inline">\(\alpha\)</span>, so the back-door formula applies pointwise. Integrating and normalizing gives <a href="#eq-trimmed-id" class="quarto-xref">Equation&nbsp;<span>9.16</span></a>. The weight bound follows directly from <span class="math inline">\(\pi(X) \geq \alpha\)</span> on <span class="math inline">\(S_\alpha\)</span>. <span class="math inline">\(\square\)</span></p>
+<p><span class="math inline">\(\tau_\alpha\)</span> and <span class="math inline">\(\tau_0\)</span> are <em>different estimands</em>: trimming is a retargeting strategy, not a variance-reduction trick. A trimmed analysis answers “what is the causal effect on the subpopulation for which the treatment decision is not already essentially forced by covariates?”</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Semiparametrically Efficient Estimator
+<span class="screen-reader-only">Warning</span>Trimming Changes the Estimand
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A regular estimator <span class="math inline">\(\hat\psi\)</span> is <strong>semiparametrically efficient</strong> at <span class="math inline">\(P_0 \in \mathcal{P}\)</span> if <span class="math inline">\(\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\longrightarrow} N(0, V^*)\)</span>. Equivalently, <span class="math inline">\(\hat\psi\)</span> is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span>.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: How the EIF is Computed
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The EIF <span class="math inline">\(\varphi^*(O)\)</span> can be derived as the pathwise derivative of <span class="math inline">\(\Psi(P)\)</span> in the <em>least favorable</em> direction. In practice: (i) compute the pathwise derivative <span class="math inline">\(\varphi(O; P_\epsilon)\)</span> for an arbitrary parametric submodel; (ii) project onto the tangent space of <span class="math inline">\(\mathcal{P}\)</span> at <span class="math inline">\(P_0\)</span>. For nonparametric or large semiparametric models, the tangent space is rich enough that this projection is often the identity, and the EIF equals the ordinary pathwise derivative. See Appendix C for the formal treatment.</p>
+<p>Reporting <span class="math inline">\(\hat\tau_\alpha\)</span> as a stabilized estimate of <span class="math inline">\(\tau\)</span> without acknowledging that the target population has changed is a common mistake. Whenever <span class="math inline">\(\alpha &gt; 0\)</span>, the estimand is <a href="#eq-trimmed-ate" class="quarto-xref">Equation&nbsp;<span>9.15</span></a>, not the full-population ATE. A proper sensitivity analysis reports <span class="math inline">\(\hat\tau_\alpha\)</span> and <span class="math inline">\(q_\alpha\)</span> together for a grid of <span class="math inline">\(\alpha \in \{0, 0.01, 0.05, 0.10\}\)</span>.</p>
 </div>
 </div>
 </section>
-<section id="the-efficient-influence-function-for-the-ate" class="level3" data-number="9.9.4">
-<h3 data-number="9.9.4" class="anchored" data-anchor-id="the-efficient-influence-function-for-the-ate"><span class="header-section-number">9.9.4</span> The Efficient Influence Function for the ATE</h3>
+</section>
+<section id="sec-iv" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="sec-iv"><span class="header-section-number">9.8</span> Sensitivity to Invalid Instruments</h2>
+<p>Of the three IV assumptions, relevance is the most empirically diagnosable. Exogeneity and exclusion involve unobserved relationships and are not testable. A sensitivity analysis for IV concentrates on these two untestable assumptions.</p>
+<p>Relevance is a statement about <span class="math inline">\((Z, T)\)</span> given <span class="math inline">\(X\)</span> — observable. Exogeneity and exclusion are statements about <span class="math inline">\((Z, Y)\)</span> given <span class="math inline">\(X\)</span> and the unobserved <span class="math inline">\(U\)</span> — not observable. A complete robustness argument has two parts: (a) evaluation of first-stage strength and (b) sensitivity analysis for exogeneity and exclusion.</p>
+<section id="sec-direct-effect" class="level3" data-number="9.8.1">
+<h3 data-number="9.8.1" class="anchored" data-anchor-id="sec-direct-effect"><span class="header-section-number">9.8.1</span> Direct-Effect Violation of Exclusion</h3>
+<p>Consider the scalar-IV model with a direct effect <span class="math inline">\(\delta\)</span> of <span class="math inline">\(Z\)</span> on <span class="math inline">\(Y\)</span>: <span id="eq-iv-direct"><span class="math display">\[Y = \alpha + \beta T + \delta Z + \varepsilon, \qquad \E(\varepsilon \mid Z) = 0. \tag{9.17}\]</span></span></p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: IV Bias under Exclusion Violation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under <a href="#eq-iv-direct" class="quarto-xref">Equation&nbsp;<span>9.17</span></a> and standard IV regularity conditions: <span id="eq-iv-bias"><span class="math display">\[\frac{\mathrm{Cov}(Y,Z)}{\mathrm{Cov}(T,Z)} = \beta + \delta\,\frac{\mathrm{Var}(Z)}{\mathrm{Cov}(T,Z)}. \tag{9.18}\]</span></span></p>
+<p>Equivalently, the Wald estimand at posited <span class="math inline">\(\delta\)</span> is: <span id="eq-beta-delta"><span class="math display">\[\beta(\delta) = \frac{\mathrm{Cov}(Y,Z) - \delta\,\mathrm{Var}(Z)}{\mathrm{Cov}(T,Z)}. \tag{9.19}\]</span></span></p>
+</div>
+</div>
+<p><em>Proof.</em> Take covariance of <a href="#eq-iv-direct" class="quarto-xref">Equation&nbsp;<span>9.17</span></a> with <span class="math inline">\(Z\)</span>: <span class="math inline">\(\mathrm{Cov}(Y,Z) = \beta\,\mathrm{Cov}(T,Z) + \delta\,\mathrm{Var}(Z) + \mathrm{Cov}(\varepsilon,Z)\)</span>. By orthogonality, <span class="math inline">\(\mathrm{Cov}(\varepsilon,Z)=0\)</span>. Dividing and rearranging gives <a href="#eq-iv-bias" class="quarto-xref">Equation&nbsp;<span>9.18</span></a> and <a href="#eq-beta-delta" class="quarto-xref">Equation&nbsp;<span>9.19</span></a>. <span class="math inline">\(\square\)</span></p>
+<p><strong>Key pedagogical consequence:</strong> the bias is proportional to <span class="math inline">\(\mathrm{Var}(Z)/\mathrm{Cov}(T,Z)\)</span>, the inverse of the first-stage slope. A <em>weak</em> first stage <em>amplifies</em> the bias from any exclusion violation.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: EIF for the ATE
+<span class="screen-reader-only">Note</span>Example: IV Sensitivity Curve
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For the ATE <span class="math inline">\(\psi = \E\{Y(1) - Y(0)\}\)</span> in the nonparametric observational-data model under strong ignorability and positivity, the efficient influence function is: <span id="eq-eif-ate"><span class="math display">\[\varphi^*(O) = \frac{T\{Y - \mu_1(X)\}}{\pi(X)} - \frac{(1-T)\{Y - \mu_0(X)\}}{1-\pi(X)} + \mu_1(X) - \mu_0(X) - \psi. \tag{9.5}\]</span></span></p>
-<p>This expression has a natural decomposition: the first two terms are an IPW-style residual correction, and the last two are the regression estimator centered at <span class="math inline">\(\psi\)</span>. The EIF depends on <em>both</em> nuisance functions <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span>, and an estimator that plugs in consistent estimates of both achieves the efficiency bound <span class="math inline">\(V^* = \E[\varphi^*(O)^2]\)</span>.</p>
+<p><span class="math inline">\(\mathrm{Cov}(Y,Z) = 3\)</span>, <span class="math inline">\(\mathrm{Cov}(T,Z) = 1.5\)</span>, <span class="math inline">\(\mathrm{Var}(Z) = 1\)</span>. Wald estimate: <span class="math inline">\(\hat\beta(0) = 2.0\)</span>. Applying <a href="#eq-beta-delta" class="quarto-xref">Equation&nbsp;<span>9.19</span></a>: <span class="math inline">\(\hat\beta(\delta) = (3-\delta)/1.5\)</span>. Values: <span class="math inline">\(\hat\beta(0.5) = 1.67\)</span>, <span class="math inline">\(\hat\beta(1.0) = 1.33\)</span>, <span class="math inline">\(\hat\beta(2.0) = 0.67\)</span>, <span class="math inline">\(\hat\beta(3.0) = 0\)</span>. The tipping point is <span class="math inline">\(\delta^\star = 3\)</span>.</p>
 </div>
 </div>
+</section>
+<section id="sec-iv-late" class="level3" data-number="9.8.2">
+<h3 data-number="9.8.2" class="anchored" data-anchor-id="sec-iv-late"><span class="header-section-number">9.8.2</span> Connection to LATE and Monotonicity</h3>
+<p>Under heterogeneous treatment effects, sensitivity analysis can also address monotonicity violations, with the sensitivity parameter becoming the proportion of defiers <span class="citation" data-cites="angrist1996identification">(<a href="references.html#ref-angrist1996identification" role="doc-biblioref">Angrist et al. 1996</a>)</span>. The same conceptual framework — parameterize the violation, report a curve or bound — applies.</p>
+</section>
+</section>
+<section id="sec-mediation" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="sec-mediation"><span class="header-section-number">9.9</span> Sensitivity in Mediation Analysis</h2>
+<p>Sensitivity analysis is especially important in mediation analysis because the identifying assumptions are strictly stronger than those for total effects. Even in a randomized trial, Assumptions 3 and 4 of sequential ignorability cannot be guaranteed.</p>
+<section id="sec-rho" class="level3" data-number="9.9.1">
+<h3 data-number="9.9.1" class="anchored" data-anchor-id="sec-rho"><span class="header-section-number">9.9.1</span> Residual-Correlation Sensitivity Parameter</h3>
+<p>Consider the linear mediation system <span class="math inline">\(M = a_0 + aT + a_X^\top X + \varepsilon_M\)</span>, <span class="math inline">\(Y = b_0 + \tau' T + bM + b_X^\top X + \varepsilon_Y\)</span>, with sensitivity parameter: <span id="eq-rho-def"><span class="math display">\[\rho = \mathrm{Corr}(\varepsilon_M, \varepsilon_Y \mid T, X). \tag{9.20}\]</span></span></p>
+<p>If sequential ignorability holds, <span class="math inline">\(\rho = 0\)</span>: disturbances are orthogonal because any shared source of variation has been conditioned out. A nonzero <span class="math inline">\(\rho\)</span> represents unobserved <span class="math inline">\(M\)</span>–<span class="math inline">\(Y\)</span> confounding. <span class="citation" data-cites="imai2010identification">Imai et al. (<a href="references.html#ref-imai2010identification" role="doc-biblioref">2010</a>)</span> derive the bias in the estimated NIE as a smooth function of <span class="math inline">\(\rho\)</span>, giving a sensitivity curve <span class="math inline">\(\rho \mapsto \widehat{\mathrm{NIE}}(\rho)\)</span> with tipping point <span class="math inline">\(\rho^\star\)</span>.</p>
+<p>A well-reported mediation sensitivity analysis states: the point estimate of the indirect effect (with sampling CI), the tipping value <span class="math inline">\(\rho^\star\)</span>, and a benchmark for what magnitude of <span class="math inline">\(\rho\)</span> is plausible.</p>
+</section>
+</section>
+<section id="sec-modern" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="sec-modern"><span class="header-section-number">9.10</span> Sensitivity Analysis and Modern Estimators</h2>
+<p>Chapters 10–13 develop doubly robust estimation, orthogonal scores, cross-fitting, and semiparametrically efficient IV estimation. These tools make estimators more robust — but robust to a specific class of perturbations: <em>nuisance-model misspecification</em>. They are silent about identification.</p>
+<p><strong>What robust estimation does.</strong> Neyman orthogonality makes AIPW consistent if either the outcome model or propensity model is correctly specified (double robustness). With cross-fitting, nuisance estimators need only converge at rate <span class="math inline">\(n^{-1/4}\)</span> to yield <span class="math inline">\(\sqrt{n}\)</span>-asymptotics. Both consequences address estimation under correctly maintained identifying assumptions.</p>
+<p><strong>What robust estimation does not do:</strong> Orthogonality and cross-fitting do not solve unmeasured confounding, positivity failure, IV invalidity, or mediation assumption failure.</p>
+<blockquote class="blockquote">
+<p><em>Neyman orthogonality and cross-fitting protect the estimator against nuisance-estimation error. They do not protect against violations of causal identification assumptions.</em></p>
+</blockquote>
+<p>This is the reason sensitivity analysis belongs in Part II (identification) rather than Part III (estimation). Every method in Chapters 10–13 assumes identification and refines the estimation.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Bridge to Chapter 10
+<span class="screen-reader-only">Note</span>Applied Workflow (Recommended)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Two important properties of <span class="math inline">\(\varphi^*(O)\)</span> will be central in Chapter 10:</p>
-<ol type="i">
-<li><p><strong>Double robustness.</strong> The estimator obtained by replacing <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> by estimates and averaging <span class="math inline">\(\varphi^*(O_i)\)</span> is consistent for <span class="math inline">\(\psi\)</span> if <em>either</em> <span class="math inline">\(\hat\pi\)</span> or <span class="math inline">\(\hat\mu_t\)</span> is consistent — not necessarily both.</p></li>
-<li><p><strong>Semiparametric efficiency.</strong> When both nuisance estimators are consistent and converge at suitable rates, the resulting estimator achieves the efficiency bound <span class="math inline">\(V^*\)</span>.</p></li>
+<ol type="1">
+<li>State the estimand (potential-outcome or do-notation).</li>
+<li>State the identifying assumptions (back-door, IV, front-door, mediation, etc.).</li>
+<li>Estimate the causal parameter (outcome regression, IPW, AIPW, DML, 2SLS, etc.).</li>
+<li>Quantify sampling uncertainty (standard errors, confidence intervals).</li>
+<li>Conduct sensitivity analysis for the least credible assumption (sensitivity curve, tipping point, or bounds, with benchmarking).</li>
+<li>Report both the point estimate with sampling CI and the sensitivity summary, with plain-language interpretation of robustness.</li>
 </ol>
-<p>The <em>augmented IPW</em> (AIPW) estimator is the principal tool for exploiting these two properties simultaneously, and will be derived and analyzed in Chapter 10.</p>
 </div>
 </div>
 </section>
+<section id="sec-lab" class="level2" data-number="9.11">
+<h2 data-number="9.11" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">9.11</span> Lab: A Tipping-Point Analysis for an Observational ATE</h2>
+<p><strong>DGP.</strong> Let <span class="math inline">\(X, U \overset{\mathrm{i.i.d.}}{\sim} N(0,1)\)</span> independently. Treatment: <span class="math inline">\(P(T=1 \mid X, U) = \mathrm{expit}(-0.3 + 0.6X + 1.0U)\)</span>. Outcome: <span class="math inline">\(Y(t) = 1.5t + 0.8X + 2.0U + \varepsilon\)</span>, <span class="math inline">\(\varepsilon \sim N(0,1)\)</span>. The analyst observes <span class="math inline">\((Y, T, X)\)</span> but not <span class="math inline">\(U\)</span>. True ATE: <span class="math inline">\(\tau = 1.5\)</span>.</p>
+<p><strong>Naive adjusted estimator.</strong> OLS coefficient on <span class="math inline">\(T\)</span> in the regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((1, T, X)\)</span>. Running 500 Monte Carlo replicates (<span class="math inline">\(n = 2000\)</span>): mean of <span class="math inline">\(\hat\tau_X\)</span> is 3.172, SD is 0.099. Implied 95% CI <span class="math inline">\(\approx [2.98, 3.37]\)</span>. The naive estimator is badly biased, but the CI is narrow and does not contain the truth. This is the identification-uncertainty failure mode in concrete form.</p>
+<p><strong>Sensitivity adjustment.</strong> Using the binary-<span class="math inline">\(U\)</span> decomposition, bias is <span class="math inline">\(B(\alpha_U, \delta) = \delta \cdot \mathrm{imbalance}(\alpha_U)\)</span>. Sensitivity-adjusted estimate <span class="math inline">\(\hat\tau_{\mathrm{sens}} = \hat\tau_X - B\)</span> over a grid (<span class="math inline">\(\hat\tau_X = 3.172\)</span>; the true configuration is <span class="math inline">\(\alpha_U = 1.00, \delta = 2.0\)</span>):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Posited <span class="math inline">\(\delta\)</span></th>
+<th><span class="math inline">\(\alpha_U=0.25\)</span> (imb=0.232)</th>
+<th><span class="math inline">\(\alpha_U=0.50\)</span> (imb=0.440)</th>
+<th><span class="math inline">\(\alpha_U=1.00\)</span> (imb=0.787)</th>
+<th><span class="math inline">\(\alpha_U=1.50\)</span> (imb=1.025)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.5</td>
+<td>3.056</td>
+<td>2.952</td>
+<td>2.779</td>
+<td>2.660</td>
+</tr>
+<tr class="even">
+<td>1.0</td>
+<td>2.940</td>
+<td>2.732</td>
+<td>2.385</td>
+<td>2.147</td>
+</tr>
+<tr class="odd">
+<td>2.0</td>
+<td>2.708</td>
+<td>2.292</td>
+<td><strong>1.598 ✓</strong></td>
+<td>1.123</td>
+</tr>
+<tr class="even">
+<td>3.0</td>
+<td>2.477</td>
+<td>1.851</td>
+<td>0.811</td>
+<td>0.098</td>
+</tr>
+</tbody>
+</table>
+<p>The true configuration <span class="math inline">\((\alpha_U=1.00, \delta=2.0)\)</span> gives the sensitivity-adjusted value <span class="math inline">\(1.598 \approx \tau = 1.5\)</span> (checkmark).</p>
+<p><strong>Tipping points.</strong> <span class="math inline">\(\delta^\star(\alpha_U) = \hat\tau_X / \mathrm{imbalance}(\alpha_U)\)</span>. At <span class="math inline">\(\alpha_U = 1.00\)</span>: <span class="math inline">\(\delta^\star = 3.172/0.787 \approx 4.03\)</span>.</p>
+<p><strong>Benchmarking against observed <span class="math inline">\(X\)</span></strong> (outcome coefficient <span class="math inline">\(\gamma_X = 0.8\)</span>): at <span class="math inline">\(\alpha_U = 1.00\)</span>, the unmeasured confounder would need an outcome association about <span class="math inline">\(4.03/0.8 \approx 5\)</span> times stronger than <span class="math inline">\(X\)</span> to zero out the estimate. A confounder as strong as <span class="math inline">\(X\)</span> (<span class="math inline">\(\delta = 0.8\)</span>, <span class="math inline">\(\alpha_U = 1.0\)</span>) would adjust the estimate to <span class="math inline">\(\approx 2.54\)</span> — still clearly positive.</p>
+<p><strong>Four lessons:</strong> (1) The naive CI <span class="math inline">\([2.98, 3.37]\)</span> is narrow but misses the true ATE <span class="math inline">\(\tau = 1.5\)</span>. Sampling uncertainty <span class="math inline">\(\neq\)</span> identification uncertainty. (2) Sensitivity adjustment at the correct configuration recovers the truth to within Monte Carlo error. (3) The tipping point depends jointly on both sensitivity parameters. (4) Benchmarking against observed <span class="math inline">\(X\)</span> anchors the analysis: the conclusion “the effect is positive” is robust to unmeasured confounders up to about <span class="math inline">\(5\gamma_X\)</span> in outcome association.</p>
 </section>
-<section id="sec-summary" class="level2" data-number="9.10">
-<h2 data-number="9.10" class="anchored" data-anchor-id="sec-summary"><span class="header-section-number">9.10</span> Chapter Summary</h2>
+<section id="sec-reporting" class="level2" data-number="9.12">
+<h2 data-number="9.12" class="anchored" data-anchor-id="sec-reporting"><span class="header-section-number">9.12</span> Practical Reporting Guidelines</h2>
+<p><strong>At minimum, a report should include:</strong> the point estimate <span class="math inline">\(\hat\psi\)</span> and its 95% CI; a sensitivity summary (curve, bound, E-value, or tipping point); a benchmarking statement; and a plain-language interpretation.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Misleading Phrases to Avoid
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>“The result is causal because the estimate is statistically significant.” Statistical significance addresses sampling uncertainty, not identification credibility.</li>
+<li>“The result is robust because we used machine learning.” Flexible nuisance estimation improves the estimator; it does not validate the identifying assumptions.</li>
+<li>“Sensitivity analysis showed the result is not biased.” Sensitivity analysis quantifies how much bias the identifying assumptions <em>could</em> produce if violated — it does not test for bias.</li>
+<li>“The E-value is <span class="math inline">\(X\)</span>, therefore the effect is robust.” An E-value is robust or not depending on whether <span class="math inline">\(X\)</span> is plausible as an unmeasured-confounder strength. A large E-value without benchmarking is an unanchored statistic.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="chapter-summary" class="level2" data-number="9.13">
+<h2 data-number="9.13" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">9.13</span> Chapter Summary</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -886,73 +1236,132 @@ window.Quarto = {
 </colgroup>
 <thead>
 <tr class="header">
-<th><strong>Object</strong></th>
-<th><strong>Role</strong></th>
+<th><strong>Symbol</strong></th>
+<th><strong>Meaning</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Estimating function <span class="math inline">\(U(O;\theta)\)</span></td>
-<td>Defines the estimator via <span class="math inline">\(\mathbb{P}_n\{U(O;\hat\theta)\}=0\)</span></td>
+<td><span class="math inline">\(\Delta_{\mathrm{obs}}\)</span></td>
+<td>Observed adjusted contrast</td>
 </tr>
 <tr class="even">
-<td>Influence function <span class="math inline">\(\varphi(O)\)</span></td>
-<td>First-order term in the expansion of <span class="math inline">\(\hat\psi - \psi\)</span>; used for CLT and variance estimation</td>
+<td><span class="math inline">\(B\)</span></td>
+<td>Confounding bias <a href="#eq-B-general" class="quarto-xref">Equation&nbsp;<span>9.3</span></a></td>
 </tr>
 <tr class="odd">
-<td>Asymptotic variance <span class="math inline">\(\E[\varphi(O)^2]/n\)</span></td>
-<td>Governs precision; the target for efficiency comparisons</td>
+<td><span class="math inline">\(\Gamma\)</span></td>
+<td>Rosenbaum odds-ratio bound</td>
 </tr>
 <tr class="even">
-<td>Efficient influence function <span class="math inline">\(\varphi^*(O)\)</span></td>
-<td>Achieves the semiparametric efficiency bound; basis for doubly robust estimators (Chapter 10)</td>
+<td><span class="math inline">\(\mathrm{EV}\)</span></td>
+<td>E-value: <span class="math inline">\(R + \sqrt{R(R-1)}\)</span> <a href="#eq-evalue" class="quarto-xref">Equation&nbsp;<span>9.9</span></a></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\Lambda\)</span></td>
+<td>MSM odds-ratio bound</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\tau_\alpha\)</span></td>
+<td>Trimmed ATE <a href="#eq-trimmed-ate" class="quarto-xref">Equation&nbsp;<span>9.15</span></a></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\rho\)</span></td>
+<td>Residual correlation for mediation <a href="#eq-rho-def" class="quarto-xref">Equation&nbsp;<span>9.20</span></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lambda^\star\)</span></td>
+<td>Tipping point for sign</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\lambda^\star_{\mathrm{CI}}\)</span></td>
+<td>Tipping point for statistical significance</td>
 </tr>
 </tbody>
 </table>
 <ol type="1">
-<li><strong>Identification is not estimation.</strong> Identification provides a population formula, but not automatically a satisfactory estimator.</li>
-<li><strong>Estimating equations.</strong> Many estimators are defined as solutions to sample moment conditions <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\}=0\)</span>, with the population condition <span class="math inline">\(\E\{U(O;\theta_0)\}=0\)</span> ensuring consistency.</li>
-<li><strong>Asymptotic linearity.</strong> Estimating equations often yield a first-order expansion, immediately implying asymptotic normality via the CLT.</li>
-<li><strong>Influence functions.</strong> The function <span class="math inline">\(\varphi(O)\)</span> describes the first-order sensitivity of the estimator to a single observation. It is the key object for both asymptotic theory and variance estimation.</li>
-<li><strong>Nuisance estimation.</strong> In causal inference, nuisance functions must be estimated, and this estimation error propagates into the target estimator. The Z-estimation framework corrects for this propagation.</li>
-<li><strong>Variance from the influence function.</strong> The asymptotic variance is <span class="math inline">\(n^{-1}\E[\varphi(O)^2]\)</span>, consistently estimated by <span class="math inline">\(n^{-2}\sum_i\hat\varphi_i^2\)</span>.</li>
-<li><strong>Efficiency.</strong> Among regular estimators, the one with the smallest asymptotic variance is efficient. The EIF characterizes this lower bound and will guide estimator construction in Chapter 10.</li>
+<li>Sampling uncertainty, model misspecification, and identification uncertainty are distinct sources of error. A confidence interval addresses only the first, and identification uncertainty does not vanish merely by collecting more data from the same observational regime.</li>
+<li>A sensitivity analysis introduces a parameter <span class="math inline">\(\lambda\)</span> that quantifies the strength of a violation, with <span class="math inline">\(\lambda = 0\)</span> recovering the baseline assumption. The three reporting objects are the sensitivity curve, sensitivity bounds, and the tipping point.</li>
+<li>The master bias decomposition <span class="math inline">\(\Delta_{\mathrm{obs}} = \tau + B\)</span> underwrites sensitivity analysis for unmeasured confounding, specializing cleanly in the linear and binary-<span class="math inline">\(U\)</span> cases.</li>
+<li>Three canonical sensitivity models differ by what the sensitivity parameter bounds: Rosenbaum’s <span class="math inline">\(\Gamma\)</span> bounds a treatment-odds ratio; the E-value <span class="math inline">\(\mathrm{EV} = R + \sqrt{R(R-1)}\)</span> gives a closed-form symmetric threshold; and the MSM bounds an odds ratio of nominal to true propensity.</li>
+<li>Sensitivity parameters need benchmarking against observed covariates to be interpretable.</li>
+<li>Partial identification reports an identified set rather than a single value. Manski’s no-assumption bound is as wide as the support of the outcome; shape restrictions narrow it.</li>
+<li>Positivity violations are an identification failure, not a variance problem. Trimming changes the estimand to a region of covariate overlap; it is a retargeting strategy, not a correction for the original population ATE.</li>
+<li>Invalid instruments produce bias <span class="math inline">\(\delta \cdot \mathrm{Var}(Z)/\mathrm{Cov}(T,Z)\)</span> amplified by weak first stages. Weak-instrument diagnostics do not address exclusion violations.</li>
+<li>Mediation sensitivity analysis proceeds by a residual-correlation parameter <span class="math inline">\(\rho\)</span> that captures unmeasured <span class="math inline">\(M\)</span>–<span class="math inline">\(Y\)</span> confounding.</li>
+<li>Modern estimation methods (AIPW, TMLE, DML, efficient GMM) address nuisance estimation, not identification. Neyman orthogonality protects the estimator; it does not protect the causal claim.</li>
 </ol>
 </section>
-<section id="problems" class="level2" data-number="9.11">
-<h2 data-number="9.11" class="anchored" data-anchor-id="problems"><span class="header-section-number">9.11</span> Problems</h2>
-<p><strong>1. Estimating equations and moment conditions.</strong></p>
+<section id="problems" class="level2" data-number="9.14">
+<h2 data-number="9.14" class="anchored" data-anchor-id="problems"><span class="header-section-number">9.14</span> Problems</h2>
+<p><strong>1. Sampling vs.&nbsp;identification uncertainty.</strong> Explain in your own words the difference between a narrow sampling confidence interval and a robust causal conclusion. Construct an example data-generating process, with numerical parameters, in which the CI for a back-door-adjusted ATE is very narrow (SD below 0.05) yet the true ATE lies outside it. Identify the identifying assumption that is violated and the magnitude of the violation.</p>
+<p><strong>2. Binary unmeasured confounder.</strong> Suppose <span class="math inline">\(\hat\Delta_{\mathrm{obs}} = 2.0\)</span>. Assume a binary unmeasured confounder <span class="math inline">\(U\)</span> with constant outcome contrast <span class="math inline">\(\delta = 4\)</span> and imbalance <span class="math inline">\(p_1 - p_0 = 0.3\)</span>.</p>
 <ol type="a">
-<li>Let <span class="math inline">\(O = (X, Y)\)</span> and define <span class="math inline">\(\theta = \mathrm{Cov}(X,Y)/\mathrm{Var}(X)\)</span>. Write down an estimating equation for <span class="math inline">\(\theta\)</span> and verify that the population moment condition holds at <span class="math inline">\(\theta_0\)</span>.</li>
-<li>Let <span class="math inline">\(\theta = F^{-1}(0.5)\)</span> be the population median. Propose an estimating function <span class="math inline">\(U(O;\theta)\)</span> and verify the population moment condition. (<em>Hint</em>: consider <span class="math inline">\(U(O;\theta) = \mathbf{1}(Y \leq \theta) - 0.5\)</span>.)</li>
-<li>Show that the OLS estimator and the IPW estimator of the ATE are both special cases of the general M-estimator framework.</li>
+<li>Use the Binary-Confounder Bias Lemma to compute <span class="math inline">\(B\)</span> and the sensitivity-adjusted estimate <span class="math inline">\(\hat\tau_{\mathrm{sens}}\)</span>.</li>
+<li>What outcome contrast <span class="math inline">\(\delta\)</span> would zero out the estimate at the same imbalance level?</li>
+<li>What imbalance <span class="math inline">\(p_1 - p_0\)</span> would zero out the estimate at <span class="math inline">\(\delta = 4\)</span>?</li>
 </ol>
-<p><strong>2. Asymptotic linearity and the CLT.</strong></p>
+<p><strong>3. Tipping point in a linear bias model.</strong> For <span class="math inline">\(\hat\Delta_{\mathrm{obs}} = 1.5\)</span> and bias model <span class="math inline">\(B(\lambda) = 0.4\lambda\)</span>:</p>
 <ol type="a">
-<li>Let <span class="math inline">\(\hat\psi = \bar Y\)</span> be the sample mean with <span class="math inline">\(\E Y = \psi\)</span> and <span class="math inline">\(\mathrm{Var}(Y) = \sigma^2 &lt; \infty\)</span>. Write down the influence function, state its asymptotic distribution, and give a consistent estimator of <span class="math inline">\(\mathrm{Var}(\hat\psi)\)</span>.</li>
-<li>Suppose <span class="math inline">\(\hat\psi_1\)</span> and <span class="math inline">\(\hat\psi_2\)</span> are two asymptotically linear estimators with influence functions <span class="math inline">\(\varphi_1\)</span> and <span class="math inline">\(\varphi_2\)</span>. Show that <span class="math inline">\(\hat\psi_\lambda = \lambda\hat\psi_1 + (1-\lambda)\hat\psi_2\)</span> is also asymptotically linear for any fixed <span class="math inline">\(\lambda \in [0,1]\)</span>, and find its influence function.</li>
-<li>Use part (b) to explain why, among linear combinations of two estimators, the one minimizing asymptotic variance is generally not the simple average (<span class="math inline">\(\lambda = 1/2\)</span>).</li>
+<li>Find the tipping point <span class="math inline">\(\lambda^\star\)</span> for the sign of the adjusted estimate.</li>
+<li>Suppose the sampling standard error is 0.3, independent of <span class="math inline">\(\lambda\)</span>. Find the tipping point <span class="math inline">\(\lambda^\star_{\mathrm{CI}}\)</span> for the lower confidence limit to reach zero (95% level). Compare to <span class="math inline">\(\lambda^\star\)</span>.</li>
 </ol>
-<p><strong>3. Influence functions for causal estimators.</strong> Consider the ATE <span class="math inline">\(\psi = \E\{Y(1) - Y(0)\}\)</span> identified under strong ignorability.</p>
+<p><strong>4. Benchmarking.</strong> A researcher reports a sensitivity analysis in which the tipping point for the <span class="math inline">\(U\)</span>-outcome effect is <span class="math inline">\(\delta^\star = 3.0\)</span>. Observed covariate outcome coefficients are <span class="math inline">\((\hat\gamma_{\mathrm{age}}, \hat\gamma_{\mathrm{income}}, \hat\gamma_{\mathrm{education}}) = (0.3, 1.8, 2.4)\)</span>. Identify the strongest benchmark. Is the result robust to an unmeasured confounder as strong as the strongest observed covariate? Write two sentences of interpretation suitable for an applied report.</p>
+<p><strong>5. E-value calculation.</strong> An observational study reports an adjusted risk ratio of <span class="math inline">\(\mathrm{RR}_{TY \mid X}^{\mathrm{obs}} = 1.9\)</span> with 95% CI <span class="math inline">\([1.3, 2.8]\)</span>.</p>
 <ol type="a">
-<li>Assume <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> are both known. Compute the influence functions of: (i) the regression estimator <span class="math inline">\(\hat\psi_{\mathrm{reg}} = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}\)</span>; (ii) the IPW estimator <span class="math inline">\(\hat\psi_{\mathrm{IPW}} = \mathbb{P}_n\!\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}\)</span>.</li>
-<li>Under what conditions on the data-generating process will <span class="math inline">\(\hat\psi_{\mathrm{reg}}\)</span> have a smaller asymptotic variance than <span class="math inline">\(\hat\psi_{\mathrm{IPW}}\)</span>?</li>
-<li>Using the EIF <a href="chapter_10.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.7</span></a>, verify that it has mean zero under <span class="math inline">\(P\)</span> by computing <span class="math inline">\(\E[\varphi^*(O)]\)</span>.</li>
+<li>Compute the E-value for the point estimate using <a href="#eq-evalue" class="quarto-xref">Equation&nbsp;<span>9.9</span></a>.</li>
+<li>Compute the E-value for the lower confidence limit.</li>
+<li>Write one sentence of interpretation for each.</li>
 </ol>
-<p><strong>4. Variance estimation.</strong></p>
+<p><strong>6. IV sensitivity curve.</strong> In a scalar-IV model with <span class="math inline">\(\mathrm{Cov}(Y,Z) = 3\)</span>, <span class="math inline">\(\mathrm{Cov}(T,Z) = 1.5\)</span>, <span class="math inline">\(\mathrm{Var}(Z) = 1\)</span>:</p>
 <ol type="a">
-<li>Let <span class="math inline">\(\hat\varphi_i = \hat\mu_1(X_i) - \hat\mu_0(X_i) - \hat\psi_{\mathrm{reg}}\)</span> be the estimated influence values for the regression estimator. Write down the plug-in variance estimator <span class="math inline">\(\hat V\)</span> and simplify. Under what conditions is <span class="math inline">\(\hat V\)</span> consistent for <span class="math inline">\(\mathrm{Var}(\hat\psi_{\mathrm{reg}})\)</span>?</li>
-<li>A researcher reports <span class="math inline">\(\hat\psi = 2.4\)</span> and <span class="math inline">\(\hat V = 0.09\)</span> based on <span class="math inline">\(n = 400\)</span> observations. Compute a 95% Wald confidence interval. Is the treatment effect statistically distinguishable from zero at the 5% level?</li>
-<li>Explain why simply plugging in <span class="math inline">\(\hat\mu_t\)</span> and <span class="math inline">\(\hat\pi\)</span> into the influence function formula may yield an inconsistent variance estimator when these nuisance estimators converge at a slower rate than <span class="math inline">\(n^{-1/2}\)</span>.</li>
+<li>Use <a href="#eq-beta-delta" class="quarto-xref">Equation&nbsp;<span>9.19</span></a> to compute <span class="math inline">\(\hat\beta(\delta)\)</span> for <span class="math inline">\(\delta \in \{0, 0.5, 1.0, 1.5, 2.0\}\)</span>.</li>
+<li>Find the tipping point <span class="math inline">\(\delta^\star\)</span>.</li>
+<li>Repeat for the weaker-instrument case <span class="math inline">\(\mathrm{Cov}(T,Z) = 0.5\)</span> (keeping other quantities fixed). Explain why the same <span class="math inline">\(\delta\)</span> produces a larger bias.</li>
 </ol>
-<p><strong>5. Efficiency comparisons.</strong></p>
+<p><strong>7. Manski bound calculation.</strong> Suppose <span class="math inline">\(Y \in [0, 10]\)</span>, <span class="math inline">\(P(T=1) = 0.3\)</span>, <span class="math inline">\(\E(Y \mid T=1) = 6.5\)</span>, <span class="math inline">\(\E(Y \mid T=0) = 4.0\)</span>.</p>
 <ol type="a">
-<li>Suppose <span class="math inline">\(\varphi_{\mathrm{reg}}\)</span> and <span class="math inline">\(\varphi_{\mathrm{IPW}}\)</span> denote the influence functions of the regression and IPW estimators. Without calculation, explain why neither estimator is always more efficient than the other.</li>
-<li>The semiparametric efficiency bound for the ATE is <span class="math inline">\(\E[\varphi^*(O)^2]\)</span>, where <span class="math inline">\(\varphi^*\)</span> is given in <a href="chapter_10.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.7</span></a>. Show that <span class="math inline">\(\E[\varphi^*(O)^2] \leq \E[\varphi_{\mathrm{IPW}}(O)^2]\)</span> by expanding the squared EIF. (<em>Hint</em>: use the law of iterated expectations to show that the cross-terms cancel.)</li>
-<li>Give one practical reason why an efficient estimator based on the EIF may not always be preferred over a simpler, less efficient estimator.</li>
+<li>Compute Manski’s no-assumption bound using <a href="#eq-manski-lower" class="quarto-xref">Equation&nbsp;<span>9.12</span></a>–<a href="#eq-manski-upper" class="quarto-xref">Equation&nbsp;<span>9.13</span></a>.</li>
+<li>Compute the width and verify <a href="#eq-manski-width" class="quarto-xref">Equation&nbsp;<span>9.14</span></a>.</li>
+<li>The observed association is 2.5. Does the no-assumption identified set include zero? Discuss what this implies about the informational content of the data alone.</li>
 </ol>
+<p><strong>8. Positivity sensitivity.</strong> Explain why the trimmed estimand <span class="math inline">\(\tau_\alpha\)</span> of <a href="#eq-trimmed-ate" class="quarto-xref">Equation&nbsp;<span>9.15</span></a> is generally not equal to the untrimmed ATE <span class="math inline">\(\tau\)</span>. In a dataset with <span class="math inline">\(\pi(X)\)</span> distributed uniformly on <span class="math inline">\([0,1]\)</span>, what fraction of the population is retained at trimming levels <span class="math inline">\(\alpha \in \{0.01, 0.05, 0.10, 0.20\}\)</span>? Under what scientific questions is <span class="math inline">\(\tau_\alpha\)</span> preferable to <span class="math inline">\(\tau\)</span> as a target?</p>
+<p><strong>9. Mediation sensitivity.</strong> In a mediation study of a behavioral intervention (<span class="math inline">\(T\)</span>) on depression (<span class="math inline">\(Y\)</span>) through sleep quality (<span class="math inline">\(M\)</span>), explain why randomization of <span class="math inline">\(T\)</span> alone does not eliminate the need for a sensitivity analysis for the indirect effect. Draw the DAG that describes the residual concern and identify which arrow corresponds to a nonzero <span class="math inline">\(\rho\)</span> in <a href="#eq-rho-def" class="quarto-xref">Equation&nbsp;<span>9.20</span></a>. Give a plausible scientific story in which the residual correlation could be large.</p>
+<p><strong>10. Modern estimators and identification.</strong> A colleague argues that because DML and AIPW are “doubly robust and orthogonalized,” they “automatically correct for unmeasured confounding provided the machine-learning models are good enough.” Explain why this is incorrect, referring to the bias decomposition of the Bias Decomposition Theorem. Identify which term in that decomposition machine-learning methods can estimate consistently, and which term they cannot estimate at all.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-angrist1996identification" class="csl-entry" role="listitem">
+Angrist, Joshua D., Guido W. Imbens, and Donald B. Rubin. 1996. <span>“Identification of Causal Effects Using Instrumental Variables.”</span> <em>Journal of the American Statistical Association</em> 91 (434): 444–55.
+</div>
+<div id="ref-cinelli2020making" class="csl-entry" role="listitem">
+Cinelli, Carlos, and Chad Hazlett. 2020. <span>“Making Sense of Sensitivity: Extending Omitted Variable Bias.”</span> <em>Journal of the Royal Statistical Society, Series B</em> 82 (1): 39–67. <a href="https://doi.org/10.1111/rssb.12348">https://doi.org/10.1111/rssb.12348</a>.
+</div>
+<div id="ref-ding2016sensitivity" class="csl-entry" role="listitem">
+Ding, Peng, and Tyler J. VanderWeele. 2016. <span>“Sensitivity Analysis Without Assumptions.”</span> <em>Epidemiology</em> 27 (3): 368–77. <a href="https://doi.org/10.1097/EDE.0000000000000457">https://doi.org/10.1097/EDE.0000000000000457</a>.
+</div>
+<div id="ref-imai2010identification" class="csl-entry" role="listitem">
+Imai, Kosuke, Luke Keele, and Teppei Yamamoto. 2010. <span>“Identification, Inference and Sensitivity Analysis for Causal Mediation Effects.”</span> <em>Statistical Science</em> 25 (1): 51–71.
+</div>
+<div id="ref-manski1990nonparametric" class="csl-entry" role="listitem">
+Manski, Charles F. 1990. <span>“Nonparametric Bounds on Treatment Effects.”</span> <em>American Economic Review, Papers and Proceedings</em> 80 (2): 319–23.
+</div>
+<div id="ref-manski2003partial" class="csl-entry" role="listitem">
+Manski, Charles F. 2003. <em>Partial Identification of Probability Distributions</em>. Springer. <a href="https://doi.org/10.1007/b97478">https://doi.org/10.1007/b97478</a>.
+</div>
+<div id="ref-rosenbaum2002observational" class="csl-entry" role="listitem">
+Rosenbaum, Paul R. 2002. <em>Observational Studies</em>. 2nd ed. Springer. <a href="https://doi.org/10.1007/978-1-4757-3692-2">https://doi.org/10.1007/978-1-4757-3692-2</a>.
+</div>
+<div id="ref-tan2006distributional" class="csl-entry" role="listitem">
+Tan, Zhiqiang. 2006. <span>“A Distributional Approach for Causal Inference Using Propensity Scores.”</span> <em>Journal of the American Statistical Association</em> 101 (476): 1619–37. <a href="https://doi.org/10.1198/016214506000000023">https://doi.org/10.1198/016214506000000023</a>.
+</div>
+<div id="ref-vanderweele2017sensitivity" class="csl-entry" role="listitem">
+VanderWeele, Tyler J., and Peng Ding. 2017. <span>“Sensitivity Analysis in Observational Research: Introducing the <span>E</span>-Value.”</span> <em>Annals of Internal Medicine</em> 167 (4): 268–74. <a href="https://doi.org/10.7326/M16-2607">https://doi.org/10.7326/M16-2607</a>.
+</div>
+<div id="ref-zhao2019sensitivity" class="csl-entry" role="listitem">
+Zhao, Qingyuan, Dylan S. Small, and Bhaswar B. Bhattacharya. 2019. <span>“Sensitivity Analysis for Inverse Probability Weighting Estimators via the Percentile Bootstrap.”</span> <em>Journal of the Royal Statistical Society, Series B</em> 81 (4): 735–61. <a href="https://doi.org/10.1111/rssb.12327">https://doi.org/10.1111/rssb.12327</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
