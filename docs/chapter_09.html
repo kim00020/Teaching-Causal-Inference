@@ -299,14 +299,14 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">References</span></a>
+  <a href="./chapter_12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
@@ -433,7 +433,7 @@ window.Quarto = {
 <li>Distinguish sampling uncertainty, model misspecification, and identification uncertainty, and explain why confidence intervals do not measure the credibility of identifying assumptions.</li>
 <li>Formulate a sensitivity analysis by introducing a sensitivity parameter <span class="math inline">\(\lambda\)</span> and reporting the sensitivity curve, bounds, or tipping point associated with it.</li>
 <li>Carry out a sensitivity analysis for unmeasured confounding under back-door adjustment, including the linear bias decomposition and the binary-confounder formula.</li>
-<li>State and use the three canonical sensitivity models: the Rosenbaum <span class="math inline">\(\Gamma\)</span>-sensitivity model, the E-value of <span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="references.html#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span>, and the marginal sensitivity model of <span class="citation" data-cites="tan2006distributional">Tan (<a href="references.html#ref-tan2006distributional" role="doc-biblioref">2006</a>)</span> and <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span>.</li>
+<li>State and use the three canonical sensitivity models: the Rosenbaum <span class="math inline">\(\Gamma\)</span>-sensitivity model, the E-value of <span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span>, and the marginal sensitivity model of <span class="citation" data-cites="tan2006distributional">Tan (<a href="#ref-tan2006distributional" role="doc-biblioref">2006</a>)</span> and <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span>.</li>
 <li>Interpret sensitivity parameters through benchmarking with observed covariates.</li>
 <li>State and prove Manski’s no-assumption bound on the average treatment effect, and contrast point identification with partial identification.</li>
 <li>Recognize positivity and overlap violations as a form of identification failure, and interpret trimming as a change of estimand.</li>
@@ -710,7 +710,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: <span class="math inline">\(\Gamma\)</span>-Sensitivity Model <span class="citation" data-cites="rosenbaum2002observational">(<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span>
+<span class="screen-reader-only">Note</span>Definition: <span class="math inline">\(\Gamma\)</span>-Sensitivity Model <span class="citation" data-cites="rosenbaum2002observational">(<a href="#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -724,7 +724,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: <span class="math inline">\(\Gamma\)</span>-Bounds on the Rank Statistic <span class="citation" data-cites="rosenbaum2002observational">(<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: <span class="math inline">\(\Gamma\)</span>-Bounds on the Rank Statistic <span class="citation" data-cites="rosenbaum2002observational">(<a href="#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -735,7 +735,7 @@ window.Quarto = {
 </section>
 <section id="sec-evalue" class="level3" data-number="9.4.2">
 <h3 data-number="9.4.2" class="anchored" data-anchor-id="sec-evalue"><span class="header-section-number">9.4.2</span> The E-Value and the VanderWeele–Ding Bound</h3>
-<p><span class="citation" data-cites="ding2016sensitivity">Ding and VanderWeele (<a href="references.html#ref-ding2016sensitivity" role="doc-biblioref">2016</a>)</span> and <span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="references.html#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span> proposed a sensitivity summary that requires no matched design and takes the form of a single closed-form number. It has become the most widely reported sensitivity summary in the applied literature.</p>
+<p><span class="citation" data-cites="ding2016sensitivity">Ding and VanderWeele (<a href="#ref-ding2016sensitivity" role="doc-biblioref">2016</a>)</span> and <span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span> proposed a sensitivity summary that requires no matched design and takes the form of a single closed-form number. It has become the most widely reported sensitivity summary in the applied literature.</p>
 <p>Define two risk-ratio sensitivity parameters: <span class="math inline">\(\mathrm{RR}_{TU} = \max_x P(U=1 \mid T=1, X=x)/P(U=1 \mid T=0, X=x)\)</span> (maximum RR of <span class="math inline">\(U\)</span> with <span class="math inline">\(T\)</span>), and <span class="math inline">\(\mathrm{RR}_{UY} = \max_{t,x} P(Y=1 \mid T=t, X=x, U=1)/P(Y=1 \mid T=t, X=x, U=0)\)</span> (maximum RR of <span class="math inline">\(U\)</span> with <span class="math inline">\(Y\)</span>). The <em>bias factor</em> is: <span id="eq-bias-factor"><span class="math display">\[B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) = \frac{\mathrm{RR}_{TU}\, \mathrm{RR}_{UY}}{\mathrm{RR}_{TU} + \mathrm{RR}_{UY} - 1}. \tag{9.8}\]</span></span></p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -805,7 +805,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Marginal Sensitivity Model <span class="citation" data-cites="tan2006distributional">(<a href="references.html#ref-tan2006distributional" role="doc-biblioref">Tan 2006</a>)</span>
+<span class="screen-reader-only">Note</span>Definition: Marginal Sensitivity Model <span class="citation" data-cites="tan2006distributional">(<a href="#ref-tan2006distributional" role="doc-biblioref">Tan 2006</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -819,14 +819,14 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: MSM Bounds on the ATE <span class="citation" data-cites="zhao2019sensitivity">(<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">Zhao et al. 2019</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: MSM Bounds on the ATE <span class="citation" data-cites="zhao2019sensitivity">(<a href="#ref-zhao2019sensitivity" role="doc-biblioref">Zhao et al. 2019</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Under the marginal sensitivity model at level <span class="math inline">\(\Lambda\)</span>, the ATE satisfies <span class="math inline">\(\tau_L(\Lambda) \leq \tau \leq \tau_U(\Lambda)\)</span>, where the sharp bounds are obtained by solving linear programs over the admissible weight perturbations induced by <a href="#eq-msm-bound" class="quarto-xref">Equation&nbsp;<span>9.10</span></a>.</p>
 </div>
 </div>
-<p><em>Proof sketch.</em> The true IPW weights equal the nominal weights multiplied by a perturbation factor <span class="math inline">\(\phi_i \in [\Lambda^{-1}, \Lambda]\)</span>. Because the target is linear in <span class="math inline">\(\phi\)</span>, the extrema are attained at <span class="math inline">\(\phi_i \in \{\Lambda^{-1}, \Lambda\}\)</span>. <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span> give closed-form percentile expressions. <span class="math inline">\(\square\)</span></p>
+<p><em>Proof sketch.</em> The true IPW weights equal the nominal weights multiplied by a perturbation factor <span class="math inline">\(\phi_i \in [\Lambda^{-1}, \Lambda]\)</span>. Because the target is linear in <span class="math inline">\(\phi\)</span>, the extrema are attained at <span class="math inline">\(\phi_i \in \{\Lambda^{-1}, \Lambda\}\)</span>. <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span> give closed-form percentile expressions. <span class="math inline">\(\square\)</span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -879,9 +879,9 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>Primary reference</td>
-<td><span class="citation" data-cites="rosenbaum2002observational">Rosenbaum (<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">2002</a>)</span></td>
-<td><span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="references.html#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span></td>
-<td><span class="citation" data-cites="tan2006distributional">Tan (<a href="references.html#ref-tan2006distributional" role="doc-biblioref">2006</a>)</span>; <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="references.html#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span></td>
+<td><span class="citation" data-cites="rosenbaum2002observational">Rosenbaum (<a href="#ref-rosenbaum2002observational" role="doc-biblioref">2002</a>)</span></td>
+<td><span class="citation" data-cites="vanderweele2017sensitivity">VanderWeele and Ding (<a href="#ref-vanderweele2017sensitivity" role="doc-biblioref">2017</a>)</span></td>
+<td><span class="citation" data-cites="tan2006distributional">Tan (<a href="#ref-tan2006distributional" role="doc-biblioref">2006</a>)</span>; <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span></td>
 </tr>
 </tbody>
 </table>
@@ -902,11 +902,11 @@ window.Quarto = {
 </section>
 <section id="sec-benchmarking" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="sec-benchmarking"><span class="header-section-number">9.5</span> Benchmarking Sensitivity Parameters</h2>
-<p>Every sensitivity model has parameters that are not identified by the data. A sensitivity curve of the form “at <span class="math inline">\(\lambda = 0.2\)</span> the effect is halved” is mathematically precise but scientifically empty until <span class="math inline">\(\lambda = 0.2\)</span> has been anchored to something concrete. <em>Benchmarking</em> gives sensitivity parameters an empirical referent by comparing them to the analogous quantities computed for the <em>observed</em> covariates <span class="citation" data-cites="cinelli2020making">(<a href="references.html#ref-cinelli2020making" role="doc-biblioref">Cinelli and Hazlett 2020</a>)</span>.</p>
+<p>Every sensitivity model has parameters that are not identified by the data. A sensitivity curve of the form “at <span class="math inline">\(\lambda = 0.2\)</span> the effect is halved” is mathematically precise but scientifically empty until <span class="math inline">\(\lambda = 0.2\)</span> has been anchored to something concrete. <em>Benchmarking</em> gives sensitivity parameters an empirical referent by comparing them to the analogous quantities computed for the <em>observed</em> covariates <span class="citation" data-cites="cinelli2020making">(<a href="#ref-cinelli2020making" role="doc-biblioref">Cinelli and Hazlett 2020</a>)</span>.</p>
 <section id="benchmarking-against-observed-covariates" class="level3" data-number="9.5.1">
 <h3 data-number="9.5.1" class="anchored" data-anchor-id="benchmarking-against-observed-covariates"><span class="header-section-number">9.5.1</span> Benchmarking Against Observed Covariates</h3>
 <p>For the binary-confounder setup, compute for each observed covariate <span class="math inline">\(X_j\)</span>: the coefficient on <span class="math inline">\(X_j\)</span> in a regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, X_1, \ldots)\)</span> (the role of <span class="math inline">\(\delta\)</span>), and the difference in conditional means of <span class="math inline">\(X_j\)</span> across treatment arms (the role of the imbalance). Plot these against the tipping contour.</p>
-<p>For the E-value, for each <span class="math inline">\(X_j\)</span> compute the bias factor: <span class="math display">\[B_j = \frac{\mathrm{RR}_{TX_j}\,\mathrm{RR}_{X_jY}}{\mathrm{RR}_{TX_j} + \mathrm{RR}_{X_jY} - 1}.\]</span> If <span class="math inline">\(B_j &lt; \mathrm{EV}\)</span> for every observed covariate, an unmeasured confounder inducing the observed effect would have to be at least as strong as some observed covariate. <span class="citation" data-cites="cinelli2020making">Cinelli and Hazlett (<a href="references.html#ref-cinelli2020making" role="doc-biblioref">2020</a>)</span> develop partial-<span class="math inline">\(R^2\)</span> benchmarks for the linear regression setting.</p>
+<p>For the E-value, for each <span class="math inline">\(X_j\)</span> compute the bias factor: <span class="math display">\[B_j = \frac{\mathrm{RR}_{TX_j}\,\mathrm{RR}_{X_jY}}{\mathrm{RR}_{TX_j} + \mathrm{RR}_{X_jY} - 1}.\]</span> If <span class="math inline">\(B_j &lt; \mathrm{EV}\)</span> for every observed covariate, an unmeasured confounder inducing the observed effect would have to be at least as strong as some observed covariate. <span class="citation" data-cites="cinelli2020making">Cinelli and Hazlett (<a href="#ref-cinelli2020making" role="doc-biblioref">2020</a>)</span> develop partial-<span class="math inline">\(R^2\)</span> benchmarks for the linear regression setting.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -937,7 +937,7 @@ window.Quarto = {
 </section>
 <section id="sec-partial" class="level2" data-number="9.6">
 <h2 data-number="9.6" class="anchored" data-anchor-id="sec-partial"><span class="header-section-number">9.6</span> Partial Identification and Bounds</h2>
-<p>The sensitivity models of <a href="#sec-three-models" class="quarto-xref"><span>Section 9.4</span></a> each restrict the magnitude of a violation by a single parameter. A more radical approach imposes no parametric restriction at all — asking what the observed data can say about the causal parameter without any untestable identifying assumption. The answer is a set of values: the theory of <em>partial identification</em> <span class="citation" data-cites="manski1990nonparametric manski2003partial">(<a href="references.html#ref-manski1990nonparametric" role="doc-biblioref">Manski 1990</a>, <a href="references.html#ref-manski2003partial" role="doc-biblioref">2003</a>)</span>.</p>
+<p>The sensitivity models of <a href="#sec-three-models" class="quarto-xref"><span>Section 9.4</span></a> each restrict the magnitude of a violation by a single parameter. A more radical approach imposes no parametric restriction at all — asking what the observed data can say about the causal parameter without any untestable identifying assumption. The answer is a set of values: the theory of <em>partial identification</em> <span class="citation" data-cites="manski1990nonparametric manski2003partial">(<a href="#ref-manski1990nonparametric" role="doc-biblioref">Manski 1990</a>, <a href="#ref-manski2003partial" role="doc-biblioref">2003</a>)</span>.</p>
 <section id="point-identification-vs.-partial-identification" class="level3" data-number="9.6.1">
 <h3 data-number="9.6.1" class="anchored" data-anchor-id="point-identification-vs.-partial-identification"><span class="header-section-number">9.6.1</span> Point Identification vs.&nbsp;Partial Identification</h3>
 <p>Under <em>point identification</em>, <span class="math inline">\(\psi = \Psi(P)\)</span>. Under <em>partial identification</em>, the assumptions pin down a set: <span id="eq-partial-id"><span class="math display">\[\psi \in \Psi_A(P) = \{\text{values of }\psi\text{ consistent with assumption set }A\text{ and distribution }P\}. \tag{9.11}\]</span></span></p>
@@ -963,7 +963,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Manski’s No-Assumption Bound <span class="citation" data-cites="manski1990nonparametric">(<a href="references.html#ref-manski1990nonparametric" role="doc-biblioref">Manski 1990</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: Manski’s No-Assumption Bound <span class="citation" data-cites="manski1990nonparametric">(<a href="#ref-manski1990nonparametric" role="doc-biblioref">Manski 1990</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1001,7 +1001,7 @@ window.Quarto = {
 </div>
 </div>
 <p>The no-assumption bound is as wide as the support of the outcome — typically too wide to be informative. Productive partial identification therefore proceeds by adding <em>shape restrictions</em> that narrow the set.</p>
-<p><strong>Monotone treatment response</strong> (<span class="math inline">\(Y(1) \geq Y(0)\)</span> a.s.) tightens the bounds. <strong>Monotone treatment selection</strong> (<span class="math inline">\(\E\{Y(t) \mid T=1\} \geq \E\{Y(t) \mid T=0\}\)</span>) is another common restriction. Combining these produces informative bounds even when neither alone suffices <span class="citation" data-cites="manski2003partial">(<a href="references.html#ref-manski2003partial" role="doc-biblioref">Manski 2003</a>)</span>.</p>
+<p><strong>Monotone treatment response</strong> (<span class="math inline">\(Y(1) \geq Y(0)\)</span> a.s.) tightens the bounds. <strong>Monotone treatment selection</strong> (<span class="math inline">\(\E\{Y(t) \mid T=1\} \geq \E\{Y(t) \mid T=0\}\)</span>) is another common restriction. Combining these produces informative bounds even when neither alone suffices <span class="citation" data-cites="manski2003partial">(<a href="#ref-manski2003partial" role="doc-biblioref">Manski 2003</a>)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1104,7 +1104,7 @@ window.Quarto = {
 </section>
 <section id="sec-iv-late" class="level3" data-number="9.8.2">
 <h3 data-number="9.8.2" class="anchored" data-anchor-id="sec-iv-late"><span class="header-section-number">9.8.2</span> Connection to LATE and Monotonicity</h3>
-<p>Under heterogeneous treatment effects, sensitivity analysis can also address monotonicity violations, with the sensitivity parameter becoming the proportion of defiers <span class="citation" data-cites="angrist1996identification">(<a href="references.html#ref-angrist1996identification" role="doc-biblioref">Angrist et al. 1996</a>)</span>. The same conceptual framework — parameterize the violation, report a curve or bound — applies.</p>
+<p>Under heterogeneous treatment effects, sensitivity analysis can also address monotonicity violations, with the sensitivity parameter becoming the proportion of defiers <span class="citation" data-cites="angrist1996identification">(<a href="#ref-angrist1996identification" role="doc-biblioref">Angrist et al. 1996</a>)</span>. The same conceptual framework — parameterize the violation, report a curve or bound — applies.</p>
 </section>
 </section>
 <section id="sec-mediation" class="level2" data-number="9.9">
@@ -1113,7 +1113,7 @@ window.Quarto = {
 <section id="sec-rho" class="level3" data-number="9.9.1">
 <h3 data-number="9.9.1" class="anchored" data-anchor-id="sec-rho"><span class="header-section-number">9.9.1</span> Residual-Correlation Sensitivity Parameter</h3>
 <p>Consider the linear mediation system <span class="math inline">\(M = a_0 + aT + a_X^\top X + \varepsilon_M\)</span>, <span class="math inline">\(Y = b_0 + \tau' T + bM + b_X^\top X + \varepsilon_Y\)</span>, with sensitivity parameter: <span id="eq-rho-def"><span class="math display">\[\rho = \mathrm{Corr}(\varepsilon_M, \varepsilon_Y \mid T, X). \tag{9.20}\]</span></span></p>
-<p>If sequential ignorability holds, <span class="math inline">\(\rho = 0\)</span>: disturbances are orthogonal because any shared source of variation has been conditioned out. A nonzero <span class="math inline">\(\rho\)</span> represents unobserved <span class="math inline">\(M\)</span>–<span class="math inline">\(Y\)</span> confounding. <span class="citation" data-cites="imai2010identification">Imai et al. (<a href="references.html#ref-imai2010identification" role="doc-biblioref">2010</a>)</span> derive the bias in the estimated NIE as a smooth function of <span class="math inline">\(\rho\)</span>, giving a sensitivity curve <span class="math inline">\(\rho \mapsto \widehat{\mathrm{NIE}}(\rho)\)</span> with tipping point <span class="math inline">\(\rho^\star\)</span>.</p>
+<p>If sequential ignorability holds, <span class="math inline">\(\rho = 0\)</span>: disturbances are orthogonal because any shared source of variation has been conditioned out. A nonzero <span class="math inline">\(\rho\)</span> represents unobserved <span class="math inline">\(M\)</span>–<span class="math inline">\(Y\)</span> confounding. <span class="citation" data-cites="imai2010identification">Imai et al. (<a href="#ref-imai2010identification" role="doc-biblioref">2010</a>)</span> derive the bias in the estimated NIE as a smooth function of <span class="math inline">\(\rho\)</span>, giving a sensitivity curve <span class="math inline">\(\rho \mapsto \widehat{\mathrm{NIE}}(\rho)\)</span> with tipping point <span class="math inline">\(\rho^\star\)</span>.</p>
 <p>A well-reported mediation sensitivity analysis states: the point estimate of the indirect effect (with sampling CI), the tipping value <span class="math inline">\(\rho^\star\)</span>, and a benchmark for what magnitude of <span class="math inline">\(\rho\)</span> is plausible.</p>
 </section>
 </section>
@@ -1330,7 +1330,7 @@ window.Quarto = {
 <p><strong>10. Modern estimators and identification.</strong> A colleague argues that because DML and AIPW are “doubly robust and orthogonalized,” they “automatically correct for unmeasured confounding provided the machine-learning models are good enough.” Explain why this is incorrect, referring to the bias decomposition of the Bias Decomposition Theorem. Identify which term in that decomposition machine-learning methods can estimate consistently, and which term they cannot estimate at all.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-angrist1996identification" class="csl-entry" role="listitem">
 Angrist, Joshua D., Guido W. Imbens, and Donald B. Rubin. 1996. <span>“Identification of Causal Effects Using Instrumental Variables.”</span> <em>Journal of the American Statistical Association</em> 91 (434): 444–55.
 </div>

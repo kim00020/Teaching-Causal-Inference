@@ -299,14 +299,14 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">References</span></a>
+  <a href="./chapter_12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
@@ -429,7 +429,7 @@ window.Quarto = {
 <li>How can we compute valid standard errors and confidence intervals?</li>
 </ul>
 <p>These questions motivate a separate theory of <em>estimation and inference</em>. In causal inference this issue is especially important because identified parameters often depend on auxiliary, or <em>nuisance</em>, functions such as the outcome regression <span class="math inline">\(\mu_t(x) = \E(Y \mid T{=}t,\, X{=}x)\)</span> or the propensity score <span class="math inline">\(\pi(x) = P(T{=}1 \mid X{=}x)\)</span>. Even when the causal parameter is identified, different estimation strategies may behave quite differently in terms of robustness, efficiency, and sensitivity to model misspecification.</p>
-<p>The goal of this chapter is to introduce a general framework for estimation based on <em>estimating equations</em> and <em>influence functions</em>. This framework will serve as the foundation for the doubly robust and semiparametric methods developed in Chapter 11; see also <span class="citation" data-cites="imbens2015causal">Imbens and Rubin (<a href="references.html#ref-imbens2015causal" role="doc-biblioref">2015</a>)</span> and <span class="citation" data-cites="hernan2020causal">Hernán and Robins (<a href="references.html#ref-hernan2020causal" role="doc-biblioref">2020</a>)</span> for complementary treatments.</p>
+<p>The goal of this chapter is to introduce a general framework for estimation based on <em>estimating equations</em> and <em>influence functions</em>. This framework will serve as the foundation for the doubly robust and semiparametric methods developed in Chapter 11; see also <span class="citation" data-cites="imbens2015causal">Imbens and Rubin (<a href="#ref-imbens2015causal" role="doc-biblioref">2015</a>)</span> and <span class="citation" data-cites="hernan2020causal">Hernán and Robins (<a href="#ref-hernan2020causal" role="doc-biblioref">2020</a>)</span> for complementary treatments.</p>
 </section>
 <section id="sec-ate" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="sec-ate"><span class="header-section-number">10.2</span> A Running Example: The ATE</h2>
@@ -721,7 +721,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Hypothesis (ii) is a separate prerequisite, not a consequence of (i), (iii), and (iv). Standard arguments require identifiability of <span class="math inline">\(\theta_0\)</span> via <span class="math inline">\(\E\{U(O;\theta)\} = 0\)</span> having a unique zero, together with uniform convergence of the sample moment. See <span class="citation" data-cites="vandervaart1998">Vaart (<a href="references.html#ref-vandervaart1998" role="doc-biblioref">1998</a>, Theorem 5.9)</span> for a standard set of sufficient conditions.</p>
+<p>Hypothesis (ii) is a separate prerequisite, not a consequence of (i), (iii), and (iv). Standard arguments require identifiability of <span class="math inline">\(\theta_0\)</span> via <span class="math inline">\(\E\{U(O;\theta)\} = 0\)</span> having a unique zero, together with uniform convergence of the sample moment. See <span class="citation" data-cites="vandervaart1998">Vaart (<a href="#ref-vandervaart1998" role="doc-biblioref">1998</a>, Theorem 5.9)</span> for a standard set of sufficient conditions.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -747,7 +747,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> presupposes the system is <strong>just identified</strong>: <span class="math inline">\(U_1\)</span> has the same dimension as <span class="math inline">\(\psi\)</span> and <span class="math inline">\(U_2\)</span> has the same dimension as <span class="math inline">\(\alpha\)</span>, so that <span class="math inline">\(A_{11}\)</span> and <span class="math inline">\(A_{22}\)</span> are square and invertible. When more moment conditions are available than parameters — the <em>overidentified</em> case from GMM — one minimizes <span class="math inline">\(\mathbb{P}_n U^\top W\mathbb{P}_n U\)</span> for some weight matrix <span class="math inline">\(W\)</span>, and the influence function takes the standard GMM sandwich form <span class="citation" data-cites="hansen1982large">(<a href="references.html#ref-hansen1982large" role="doc-biblioref">Hansen 1982</a>)</span>. The block formula is the just-identified specialization.</p>
+<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> presupposes the system is <strong>just identified</strong>: <span class="math inline">\(U_1\)</span> has the same dimension as <span class="math inline">\(\psi\)</span> and <span class="math inline">\(U_2\)</span> has the same dimension as <span class="math inline">\(\alpha\)</span>, so that <span class="math inline">\(A_{11}\)</span> and <span class="math inline">\(A_{22}\)</span> are square and invertible. When more moment conditions are available than parameters — the <em>overidentified</em> case from GMM — one minimizes <span class="math inline">\(\mathbb{P}_n U^\top W\mathbb{P}_n U\)</span> for some weight matrix <span class="math inline">\(W\)</span>, and the influence function takes the standard GMM sandwich form <span class="citation" data-cites="hansen1982large">(<a href="#ref-hansen1982large" role="doc-biblioref">Hansen 1982</a>)</span>. The block formula is the just-identified specialization.</p>
 </div>
 </div>
 </section>
@@ -772,7 +772,7 @@ window.Quarto = {
 <p><strong>Bartlett identity (ML score):</strong> <span class="math inline">\(\E[U_2 U_2^\top] = \Sigma_\pi\)</span> (information equality for the correctly specified logistic model).</p>
 <p><strong>Cross-identity:</strong> Since <span class="math inline">\(\E_\alpha[U_1(O;\tau_0,\alpha)] = 0\)</span> for all <span class="math inline">\(\alpha\)</span> (under correct PS specification), differentiating through <span class="math inline">\(\alpha\)</span>: <span class="math inline">\(A_{12} = -\E[U_1 U_2^\top]\)</span>.</p>
 <p>Substituting into <a href="#eq-var-decomp" class="quarto-xref">Equation&nbsp;<span>10.6</span></a>: <span class="math display">\[\E[\varphi(O)^2] = \sigma_1^2 - A_{12}\Sigma_\pi^{-1}A_{12}^\top = \sigma_1^2 - \E[U_1 U_2^\top]\Sigma_\pi^{-1}\E[U_2 U_1] \leq \sigma_1^2,\]</span> since <span class="math inline">\(\Sigma_\pi\)</span> is positive definite. Equality holds only when <span class="math inline">\(\E[U_1 U_2^\top] = 0\)</span>.</p>
-<p><strong>Scope.</strong> This variance-reduction conclusion (sometimes called the <em>estimated propensity score paradox</em>, <span class="citation" data-cites="robins1986new">Robins (<a href="references.html#ref-robins1986new" role="doc-biblioref">1986</a>)</span>) requires: (i) correctly specified parametric propensity model; (ii) ML estimation so the Bartlett identity holds; (iii) strong overlap and moment conditions. When the parametric model is misspecified, when <span class="math inline">\(\hat\alpha\)</span> is computed by another method, or when <span class="math inline">\(\pi(X)\)</span> is estimated nonparametrically, the identity <span class="math inline">\(A_{12} = -\E[U_1 U_2^\top]\)</span> need not hold and the conclusion fails.</p>
+<p><strong>Scope.</strong> This variance-reduction conclusion (sometimes called the <em>estimated propensity score paradox</em>, <span class="citation" data-cites="robins1986new">Robins (<a href="#ref-robins1986new" role="doc-biblioref">1986</a>)</span>) requires: (i) correctly specified parametric propensity model; (ii) ML estimation so the Bartlett identity holds; (iii) strong overlap and moment conditions. When the parametric model is misspecified, when <span class="math inline">\(\hat\alpha\)</span> is computed by another method, or when <span class="math inline">\(\pi(X)\)</span> is estimated nonparametrically, the identity <span class="math inline">\(A_{12} = -\E[U_1 U_2^\top]\)</span> need not hold and the conclusion fails.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
@@ -890,7 +890,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In a <em>fully parametric</em> model, the Cramér–Rao lower bound gives the minimum variance of any unbiased estimator of <span class="math inline">\(\psi\)</span>. When the nuisance is infinite-dimensional, the classical bound no longer applies: the relevant lower bound must account for all infinitely many directions in which the likelihood can vary. The semiparametric efficiency bound is the analogue of the Cramér–Rao bound for this setting; see <span class="citation" data-cites="bickel1993">Bickel et al. (<a href="references.html#ref-bickel1993" role="doc-biblioref">1993</a>)</span> and <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (<a href="references.html#ref-tsiatis2006semiparametric" role="doc-biblioref">2006</a>)</span> for comprehensive treatments.</p>
+<p>In a <em>fully parametric</em> model, the Cramér–Rao lower bound gives the minimum variance of any unbiased estimator of <span class="math inline">\(\psi\)</span>. When the nuisance is infinite-dimensional, the classical bound no longer applies: the relevant lower bound must account for all infinitely many directions in which the likelihood can vary. The semiparametric efficiency bound is the analogue of the Cramér–Rao bound for this setting; see <span class="citation" data-cites="bickel1993">Bickel et al. (<a href="#ref-bickel1993" role="doc-biblioref">1993</a>)</span> and <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (<a href="#ref-tsiatis2006semiparametric" role="doc-biblioref">2006</a>)</span> for comprehensive treatments.</p>
 </div>
 </div>
 </section>
@@ -910,7 +910,7 @@ window.Quarto = {
 <p>An estimator <span class="math inline">\(\hat\psi\)</span> of <span class="math inline">\(\psi_0 = \Psi(P_0)\)</span> is called <strong>regular</strong> at <span class="math inline">\(P_0\)</span> if, along every smooth parametric submodel <span class="math inline">\(\{P_t : t \in \mathbb{R}\}\)</span> with <span class="math inline">\(P_0 = P_{t=0}\)</span>, the limiting distribution of <span class="math inline">\(\sqrt{n}(\hat\psi - \psi_t)\)</span> under <span class="math inline">\(P_{1/\sqrt{n}}\)</span> does not depend on the submodel or its direction.</p>
 </div>
 </div>
-<p>Regularity rules out pathological estimators that exploit specific features of the data-generating mechanism in a non-uniform way (superefficient estimators). All estimators in this course — regression, IPW, and augmented variants — are regular. See <span class="citation" data-cites="vandervaart1998">Vaart (<a href="references.html#ref-vandervaart1998" role="doc-biblioref">1998</a>, Chs. 8, 25)</span> and <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (<a href="references.html#ref-tsiatis2006semiparametric" role="doc-biblioref">2006</a>, Ch. 4)</span>.</p>
+<p>Regularity rules out pathological estimators that exploit specific features of the data-generating mechanism in a non-uniform way (superefficient estimators). All estimators in this course — regression, IPW, and augmented variants — are regular. See <span class="citation" data-cites="vandervaart1998">Vaart (<a href="#ref-vandervaart1998" role="doc-biblioref">1998</a>, Chs. 8, 25)</span> and <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (<a href="#ref-tsiatis2006semiparametric" role="doc-biblioref">2006</a>, Ch. 4)</span>.</p>
 </section>
 <section id="the-semiparametric-efficiency-bound-and-the-eif" class="level3" data-number="10.9.3">
 <h3 data-number="10.9.3" class="anchored" data-anchor-id="the-semiparametric-efficiency-bound-and-the-eif"><span class="header-section-number">10.9.3</span> The Semiparametric Efficiency Bound and the EIF</h3>
@@ -920,7 +920,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Semiparametric Convolution Theorem <span class="citation" data-cites="bickel1993">(<a href="references.html#ref-bickel1993" role="doc-biblioref">Bickel et al. 1993</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: Semiparametric Convolution Theorem <span class="citation" data-cites="bickel1993">(<a href="#ref-bickel1993" role="doc-biblioref">Bickel et al. 1993</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1081,7 +1081,7 @@ window.Quarto = {
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-bickel1993" class="csl-entry" role="listitem">
 Bickel, Peter J., Chris A. J. Klaassen, Ya’acov Ritov, and Jon A. Wellner. 1993. <em>Efficient and Adaptive Estimation for Semiparametric Models</em>. Johns Hopkins University Press.
 </div>

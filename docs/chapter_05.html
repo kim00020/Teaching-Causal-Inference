@@ -299,14 +299,14 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">References</span></a>
+  <a href="./chapter_12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
@@ -580,7 +580,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under i.i.d. superpopulation draws with arm variances <span class="math inline">\((\sigma_0^2, \sigma_1^2)\)</span>, the total variance has two phases: randomization variance (given <span class="math inline">\(\mathcal{F}_N\)</span>) and sampling variance (over draws of <span class="math inline">\(\mathcal{F}_N\)</span>). The law of total variance gives: <span id="eq-dim-var-superpop"><span class="math display">\[\mathrm{Var}(\hat\tau_{\mathrm{DIM}}) = \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0}. \tag{5.3}\]</span></span> The Neyman correction <span class="math inline">\(S_\tau^2/n\)</span> in <a href="#eq-neyman-variance" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> is exactly cancelled by the sampling variance of <span class="math inline">\(\bar\tau_n\)</span> when averaging over superpopulation draws. See <span class="citation" data-cites="ding2023first">Ding (<a href="references.html#ref-ding2023first" role="doc-biblioref">2024</a>)</span> for a complete treatment.</p>
+<p>Under i.i.d. superpopulation draws with arm variances <span class="math inline">\((\sigma_0^2, \sigma_1^2)\)</span>, the total variance has two phases: randomization variance (given <span class="math inline">\(\mathcal{F}_N\)</span>) and sampling variance (over draws of <span class="math inline">\(\mathcal{F}_N\)</span>). The law of total variance gives: <span id="eq-dim-var-superpop"><span class="math display">\[\mathrm{Var}(\hat\tau_{\mathrm{DIM}}) = \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0}. \tag{5.3}\]</span></span> The Neyman correction <span class="math inline">\(S_\tau^2/n\)</span> in <a href="#eq-neyman-variance" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> is exactly cancelled by the sampling variance of <span class="math inline">\(\bar\tau_n\)</span> when averaging over superpopulation draws. See <span class="citation" data-cites="ding2023first">Ding (<a href="#ref-ding2023first" role="doc-biblioref">2024</a>)</span> for a complete treatment.</p>
 </div>
 </div>
 </section>
@@ -624,7 +624,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="ding2023first">Ding (<a href="references.html#ref-ding2023first" role="doc-biblioref">2024</a>)</span> provides a comprehensive graduate-level treatment of CRE, stratified experiments, and regression adjustment. <span class="citation" data-cites="li2017general">Li and Ding (<a href="references.html#ref-li2017general" role="doc-biblioref">2017</a>)</span> works out the asymptotic theory underlying confidence intervals for <span class="math inline">\(\hat\tau_{\mathrm{DIM}}\)</span> via a finite-population CLT requiring neither i.i.d. observations nor a superpopulation model. <span class="citation" data-cites="ding2016randomization">Ding et al. (<a href="references.html#ref-ding2016randomization" role="doc-biblioref">2016</a>)</span> develop randomization-based tests for treatment effect heterogeneity.</p>
+<p><span class="citation" data-cites="ding2023first">Ding (<a href="#ref-ding2023first" role="doc-biblioref">2024</a>)</span> provides a comprehensive graduate-level treatment of CRE, stratified experiments, and regression adjustment. <span class="citation" data-cites="li2017general">Li and Ding (<a href="#ref-li2017general" role="doc-biblioref">2017</a>)</span> works out the asymptotic theory underlying confidence intervals for <span class="math inline">\(\hat\tau_{\mathrm{DIM}}\)</span> via a finite-population CLT requiring neither i.i.d. observations nor a superpopulation model. <span class="citation" data-cites="ding2016randomization">Ding et al. (<a href="#ref-ding2016randomization" role="doc-biblioref">2016</a>)</span> develop randomization-based tests for treatment effect heterogeneity.</p>
 </div>
 </div>
 </section>
@@ -680,7 +680,7 @@ window.Quarto = {
 </section>
 <section id="terminology" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="terminology"><span class="header-section-number">5.2.2</span> Terminology</h3>
-<p>Strong ignorability was defined in Chapter 4: joint unconfoundedness <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> together with overlap <span class="math inline">\(0 &lt; P(T{=}1 \mid X) &lt; 1\)</span> a.s. <span class="citation" data-cites="rosenbaum1983central">(<a href="references.html#ref-rosenbaum1983central" role="doc-biblioref">Rosenbaum and Rubin 1983</a>)</span>. The pointwise (weak) form <span class="math inline">\(Y(t) \indep T \mid X\)</span> for each <span class="math inline">\(t\)</span> separately is what identification of <span class="math inline">\(\E[Y(t)]\)</span> actually uses. Equivalent names in the literature: <em>unconfoundedness</em>, <em>selection on observables</em>, <em>no unmeasured confounders</em>, <em>conditional exchangeability</em>.</p>
+<p>Strong ignorability was defined in Chapter 4: joint unconfoundedness <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> together with overlap <span class="math inline">\(0 &lt; P(T{=}1 \mid X) &lt; 1\)</span> a.s. <span class="citation" data-cites="rosenbaum1983central">(<a href="#ref-rosenbaum1983central" role="doc-biblioref">Rosenbaum and Rubin 1983</a>)</span>. The pointwise (weak) form <span class="math inline">\(Y(t) \indep T \mid X\)</span> for each <span class="math inline">\(t\)</span> separately is what identification of <span class="math inline">\(\E[Y(t)]\)</span> actually uses. Equivalent names in the literature: <em>unconfoundedness</em>, <em>selection on observables</em>, <em>no unmeasured confounders</em>, <em>conditional exchangeability</em>.</p>
 </section>
 <section id="three-languages-for-ignorability" class="level3" data-number="5.2.3">
 <h3 data-number="5.2.3" class="anchored" data-anchor-id="three-languages-for-ignorability"><span class="header-section-number">5.2.3</span> Three Languages for Ignorability</h3>
@@ -724,7 +724,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>No statistical test can confirm or refute unconfoundedness using observed data alone. If an unobserved variable <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open, and conditioning on any set of observed variables cannot close it. Sensitivity analysis <span class="citation" data-cites="rosenbaum2002observational">(<a href="references.html#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span> can quantify how large such an unobserved confounder would have to be to overturn a conclusion, but cannot confirm the assumption itself.</p>
+<p>No statistical test can confirm or refute unconfoundedness using observed data alone. If an unobserved variable <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> is open, and conditioning on any set of observed variables cannot close it. Sensitivity analysis <span class="citation" data-cites="rosenbaum2002observational">(<a href="#ref-rosenbaum2002observational" role="doc-biblioref">Rosenbaum 2002</a>)</span> can quantify how large such an unobserved confounder would have to be to overturn a conclusion, but cannot confirm the assumption itself.</p>
 </div>
 </div>
 </section>
@@ -851,7 +851,7 @@ window.Quarto = {
 </ol>
 </div>
 </div>
-<p>This is the <em>outcome regression</em> (OR) or <em>G-computation</em> estimator <span class="citation" data-cites="robins1986new">(<a href="references.html#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span>. Step 3 averages out <span class="math inline">\(X\)</span> using the empirical distribution — exactly what <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> requires: <span class="math inline">\(\tau_{\mathrm{ATE}} = \int [\mu(1,x) - \mu(0,x)] p(x)\, dx\)</span>.</p>
+<p>This is the <em>outcome regression</em> (OR) or <em>G-computation</em> estimator <span class="citation" data-cites="robins1986new">(<a href="#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span>. Step 3 averages out <span class="math inline">\(X\)</span> using the empirical distribution — exactly what <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> requires: <span class="math inline">\(\tau_{\mathrm{ATE}} = \int [\mu(1,x) - \mu(0,x)] p(x)\, dx\)</span>.</p>
 </section>
 <section id="a-worked-example" class="level3" data-number="5.3.2">
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="a-worked-example"><span class="header-section-number">5.3.2</span> A Worked Example</h3>
@@ -899,7 +899,7 @@ window.Quarto = {
 </section>
 <section id="sec-standardization" class="level3" data-number="5.3.3">
 <h3 data-number="5.3.3" class="anchored" data-anchor-id="sec-standardization"><span class="header-section-number">5.3.3</span> Standardization as a Special Case</h3>
-<p>When <span class="math inline">\(X\)</span> is categorical, standardization computes <span class="math inline">\(\hat\mu(t,x)\)</span> as the within-cell sample mean — a fully saturated model: <span id="eq-std"><span class="math display">\[\hat\tau_{\mathrm{STD}} = \sum_{x \in \mathcal{X}} [\hat\mu(1,x) - \hat\mu(0,x)]\,\hat{p}(x). \tag{5.8}\]</span></span> This is <em>algebraically identical</em> to <a href="#eq-or" class="quarto-xref">Equation&nbsp;<span>5.7</span></a> when <span class="math inline">\(X\)</span> is categorical: standardization is regression adjustment with a saturated outcome model. The formula is also known as the <em>G-formula</em> <span class="citation" data-cites="robins1986new">(<a href="references.html#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span> and as <em>direct standardization</em> in epidemiology.</p>
+<p>When <span class="math inline">\(X\)</span> is categorical, standardization computes <span class="math inline">\(\hat\mu(t,x)\)</span> as the within-cell sample mean — a fully saturated model: <span id="eq-std"><span class="math display">\[\hat\tau_{\mathrm{STD}} = \sum_{x \in \mathcal{X}} [\hat\mu(1,x) - \hat\mu(0,x)]\,\hat{p}(x). \tag{5.8}\]</span></span> This is <em>algebraically identical</em> to <a href="#eq-or" class="quarto-xref">Equation&nbsp;<span>5.7</span></a> when <span class="math inline">\(X\)</span> is categorical: standardization is regression adjustment with a saturated outcome model. The formula is also known as the <em>G-formula</em> <span class="citation" data-cites="robins1986new">(<a href="#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span> and as <em>direct standardization</em> in epidemiology.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -945,7 +945,7 @@ window.Quarto = {
 </section>
 <section id="regression-adjustment-in-randomized-experiments-lin-2013" class="level3" data-number="5.3.5">
 <h3 data-number="5.3.5" class="anchored" data-anchor-id="regression-adjustment-in-randomized-experiments-lin-2013"><span class="header-section-number">5.3.5</span> Regression Adjustment in Randomized Experiments: Lin (2013)</h3>
-<p>In a <em>randomized</em> experiment, outcome regression can reduce variance even though adjustment is not needed for unbiasedness. The <em>regression-adjusted estimator</em> of <span class="citation" data-cites="lin2013agnostic">Lin (<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span> fits the fully interacted OLS model: <span id="eq-lin-reg"><span class="math display">\[Y_i = \alpha + \beta T_i + \gamma^\top \tilde{X}_i + \delta^\top (T_i \cdot \tilde{X}_i) + \varepsilon_i, \tag{5.9}\]</span></span> where <span class="math inline">\(\tilde{X}_i = X_i - \bar{X}\)</span> are mean-centered covariates, and takes <span class="math inline">\(\hat\beta\)</span> as the ATE estimate.</p>
+<p>In a <em>randomized</em> experiment, outcome regression can reduce variance even though adjustment is not needed for unbiasedness. The <em>regression-adjusted estimator</em> of <span class="citation" data-cites="lin2013agnostic">Lin (<a href="#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span> fits the fully interacted OLS model: <span id="eq-lin-reg"><span class="math display">\[Y_i = \alpha + \beta T_i + \gamma^\top \tilde{X}_i + \delta^\top (T_i \cdot \tilde{X}_i) + \varepsilon_i, \tag{5.9}\]</span></span> where <span class="math inline">\(\tilde{X}_i = X_i - \bar{X}\)</span> are mean-centered covariates, and takes <span class="math inline">\(\hat\beta\)</span> as the ATE estimate.</p>
 <p><strong>Why <span class="math inline">\(\hat\beta\)</span> equals the three-step OR estimator.</strong> The interacted regression <a href="#eq-lin-reg" class="quarto-xref">Equation&nbsp;<span>5.9</span></a> fits arm-specific linear models with centered covariates. Under centering, the OLS intercept equals the regression-adjusted estimator of <span class="math inline">\(\E[Y(t)]\)</span>, so <span class="math inline">\(\hat\beta = \hat\mu_{1,\mathrm{reg}} - \hat\mu_{0,\mathrm{reg}} = \hat\tau_{\mathrm{reg}}\)</span>.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -953,7 +953,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Design-Consistency of the Regression-Adjusted Estimator <span class="citation" data-cites="lin2013agnostic">(<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">Lin 2013</a>)</span>
+<span class="screen-reader-only">Tip</span>Theorem: Design-Consistency of the Regression-Adjusted Estimator <span class="citation" data-cites="lin2013agnostic">(<a href="#ref-lin2013agnostic" role="doc-biblioref">Lin 2013</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1003,7 +1003,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The design-consistency result in <span class="quarto-unresolved-ref">?thm-lin</span> — model-agnostic consistency under the randomization distribution — was established in the survey sampling literature decades before <span class="citation" data-cites="lin2013agnostic">Lin (<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span>. <span class="citation" data-cites="isaki1982survey">Isaki and Fuller (<a href="references.html#ref-isaki1982survey" role="doc-biblioref">1982</a>)</span> proved this for the generalized regression (GREG) estimator under general probability sampling designs. A CRE is structurally equivalent to simple random sampling from the finite population of potential outcomes, so their result directly implies <span class="quarto-unresolved-ref">?thm-lin</span>. <span class="citation" data-cites="deville1992calibration">Deville and Särndal (<a href="references.html#ref-deville1992calibration" role="doc-biblioref">1992</a>)</span> extended this to calibration estimators. <span class="citation" data-cites="lin2013agnostic">Lin (<a href="references.html#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span>’s contribution was restating and proving this within the Neyman–Rubin framework for the experimental causal inference audience.</p>
+<p>The design-consistency result in <span class="quarto-unresolved-ref">?thm-lin</span> — model-agnostic consistency under the randomization distribution — was established in the survey sampling literature decades before <span class="citation" data-cites="lin2013agnostic">Lin (<a href="#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span>. <span class="citation" data-cites="isaki1982survey">Isaki and Fuller (<a href="#ref-isaki1982survey" role="doc-biblioref">1982</a>)</span> proved this for the generalized regression (GREG) estimator under general probability sampling designs. A CRE is structurally equivalent to simple random sampling from the finite population of potential outcomes, so their result directly implies <span class="quarto-unresolved-ref">?thm-lin</span>. <span class="citation" data-cites="deville1992calibration">Deville and Särndal (<a href="#ref-deville1992calibration" role="doc-biblioref">1992</a>)</span> extended this to calibration estimators. <span class="citation" data-cites="lin2013agnostic">Lin (<a href="#ref-lin2013agnostic" role="doc-biblioref">2013</a>)</span>’s contribution was restating and proving this within the Neyman–Rubin framework for the experimental causal inference audience.</p>
 </div>
 </div>
 </section>
@@ -1012,7 +1012,7 @@ window.Quarto = {
 <h2 data-number="5.4" class="anchored" data-anchor-id="sec-stratification"><span class="header-section-number">5.4</span> Stratification</h2>
 <p>Stratification (subclassification) is a non-parametric implementation of the back-door formula. Rather than modeling <span class="math inline">\(\E[Y \mid T, X]\)</span>, the analyst divides the sample into <em>strata</em> — subgroups with similar values of <span class="math inline">\(X\)</span> — and estimates the treatment effect within each stratum.</p>
 <p>Within stratum <span class="math inline">\(\mathcal{S}_k\)</span>, the treated and control units have similar covariate distributions. If the stratum is narrow enough, ignorability holds approximately, and the within-stratum DIM: <span class="math display">\[\hat\tau_k = \bar Y_{1,k} - \bar Y_{0,k}\]</span> is approximately unbiased for the stratum-specific ATE. The overall ATE is estimated as: <span id="eq-strat"><span class="math display">\[\hat\tau_{\mathrm{STRAT}} = \sum_{k=1}^K \hat\tau_k \cdot \frac{n_k}{n}. \tag{5.11}\]</span></span></p>
-<p><span class="citation" data-cites="cochran1968effectiveness">Cochran (<a href="references.html#ref-cochran1968effectiveness" role="doc-biblioref">1968</a>)</span> showed that with <span class="math inline">\(K = 5\)</span> equal-size strata, roughly 90% of the bias from a single continuous confounder is removed; with <span class="math inline">\(K = 10\)</span>, over 95%.</p>
+<p><span class="citation" data-cites="cochran1968effectiveness">Cochran (<a href="#ref-cochran1968effectiveness" role="doc-biblioref">1968</a>)</span> showed that with <span class="math inline">\(K = 5\)</span> equal-size strata, roughly 90% of the bias from a single continuous confounder is removed; with <span class="math inline">\(K = 10\)</span>, over 95%.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1237,7 +1237,7 @@ window.Quarto = {
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-cochran1968effectiveness" class="csl-entry" role="listitem">
 Cochran, William G. 1968. <span>“The Effectiveness of Adjustment by Subclassification in Removing Bias in Observational Studies.”</span> <em>Biometrics</em> 24 (2): 295–313. <a href="https://doi.org/10.2307/2528036">https://doi.org/10.2307/2528036</a>.
 </div>
