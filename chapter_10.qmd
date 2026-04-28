@@ -1,355 +1,466 @@
 ---
 engine: knitr
-suppress-bibliography: true
 ---
 
-# Doubly Robust Estimation and Semiparametric Efficiency
+# Estimating Equations and Influence Functions
 
 ::: {.callout-note icon=false}
 ## Learning Objectives
 
 By the end of this chapter, students should be able to:
 
-1. Derive the AIPW estimator as a bias-corrected prediction estimator, and explain the role of each term.
-2. Prove the double robustness property using the law of iterated expectations.
-3. Describe the class of augmented IPW estimators indexed by arbitrary control functions $b_t(x)$, verify unbiasedness for any $b_t$, and identify the optimal choice that minimizes total variance.
-4. Interpret the augmentation step as a Hilbert-space projection onto the orthogonal complement of the augmentation space, and derive the Pythagorean variance decomposition.
-5. Carry out the projection argument in the causal inference setting, starting from the Horvitz--Thompson estimator.
-6. State the semiparametric efficiency bound for the ATE and explain why the AIPW estimating function is the efficient influence function.
-7. Derive the two approaches to building double robustness directly into the outcome model: IPW-weighted regression and the augmented model with clever covariate.
-8. Identify the product-rate condition as the key sufficient condition for nuisance estimation error to be asymptotically negligible, and construct a consistent variance estimator and Wald confidence interval.
+1. Explain why identification of a causal parameter does not automatically yield a statistically reliable estimator, and articulate the distinct questions that an estimation theory must address.
+2. Define an estimating equation and verify the population moment condition for standard examples (sample mean, OLS, IPW).
+3. State the definition of an asymptotically linear estimator and derive the influence function from a generic first-order expansion of an estimating equation.
+4. Compute the influence function for simple causal estimators when nuisance functions are known, and interpret it as the infinitesimal contribution of a single observation.
+5. Describe how estimation error in nuisance functions propagates into the target estimator via the Z-estimation stacked-equation framework, and explain why this is the central statistical challenge in causal inference.
+6. Use the influence function to construct a consistent variance estimator and an approximate Wald confidence interval.
+7. Define efficiency in the class of regular estimators and explain the role of the efficient influence function as the foundation for doubly robust estimation in Chapter 11.
 :::
 
-## Why Combine Outcome Regression and Weighting? {#sec-motivation}
+## Why Estimation Needs Its Own Theory {#sec-motivation}
 
-Under consistency, conditional exchangeability, and positivity, the ATE $\tau = \E\{Y(1) - Y(0)\}$ is identified by either the regression formula $\tau = \E\{\mu_1(X) - \mu_0(X)\}$ or the Horvitz--Thompson formula $\tau = \E\!\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\}$.
+So far the focus has been on *identification*: under what assumptions can a causal parameter be written as a functional of the observed-data distribution? Identification does not by itself provide a statistically reliable estimator. Once a causal parameter is identified, several distinct questions remain:
 
-**Outcome regression** estimates $\mu_1(x)$ and $\mu_0(x)$ and averages $\hat\mu_1(X_i)-\hat\mu_0(X_i)$ over the sample. **IPW** estimates $\pi(x)$ and reweights observed outcomes. Each has weaknesses: regression can be biased under misspecification; IPW can be unstable when estimated propensity scores are near 0 or 1 [@rosenbaum1983central].
+- How should the estimator be constructed from the observed sample?
+- How does estimation of nuisance functions affect the target estimator?
+- What is the large-sample distribution of the estimator?
+- How can we compute valid standard errors and confidence intervals?
 
-This chapter develops a third strategy: combine both models to construct an estimator that is consistent when *either* model is correct, and achieves the semiparametric efficiency bound when both are correct. We derive the same estimator in three complementary ways: as a bias-corrected prediction estimator (@sec-prediction), as the optimal member of a class of augmented estimators (@sec-class), and as the efficient influence function in a semiparametric model (@sec-eif).
+These questions motivate a separate theory of *estimation and inference*. In causal inference this issue is especially important because identified parameters often depend on auxiliary, or *nuisance*, functions such as the outcome regression $\mu_t(x) = \E(Y \mid T{=}t,\, X{=}x)$ or the propensity score $\pi(x) = P(T{=}1 \mid X{=}x)$. Even when the causal parameter is identified, different estimation strategies may behave quite differently in terms of robustness, efficiency, and sensitivity to model misspecification.
 
-## The Prediction Estimator and Its Bias {#sec-prediction}
+The goal of this chapter is to introduce a general framework for estimation based on *estimating equations* and *influence functions*. This framework will serve as the foundation for the doubly robust and semiparametric methods developed in Chapter 11; see also @imbens2015causal and @hernan2020causal for complementary treatments.
 
-Working with generic *working regression functions* $m_t(x)$, the **prediction estimator** is $\hat\tau_{\mathrm{pred}}(m) = n^{-1}\sum_{i=1}^n \{m_1(X_i) - m_0(X_i)\}$. The population bias is:
-$$\tau_{\mathrm{pred}}(m) - \tau = \E\bigl[(m_1(X)-\mu_1(X)) - (m_0(X)-\mu_0(X))\bigr].$$ {#eq-pred-bias}
+## A Running Example: The ATE {#sec-ate}
 
-If a propensity score estimator $\hat\pi$ is available, we can estimate and subtract this bias. The bias-corrected prediction estimator is:
-$$\hat\tau_{\mathrm{AIPW}} = \hat\tau_{\mathrm{pred}} - \widehat{\mathrm{Bias}} = \hat\mu_{1,\mathrm{dr}} - \hat\mu_{0,\mathrm{dr}},$$ {#eq-aipw-biascorr}
-where:
-$$\hat\mu_{1,\mathrm{dr}} = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi(X_i)}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\} + \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i),$$
-$$\hat\mu_{0,\mathrm{dr}} = \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\hat\pi(X_i)}\bigl\{Y_i - \hat\mu_0(X_i)\bigr\} + \frac{1}{n}\sum_{i=1}^n \hat\mu_0(X_i).$$
+Throughout this chapter we use the average treatment effect (ATE) as a running example:
+$$\tau = \E\{Y(1) - Y(0)\}.$$
+
+Under consistency, conditional exchangeability, and positivity, the ATE is identified by the back-door formula (Chapter 5):
+$$\tau = \E[\mu_1(X) - \mu_0(X)], \qquad \mu_t(x) = \E(Y \mid T{=}t,\, X{=}x),\quad t\in\{0,1\}.$$
+
+This identity tells us what the target parameter is, but it does not uniquely determine how to estimate it. One may consider a *regression-based* estimator by fitting models for $\mu_1(x)$ and $\mu_0(x)$; a *weighting* estimator based on the propensity score $\pi(x)$; or an *augmented* estimator combining both. All of these may target the same causal parameter yet differ in their statistical properties. A main goal of this chapter is to develop a common language for describing and comparing such estimators.
+
+## Estimating Equations {#sec-ee}
+
+A broad class of estimators can be defined as solutions to *estimating equations*. Let $O_1,\dots,O_n$ be i.i.d. observations from a distribution $P$, let $\theta$ denote a finite-dimensional target parameter, and write $\mathbb{P}_n f = n^{-1}\sum_{i=1}^n f(O_i)$ for the empirical average.
 
 ::: {.callout-note icon=false}
-## Remark: Two Roles of the Augmentation Terms
+## Definition: Estimating Equation
 
-From the bias-correction perspective, $T_i\{Y_i-\hat\mu_1(X_i)\}/\hat\pi(X_i)$ are IPW-weighted residuals estimating prediction error. From an estimating-equation perspective, they make the estimating function orthogonal to nuisance perturbations. The estimated bias term has zero expectation when the outcome model is correct; the bias-corrected estimator is unbiased when the propensity model is correct. Hence the name *doubly robust*.
+An **estimating equation** for a parameter $\theta$ is an equation of the form $\mathbb{P}_n\{U(O;\theta)\} = 0$, where the **population moment condition** $\E\{U(O;\theta_0)\} = 0$ holds at the true parameter value $\theta_0$. The function $U(O;\theta)$ is called the **estimating function**.
 :::
 
-## The Augmented IPW Estimator {#sec-aipw}
+Many familiar estimators take this form.
 
-**Notation.** $\mu_t(x)$ denotes a generic *working* outcome regression; the truth is $\mu_t^*(x)$. The propensity score $\pi(x)$ is always the *true* propensity.
+::: {.callout-note icon=false}
+## Example: Three Estimating Equations
 
-The AIPW estimator solves $\mathbb{P}_n\{\phi(O;\tau,\hat\eta)\} = 0$ where:
-$$\phi(O;\tau,\eta) = \left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\}+\mu_1(X)\right] - \left[\frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\}+\mu_0(X)\right] - \tau.$$ {#eq-dr-score}
+**(i) Sample mean.** Let $\theta = \E(Y)$. The sample mean $\hat\theta = \bar Y$ solves $\mathbb{P}_n(Y-\theta) = 0$. The estimating function is $U(O;\theta) = Y - \theta$.
 
-Solving explicitly:
-$$\hat\tau_{\mathrm{AIPW}} = \frac{1}{n}\sum_{i=1}^n \Bigg[\hat\mu_1(X_i) - \hat\mu_0(X_i) + \frac{T_i}{\hat\pi(X_i)}\{Y_i - \hat\mu_1(X_i)\} - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i - \hat\mu_0(X_i)\}\Bigg].$$ {#eq-aipw}
+**(ii) Ordinary least squares.** Let $O = (X,Y)$ and $\beta = [\E(XX^\top)]^{-1}\E(XY)$. OLS solves $\mathbb{P}_n[X\{Y - X^\top\beta\}] = 0$.
+
+**(iii) IPW estimating equation.** Suppose $\pi(X)$ is known. Under consistency, conditional exchangeability, and positivity, $\tau = \E\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}$. Then $\tau$ solves:
+$$\E\!\left[\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \tau\right] = 0.$$
+The right-hand side is an observed-data functional only after identification has been imposed; without those assumptions, knowing $\pi(X)$ alone does not turn the expression into a causal quantity.
+:::
+
+The main advantage of the estimating-equation framework is that it provides a unified language for both estimator construction and asymptotic analysis.
+
+## From Estimating Equations to Asymptotic Linearity {#sec-asymlin}
+
+Estimating equations are useful not only because they define estimators, but also because they often yield a convenient first-order expansion. Under suitable regularity conditions, an estimator solving an estimating equation can typically be approximated as $\sqrt{n}(\hat\theta - \theta_0) = n^{-1/2}\sum_{i=1}^n \varphi(O_i) + o_p(1)$ for some mean-zero function $\varphi(O)$.
+
+::: {.callout-note icon=false}
+## Definition: Asymptotic Linearity and Influence Function
+
+An estimator $\hat\theta$ is **asymptotically linear** with **influence function** $\varphi(O)$ if
+$$\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1), \qquad \E\{\varphi(O)\} = 0.$$ {#eq-asymlin}
+:::
+
+This representation is fundamental because it immediately implies asymptotic normality by the CLT. When $\theta \in \mathbb{R}^p$:
+$$\sqrt{n}(\hat\theta - \theta_0) \overset{d}{\longrightarrow} N(\mathbf{0},\; \Sigma), \qquad \Sigma = \E[\varphi(O)\varphi(O)^\top].$$
+In the scalar case this reduces to $\Sigma = \E[\varphi(O)^2]$.
 
 ::: {.callout-tip icon=false}
-## Theorem: Double Robustness
+## Proposition: Generic First-Order Expansion
 
-Let $\phi(O;\tau,\eta)$ be the estimating function in @eq-dr-score. Under consistency, conditional exchangeability, and positivity, $\E\{\phi(O;\tau,\eta)\} = 0$ if either:
-
-1. $\mu_t(x) = \mu_t^*(x)$ for $t=0,1$, regardless of whether $\pi(x)$ is correctly specified; or
-2. $\pi(x) = P(T=1\mid X=x)$, regardless of whether $\mu_0$ and $\mu_1$ are correctly specified.
+Under smoothness and regularity conditions, an estimator $\hat\theta$ solving $\mathbb{P}_n\{U(O;\theta)\}=0$ admits a first-order expansion:
+$$\sqrt{n}(\hat\theta - \theta_0) = -A^{-1}\,\frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1), \qquad A = \E\!\left\{\frac{\partial}{\partial\theta^\top}U(O;\theta_0)\right\}.$$ {#eq-expansion}
+Hence the influence function is $\varphi(O) = -A^{-1}U(O;\theta_0)$.
 :::
 
 ::: {.callout-note collapse=true icon=false}
 ## Proof
 
-**Case 1: outcome regression correct.** If $\mu_t(X) = \E(Y\mid T=t,X)$, then $\E\!\left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\}\,\middle|\,X\right] = \frac{P(T=1\mid X)}{\pi(X)}\,\E\{Y-\mu_1(X)\mid T=1,X\} = 0$, and similarly for the control arm. Therefore $\E\{\phi\} = \E\{\mu_1(X)-\mu_0(X)\} - \tau = 0$.
+A Taylor expansion of the sample moment condition around $\theta_0$ gives:
+$$0 = \mathbb{P}_n\{U(O;\hat\theta)\} \approx \mathbb{P}_n\{U(O;\theta_0)\} + \mathbb{P}_n\!\left\{\frac{\partial}{\partial\theta^\top} U(O;\theta_0)\right\}(\hat\theta - \theta_0).$$
+By the LLN, $\mathbb{P}_n\{\partial_{\theta^\top} U(O;\theta_0)\} \to A$ in probability. Rearranging and multiplying by $\sqrt{n}$ yields the stated expansion. $\square$
+:::
 
-**Case 2: propensity score correct.** Suppose $\pi(X) = P(T=1\mid X)$. For the treated bracket:
-$$\E\!\left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\} + \mu_1(X)\,\Big|\, X\right] = \frac{\E[TY\mid X]}{\pi(X)} - \mu_1(X)\cdot\frac{\E[T\mid X]}{\pi(X)} + \mu_1(X).$$
-Using $\E[T\mid X] = \pi(X)$ (so the $\mu_1$ terms cancel) and $\E[TY\mid X] = \pi(X)\mu_1^*(X)$, this equals $\mu_1^*(X)$. By symmetry, the control bracket gives $\mu_0^*(X)$. Hence $\E\{\phi\mid X\} = \mu_1^*(X) - \mu_0^*(X) - \tau$, and taking expectations gives $\E\{\phi\} = 0$. $\square$
+## Influence Functions: Intuition {#sec-if-intuition}
+
+### Statistical Functionals
+
+Many parameters of interest in statistics and causal inference can be written as *functionals* of the underlying distribution.
+
+::: {.callout-note icon=false}
+## Definition: Statistical Functional and Plug-In Estimator
+
+A **statistical functional** is a map $\Psi : \mathcal{P} \to \mathbb{R}^p$ that assigns a parameter value $\psi = \Psi(P)$ to each distribution $P \in \mathcal{P}$. The **plug-in estimator** of $\psi$ is $\hat\psi = \Psi(\mathbb{P}_n)$, obtained by replacing $P$ with the empirical distribution.
 :::
 
 ::: {.callout-note icon=false}
-## Remark: The Algebra of Case 2
+## Example: Common Statistical Functionals
 
-The key cancellation: $\mu_1(X)$ enters the bracket twice with equal and opposite conditional expectations because $\E[T/\pi(X)\mid X] = 1$ when $\pi$ is correct. The bracket "forgets" $\mu_1$ entirely and converges to $\mu_1^*(X)$. A wrong $\mu_t$ is subtracted out by the correct $\pi$.
+(i) **Mean.** $\Psi(P) = \E_P(Y)$. Plug-in: $\bar Y$.
+(ii) **Variance.** $\Psi(P) = \E_P(Y^2) - [\E_P(Y)]^2$. Plug-in: sample variance.
+(iii) **Quantile.** $\Psi(P) = F_P^{-1}(\tau)$. Plug-in: sample $\tau$-quantile.
+(iv) **OLS regression coefficient.** $\Psi(P) = [\E_P(XX^\top)]^{-1}\E_P(XY)$. Plug-in: OLS estimator.
+(v) **ATE.** $\Psi(P) = \E_P[\mu_1(X) - \mu_0(X)]$. Plug-in: average of estimated regression functions.
 :::
 
-## A Class of Augmented Estimators {#sec-class}
+::: {.callout-note icon=false}
+## Remark: Linearity vs. Nonlinearity
 
-For any square-integrable functions $b_1(x)$ and $b_0(x)$, define:
-$$\hat\mu_{1,b} = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\pi(X_i)}\,Y_i - \frac{1}{n}\sum_{i=1}^n \left\{\frac{T_i}{\pi(X_i)}-1\right\} b_1(X_i),$$
-$$\hat\mu_{0,b} = \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\pi(X_i)}\,Y_i - \frac{1}{n}\sum_{i=1}^n \left\{\frac{1-T_i}{1-\pi(X_i)}-1\right\} b_0(X_i),$$
-and $\hat\tau_b = \hat\mu_{1,b} - \hat\mu_{0,b}$. The correction is mean-zero under the true $\pi$ for any $b_t$, so every member is unbiased; only the variance depends on $b_t$. When $b_t = \mu_t$, $\hat\mu_{t,b}$ equals the AIPW form.
+A functional $\Psi$ is **linear** if $\Psi((1-\epsilon)P + \epsilon Q) = (1-\epsilon)\Psi(P) + \epsilon\Psi(Q)$. The mean (i) is linear; the variance (ii), quantile (iii), OLS coefficient (iv), and ATE (v) are nonlinear. Linear functionals are straightforward to analyze because their plug-in estimators are sample averages. Nonlinear functionals require a local linearization, which is precisely what the influence function provides.
+:::
+
+### Influence Functions
+
+Influence functions describe the first-order sensitivity of a statistical functional to small perturbations of the underlying distribution. Informally:
+
+> *The influence function is the infinitesimal contribution of a single observation to the first-order behavior of the estimator.*
+
+::: {.callout-note icon=false}
+## Definition: Influence Function (Informal)
+
+A function $\varphi(O)$ is called an **influence function** for $\Psi$ if it has mean zero under $P$ and gives the first-order derivative of $\Psi(P)$ along regular parametric submodels:
+$$\sqrt{n}(\hat\psi - \psi) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1).$$
+:::
+
+::: {.callout-note icon=false}
+## Remark: Formal Derivation via Pathwise Derivatives
+
+The influence function can be defined formally through the *pathwise (Gateaux) derivative* of the functional $\Psi(P)$: if $P_\epsilon = (1-\epsilon)P + \epsilon\delta_O$ is the $\epsilon$-mixture of $P$ with a point mass at $O$, then:
+$$\varphi(O) = \left.\frac{d}{d\epsilon}\Psi(P_\epsilon)\right|_{\epsilon=0}.$$
+This derivative-based definition is the starting point for semiparametric efficiency theory. In this chapter it is enough to interpret $\varphi(O)$ as the object appearing in the asymptotic linear expansion.
+:::
+
+::: {.callout-note icon=false}
+## Example: Influence Function of the OLS Slope via Pathwise Derivative
+
+Consider $\beta = \Psi(P) = [\E(XX^\top)]^{-1}\E(XY)$.
+
+**Step 1.** Let $P_\epsilon = (1-\epsilon)P + \epsilon\delta_O$. Then $\E_{P_\epsilon}(\tilde X \tilde X^\top) = (1-\epsilon)\E(XX^\top) + \epsilon XX^\top$ and similarly for $\E_{P_\epsilon}(\tilde X \tilde Y)$.
+
+**Step 2.** Differentiate with respect to $\epsilon$ at $\epsilon = 0$. Let $M(\epsilon) = (1-\epsilon)\E(XX^\top) + \epsilon XX^\top$ and $v(\epsilon) = (1-\epsilon)\E(XY) + \epsilon XY$. By differentiating $M(\epsilon)M(\epsilon)^{-1} = I$:
+$$\frac{d}{d\epsilon}M(\epsilon)^{-1} = -M(\epsilon)^{-1}\dot M(\epsilon)\,M(\epsilon)^{-1}.$$
+Evaluating at $\epsilon = 0$ and applying the product rule to $M^{-1}v$:
+$$\varphi(O) = [\E(XX^\top)]^{-1}X(Y - X^\top\beta).$$
+
+**Verification.** $\E\{\varphi(O)\} = [\E(XX^\top)]^{-1}\E[X(Y - X^\top\beta)] = [\E(XX^\top)]^{-1}\cdot 0 = 0$.
+
+**Connection to estimating equations.** The OLS estimating function is $U(O;\beta) = X(Y - X^\top\beta)$, so $A = -\E(XX^\top)$ and @eq-expansion gives $\varphi(O) = [\E(XX^\top)]^{-1}X(Y - X^\top\beta)$ --- the same answer. The pathwise route is more fundamental; the estimating-equation route is more computationally direct.
+:::
+
+## Influence Functions for Simple Causal Estimators {#sec-if-causal}
+
+We now illustrate the idea in causal settings when nuisance functions are *known*.
+
+**Known outcome regression.** Suppose $\mu_1(\cdot)$ and $\mu_0(\cdot)$ are known. The natural plug-in estimator is $\hat\tau = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}$. Its influence function is:
+$$\varphi(O) = \mu_1(X) - \mu_0(X) - \tau.$$
+
+**Known propensity score.** Suppose $\pi(X)$ is known. The IPW estimator $\hat\tau = \mathbb{P}_n\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}$ has influence function:
+$$\varphi(O) = \frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \tau.$$
+
+::: {.callout-note icon=false}
+## Remark: Nuisance Functions and the Influence Function
+
+When nuisance functions are *known*, the influence function is simply the centered estimating function. This observation becomes much more consequential in the next section, where nuisance functions must be estimated. The key challenge is to understand how estimation error in $\hat\mu_t$ or $\hat\pi$ perturbs the first-order expansion.
+:::
+
+::: {.callout-note icon=false}
+## Five Related Concepts: A Taxonomy
+
+Several closely related objects share the symbol $\varphi$. Keeping them separate prevents confusion.
+
+**(i) Estimating function.** A function $U(O;\theta)$ that defines an estimator through $\mathbb{P}_n\{U(O;\hat\theta)\}=0$. This is an *input* to the construction of $\hat\theta$.
+
+**(ii) Influence function of an estimator.** A function $\varphi(O)$ such that $\sqrt{n}(\hat\psi-\psi_0) = n^{-1/2}\sum_i\varphi(O_i)+o_p(1)$. This is a *property of the estimator*. With known nuisance, $\varphi$ is the centered estimating function; when nuisance is estimated, the two generally differ.
+
+**(iii) Influence function (canonical gradient) of a functional.** A function $\varphi^*(O;P)$ that is the pathwise derivative of the parameter functional $\Psi(P)$ at $P$. This is a *property of the parameter and the model*, independent of any estimator.
+
+**(iv) Efficient influence function (EIF).** Among all valid influence functions of regular estimators in the model, the unique one with smallest asymptotic variance.
+
+**(v) Estimated influence values.** The numerical quantities $\hat\varphi_i = \hat\varphi(O_i)$, obtained by plugging in estimated nuisance functions. These are used to compute the sandwich variance $\hat V = (n(n-1))^{-1}\sum_i(\hat\varphi_i-\bar\varphi)^2$.
+
+A regular estimator $\hat\psi$ is asymptotically linear with influence function $\varphi^*$ (the canonical gradient) when nuisance estimators converge fast enough; the estimated influence values $\hat\varphi_i$ then serve as data-driven proxies for $\varphi^*(O_i)$ for variance estimation.
+:::
+
+## Z-Estimation with Nuisance Parameters {#sec-nuisance}
+
+The examples in @sec-if-causal treated nuisance functions as known. In practice, they must be estimated from the same data. When this happens, the randomness in the estimated nuisance introduces an additional term that the naive plug-in formula ignores. Z-estimation provides the framework that accounts jointly for estimation of both the target and nuisance parameters.
+
+### The Stacked Estimating Equation Framework {#sec-stacked}
+
+Suppose the target parameter $\psi \in \mathbb{R}^p$ depends on an unknown nuisance parameter $\alpha \in \mathbb{R}^q$. Both are estimated by solving a *stacked* system:
+$$\mathbb{P}_n\{U_1(O;\psi,\alpha)\} = 0, \qquad \mathbb{P}_n\{U_2(O;\alpha)\} = 0.$$ {#eq-stacked}
+
+Here $U_1$ defines the target estimator $\hat\psi$ given $\alpha$, while $U_2$ defines the nuisance estimator $\hat\alpha$. The equations are solved simultaneously (or sequentially: first @eq-stacked for $\hat\alpha$, then for $\hat\psi$).
+
+::: {.callout-note icon=false}
+## Remark: Why Stack the Equations?
+
+One might think it is enough to plug the estimated $\hat\alpha$ into the influence function derived under known $\alpha$. This is incorrect in general: the randomness in $\hat\alpha$ contributes an additional term to the first-order expansion of $\hat\psi$ that is not captured by the plug-in influence function. The stacked framework keeps track of this extra term automatically.
+:::
+
+### The Z-Estimation Theorem {#sec-zthm}
+
+Write $\theta = (\psi^\top, \alpha^\top)^\top$ and let $U(O;\theta) = (U_1(O;\psi,\alpha)^\top, U_2(O;\alpha)^\top)^\top$ be the stacked estimating function.
 
 ::: {.callout-tip icon=false}
-## Theorem: Unbiasedness and Variance of the AIPW Class
+## Theorem: Z-Estimation Theorem (Stacked Equations)
 
-Under conditional exchangeability, SUTVA, and positivity, with the true propensity score, for any square-integrable $b_0, b_1$: (1) $\E(\hat\tau_b) = \tau$; and (2):
-$$\mathrm{Var}(\hat\tau_b) = \frac{1}{n}\,\E\!\left[\left(\frac{1}{\pi(X)}-1\right)\{Y(1)-b_1(X)\}^2 + 2\{Y(1)-b_1(X)\}\{Y(0)-b_0(X)\} + \left(\frac{1}{1-\pi(X)}-1\right)\{Y(0)-b_0(X)\}^2\right] + \frac{\mathrm{Var}\{Y(1)-Y(0)\}}{n}.$$ {#eq-var-b}
+Suppose: (i) $\E\{U(O;\theta_0)\}=0$; (ii) $\hat\theta \overset{p}{\to} \theta_0$; (iii) the Jacobian $\mathcal{A} = \E\{\partial_{\theta^\top} U(O;\theta_0)\}$ is invertible; (iv) $U$ is smooth enough in $\theta$ for a uniform LLN and CLT. Then:
+$$\sqrt{n}(\hat\theta - \theta_0) = -\mathcal{A}^{-1}\, \frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1).$$
+Partitioning $\mathcal{A}$ conformably with $(\psi, \alpha)$ as $\mathcal{A} = \begin{pmatrix} A_{11} & A_{12} \\ 0 & A_{22} \end{pmatrix}$, the block-matrix inverse gives $\mathcal{A}^{-1} = \begin{pmatrix} A_{11}^{-1} & -A_{11}^{-1}A_{12}A_{22}^{-1} \\ 0 & A_{22}^{-1} \end{pmatrix}$, and the influence function of $\hat\psi$ is:
+$$\varphi(O) = -A_{11}^{-1}\,U_1(O;\psi_0,\alpha_0) + A_{11}^{-1}A_{12}A_{22}^{-1}\,U_2(O;\alpha_0).$$ {#eq-if-corrected}
 :::
 
-::: {.callout-tip icon=false}
-## Theorem: Optimal Control Functions
+::: {.callout-note collapse=true icon=false}
+## Proof
 
-The control functions $b_1^*(X) = \E\{Y(1)\mid X\}$ and $b_0^*(X) = \E\{Y(0)\mid X\}$ minimize the total variance in @eq-var-b. The proof shows that the $b_t$-dependent term equals a perfect square $\E\!\left[\!\left(\sqrt{\frac{1-\pi}{\pi}}u + \sqrt{\frac{\pi}{1-\pi}}v\right)^{\!2}\right] \geq 0$, where $u = \mu_1^*-b_1$ and $v = \mu_0^*-b_0$, which equals zero iff $b_t = \mu_t^*$.
-:::
-
-## The Projection Interpretation {#sec-projection}
-
-The optimality of AIPW has an elegant geometric interpretation in terms of projections in a Hilbert space of estimators [@tsiatis2006semiparametric, Ch. 2]. Define the **augmentation space** $\Lambda = \{\hat b : \E(\hat b) = 0\}$.
-
-::: {.callout-tip icon=false}
-## Theorem: Optimal Projection
-
-The optimal correction is $\hat b^* = \Pi(\hat\theta_0\mid\Lambda)$, characterized by $\hat b^* \in \Lambda$ and $\mathrm{Cov}(\hat\theta_0-\hat b^*,\;\hat b) = 0$ for all $\hat b \in \Lambda$. The optimal estimator $\hat\theta_{\mathrm{opt}} = \Pi(\hat\theta_0 \mid \Lambda^\perp)$ satisfies the **Pythagorean identity**:
-$$\mathrm{Var}(\hat\theta_0) = \mathrm{Var}(\hat\theta_{\mathrm{opt}}) + \mathrm{Var}(\hat b^*).$$ {#eq-pythagoras}
-:::
-
-```{tikz}
-#| label: fig-projection
-#| fig-cap: "Geometric illustration of the projection. $\\hat\\theta_0$ decomposes into $\\hat\\theta_{\\mathrm{opt}} \\in \\Lambda^\\perp$ and $\\hat b^* \\in \\Lambda$. The Pythagorean identity gives $\\mathrm{Var}(\\hat\\theta_0) = \\mathrm{Var}(\\hat\\theta_{\\mathrm{opt}}) + \\mathrm{Var}(\\hat b^*)$."
-#| echo: false
-#| fig-width: 2.5
-\usetikzlibrary{arrows.meta}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{causalgreen}{RGB}{20,120,60}
-\definecolor{backdoorred}{RGB}{180,40,40}
-\begin{tikzpicture}[scale=1.1]
-  \draw[->] (-0.3,0) -- (3.2,0) node[right] {$\Lambda$};
-  \draw[->] (0,-0.3) -- (0,2.8) node[above] {$\Lambda^\perp$};
-  \draw[->,thick,color=isublue] (0,0) -- (2.4,2.1)
-    node[above right] {$\hat\theta_0$};
-  \draw[->,thick,color=causalgreen] (0,0) -- (0,2.1)
-    node[left] {$\hat\theta_{\mathrm{opt}}$};
-  \draw[->,thick,color=backdoorred] (0,0) -- (2.4,0)
-    node[below] {$\hat b^*$};
-  \draw[dashed,gray] (2.4,0) -- (2.4,2.1);
-  \draw (2.0,0) rectangle (2.4,0.4);
-\end{tikzpicture}
-```
-
-## Projection in the Causal Inference Setting {#sec-proj-causal}
-
-We now specialize to the ATE, with $\pi(X)$ known. Decompose the Horvitz--Thompson (HT) estimator as $\hat\tau_{\mathrm{HT}} = \hat\mu_{1,\mathrm{HT}} - \hat\mu_{0,\mathrm{HT}}$. Define arm-specific augmentation spaces:
-$$\Lambda_t = \left\{n^{-1}\sum_{i=1}^n \!\left(\frac{T_i^{(t)}}{\pi_i^{(t)}}-1\right) b_t(X_i) : b_t \in \mathcal{L}^2\right\}, \quad \Lambda = \Lambda_1 \oplus \Lambda_0.$$
-
-::: {.callout-tip icon=false}
-## Theorem: Arm-wise Projections
-
-The optimal arm-wise corrections are given by $b_t^*(x) = \E\{Y(t)\mid x\}$:
-$$\Pi(\hat\mu_{t,\mathrm{HT}} \mid \Lambda_t) = n^{-1}\sum_{i=1}^n\!\left(\frac{T_i^{(t)}}{\pi_i^{(t)}}-1\right) \mu_t^*(X_i).$$
-The orthogonality condition $\E[r_{t,i}\, b_i] = 0$ holds because $\E\{\mu_t^*(X_i) - \mu_t^*(X_i)\mid X_i\} = 0$ and $\E[T_i/\pi_i\cdot(T_i/\pi_i - 1)\mid X_i] = 1/\pi_i - 1$.
-:::
-
-The arm-wise optimal estimators are:
-$$\hat\mu_{t,\mathrm{opt}} = \frac{1}{n}\sum_{i=1}^n\left[\frac{T_i^{(t)}}{\pi_i^{(t)}}\{Y_i-\mu_t^*(X_i)\}+\mu_t^*(X_i)\right],$$
-and $\hat\tau_{\mathrm{opt}} = \hat\mu_{1,\mathrm{opt}} - \hat\mu_{0,\mathrm{opt}}$ is precisely the AIPW estimator @eq-aipw, confirming the Optimal Control Functions theorem by a different route.
-
-## The Efficient Influence Function and Semiparametric Efficiency {#sec-eif}
-
-Under the nonparametric model for $O=(X,T,Y)$, the efficient influence function for the ATE is:
-$$\varphi_{\mathrm{eff}}(O) = \frac{T}{\pi(X)}\{Y-\mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau.$$ {#eq-eif-ate}
-
-Comparing @eq-eif-ate with @eq-dr-score, the AIPW estimating function *is* the efficient influence function $\varphi^*(O)$ from Chapter 9. The augmentation space $\Lambda$ is the nuisance tangent space of the nonparametric model.
-
-::: {.callout-tip icon=false}
-## Theorem: Semiparametric Efficiency Bound for the ATE
-
-Under the nonparametric model for $O=(X,T,Y)$, every regular asymptotically linear estimator $\hat\tau$ of the ATE satisfies $\mathrm{Avar}(\sqrt{n}(\hat\tau - \tau)) \geq \E\{\varphi_{\mathrm{eff}}(O)^2\}$, and the bound is attained by estimators whose influence function equals $\varphi_{\mathrm{eff}}$.
-:::
-
-This is a specialization of the Hájek--Le Cam convolution theorem; see @bickel1993 or @vandervaart1998 [Ch. 25] for a rigorous development.
-
-::: {.callout-note icon=false}
-## Remark: EIF as the Semiparametric Score
-
-The efficient influence function plays the same role in semiparametric theory that the score plays in parametric models: its variance gives the information lower bound. The three derivations in this chapter --- bias correction, optimal augmentation, and semiparametric identification --- converge on the same estimating function. This is the deepest explanation of why AIPW occupies a central place in the causal inference toolkit.
-:::
-
-## Doubly Robust Regression: Weighted and Augmented Approaches {#sec-ibc}
-
-The **internal bias calibration** (IBC) conditions [@firth1998robust] enforce double robustness directly within the outcome model fit: when satisfied, the prediction estimator coincides with AIPW without a separate augmentation step:
-$$\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\} = 0, \qquad \sum_{i=1}^n \frac{1-T_i}{1-\hat\pi_i}\bigl\{Y_i - \hat\mu_0(X_i)\bigr\} = 0.$$ {#eq-ibc}
-
-**Weighted regression.** Use IPW-weighted least squares: minimize $\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\{Y_i - \mu_1(X_i;\theta_1)\}^2$ for arm $t=1$. The normal equation for the intercept is exactly the IBC condition @eq-ibc. IPW-weighted fitted values automatically satisfy IBC for any model containing a constant [@robins1994estimation; @bang2005doubly].
-
-**Augmented model with clever covariate.** Let $\hat\mu_1^{(0)}(X_i)$ be any initial fit. Include the **clever covariate** $\hat\pi_i^{-1}$ [@vanderLaan2006targeted; @vanderLaan2011targeted] and run OLS among treated units:
-$$Y_i = \alpha_1 + \beta_1\hat\mu_1^{(0)}(X_i) + \gamma_1\hat\pi_i^{-1} + e_i(1), \qquad T_i = 1.$$ {#eq-aug-model}
-
-The fitted model is $\hat\mu_1(X_i) = \hat\alpha_1 + \hat\beta_1\hat\mu_1^{(0)}(X_i) + \hat\gamma_1\hat\pi_i^{-1}$. The normal equation for $\hat\gamma_1$ is exactly the IBC condition, so the prediction estimator can be written in AIPW form:
-$$\hat\mu_1^{\mathrm{pred}} = \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i) + \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\}.$$ {#eq-aug-aipw}
-
-::: {.callout-note icon=false}
-## Remark: Behavior Under Correct Outcome Model
-
-If $\hat\mu_1^{(0)}$ is correctly specified, then $\hat\alpha_1 \overset{p}{\to} 0$, $\hat\beta_1 \overset{p}{\to} 1$, and $\hat\gamma_1 \overset{p}{\to} 0$. Including the clever covariate carries no asymptotic efficiency cost.
+The argument mirrors @eq-expansion applied to the full stacked system. Taylor-expand $\mathbb{P}_n\{U(O;\hat\theta)\}=0$ around $\theta_0$:
+$$0 \approx \mathbb{P}_n\{U(O;\theta_0)\} + \mathbb{P}_n\!\left\{\frac{\partial}{\partial\theta^\top} U(O;\theta_0)\right\}(\hat\theta-\theta_0).$$
+By the LLN, the matrix of derivatives converges to $\mathcal{A}$. Rearranging and multiplying by $\sqrt{n}$ gives the stacked expansion. Extracting the first block via the block-matrix inverse formula gives @eq-if-corrected. $\square$
 :::
 
 ::: {.callout-note icon=false}
-## Remark: Connection to TMLE
+## Remark: Consistency Hypothesis
 
-This approach captures the targeting idea underlying TMLE [@vanderLaan2006targeted; @vanderLaan2011targeted]. Standard TMLE uses the fixed-offset form (coefficient on $\hat\mu_1^{(0)}$ fixed at 1). Model @eq-aug-model goes further by freely estimating $\hat\beta_1$. See @rose2020targeted for a comprehensive treatment.
+Hypothesis (ii) is a separate prerequisite, not a consequence of (i), (iii), and (iv). Standard arguments require identifiability of $\theta_0$ via $\E\{U(O;\theta)\} = 0$ having a unique zero, together with uniform convergence of the sample moment. See @vandervaart1998 [Theorem 5.9] for a standard set of sufficient conditions.
 :::
 
-## Lab: Simulation Study {#sec-lab}
-
-This lab compares four estimators of the ATE: $\hat\tau_{\mathrm{HT}}$, $\hat\tau_{\mathrm{AIPW}}$, the fixed-offset augmented-model estimator $\hat\tau_{\mathrm{aug}}$, and the improved augmented-model estimator $\hat\tau_{\mathrm{aug}^+}$ of @eq-aug-model. A $2\times 2$ design over nuisance-model correctness --- OR correct or misspecified, crossed with PS correct or misspecified --- demonstrates double robustness directly. The lab also reports empirical 95% Wald coverage, illustrating the distinction between double-robust consistency and valid asymptotic inference.
-
-**Data-generating process.** $n = 1000$ observations. Draw $X_i \sim N(0,1)$, then $T_i \mid X_i \sim \mathrm{Bernoulli}(\pi^*(X_i))$ with:
-$$\pi^*(x) = \mathrm{expit}\{0.2\,x + 0.2\,(x^2 - 1)\}.$$
-The potential outcomes are $Y_i(1) = 1 + X_i + 0.5X_i^2 + \varepsilon_i(1)$ and $Y_i(0) = X_i + 0.5X_i^2 + \varepsilon_i(0)$, with $\varepsilon_i(t) \sim N(0,1)$ i.i.d., true ATE $\tau = 1$. The quadratic term enters both the true OR and true PS; a linear-only fit omits it.
-
-**The $2\times 2$ design.** The fitted $\hat\pi$ is clipped to $[10^{-3}, 1-10^{-3}]$.
-
-| Scenario | OR fit | PS fit |
-|---|---|---|
-| S1 | correct: $Y \sim (1, X, X^2)$ | correct: $T \sim (1, X, X^2)$ |
-| S2 | correct: $Y \sim (1, X, X^2)$ | misspecified: $T \sim (1, X)$ |
-| S3 | misspecified: $Y \sim (1, X)$ | correct: $T \sim (1, X, X^2)$ |
-| S4 | misspecified: $Y \sim (1, X)$ | misspecified: $T \sim (1, X)$ |
-
-**Results** ($B = 2000$ replications, `set.seed(2025)`). Bias, Var, MSE in units of $10^{-3}$; Cov = empirical 95% Wald coverage.
-
-| Scenario | Metric | $\hat\tau_{\mathrm{HT}}$ | $\hat\tau_{\mathrm{AIPW}}$ | $\hat\tau_{\mathrm{aug}}$ | $\hat\tau_{\mathrm{aug}^+}$ |
-|---|---|---|---|---|---|
-| **S1: OR ✓, PS ✓** | Bias | 0.55 | −0.44 | −0.45 | −0.45 |
-| | Var | 6.82 | 4.25 | 4.25 | 4.30 |
-| | MSE | 6.82 | 4.25 | 4.25 | 4.30 |
-| | Cov (%) | 99.9 | 95.0 | 94.9 | 94.5 |
-| **S2: OR ✓, PS ✗** | Bias | 188.56 | 0.62 | 0.62 | 0.62 |
-| | Var | 6.32 | 4.33 | 4.33 | 4.33 |
-| | MSE | 41.87 | 4.32 | 4.32 | 4.32 |
-| | Cov (%) | 67.4 | 94.2 | 94.2 | 94.2 |
-| **S3: OR ✗, PS ✓** | Bias | 1.46 | 2.02 | 2.25 | −25.26 |
-| | Var | 5.74 | 4.71 | 4.41 | 8.02 |
-| | MSE | 5.74 | 4.71 | 4.41 | 8.66 |
-| | Cov (%) | 99.9 | 98.4 | 98.2 | 93.2 |
-| **S4: OR ✗, PS ✗** | Bias | 188.42 | 188.77 | 188.62 | −5.42 |
-| | Var | 6.28 | 6.30 | 6.29 | 4.26 |
-| | MSE | 41.78 | 41.93 | 41.87 | 4.29 |
-| | Cov (%) | 67.5 | 33.1 | 33.1 | 94.7 |
-
-**S1 (both correct).** All four estimators are approximately unbiased. $\hat\tau_{\mathrm{HT}}$ has about 60% higher MSE ($6.82$ vs $4.25 \times 10^{-3}$) because it discards the outcome model. The three augmented estimators are essentially equivalent, confirming that $(\hat\alpha_t, \hat\beta_t, \hat\gamma_t) \to (0, 1, 0)$ when the OR is correct. HT's coverage is above nominal because its influence function has larger variance than $\varphi_{\mathrm{eff}}$.
-
-**S2 (OR correct, PS misspecified).** HT is badly biased (MSE $\approx 42 \times 10^{-3}$, coverage 67%). The three augmented estimators are indistinguishable: when the OR is correct they converge to the same limit regardless of PS specification. This is the **first direct demonstration of double robustness**: PS misspecification is absorbed by the correctly specified OR model.
-
-**S3 (OR misspecified, PS correct).** HT, AIPW, and $\hat\tau_{\mathrm{aug}}$ remain consistent through the correct PS (biases under $3 \times 10^{-3}$, coverage close to nominal). $\hat\tau_{\mathrm{aug}}$ achieves the lowest MSE ($4.41 \times 10^{-3}$): the targeted regression reduces residual variance without disturbing the IBC constraint. $\hat\tau_{\mathrm{aug}^+}$ shows a finite-sample bias ($-25 \times 10^{-3}$) from high-leverage clever-covariate values. This is the **second double-robustness demonstration**: OR misspecification is absorbed by the correctly specified PS.
-
-**S4 (both misspecified).** Double robustness provides no guarantee. HT, AIPW, and $\hat\tau_{\mathrm{aug}}$ are all badly biased (MSE $\approx 42 \times 10^{-3}$); Wald coverage collapses to 33% for AIPW and aug --- the variance estimator is concentrated around the wrong value. The apparent "recovery" of $\hat\tau_{\mathrm{aug}^+}$ (coverage 94.7%) is a DGP-specific artifact: the regressors $(1, \hat\mu_t^{(0)}(X), \hat\pi^{-1}(X))$ happen to capture the omitted quadratic curvature through the nonlinearity of $\hat\pi^{-1}$, but this does **not** indicate triple robustness.
-
-**Takeaway.** Comparing S2--S3 against S4 is the crisp illustration of the Double Robustness theorem: AIPW is consistent whenever at least one nuisance model is correct, and only S4 breaks the guarantee. Wald coverage mirrors this pattern. The lab also shows that $\hat\tau_{\mathrm{aug}}$ can reduce MSE in S3 by shrinking residual variance through IBC-enforced regression — the practical motivation for targeting methods such as TMLE.
-
-## Asymptotic Inference with Estimated Nuisance Functions {#sec-asymp}
-
-Under suitable regularity conditions:
-$$\sqrt{n}(\hat\tau_{\mathrm{AIPW}}-\tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i) + o_p(1) \overset{d}{\longrightarrow} N\!\bigl(0,\;\E\{\varphi_{\mathrm{eff}}(O)^2\}\bigr).$$
-
-Neyman orthogonality implies nuisance estimation error enters only through a second-order remainder. A sufficient condition for this remainder to be negligible is the **product-rate condition**:
-$$\|\hat\pi-\pi\|\cdot\|\hat\mu_t-\mu_t\| = o_p(n^{-1/2}), \qquad t=0,1,$$ {#eq-product-rate}
-where $\|\cdot\|$ denotes the $L_2(P)$ norm (equivalently, the root-mean-squared-error under the data distribution). This allows each nuisance estimator to converge at rate as slow as $n^{-1/4}$. In modern applications, this is usually paired with **cross-fitting**; Chapter 11 develops this in detail.
-
 ::: {.callout-note icon=false}
-## Remark: Neyman Orthogonality
+## Remark: Interpreting the Correction Term
 
-The first-order insensitivity of the AIPW estimating function to nuisance perturbations is an instance of *Neyman orthogonality*. Chapter 11 exploits this via cross-fitting, yielding the *double/debiased machine learning* (DML) estimator [@chernozhukov2018double].
+@eq-if-corrected decomposes the influence function into two parts. The first term $-A_{11}^{-1}U_1(O;\psi_0,\alpha_0)$ is exactly what we would obtain if $\alpha_0$ were known. The second term $A_{11}^{-1}A_{12}A_{22}^{-1}U_2(O;\alpha_0)$ is the *nuisance correction* that accounts for the additional variability introduced by estimating $\alpha$. If $A_{12}=0$, the target estimating function $U_1$ does not depend on $\alpha$ at $\alpha_0$, and the correction vanishes. This is the key condition exploited by *locally efficient* and *doubly robust* estimators in Chapter 11.
 :::
 
-Compute plug-in influence values:
-$$\hat\varphi_i = \frac{T_i}{\hat\pi(X_i)}\{Y_i-\hat\mu_1(X_i)\} - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i-\hat\mu_0(X_i)\} + \hat\mu_1(X_i)-\hat\mu_0(X_i) - \hat\tau_{\mathrm{AIPW}},$$ {#eq-ifhat}
-and set:
-$$\hat V = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i-\bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i.$$ {#eq-var-aipw}
-The Wald CI is $\hat\tau_{\mathrm{AIPW}} \pm z_{1-\alpha/2}\sqrt{\hat V}$.
+::: {.callout-note icon=false}
+## Remark: Just-Identified vs. Overidentified Moments
+
+@eq-if-corrected presupposes the system is **just identified**: $U_1$ has the same dimension as $\psi$ and $U_2$ has the same dimension as $\alpha$, so that $A_{11}$ and $A_{22}$ are square and invertible. When more moment conditions are available than parameters --- the *overidentified* case from GMM --- one minimizes $\mathbb{P}_n U^\top W\mathbb{P}_n U$ for some weight matrix $W$, and the influence function takes the standard GMM sandwich form [@hansen1982large]. The block formula is the just-identified specialization.
+:::
+
+### Working Example: IPW with Estimated Propensity Score {#sec-ipw-example}
+
+We apply the Z-estimation theorem to the IPW estimator of the ATE $\tau$ when $\pi(X)$ is estimated by logistic regression. In @sec-zthm the generic target was $\psi$; here $\psi = \tau$.
+
+**Setup.** Assume $\pi(X;\alpha) = \mathrm{expit}(X^\top\alpha)$. The IPW estimating equation for $\tau$ is $U_1(O;\tau,\alpha) = TY/\pi(X;\alpha) - (1-T)Y/(1-\pi(X;\alpha)) - \tau$, and the logistic regression score is $U_2(O;\alpha) = X\{T - \pi(X;\alpha)\}$.
+
+**Computing the Jacobian blocks.** Since $A_{11} = \E\{\partial_\tau U_1\} = -1$ and $A_{22} = \E\{\partial_{\alpha^\top}U_2\} = -\Sigma_\pi$ where $\Sigma_\pi = \E\{\pi(X;\alpha_0)(1-\pi(X;\alpha_0))XX^\top\}$. Using $\partial\pi/\partial\alpha^\top = \pi(1-\pi)X^\top$ and simplifying:
+$$A_{12} = -\E\!\left[Y X^\top\!\left\{\frac{T}{\pi(X;\alpha_0)} + \frac{1-T}{1-\pi(X;\alpha_0)} - 1\right\}\right].$$
+
+**Corrected influence function.** Substituting into @eq-if-corrected with $A_{11} = -1$ and $A_{22}^{-1} = -\Sigma_\pi^{-1}$ (the two negatives cancel):
+$$\varphi(O) = U_1(O;\tau_0,\alpha_0) + A_{12}\,\Sigma_\pi^{-1}\,U_2(O;\alpha_0).$$ {#eq-if-ipw-corrected}
+The first term is the naive IPW influence function from @sec-if-causal; the second is the nuisance correction removing the first-order contribution of $\hat\alpha - \alpha_0$.
 
 ::: {.callout-note icon=false}
-## Remark: Double Robustness versus Efficient Inference
+## Example: Variance Reduction from ML Estimation of the Propensity Score
 
-It is important not to conflate two distinct results. *Double-robust consistency* requires only that *one* of the two nuisance models be correctly specified; no rate conditions are imposed. *Efficient asymptotic inference* --- the $\sqrt{n}$-normal expansion and the Wald interval based on $\hat V$ --- is a strictly stronger requirement. It requires *both* nuisance functions to be estimated consistently at rates satisfying the product-rate condition @eq-product-rate, together with overlap and moment conditions.
+We show that estimating $\alpha$ by maximum likelihood (ML) can only *reduce* the asymptotic variance of $\hat\tau_{\mathrm{IPW}}$ relative to using the true $\alpha_0$.
 
-Plugging estimated nuisance functions into @eq-var-aipw produces valid standard errors only when the asymptotic linear representation holds; that representation does *not* follow from double robustness alone. In particular, if the outcome regression is misspecified but the propensity score is correct, the AIPW estimator remains consistent but the influence-function variance estimator targets the variance of an estimator whose nuisance functions converge to their true values, not to misspecified limits. The simulation in @sec-lab illustrates this: coverage is approximately nominal in S2 and S3 (where double robustness operates), but this relies on the surviving nuisance model being correctly specified, not just present. Careful rate verification --- or cross-fitting as in Chapter 11 --- is essential before reporting the Wald interval.
+Write $\sigma_1^2 = \E[U_1(O;\tau_0,\alpha_0)^2]$. Expanding the variance of @eq-if-ipw-corrected:
+$$\E[\varphi(O)^2] = \sigma_1^2 + 2A_{12}\Sigma_\pi^{-1}\E[U_1 U_2] + A_{12}\Sigma_\pi^{-1}\E[U_2 U_2^\top]\Sigma_\pi^{-1}A_{12}^\top.$$ {#eq-var-decomp}
+
+**Bartlett identity (ML score):** $\E[U_2 U_2^\top] = \Sigma_\pi$ (information equality for the correctly specified logistic model).
+
+**Cross-identity:** Since $\E_\alpha[U_1(O;\tau_0,\alpha)] = 0$ for all $\alpha$ (under correct PS specification), differentiating through $\alpha$: $A_{12} = -\E[U_1 U_2^\top]$.
+
+Substituting into @eq-var-decomp:
+$$\E[\varphi(O)^2] = \sigma_1^2 - A_{12}\Sigma_\pi^{-1}A_{12}^\top = \sigma_1^2 - \E[U_1 U_2^\top]\Sigma_\pi^{-1}\E[U_2 U_1] \leq \sigma_1^2,$$
+since $\Sigma_\pi$ is positive definite. Equality holds only when $\E[U_1 U_2^\top] = 0$.
+
+**Scope.** This variance-reduction conclusion (sometimes called the *estimated propensity score paradox*, @robins1986new) requires: (i) correctly specified parametric propensity model; (ii) ML estimation so the Bartlett identity holds; (iii) strong overlap and moment conditions. When the parametric model is misspecified, when $\hat\alpha$ is computed by another method, or when $\pi(X)$ is estimated nonparametrically, the identity $A_{12} = -\E[U_1 U_2^\top]$ need not hold and the conclusion fails.
 :::
 
 ::: {.callout-warning icon=false}
-## Extreme Propensity Scores
+## The Central Challenge in Causal Estimation
 
-When $\hat\pi(X_i)$ is near 0 or 1, the IPW weights become large and can destabilize the estimator. Practical remedies: overlap diagnostics, truncation of extreme propensity scores, or restricting to a subgroup with adequate overlap. The augmented model approach of @sec-ibc provides a complementary strategy.
+The primary difficulty in practice is often not identifying the target parameter, but *correctly accounting for the effect of nuisance estimation* on the asymptotic distribution of the final estimator. Treating $\hat\alpha$ as if it were the true $\alpha_0$ --- computing standard errors from the naive IPW influence function rather than from @eq-if-corrected --- yields correct point estimates under a correctly specified PS model but **incorrect standard errors**. The Z-estimation framework resolves this variance-accounting issue whenever the nuisance model is correctly specified and the nuisance estimator converges at rate $n^{-1/2}$. It does not, by itself, protect against model misspecification: if the parametric PS model is wrong, $\hat\tau$ is inconsistent regardless of which variance formula is used.
 :::
 
-## Comparison of Regression, IPW, and AIPW {#sec-comparison}
+::: {.callout-note icon=false}
+## Remark: Machine Learning for Nuisance Estimation
 
-| **Estimator** | **Uses $\mu_t$** | **Uses $\pi$** | **Consistent if** | **Main weakness** |
-|---|---|---|---|---|
-| Regression | Yes | No | outcome model correct | Sensitive to OR misspecification |
-| IPW | No | Yes | propensity model correct | Unstable under weak overlap |
-| AIPW | Yes | Yes | either model correct | Requires both nuisances and careful inference |
+The Z-estimation theorem as stated requires $\hat\alpha$ to converge at rate $n^{-1/2}$, which holds for finite-dimensional parametric models but fails for nonparametric or machine-learning estimators. When flexible methods are used for $\pi(x)$ or $\mu_t(x)$, the correction term in @eq-if-corrected no longer has the simple form derived here, and a more careful analysis based on *sample splitting* or *cross-fitting* is needed. This is the starting point for the doubly robust and debiased machine-learning estimators in Chapter 11.
+:::
 
-## Chapter Summary {#sec-summary}
+## Variance Estimation and Confidence Intervals {#sec-variance}
 
-| **Symbol** | **Meaning** |
+Once an estimator admits the asymptotic linear representation, its asymptotic variance is $n^{-1}\mathrm{Var}\{\varphi(O)\}$. A natural estimator is obtained by replacing $\varphi(O_i)$ with estimated influence values $\hat\varphi_i$:
+$$\hat V = \frac{1}{n(n-1)}\sum_{i=1}^n (\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n \hat\varphi_i.$$ {#eq-sandwich}
+
+The asymptotically equivalent uncentered form $\hat V = n^{-2}\sum_i \hat\varphi_i^2$ is also commonly used; the two differ by $O_p(n^{-1})$. We adopt the centered form throughout this book. The approximate Wald confidence interval at level $1-a$ is $\hat\psi \pm z_{1-a/2}\sqrt{\hat V}$.
+
+::: {.callout-tip icon=false}
+## Proposition: Variance from the Influence Function
+
+If $\sqrt{n}(\hat\psi - \psi) = n^{-1/2}\sum_{i=1}^n \varphi(O_i) + o_p(1)$ with $\E\{\varphi(O)\} = 0$ and $\E\{\varphi(O)^2\} < \infty$, then:
+$$\sqrt{n}(\hat\psi - \psi) \overset{d}{\longrightarrow} N\!\left(0,\, \E[\varphi(O)^2]\right), \qquad \mathrm{Var}(\hat\psi) = \frac{1}{n}\,\E[\varphi(O)^2] + o(n^{-1}).$$ {#eq-variance-prop}
+:::
+
+The proof follows immediately from the CLT applied to the i.i.d. sum. The influence function thus plays a dual role: it characterizes both the asymptotic distribution and the asymptotic variance.
+
+::: {.callout-note icon=false}
+## Remark: Sandwich Variance Estimator
+
+@eq-if-corrected also provides the basis for the *sandwich variance estimator*. Replacing $\theta_0$ by $\hat\theta$, the asymptotic variance of $\hat\tau$ is consistently estimated by @eq-sandwich with $\hat\varphi_i$ evaluated at $(\hat\tau, \hat\alpha)$. This estimator automatically accounts for nuisance estimation uncertainty and is valid without any re-sampling. Standard errors from a logistic regression routine that ignores the link between $\hat\alpha$ and $\hat\tau$ will in general be **incorrect**.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Plug-In Influence Values in Practice
+
+In practice, $\varphi(O_i)$ depends on unknown parameters and nuisance functions, so it is replaced by an estimated influence value $\hat\varphi_i$. This substitution is not innocuous: the plug-in variance formula is valid only when the estimator is asymptotically linear with influence function $\varphi$ *and* the error from replacing unknown quantities by estimates is asymptotically negligible. For the plug-in estimators of @sec-nuisance, these conditions require nuisance estimators to converge fast enough that the plug-in error is $o_p(n^{-1/2})$. We return to this point in Chapter 11.
+:::
+
+## Toward Efficiency: Semiparametric Models and the EIF {#sec-efficiency}
+
+@sec-asymlin showed that the influence function determines both the asymptotic distribution and variance. Different regular estimators of the same parameter may therefore have different large-sample variances. This raises a natural question: among all regular estimators in a given model, what is the smallest achievable asymptotic variance? This section introduces the basic objects --- semiparametric models, regular estimators, and the efficient influence function --- as preparation for Chapter 11, where they are used to construct doubly robust and efficient estimators.
+
+### Semiparametric Models
+
+::: {.callout-note icon=false}
+## Definition: Semiparametric Model
+
+A **semiparametric model** is a statistical model $\mathcal{P}$ for the distribution $P$ of the observed data in which: (i) the **parameter of interest** $\psi = \Psi(P) \in \mathbb{R}^p$ is finite-dimensional; and (ii) the remaining aspects of $P$ --- the **nuisance parameter** --- are infinite-dimensional.
+:::
+
+The canonical example in this course is the ATE. Under the identification assumptions of consistency, conditional exchangeability, and positivity, it equals the observed-data functional $\tau(P) = \E_P\{\mu_1(X) - \mu_0(X)\}$. We study estimation in the nonparametric model $\mathcal{P} = \{P : 0 < \pi(X) < 1\ \text{a.s.}\}$, where the nuisance consists of the entire joint distribution of $(X, T, Y)$ subject only to positivity. No parametric form is assumed for $\mu_t(x)$ or $\pi(x)$.
+
+::: {.callout-note icon=false}
+## Remark: Weak vs. Strong Overlap
+
+The positivity condition $0 < \pi(X) < 1$ a.s. suffices for *identification* of $\tau$, but not for stable regular root-$n$ inference. Regular asymptotic theory typically requires **strong overlap**, $\epsilon \leq \pi(X) \leq 1-\epsilon$ a.s. for some $\epsilon > 0$, together with appropriate moment conditions on $Y$. Under weak overlap the inverse-probability weights are unbounded in probability, and the asymptotic variance of IPW-type estimators may fail to be finite or fail to have a normal limiting distribution at the $\sqrt{n}$ rate.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Semiparametric vs. Parametric Efficiency
+
+In a *fully parametric* model, the Cramér--Rao lower bound gives the minimum variance of any unbiased estimator of $\psi$. When the nuisance is infinite-dimensional, the classical bound no longer applies: the relevant lower bound must account for all infinitely many directions in which the likelihood can vary. The semiparametric efficiency bound is the analogue of the Cramér--Rao bound for this setting; see @bickel1993 and @tsiatis2006semiparametric for comprehensive treatments.
+:::
+
+### Regular Estimators
+
+The efficiency bound is meaningful only within the class of *regular* estimators, which informally are estimators whose asymptotic distribution is stable under small perturbations of the data-generating distribution.
+
+::: {.callout-note icon=false}
+## Definition: Regular Estimator (Informal)
+
+An estimator $\hat\psi$ of $\psi_0 = \Psi(P_0)$ is called **regular** at $P_0$ if, along every smooth parametric submodel $\{P_t : t \in \mathbb{R}\}$ with $P_0 = P_{t=0}$, the limiting distribution of $\sqrt{n}(\hat\psi - \psi_t)$ under $P_{1/\sqrt{n}}$ does not depend on the submodel or its direction.
+:::
+
+Regularity rules out pathological estimators that exploit specific features of the data-generating mechanism in a non-uniform way (superefficient estimators). All estimators in this course --- regression, IPW, and augmented variants --- are regular. See @vandervaart1998 [Chs. 8, 25] and @tsiatis2006semiparametric [Ch. 4].
+
+### The Semiparametric Efficiency Bound and the EIF
+
+::: {.callout-tip icon=false}
+## Theorem: Semiparametric Convolution Theorem [@bickel1993]
+
+In a semiparametric model $\mathcal{P}$, the asymptotic distribution of any regular estimator $\hat\psi$ of $\psi_0 \in \mathbb{R}^p$ satisfies:
+$$\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\longrightarrow} N(0, V^*) * M$$
+for some distribution $M$, where $*$ denotes convolution and $V^* = \E_P[\varphi^*(O)\,\varphi^*(O)^\top]$ is the **semiparametric efficiency bound**. The function $\varphi^*(O)$ with $\E[\varphi^*(O)] = 0$ and $\E[\varphi^*(O)\varphi^*(O)^\top] = V^*$ is called the **efficient influence function (EIF)**. An estimator achieves $V^*$ if and only if it is asymptotically linear with influence function $\varphi^*(O)$.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Loewner Partial Order
+
+For a scalar parameter ($p = 1$), $V^*$ is a scalar and any regular estimator has asymptotic variance at least $V^*$. For vector-valued $\psi$, $V^*$ is a $p \times p$ matrix and the comparison uses the **Loewner partial order**: any regular estimator has asymptotic covariance $V \succeq V^*$ (i.e., $V - V^*$ is positive semidefinite). Equivalently, every linear combination $c^\top\hat\psi$ has asymptotic variance at least $c^\top V^* c$ for every $c \in \mathbb{R}^p$.
+:::
+
+::: {.callout-note icon=false}
+## Definition: Semiparametrically Efficient Estimator
+
+A regular estimator $\hat\psi$ is **semiparametrically efficient** at $P_0 \in \mathcal{P}$ if $\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\to} N(0, V^*)$, i.e., it achieves $V^*$ with no additional convolution component. Equivalently, $\hat\psi$ is asymptotically linear with influence function $\varphi^*(O)$.
+:::
+
+::: {.callout-note icon=false}
+## Remark: The EIF and the Parametric Score
+
+It is tempting to describe the EIF as the "semiparametric score" of the model. The analogy is useful: $\varphi^*(O)$ plays the role in the semiparametric efficiency bound that the score plays in the Cramér--Rao bound. Strictly speaking, however, the score and the EIF live in different spaces. The score $\partial_\theta \log p(O;\theta_0)$ is an element of the model's *tangent space* (mean-zero functions reachable as derivatives of log-likelihoods). The EIF is the unique *canonical gradient*: the element of the tangent space that represents the derivative of the target functional $\Psi$ via $\langle\varphi^*, S_\theta\rangle = \partial_\theta\Psi(P_\theta)|_{\theta=0}$. In a fully parametric model these coincide (scaled by the inverse Fisher information); in a semiparametric model they generally do not.
+:::
+
+### The Efficient Influence Function for the ATE {#sec-eif-ate}
+
+::: {.callout-note icon=false}
+## The EIF for the ATE
+
+For the ATE $\tau = \E\{Y(1) - Y(0)\}$ in the nonparametric observed-data model under consistency, conditional exchangeability, and positivity, the efficient influence function is:
+$$\varphi^*(O) = \frac{T\{Y - \mu_1(X)\}}{\pi(X)} - \frac{(1-T)\{Y - \mu_0(X)\}}{1-\pi(X)} + \mu_1(X) - \mu_0(X) - \tau.$$ {#eq-eif-ate}
+
+This expression has a natural decomposition: the first two terms are an IPW-style residual correction, and the last two are the regression estimator centered at $\tau$. The EIF depends on *both* nuisance functions $\pi(X)$ and $\mu_t(X)$; an estimator that plugs in consistent estimates of both achieves the efficiency bound $V^* = \E[\varphi^*(O)^2]$.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Bridge to Chapter 11
+
+Two important properties of @eq-eif-ate will be central in Chapter 11:
+
+**(i) Double robustness.** The estimator obtained by replacing $\pi(X)$ and $\mu_t(X)$ by estimates and averaging $\varphi^*(O_i)$ is consistent for $\tau$ if *either* $\hat\pi$ or $\hat\mu_t$ is consistent --- not necessarily both. This is the *doubly robust* property.
+
+**(ii) Semiparametric efficiency.** When both nuisance estimators are consistent and converge at suitable rates, the resulting estimator is asymptotically linear with influence function $\varphi^*(O)$ and therefore achieves the efficiency bound $V^*$.
+
+The augmented IPW (AIPW) estimator, sometimes called the one-step or debiased estimator, is the principal tool for exploiting both properties simultaneously; it will be derived and analyzed in Chapter 11. The EIF @eq-eif-ate becomes central there: the same object generates both doubly robust estimating equations and the semiparametric efficiency bound.
+:::
+
+## Chapter Summary
+
+| **Object** | **Role** |
 |---|---|
-| $\tau$ | ATE $= \E\{Y(1)-Y(0)\}$ |
-| $\mu_t(x)$ | Outcome regression $\E(Y\mid T=t,X=x)$ |
-| $\pi(x)$ | Propensity score $P(T=1\mid X=x)$ |
-| $b_t(x)$ | Control function; optimal $b_t^*(x)=\E\{Y(t)\mid X=x\}$ |
-| $\hat\tau_{\mathrm{AIPW}}$ | AIPW estimator @eq-aipw |
-| $\Lambda$ | Augmentation space $\{\hat b : \E(\hat b)=0\}$ |
-| $\varphi_{\mathrm{eff}}(O)$ | Efficient influence function @eq-eif-ate |
-| $\hat\pi_i^{-1}$ | Clever covariate; enforces IBC via its normal equation |
-| IBC | Internal bias calibration conditions @eq-ibc |
+| Estimating function $U(O;\theta)$ | Defines the estimator via $\mathbb{P}_n\{U(O;\hat\theta)\}=0$ |
+| Influence function $\varphi(O)$ | First-order term in expansion of $\hat\psi - \psi$; used for CLT and variance estimation |
+| Asymptotic variance $\E[\varphi(O)^2]/n$ | Governs precision; the target for efficiency comparisons |
+| Efficient influence function $\varphi^*(O)$ | Achieves the semiparametric efficiency bound; basis for doubly robust estimators (Chapter 11) |
+| Sandwich variance estimator $\hat V$ | Plug-in estimate of the asymptotic variance; valid under asymptotic linearity |
 
-1. The prediction estimator bias can be estimated and subtracted using the propensity score, yielding the AIPW estimator.
-2. AIPW has two key properties: **double robustness** (consistent when either model is correct) and **class-optimality** ($b_t^* = \mu_t^*$ minimizes variance).
-3. The optimality follows also from a Hilbert-space projection onto $\Lambda^\perp$; the Pythagorean identity governs the variance reduction.
-4. The AIPW estimating function *is* the efficient influence function; three derivations converge on the same object.
-5. Double robustness can be built directly into the outcome regression via IPW-weighted regression or including the clever covariate $\hat\pi_i^{-1}$ (TMLE connection).
-6. The simulation (@sec-lab) demonstrates double robustness across a $2\times 2$ design: AIPW remains consistent whenever at least one nuisance model is correct (S1--S3) and loses the guarantee when both are misspecified (S4). Wald coverage is approximately nominal in S1--S3 but collapses in S4, illustrating that double-robust consistency and valid asymptotic inference are distinct properties.
-7. For asymptotic inference, the central issue is whether the effect of estimating nuisance functions is asymptotically negligible. Neyman orthogonality yields a second-order remainder, and the product-rate condition @eq-product-rate is sufficient for root-$n$ inference. In modern machine-learning settings, cross-fitting is often used to make these conditions more plausible; Chapter 11 develops this approach.
+1. **Identification is not estimation.** Identification provides a population formula, but not automatically a satisfactory estimator.
+2. **Estimating equations.** Many estimators are defined as solutions to $\mathbb{P}_n\{U(O;\theta)\}=0$, with the population moment condition identifying $\theta_0$.
+3. **Asymptotic linearity.** Estimating equations often yield a first-order expansion @eq-asymlin, which immediately implies asymptotic normality via the CLT.
+4. **Influence functions.** The function $\varphi(O)$ describes the first-order sensitivity of the estimator to a single observation. It is the key object for both asymptotic theory and variance estimation.
+5. **Nuisance estimation.** In causal inference, nuisance functions must be estimated, and this estimation error propagates into the target estimator via the Z-estimation framework @eq-if-corrected. Controlling this propagation is the central statistical challenge.
+6. **Variance from the influence function.** The asymptotic variance is $n^{-1}\E[\varphi(O)^2]$, consistently estimated by @eq-sandwich.
+7. **Efficiency.** Among regular estimators, the one with the smallest asymptotic variance is efficient. The efficient influence function characterizes this lower bound and guides estimator construction in Chapter 11.
 
-## Exercises
+## Problems
 
-**1. Bias of the prediction estimator.**
+**1. Estimating equations and moment conditions.**
 
-(a) Verify the bias formula @eq-pred-bias by writing $\tau_{\mathrm{pred}}(m)-\tau$ as a difference of working-model errors and simplifying.
-(b) Under what condition on the propensity score model does $\widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}})$ have zero expectation? Give a careful argument using iterated expectations.
-(c) Construct a simple example (binary $X$, binary $T$, binary $Y$) in which the estimated bias is nonzero and the outcome model is misspecified, but the AIPW estimator is still consistent.
+(a) Let $O = (X, Y)$ and define $\theta = \mathrm{Cov}(X,Y)/\mathrm{Var}(X)$ (the coefficient in the population simple regression of $Y$ on $X$). Write down an estimating equation for $\theta$ and verify the population moment condition holds at $\theta_0$.
+(b) Let $\theta = F^{-1}(0.5)$ be the population median. Propose an estimating function $U(O;\theta)$ and verify the population moment condition. (*Hint*: consider $U(O;\theta) = \mathbf{1}(Y \leq \theta) - 0.5$.)
+(c) Show that the OLS estimator and the IPW estimator of the ATE are both special cases of the general M-estimator framework.
 
-**2. The AIPW class and optimal control functions.**
+**2. Asymptotic linearity and the CLT.**
 
-(a) Verify that $\hat\tau_b$ with $b_t=\mu_t$ equals the AIPW estimator @eq-aipw.
-(b) Using @eq-var-b, show that $b_t^*(x)=\E\{Y(t)\mid x\}$ minimizes conditional variance by completing the square in $b_t$.
-(c) Suppose $\pi(x)=1/2$ for all $x$. Simplify @eq-var-b and interpret the result.
+(a) Let $\hat\psi = \bar Y$ be the sample mean of i.i.d. $Y_1,\dots,Y_n$ with $\E Y = \psi$ and $\mathrm{Var}(Y) = \sigma^2 < \infty$. Write down the influence function, state its asymptotic distribution, and give a consistent estimator of $\mathrm{Var}(\hat\psi)$.
+(b) Suppose $\hat\psi_1$ and $\hat\psi_2$ are two asymptotically linear estimators of the same parameter with influence functions $\varphi_1$ and $\varphi_2$. Show that $\hat\psi_\lambda = \lambda\hat\psi_1 + (1-\lambda)\hat\psi_2$ is also asymptotically linear for any fixed $\lambda \in \mathbb{R}$, and find its influence function.
+(c) Use part (b) to derive the value of $\lambda \in \mathbb{R}$ that minimizes the asymptotic variance of $\hat\psi_\lambda$. Express the answer in terms of $\sigma_1^2 = \E[\varphi_1^2]$, $\sigma_2^2 = \E[\varphi_2^2]$, and $\rho = \E[\varphi_1\varphi_2]$. Under what condition on $(\sigma_1^2, \sigma_2^2, \rho)$ does the optimal $\lambda$ equal $1/2$?
 
-**3. Double robustness.**
+**3. Influence functions for causal estimators.** Consider the ATE $\tau = \E\{Y(1) - Y(0)\}$ identified under consistency, conditional exchangeability, and positivity.
 
-(a) Verify Case 1 of the Double Robustness theorem: with $\mu_t=\mu_t^*$ and arbitrary $\pi$, show $\E\{\phi\}=0$.
-(b) Verify Case 2: with $\pi=\pi^*$ and arbitrary $\mu_t$, show $\E\{\phi\}=0$.
-(c) Provide a counterexample showing $\E\{\phi\}\neq 0$ when both models are misspecified.
+(a) Assume $\pi(X)$ and $\mu_t(X)$ are both known. Compute the influence functions of: (i) the regression estimator $\hat\tau_{\mathrm{reg}} = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}$; (ii) the IPW estimator $\hat\tau_{\mathrm{IPW}} = \mathbb{P}_n\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}$.
+(b) Under what conditions on the data-generating process will $\hat\tau_{\mathrm{reg}}$ have a smaller asymptotic variance than $\hat\tau_{\mathrm{IPW}}$?
+(c) Verify that the EIF @eq-eif-ate has mean zero under $P$ by computing $\E[\varphi^*(O)]$.
 
-**4. Projection and the Pythagorean identity.**
+**4. Variance estimation.**
 
-(a) Verify $\mathrm{Cov}(\hat\theta_{\mathrm{opt}},\hat b^*)=0$ from the definition of $\hat b^*$.
-(b) Deduce @eq-pythagoras from the decomposition $\hat\theta_0 = \hat\theta_{\mathrm{opt}} + \hat b^*$.
-(c) Explain why $\hat\theta_{\mathrm{opt}}$ is still unbiased for $\theta$ even though $\hat b^* \in \Lambda$ is subtracted.
+(a) Let $\hat\varphi_i = \hat\mu_1(X_i) - \hat\mu_0(X_i) - \hat\tau_{\mathrm{reg}}$ be the estimated influence values for the regression estimator. Write down the plug-in variance estimator $\hat V$ and simplify. Under what conditions is $\hat V$ consistent for $\mathrm{Var}(\hat\tau_{\mathrm{reg}})$?
+(b) A researcher reports $\hat\tau = 2.4$ and $\hat V = 0.09$ based on $n = 400$ observations. Compute a 95% Wald confidence interval. Is the treatment effect statistically distinguishable from zero at the 5% level?
+(c) Explain why simply plugging in $\hat\mu_t$ and $\hat\pi$ into the influence function formula may yield an inconsistent variance estimator when these nuisance estimators converge at a slower rate than $n^{-1/2}$.
 
-**5. Semiparametric efficiency.**
+**5. Efficiency comparisons.**
 
-(a) Show $\E\{\varphi_{\mathrm{eff}}(O)^2\} \leq \E\{\varphi_{\mathrm{IPW}}(O)^2\}$ by writing $\varphi_{\mathrm{IPW}} = \varphi_{\mathrm{eff}} + (\varphi_{\mathrm{IPW}}-\varphi_{\mathrm{eff}})$ and showing the cross term vanishes.
-(b) Interpret the efficiency gain $\E\{\varphi_{\mathrm{IPW}}^2\}-\E\{\varphi_{\mathrm{eff}}^2\}$ in terms of the variance of the outcome regression.
-(c) Give one reason why an efficient estimator based on $\varphi_{\mathrm{eff}}$ may still be disfavored in practice.
-
-**6. Augmented model and the clever covariate.**
-
-(a) Show that the normal equation for $\hat\gamma_1$ in the augmented model @eq-aug-model is exactly the IBC condition @eq-ibc, and conclude that the prediction estimator can always be written in AIPW form @eq-aug-aipw.
-(b) Explain why $\hat\gamma_1 \overset{p}{\to} 0$ when the initial model $\hat\mu_1^{(0)}$ is correctly specified.
-(c) Explain in words why $\hat\pi_i^{-1}$ is called the clever covariate: what bias does it absorb, and why does this make the prediction estimator doubly robust?
-
-**7. Coverage of the Wald confidence interval (computational).** Use the DGP of @sec-lab with the propensity score generalized to $\pi^*(x) = \mathrm{expit}\{0.2\,x + \gamma(x^2 - 1)\}$, so that the baseline ($\gamma = 0.2$) coincides with the lab and larger $\gamma$ degrades overlap. Implement the AIPW estimator and variance estimator @eq-var-aipw. Following Scenario S3 of the lab, use logistic regression of $T$ on $(1, X, X^2)$ for $\hat\pi$ (correct PS) and OLS of $Y$ on $(1, X)$ separately in each arm for $\hat\mu_t$ (misspecified OR); truncate $\hat\pi$ to $[10^{-3}, 1-10^{-3}]$.
-
-(a) With $\gamma = 0.2$, $n = 500$, $B = 2000$ replications, compute empirical coverage of the 95% Wald interval $\hat\tau_{\mathrm{AIPW}} \pm z_{0.975}\sqrt{\hat V}$. Compare the average SE $\overline{\sqrt{\hat V}}$ with the empirical SD of $\hat\tau_{\mathrm{AIPW}}$ across replications.
-(b) Repeat with $\gamma \in \{0.5,\, 1.0\}$, producing increasingly weak overlap at large $|X|$. Report coverage, average SE, and empirical SD. What do you observe?
-(c) Which assumption of @sec-asymp is stressed as $\gamma$ grows, and which of the remedies in the Extreme Propensity Scores warning would you try first? (No simulation required; a paragraph suffices.)
+(a) Suppose $\varphi_{\mathrm{reg}}$ and $\varphi_{\mathrm{IPW}}$ denote the influence functions of the regression and IPW estimators. Without calculation, explain why neither estimator is always more efficient than the other.
+(b) The semiparametric efficiency bound for the ATE is $\E[\varphi^*(O)^2]$, where $\varphi^*$ is given in @eq-eif-ate. Show that $\E[\varphi^*(O)^2] \leq \E[\varphi_{\mathrm{IPW}}(O)^2]$ by expanding the squared EIF. (*Hint*: use the law of iterated expectations to show that the cross-terms cancel.)
+(c) Give one practical reason why an efficient estimator based on the EIF may not always be preferred over a simpler, less efficient estimator.

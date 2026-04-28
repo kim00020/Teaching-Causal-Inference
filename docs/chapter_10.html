@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Doubly Robust Estimation and Semiparametric Efficiency – Theory and Methods in Causal Inference</title>
+<title>10&nbsp; Estimating Equations and Influence Functions – Theory and Methods in Causal Inference</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -149,7 +168,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -271,13 +290,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapter_10.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapter_11.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
   </div>
 </li>
       </ul>
@@ -327,28 +346,41 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">10.1</span> Why Combine Outcome Regression and Weighting?</a></li>
-  <li><a href="#sec-prediction" id="toc-sec-prediction" class="nav-link" data-scroll-target="#sec-prediction"><span class="header-section-number">10.2</span> The Prediction Estimator and Its Bias</a></li>
-  <li><a href="#sec-aipw" id="toc-sec-aipw" class="nav-link" data-scroll-target="#sec-aipw"><span class="header-section-number">10.3</span> The Augmented IPW Estimator</a></li>
-  <li><a href="#sec-class" id="toc-sec-class" class="nav-link" data-scroll-target="#sec-class"><span class="header-section-number">10.4</span> A Class of Augmented Estimators</a></li>
-  <li><a href="#sec-projection" id="toc-sec-projection" class="nav-link" data-scroll-target="#sec-projection"><span class="header-section-number">10.5</span> The Projection Interpretation</a></li>
-  <li><a href="#sec-proj-causal" id="toc-sec-proj-causal" class="nav-link" data-scroll-target="#sec-proj-causal"><span class="header-section-number">10.6</span> Projection in the Causal Inference Setting</a></li>
-  <li><a href="#sec-eif" id="toc-sec-eif" class="nav-link" data-scroll-target="#sec-eif"><span class="header-section-number">10.7</span> The Efficient Influence Function and Semiparametric Efficiency</a></li>
-  <li><a href="#sec-ibc" id="toc-sec-ibc" class="nav-link" data-scroll-target="#sec-ibc"><span class="header-section-number">10.8</span> Doubly Robust Regression: Weighted and Augmented Approaches</a></li>
-  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">10.9</span> Lab: Simulation Study</a></li>
-  <li><a href="#sec-asymp" id="toc-sec-asymp" class="nav-link" data-scroll-target="#sec-asymp"><span class="header-section-number">10.10</span> Asymptotic Inference with Estimated Nuisance Functions</a></li>
-  <li><a href="#sec-comparison" id="toc-sec-comparison" class="nav-link" data-scroll-target="#sec-comparison"><span class="header-section-number">10.11</span> Comparison of Regression, IPW, and AIPW</a></li>
-  <li><a href="#sec-summary" id="toc-sec-summary" class="nav-link" data-scroll-target="#sec-summary"><span class="header-section-number">10.12</span> Chapter Summary</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">10.13</span> Exercises</a></li>
+  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">10.1</span> Why Estimation Needs Its Own Theory</a></li>
+  <li><a href="#sec-ate" id="toc-sec-ate" class="nav-link" data-scroll-target="#sec-ate"><span class="header-section-number">10.2</span> A Running Example: The ATE</a></li>
+  <li><a href="#sec-ee" id="toc-sec-ee" class="nav-link" data-scroll-target="#sec-ee"><span class="header-section-number">10.3</span> Estimating Equations</a></li>
+  <li><a href="#sec-asymlin" id="toc-sec-asymlin" class="nav-link" data-scroll-target="#sec-asymlin"><span class="header-section-number">10.4</span> From Estimating Equations to Asymptotic Linearity</a></li>
+  <li><a href="#sec-if-intuition" id="toc-sec-if-intuition" class="nav-link" data-scroll-target="#sec-if-intuition"><span class="header-section-number">10.5</span> Influence Functions: Intuition</a>
+  <ul class="collapse">
+  <li><a href="#statistical-functionals" id="toc-statistical-functionals" class="nav-link" data-scroll-target="#statistical-functionals"><span class="header-section-number">10.5.1</span> Statistical Functionals</a></li>
+  <li><a href="#influence-functions" id="toc-influence-functions" class="nav-link" data-scroll-target="#influence-functions"><span class="header-section-number">10.5.2</span> Influence Functions</a></li>
+  </ul></li>
+  <li><a href="#sec-if-causal" id="toc-sec-if-causal" class="nav-link" data-scroll-target="#sec-if-causal"><span class="header-section-number">10.6</span> Influence Functions for Simple Causal Estimators</a></li>
+  <li><a href="#sec-nuisance" id="toc-sec-nuisance" class="nav-link" data-scroll-target="#sec-nuisance"><span class="header-section-number">10.7</span> Z-Estimation with Nuisance Parameters</a>
+  <ul class="collapse">
+  <li><a href="#sec-stacked" id="toc-sec-stacked" class="nav-link" data-scroll-target="#sec-stacked"><span class="header-section-number">10.7.1</span> The Stacked Estimating Equation Framework</a></li>
+  <li><a href="#sec-zthm" id="toc-sec-zthm" class="nav-link" data-scroll-target="#sec-zthm"><span class="header-section-number">10.7.2</span> The Z-Estimation Theorem</a></li>
+  <li><a href="#sec-ipw-example" id="toc-sec-ipw-example" class="nav-link" data-scroll-target="#sec-ipw-example"><span class="header-section-number">10.7.3</span> Working Example: IPW with Estimated Propensity Score</a></li>
+  </ul></li>
+  <li><a href="#sec-variance" id="toc-sec-variance" class="nav-link" data-scroll-target="#sec-variance"><span class="header-section-number">10.8</span> Variance Estimation and Confidence Intervals</a></li>
+  <li><a href="#sec-efficiency" id="toc-sec-efficiency" class="nav-link" data-scroll-target="#sec-efficiency"><span class="header-section-number">10.9</span> Toward Efficiency: Semiparametric Models and the EIF</a>
+  <ul class="collapse">
+  <li><a href="#semiparametric-models" id="toc-semiparametric-models" class="nav-link" data-scroll-target="#semiparametric-models"><span class="header-section-number">10.9.1</span> Semiparametric Models</a></li>
+  <li><a href="#regular-estimators" id="toc-regular-estimators" class="nav-link" data-scroll-target="#regular-estimators"><span class="header-section-number">10.9.2</span> Regular Estimators</a></li>
+  <li><a href="#the-semiparametric-efficiency-bound-and-the-eif" id="toc-the-semiparametric-efficiency-bound-and-the-eif" class="nav-link" data-scroll-target="#the-semiparametric-efficiency-bound-and-the-eif"><span class="header-section-number">10.9.3</span> The Semiparametric Efficiency Bound and the EIF</a></li>
+  <li><a href="#sec-eif-ate" id="toc-sec-eif-ate" class="nav-link" data-scroll-target="#sec-eif-ate"><span class="header-section-number">10.9.4</span> The Efficient Influence Function for the ATE</a></li>
+  </ul></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">10.10</span> Chapter Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">10.11</span> Problems</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></h1>
 </div>
 
 
@@ -377,65 +409,100 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter, students should be able to:</p>
 <ol type="1">
-<li>Derive the AIPW estimator as a bias-corrected prediction estimator, and explain the role of each term.</li>
-<li>Prove the double robustness property using the law of iterated expectations.</li>
-<li>Describe the class of augmented IPW estimators indexed by arbitrary control functions <span class="math inline">\(b_t(x)\)</span>, verify unbiasedness for any <span class="math inline">\(b_t\)</span>, and identify the optimal choice that minimizes total variance.</li>
-<li>Interpret the augmentation step as a Hilbert-space projection onto the orthogonal complement of the augmentation space, and derive the Pythagorean variance decomposition.</li>
-<li>Carry out the projection argument in the causal inference setting, starting from the Horvitz–Thompson estimator.</li>
-<li>State the semiparametric efficiency bound for the ATE and explain why the AIPW estimating function is the efficient influence function.</li>
-<li>Derive the two approaches to building double robustness directly into the outcome model: IPW-weighted regression and the augmented model with clever covariate.</li>
-<li>Identify the product-rate condition as the key sufficient condition for nuisance estimation error to be asymptotically negligible, and construct a consistent variance estimator and Wald confidence interval.</li>
+<li>Explain why identification of a causal parameter does not automatically yield a statistically reliable estimator, and articulate the distinct questions that an estimation theory must address.</li>
+<li>Define an estimating equation and verify the population moment condition for standard examples (sample mean, OLS, IPW).</li>
+<li>State the definition of an asymptotically linear estimator and derive the influence function from a generic first-order expansion of an estimating equation.</li>
+<li>Compute the influence function for simple causal estimators when nuisance functions are known, and interpret it as the infinitesimal contribution of a single observation.</li>
+<li>Describe how estimation error in nuisance functions propagates into the target estimator via the Z-estimation stacked-equation framework, and explain why this is the central statistical challenge in causal inference.</li>
+<li>Use the influence function to construct a consistent variance estimator and an approximate Wald confidence interval.</li>
+<li>Define efficiency in the class of regular estimators and explain the role of the efficient influence function as the foundation for doubly robust estimation in Chapter 11.</li>
 </ol>
 </div>
 </div>
 <section id="sec-motivation" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">10.1</span> Why Combine Outcome Regression and Weighting?</h2>
-<p>Under consistency, conditional exchangeability, and positivity, the ATE <span class="math inline">\(\tau = \E\{Y(1) - Y(0)\}\)</span> is identified by either the regression formula <span class="math inline">\(\tau = \E\{\mu_1(X) - \mu_0(X)\}\)</span> or the Horvitz–Thompson formula <span class="math inline">\(\tau = \E\!\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\}\)</span>.</p>
-<p><strong>Outcome regression</strong> estimates <span class="math inline">\(\mu_1(x)\)</span> and <span class="math inline">\(\mu_0(x)\)</span> and averages <span class="math inline">\(\hat\mu_1(X_i)-\hat\mu_0(X_i)\)</span> over the sample. <strong>IPW</strong> estimates <span class="math inline">\(\pi(x)\)</span> and reweights observed outcomes. Each has weaknesses: regression can be biased under misspecification; IPW can be unstable when estimated propensity scores are near 0 or 1 <span class="citation" data-cites="rosenbaum1983central">(Rosenbaum and Rubin 1983)</span>.</p>
-<p>This chapter develops a third strategy: combine both models to construct an estimator that is consistent when <em>either</em> model is correct, and achieves the semiparametric efficiency bound when both are correct. We derive the same estimator in three complementary ways: as a bias-corrected prediction estimator (<a href="#sec-prediction" class="quarto-xref"><span>Section 10.2</span></a>), as the optimal member of a class of augmented estimators (<a href="#sec-class" class="quarto-xref"><span>Section 10.4</span></a>), and as the efficient influence function in a semiparametric model (<a href="#sec-eif" class="quarto-xref"><span>Section 10.7</span></a>).</p>
+<h2 data-number="10.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">10.1</span> Why Estimation Needs Its Own Theory</h2>
+<p>So far the focus has been on <em>identification</em>: under what assumptions can a causal parameter be written as a functional of the observed-data distribution? Identification does not by itself provide a statistically reliable estimator. Once a causal parameter is identified, several distinct questions remain:</p>
+<ul>
+<li>How should the estimator be constructed from the observed sample?</li>
+<li>How does estimation of nuisance functions affect the target estimator?</li>
+<li>What is the large-sample distribution of the estimator?</li>
+<li>How can we compute valid standard errors and confidence intervals?</li>
+</ul>
+<p>These questions motivate a separate theory of <em>estimation and inference</em>. In causal inference this issue is especially important because identified parameters often depend on auxiliary, or <em>nuisance</em>, functions such as the outcome regression <span class="math inline">\(\mu_t(x) = \E(Y \mid T{=}t,\, X{=}x)\)</span> or the propensity score <span class="math inline">\(\pi(x) = P(T{=}1 \mid X{=}x)\)</span>. Even when the causal parameter is identified, different estimation strategies may behave quite differently in terms of robustness, efficiency, and sensitivity to model misspecification.</p>
+<p>The goal of this chapter is to introduce a general framework for estimation based on <em>estimating equations</em> and <em>influence functions</em>. This framework will serve as the foundation for the doubly robust and semiparametric methods developed in Chapter 11; see also <span class="citation" data-cites="imbens2015causal">Imbens and Rubin (<a href="references.html#ref-imbens2015causal" role="doc-biblioref">2015</a>)</span> and <span class="citation" data-cites="hernan2020causal">Hernán and Robins (<a href="references.html#ref-hernan2020causal" role="doc-biblioref">2020</a>)</span> for complementary treatments.</p>
 </section>
-<section id="sec-prediction" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="sec-prediction"><span class="header-section-number">10.2</span> The Prediction Estimator and Its Bias</h2>
-<p>Working with generic <em>working regression functions</em> <span class="math inline">\(m_t(x)\)</span>, the <strong>prediction estimator</strong> is <span class="math inline">\(\hat\tau_{\mathrm{pred}}(m) = n^{-1}\sum_{i=1}^n \{m_1(X_i) - m_0(X_i)\}\)</span>. The population bias is: <span id="eq-pred-bias"><span class="math display">\[\tau_{\mathrm{pred}}(m) - \tau = \E\bigl[(m_1(X)-\mu_1(X)) - (m_0(X)-\mu_0(X))\bigr]. \tag{10.1}\]</span></span></p>
-<p>If a propensity score estimator <span class="math inline">\(\hat\pi\)</span> is available, we can estimate and subtract this bias. The bias-corrected prediction estimator is: <span id="eq-aipw-biascorr"><span class="math display">\[\hat\tau_{\mathrm{AIPW}} = \hat\tau_{\mathrm{pred}} - \widehat{\mathrm{Bias}} = \hat\mu_{1,\mathrm{dr}} - \hat\mu_{0,\mathrm{dr}}, \tag{10.2}\]</span></span> where: <span class="math display">\[\hat\mu_{1,\mathrm{dr}} = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi(X_i)}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\} + \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i),\]</span> <span class="math display">\[\hat\mu_{0,\mathrm{dr}} = \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\hat\pi(X_i)}\bigl\{Y_i - \hat\mu_0(X_i)\bigr\} + \frac{1}{n}\sum_{i=1}^n \hat\mu_0(X_i).\]</span></p>
+<section id="sec-ate" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="sec-ate"><span class="header-section-number">10.2</span> A Running Example: The ATE</h2>
+<p>Throughout this chapter we use the average treatment effect (ATE) as a running example: <span class="math display">\[\tau = \E\{Y(1) - Y(0)\}.\]</span></p>
+<p>Under consistency, conditional exchangeability, and positivity, the ATE is identified by the back-door formula (Chapter 5): <span class="math display">\[\tau = \E[\mu_1(X) - \mu_0(X)], \qquad \mu_t(x) = \E(Y \mid T{=}t,\, X{=}x),\quad t\in\{0,1\}.\]</span></p>
+<p>This identity tells us what the target parameter is, but it does not uniquely determine how to estimate it. One may consider a <em>regression-based</em> estimator by fitting models for <span class="math inline">\(\mu_1(x)\)</span> and <span class="math inline">\(\mu_0(x)\)</span>; a <em>weighting</em> estimator based on the propensity score <span class="math inline">\(\pi(x)\)</span>; or an <em>augmented</em> estimator combining both. All of these may target the same causal parameter yet differ in their statistical properties. A main goal of this chapter is to develop a common language for describing and comparing such estimators.</p>
+</section>
+<section id="sec-ee" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="sec-ee"><span class="header-section-number">10.3</span> Estimating Equations</h2>
+<p>A broad class of estimators can be defined as solutions to <em>estimating equations</em>. Let <span class="math inline">\(O_1,\dots,O_n\)</span> be i.i.d. observations from a distribution <span class="math inline">\(P\)</span>, let <span class="math inline">\(\theta\)</span> denote a finite-dimensional target parameter, and write <span class="math inline">\(\mathbb{P}_n f = n^{-1}\sum_{i=1}^n f(O_i)\)</span> for the empirical average.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Two Roles of the Augmentation Terms
+<span class="screen-reader-only">Note</span>Definition: Estimating Equation
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>From the bias-correction perspective, <span class="math inline">\(T_i\{Y_i-\hat\mu_1(X_i)\}/\hat\pi(X_i)\)</span> are IPW-weighted residuals estimating prediction error. From an estimating-equation perspective, they make the estimating function orthogonal to nuisance perturbations. The estimated bias term has zero expectation when the outcome model is correct; the bias-corrected estimator is unbiased when the propensity model is correct. Hence the name <em>doubly robust</em>.</p>
+<p>An <strong>estimating equation</strong> for a parameter <span class="math inline">\(\theta\)</span> is an equation of the form <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\} = 0\)</span>, where the <strong>population moment condition</strong> <span class="math inline">\(\E\{U(O;\theta_0)\} = 0\)</span> holds at the true parameter value <span class="math inline">\(\theta_0\)</span>. The function <span class="math inline">\(U(O;\theta)\)</span> is called the <strong>estimating function</strong>.</p>
 </div>
 </div>
+<p>Many familiar estimators take this form.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Three Estimating Equations
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>(i) Sample mean.</strong> Let <span class="math inline">\(\theta = \E(Y)\)</span>. The sample mean <span class="math inline">\(\hat\theta = \bar Y\)</span> solves <span class="math inline">\(\mathbb{P}_n(Y-\theta) = 0\)</span>. The estimating function is <span class="math inline">\(U(O;\theta) = Y - \theta\)</span>.</p>
+<p><strong>(ii) Ordinary least squares.</strong> Let <span class="math inline">\(O = (X,Y)\)</span> and <span class="math inline">\(\beta = [\E(XX^\top)]^{-1}\E(XY)\)</span>. OLS solves <span class="math inline">\(\mathbb{P}_n[X\{Y - X^\top\beta\}] = 0\)</span>.</p>
+<p><strong>(iii) IPW estimating equation.</strong> Suppose <span class="math inline">\(\pi(X)\)</span> is known. Under consistency, conditional exchangeability, and positivity, <span class="math inline">\(\tau = \E\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}\)</span>. Then <span class="math inline">\(\tau\)</span> solves: <span class="math display">\[\E\!\left[\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \tau\right] = 0.\]</span> The right-hand side is an observed-data functional only after identification has been imposed; without those assumptions, knowing <span class="math inline">\(\pi(X)\)</span> alone does not turn the expression into a causal quantity.</p>
+</div>
+</div>
+<p>The main advantage of the estimating-equation framework is that it provides a unified language for both estimator construction and asymptotic analysis.</p>
 </section>
-<section id="sec-aipw" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="sec-aipw"><span class="header-section-number">10.3</span> The Augmented IPW Estimator</h2>
-<p><strong>Notation.</strong> <span class="math inline">\(\mu_t(x)\)</span> denotes a generic <em>working</em> outcome regression; the truth is <span class="math inline">\(\mu_t^*(x)\)</span>. The propensity score <span class="math inline">\(\pi(x)\)</span> is always the <em>true</em> propensity.</p>
-<p>The AIPW estimator solves <span class="math inline">\(\mathbb{P}_n\{\phi(O;\tau,\hat\eta)\} = 0\)</span> where: <span id="eq-dr-score"><span class="math display">\[\phi(O;\tau,\eta) = \left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\}+\mu_1(X)\right] - \left[\frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\}+\mu_0(X)\right] - \tau. \tag{10.3}\]</span></span></p>
-<p>Solving explicitly: <span id="eq-aipw"><span class="math display">\[\hat\tau_{\mathrm{AIPW}} = \frac{1}{n}\sum_{i=1}^n \Bigg[\hat\mu_1(X_i) - \hat\mu_0(X_i) + \frac{T_i}{\hat\pi(X_i)}\{Y_i - \hat\mu_1(X_i)\} - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i - \hat\mu_0(X_i)\}\Bigg]. \tag{10.4}\]</span></span></p>
+<section id="sec-asymlin" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="sec-asymlin"><span class="header-section-number">10.4</span> From Estimating Equations to Asymptotic Linearity</h2>
+<p>Estimating equations are useful not only because they define estimators, but also because they often yield a convenient first-order expansion. Under suitable regularity conditions, an estimator solving an estimating equation can typically be approximated as <span class="math inline">\(\sqrt{n}(\hat\theta - \theta_0) = n^{-1/2}\sum_{i=1}^n \varphi(O_i) + o_p(1)\)</span> for some mean-zero function <span class="math inline">\(\varphi(O)\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Asymptotic Linearity and Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An estimator <span class="math inline">\(\hat\theta\)</span> is <strong>asymptotically linear</strong> with <strong>influence function</strong> <span class="math inline">\(\varphi(O)\)</span> if <span id="eq-asymlin"><span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1), \qquad \E\{\varphi(O)\} = 0. \tag{10.1}\]</span></span></p>
+</div>
+</div>
+<p>This representation is fundamental because it immediately implies asymptotic normality by the CLT. When <span class="math inline">\(\theta \in \mathbb{R}^p\)</span>: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) \overset{d}{\longrightarrow} N(\mathbf{0},\; \Sigma), \qquad \Sigma = \E[\varphi(O)\varphi(O)^\top].\]</span> In the scalar case this reduces to <span class="math inline">\(\Sigma = \E[\varphi(O)^2]\)</span>.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Double Robustness
+<span class="screen-reader-only">Tip</span>Proposition: Generic First-Order Expansion
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\phi(O;\tau,\eta)\)</span> be the estimating function in <a href="#eq-dr-score" class="quarto-xref">Equation&nbsp;<span>10.3</span></a>. Under consistency, conditional exchangeability, and positivity, <span class="math inline">\(\E\{\phi(O;\tau,\eta)\} = 0\)</span> if either:</p>
-<ol type="1">
-<li><span class="math inline">\(\mu_t(x) = \mu_t^*(x)\)</span> for <span class="math inline">\(t=0,1\)</span>, regardless of whether <span class="math inline">\(\pi(x)\)</span> is correctly specified; or</li>
-<li><span class="math inline">\(\pi(x) = P(T=1\mid X=x)\)</span>, regardless of whether <span class="math inline">\(\mu_0\)</span> and <span class="math inline">\(\mu_1\)</span> are correctly specified.</li>
-</ol>
+<p>Under smoothness and regularity conditions, an estimator <span class="math inline">\(\hat\theta\)</span> solving <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\}=0\)</span> admits a first-order expansion: <span id="eq-expansion"><span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = -A^{-1}\,\frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1), \qquad A = \E\!\left\{\frac{\partial}{\partial\theta^\top}U(O;\theta_0)\right\}. \tag{10.2}\]</span></span> Hence the influence function is <span class="math inline">\(\varphi(O) = -A^{-1}U(O;\theta_0)\)</span>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -444,11 +511,29 @@ window.Quarto = {
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>Case 1: outcome regression correct.</strong> If <span class="math inline">\(\mu_t(X) = \E(Y\mid T=t,X)\)</span>, then <span class="math inline">\(\E\!\left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\}\,\middle|\,X\right] = \frac{P(T=1\mid X)}{\pi(X)}\,\E\{Y-\mu_1(X)\mid T=1,X\} = 0\)</span>, and similarly for the control arm. Therefore <span class="math inline">\(\E\{\phi\} = \E\{\mu_1(X)-\mu_0(X)\} - \tau = 0\)</span>.</p>
-<p><strong>Case 2: propensity score correct.</strong> Suppose <span class="math inline">\(\pi(X) = P(T=1\mid X)\)</span>. For the treated bracket: <span class="math display">\[\E\!\left[\frac{T}{\pi(X)}\{Y-\mu_1(X)\} + \mu_1(X)\,\Big|\, X\right] = \frac{\E[TY\mid X]}{\pi(X)} - \mu_1(X)\cdot\frac{\E[T\mid X]}{\pi(X)} + \mu_1(X).\]</span> Using <span class="math inline">\(\E[T\mid X] = \pi(X)\)</span> (so the <span class="math inline">\(\mu_1\)</span> terms cancel) and <span class="math inline">\(\E[TY\mid X] = \pi(X)\mu_1^*(X)\)</span>, this equals <span class="math inline">\(\mu_1^*(X)\)</span>. By symmetry, the control bracket gives <span class="math inline">\(\mu_0^*(X)\)</span>. Hence <span class="math inline">\(\E\{\phi\mid X\} = \mu_1^*(X) - \mu_0^*(X) - \tau\)</span>, and taking expectations gives <span class="math inline">\(\E\{\phi\} = 0\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>A Taylor expansion of the sample moment condition around <span class="math inline">\(\theta_0\)</span> gives: <span class="math display">\[0 = \mathbb{P}_n\{U(O;\hat\theta)\} \approx \mathbb{P}_n\{U(O;\theta_0)\} + \mathbb{P}_n\!\left\{\frac{\partial}{\partial\theta^\top} U(O;\theta_0)\right\}(\hat\theta - \theta_0).\]</span> By the LLN, <span class="math inline">\(\mathbb{P}_n\{\partial_{\theta^\top} U(O;\theta_0)\} \to A\)</span> in probability. Rearranging and multiplying by <span class="math inline">\(\sqrt{n}\)</span> yields the stated expansion. <span class="math inline">\(\square\)</span></p>
 </div>
+</div>
+</div>
+</section>
+<section id="sec-if-intuition" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="sec-if-intuition"><span class="header-section-number">10.5</span> Influence Functions: Intuition</h2>
+<section id="statistical-functionals" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="statistical-functionals"><span class="header-section-number">10.5.1</span> Statistical Functionals</h3>
+<p>Many parameters of interest in statistics and causal inference can be written as <em>functionals</em> of the underlying distribution.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Statistical Functional and Plug-In Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <strong>statistical functional</strong> is a map <span class="math inline">\(\Psi : \mathcal{P} \to \mathbb{R}^p\)</span> that assigns a parameter value <span class="math inline">\(\psi = \Psi(P)\)</span> to each distribution <span class="math inline">\(P \in \mathcal{P}\)</span>. The <strong>plug-in estimator</strong> of <span class="math inline">\(\psi\)</span> is <span class="math inline">\(\hat\psi = \Psi(\mathbb{P}_n)\)</span>, obtained by replacing <span class="math inline">\(P\)</span> with the empirical distribution.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -457,142 +542,173 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: The Algebra of Case 2
+<span class="screen-reader-only">Note</span>Example: Common Statistical Functionals
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The key cancellation: <span class="math inline">\(\mu_1(X)\)</span> enters the bracket twice with equal and opposite conditional expectations because <span class="math inline">\(\E[T/\pi(X)\mid X] = 1\)</span> when <span class="math inline">\(\pi\)</span> is correct. The bracket “forgets” <span class="math inline">\(\mu_1\)</span> entirely and converges to <span class="math inline">\(\mu_1^*(X)\)</span>. A wrong <span class="math inline">\(\mu_t\)</span> is subtracted out by the correct <span class="math inline">\(\pi\)</span>.</p>
+<ol type="i">
+<li><strong>Mean.</strong> <span class="math inline">\(\Psi(P) = \E_P(Y)\)</span>. Plug-in: <span class="math inline">\(\bar Y\)</span>.</li>
+<li><strong>Variance.</strong> <span class="math inline">\(\Psi(P) = \E_P(Y^2) - [\E_P(Y)]^2\)</span>. Plug-in: sample variance.</li>
+<li><strong>Quantile.</strong> <span class="math inline">\(\Psi(P) = F_P^{-1}(\tau)\)</span>. Plug-in: sample <span class="math inline">\(\tau\)</span>-quantile.</li>
+<li><strong>OLS regression coefficient.</strong> <span class="math inline">\(\Psi(P) = [\E_P(XX^\top)]^{-1}\E_P(XY)\)</span>. Plug-in: OLS estimator.</li>
+<li><strong>ATE.</strong> <span class="math inline">\(\Psi(P) = \E_P[\mu_1(X) - \mu_0(X)]\)</span>. Plug-in: average of estimated regression functions.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Linearity vs.&nbsp;Nonlinearity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A functional <span class="math inline">\(\Psi\)</span> is <strong>linear</strong> if <span class="math inline">\(\Psi((1-\epsilon)P + \epsilon Q) = (1-\epsilon)\Psi(P) + \epsilon\Psi(Q)\)</span>. The mean (i) is linear; the variance (ii), quantile (iii), OLS coefficient (iv), and ATE (v) are nonlinear. Linear functionals are straightforward to analyze because their plug-in estimators are sample averages. Nonlinear functionals require a local linearization, which is precisely what the influence function provides.</p>
 </div>
 </div>
 </section>
-<section id="sec-class" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="sec-class"><span class="header-section-number">10.4</span> A Class of Augmented Estimators</h2>
-<p>For any square-integrable functions <span class="math inline">\(b_1(x)\)</span> and <span class="math inline">\(b_0(x)\)</span>, define: <span class="math display">\[\hat\mu_{1,b} = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\pi(X_i)}\,Y_i - \frac{1}{n}\sum_{i=1}^n \left\{\frac{T_i}{\pi(X_i)}-1\right\} b_1(X_i),\]</span> <span class="math display">\[\hat\mu_{0,b} = \frac{1}{n}\sum_{i=1}^n \frac{1-T_i}{1-\pi(X_i)}\,Y_i - \frac{1}{n}\sum_{i=1}^n \left\{\frac{1-T_i}{1-\pi(X_i)}-1\right\} b_0(X_i),\]</span> and <span class="math inline">\(\hat\tau_b = \hat\mu_{1,b} - \hat\mu_{0,b}\)</span>. The correction is mean-zero under the true <span class="math inline">\(\pi\)</span> for any <span class="math inline">\(b_t\)</span>, so every member is unbiased; only the variance depends on <span class="math inline">\(b_t\)</span>. When <span class="math inline">\(b_t = \mu_t\)</span>, <span class="math inline">\(\hat\mu_{t,b}\)</span> equals the AIPW form.</p>
+<section id="influence-functions" class="level3" data-number="10.5.2">
+<h3 data-number="10.5.2" class="anchored" data-anchor-id="influence-functions"><span class="header-section-number">10.5.2</span> Influence Functions</h3>
+<p>Influence functions describe the first-order sensitivity of a statistical functional to small perturbations of the underlying distribution. Informally:</p>
+<blockquote class="blockquote">
+<p><em>The influence function is the infinitesimal contribution of a single observation to the first-order behavior of the estimator.</em></p>
+</blockquote>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Influence Function (Informal)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A function <span class="math inline">\(\varphi(O)\)</span> is called an <strong>influence function</strong> for <span class="math inline">\(\Psi\)</span> if it has mean zero under <span class="math inline">\(P\)</span> and gives the first-order derivative of <span class="math inline">\(\Psi(P)\)</span> along regular parametric submodels: <span class="math display">\[\sqrt{n}(\hat\psi - \psi) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1).\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Formal Derivation via Pathwise Derivatives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The influence function can be defined formally through the <em>pathwise (Gateaux) derivative</em> of the functional <span class="math inline">\(\Psi(P)\)</span>: if <span class="math inline">\(P_\epsilon = (1-\epsilon)P + \epsilon\delta_O\)</span> is the <span class="math inline">\(\epsilon\)</span>-mixture of <span class="math inline">\(P\)</span> with a point mass at <span class="math inline">\(O\)</span>, then: <span class="math display">\[\varphi(O) = \left.\frac{d}{d\epsilon}\Psi(P_\epsilon)\right|_{\epsilon=0}.\]</span> This derivative-based definition is the starting point for semiparametric efficiency theory. In this chapter it is enough to interpret <span class="math inline">\(\varphi(O)\)</span> as the object appearing in the asymptotic linear expansion.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Influence Function of the OLS Slope via Pathwise Derivative
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider <span class="math inline">\(\beta = \Psi(P) = [\E(XX^\top)]^{-1}\E(XY)\)</span>.</p>
+<p><strong>Step 1.</strong> Let <span class="math inline">\(P_\epsilon = (1-\epsilon)P + \epsilon\delta_O\)</span>. Then <span class="math inline">\(\E_{P_\epsilon}(\tilde X \tilde X^\top) = (1-\epsilon)\E(XX^\top) + \epsilon XX^\top\)</span> and similarly for <span class="math inline">\(\E_{P_\epsilon}(\tilde X \tilde Y)\)</span>.</p>
+<p><strong>Step 2.</strong> Differentiate with respect to <span class="math inline">\(\epsilon\)</span> at <span class="math inline">\(\epsilon = 0\)</span>. Let <span class="math inline">\(M(\epsilon) = (1-\epsilon)\E(XX^\top) + \epsilon XX^\top\)</span> and <span class="math inline">\(v(\epsilon) = (1-\epsilon)\E(XY) + \epsilon XY\)</span>. By differentiating <span class="math inline">\(M(\epsilon)M(\epsilon)^{-1} = I\)</span>: <span class="math display">\[\frac{d}{d\epsilon}M(\epsilon)^{-1} = -M(\epsilon)^{-1}\dot M(\epsilon)\,M(\epsilon)^{-1}.\]</span> Evaluating at <span class="math inline">\(\epsilon = 0\)</span> and applying the product rule to <span class="math inline">\(M^{-1}v\)</span>: <span class="math display">\[\varphi(O) = [\E(XX^\top)]^{-1}X(Y - X^\top\beta).\]</span></p>
+<p><strong>Verification.</strong> <span class="math inline">\(\E\{\varphi(O)\} = [\E(XX^\top)]^{-1}\E[X(Y - X^\top\beta)] = [\E(XX^\top)]^{-1}\cdot 0 = 0\)</span>.</p>
+<p><strong>Connection to estimating equations.</strong> The OLS estimating function is <span class="math inline">\(U(O;\beta) = X(Y - X^\top\beta)\)</span>, so <span class="math inline">\(A = -\E(XX^\top)\)</span> and <a href="#eq-expansion" class="quarto-xref">Equation&nbsp;<span>10.2</span></a> gives <span class="math inline">\(\varphi(O) = [\E(XX^\top)]^{-1}X(Y - X^\top\beta)\)</span> — the same answer. The pathwise route is more fundamental; the estimating-equation route is more computationally direct.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-if-causal" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="sec-if-causal"><span class="header-section-number">10.6</span> Influence Functions for Simple Causal Estimators</h2>
+<p>We now illustrate the idea in causal settings when nuisance functions are <em>known</em>.</p>
+<p><strong>Known outcome regression.</strong> Suppose <span class="math inline">\(\mu_1(\cdot)\)</span> and <span class="math inline">\(\mu_0(\cdot)\)</span> are known. The natural plug-in estimator is <span class="math inline">\(\hat\tau = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}\)</span>. Its influence function is: <span class="math display">\[\varphi(O) = \mu_1(X) - \mu_0(X) - \tau.\]</span></p>
+<p><strong>Known propensity score.</strong> Suppose <span class="math inline">\(\pi(X)\)</span> is known. The IPW estimator <span class="math inline">\(\hat\tau = \mathbb{P}_n\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}\)</span> has influence function: <span class="math display">\[\varphi(O) = \frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)} - \tau.\]</span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Nuisance Functions and the Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When nuisance functions are <em>known</em>, the influence function is simply the centered estimating function. This observation becomes much more consequential in the next section, where nuisance functions must be estimated. The key challenge is to understand how estimation error in <span class="math inline">\(\hat\mu_t\)</span> or <span class="math inline">\(\hat\pi\)</span> perturbs the first-order expansion.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Five Related Concepts: A Taxonomy
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Several closely related objects share the symbol <span class="math inline">\(\varphi\)</span>. Keeping them separate prevents confusion.</p>
+<p><strong>(i) Estimating function.</strong> A function <span class="math inline">\(U(O;\theta)\)</span> that defines an estimator through <span class="math inline">\(\mathbb{P}_n\{U(O;\hat\theta)\}=0\)</span>. This is an <em>input</em> to the construction of <span class="math inline">\(\hat\theta\)</span>.</p>
+<p><strong>(ii) Influence function of an estimator.</strong> A function <span class="math inline">\(\varphi(O)\)</span> such that <span class="math inline">\(\sqrt{n}(\hat\psi-\psi_0) = n^{-1/2}\sum_i\varphi(O_i)+o_p(1)\)</span>. This is a <em>property of the estimator</em>. With known nuisance, <span class="math inline">\(\varphi\)</span> is the centered estimating function; when nuisance is estimated, the two generally differ.</p>
+<p><strong>(iii) Influence function (canonical gradient) of a functional.</strong> A function <span class="math inline">\(\varphi^*(O;P)\)</span> that is the pathwise derivative of the parameter functional <span class="math inline">\(\Psi(P)\)</span> at <span class="math inline">\(P\)</span>. This is a <em>property of the parameter and the model</em>, independent of any estimator.</p>
+<p><strong>(iv) Efficient influence function (EIF).</strong> Among all valid influence functions of regular estimators in the model, the unique one with smallest asymptotic variance.</p>
+<p><strong>(v) Estimated influence values.</strong> The numerical quantities <span class="math inline">\(\hat\varphi_i = \hat\varphi(O_i)\)</span>, obtained by plugging in estimated nuisance functions. These are used to compute the sandwich variance <span class="math inline">\(\hat V = (n(n-1))^{-1}\sum_i(\hat\varphi_i-\bar\varphi)^2\)</span>.</p>
+<p>A regular estimator <span class="math inline">\(\hat\psi\)</span> is asymptotically linear with influence function <span class="math inline">\(\varphi^*\)</span> (the canonical gradient) when nuisance estimators converge fast enough; the estimated influence values <span class="math inline">\(\hat\varphi_i\)</span> then serve as data-driven proxies for <span class="math inline">\(\varphi^*(O_i)\)</span> for variance estimation.</p>
+</div>
+</div>
+</section>
+<section id="sec-nuisance" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="sec-nuisance"><span class="header-section-number">10.7</span> Z-Estimation with Nuisance Parameters</h2>
+<p>The examples in <a href="#sec-if-causal" class="quarto-xref"><span>Section 10.6</span></a> treated nuisance functions as known. In practice, they must be estimated from the same data. When this happens, the randomness in the estimated nuisance introduces an additional term that the naive plug-in formula ignores. Z-estimation provides the framework that accounts jointly for estimation of both the target and nuisance parameters.</p>
+<section id="sec-stacked" class="level3" data-number="10.7.1">
+<h3 data-number="10.7.1" class="anchored" data-anchor-id="sec-stacked"><span class="header-section-number">10.7.1</span> The Stacked Estimating Equation Framework</h3>
+<p>Suppose the target parameter <span class="math inline">\(\psi \in \mathbb{R}^p\)</span> depends on an unknown nuisance parameter <span class="math inline">\(\alpha \in \mathbb{R}^q\)</span>. Both are estimated by solving a <em>stacked</em> system: <span id="eq-stacked"><span class="math display">\[\mathbb{P}_n\{U_1(O;\psi,\alpha)\} = 0, \qquad \mathbb{P}_n\{U_2(O;\alpha)\} = 0. \tag{10.3}\]</span></span></p>
+<p>Here <span class="math inline">\(U_1\)</span> defines the target estimator <span class="math inline">\(\hat\psi\)</span> given <span class="math inline">\(\alpha\)</span>, while <span class="math inline">\(U_2\)</span> defines the nuisance estimator <span class="math inline">\(\hat\alpha\)</span>. The equations are solved simultaneously (or sequentially: first <a href="#eq-stacked" class="quarto-xref">Equation&nbsp;<span>10.3</span></a> for <span class="math inline">\(\hat\alpha\)</span>, then for <span class="math inline">\(\hat\psi\)</span>).</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Why Stack the Equations?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>One might think it is enough to plug the estimated <span class="math inline">\(\hat\alpha\)</span> into the influence function derived under known <span class="math inline">\(\alpha\)</span>. This is incorrect in general: the randomness in <span class="math inline">\(\hat\alpha\)</span> contributes an additional term to the first-order expansion of <span class="math inline">\(\hat\psi\)</span> that is not captured by the plug-in influence function. The stacked framework keeps track of this extra term automatically.</p>
+</div>
+</div>
+</section>
+<section id="sec-zthm" class="level3" data-number="10.7.2">
+<h3 data-number="10.7.2" class="anchored" data-anchor-id="sec-zthm"><span class="header-section-number">10.7.2</span> The Z-Estimation Theorem</h3>
+<p>Write <span class="math inline">\(\theta = (\psi^\top, \alpha^\top)^\top\)</span> and let <span class="math inline">\(U(O;\theta) = (U_1(O;\psi,\alpha)^\top, U_2(O;\alpha)^\top)^\top\)</span> be the stacked estimating function.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Unbiasedness and Variance of the AIPW Class
+<span class="screen-reader-only">Tip</span>Theorem: Z-Estimation Theorem (Stacked Equations)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under conditional exchangeability, SUTVA, and positivity, with the true propensity score, for any square-integrable <span class="math inline">\(b_0, b_1\)</span>: (1) <span class="math inline">\(\E(\hat\tau_b) = \tau\)</span>; and (2): <span id="eq-var-b"><span class="math display">\[\mathrm{Var}(\hat\tau_b) = \frac{1}{n}\,\E\!\left[\left(\frac{1}{\pi(X)}-1\right)\{Y(1)-b_1(X)\}^2 + 2\{Y(1)-b_1(X)\}\{Y(0)-b_0(X)\} + \left(\frac{1}{1-\pi(X)}-1\right)\{Y(0)-b_0(X)\}^2\right] + \frac{\mathrm{Var}\{Y(1)-Y(0)\}}{n}. \tag{10.5}\]</span></span></p>
+<p>Suppose: (i) <span class="math inline">\(\E\{U(O;\theta_0)\}=0\)</span>; (ii) <span class="math inline">\(\hat\theta \overset{p}{\to} \theta_0\)</span>; (iii) the Jacobian <span class="math inline">\(\mathcal{A} = \E\{\partial_{\theta^\top} U(O;\theta_0)\}\)</span> is invertible; (iv) <span class="math inline">\(U\)</span> is smooth enough in <span class="math inline">\(\theta\)</span> for a uniform LLN and CLT. Then: <span class="math display">\[\sqrt{n}(\hat\theta - \theta_0) = -\mathcal{A}^{-1}\, \frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1).\]</span> Partitioning <span class="math inline">\(\mathcal{A}\)</span> conformably with <span class="math inline">\((\psi, \alpha)\)</span> as <span class="math inline">\(\mathcal{A} = \begin{pmatrix} A_{11} &amp; A_{12} \\ 0 &amp; A_{22} \end{pmatrix}\)</span>, the block-matrix inverse gives <span class="math inline">\(\mathcal{A}^{-1} = \begin{pmatrix} A_{11}^{-1} &amp; -A_{11}^{-1}A_{12}A_{22}^{-1} \\ 0 &amp; A_{22}^{-1} \end{pmatrix}\)</span>, and the influence function of <span class="math inline">\(\hat\psi\)</span> is: <span id="eq-if-corrected"><span class="math display">\[\varphi(O) = -A_{11}^{-1}\,U_1(O;\psi_0,\alpha_0) + A_{11}^{-1}A_{12}A_{22}^{-1}\,U_2(O;\alpha_0). \tag{10.4}\]</span></span></p>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Optimal Control Functions
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The control functions <span class="math inline">\(b_1^*(X) = \E\{Y(1)\mid X\}\)</span> and <span class="math inline">\(b_0^*(X) = \E\{Y(0)\mid X\}\)</span> minimize the total variance in <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.5</span></a>. The proof shows that the <span class="math inline">\(b_t\)</span>-dependent term equals a perfect square <span class="math inline">\(\E\!\left[\!\left(\sqrt{\frac{1-\pi}{\pi}}u + \sqrt{\frac{\pi}{1-\pi}}v\right)^{\!2}\right] \geq 0\)</span>, where <span class="math inline">\(u = \mu_1^*-b_1\)</span> and <span class="math inline">\(v = \mu_0^*-b_0\)</span>, which equals zero iff <span class="math inline">\(b_t = \mu_t^*\)</span>.</p>
-</div>
-</div>
-</section>
-<section id="sec-projection" class="level2" data-number="10.5">
-<h2 data-number="10.5" class="anchored" data-anchor-id="sec-projection"><span class="header-section-number">10.5</span> The Projection Interpretation</h2>
-<p>The optimality of AIPW has an elegant geometric interpretation in terms of projections in a Hilbert space of estimators <span class="citation" data-cites="tsiatis2006semiparametric">(Tsiatis 2006, Ch. 2)</span>. Define the <strong>augmentation space</strong> <span class="math inline">\(\Lambda = \{\hat b : \E(\hat b) = 0\}\)</span>.</p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Optimal Projection
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The optimal correction is <span class="math inline">\(\hat b^* = \Pi(\hat\theta_0\mid\Lambda)\)</span>, characterized by <span class="math inline">\(\hat b^* \in \Lambda\)</span> and <span class="math inline">\(\mathrm{Cov}(\hat\theta_0-\hat b^*,\;\hat b) = 0\)</span> for all <span class="math inline">\(\hat b \in \Lambda\)</span>. The optimal estimator <span class="math inline">\(\hat\theta_{\mathrm{opt}} = \Pi(\hat\theta_0 \mid \Lambda^\perp)\)</span> satisfies the <strong>Pythagorean identity</strong>: <span id="eq-pythagoras"><span class="math display">\[\mathrm{Var}(\hat\theta_0) = \mathrm{Var}(\hat\theta_{\mathrm{opt}}) + \mathrm{Var}(\hat b^*). \tag{10.6}\]</span></span></p>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-projection" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="chapter_10_files/figure-html/fig-projection-1.pdf" class="img-fluid" width="240">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10.1: Geometric illustration of the projection. <span class="math inline">\(\hat\theta_0\)</span> decomposes into <span class="math inline">\(\hat\theta_{\mathrm{opt}} \in \Lambda^\perp\)</span> and <span class="math inline">\(\hat b^* \in \Lambda\)</span>. The Pythagorean identity gives <span class="math inline">\(\mathrm{Var}(\hat\theta_0) = \mathrm{Var}(\hat\theta_{\mathrm{opt}}) + \mathrm{Var}(\hat b^*)\)</span>.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="sec-proj-causal" class="level2" data-number="10.6">
-<h2 data-number="10.6" class="anchored" data-anchor-id="sec-proj-causal"><span class="header-section-number">10.6</span> Projection in the Causal Inference Setting</h2>
-<p>We now specialize to the ATE, with <span class="math inline">\(\pi(X)\)</span> known. Decompose the Horvitz–Thompson (HT) estimator as <span class="math inline">\(\hat\tau_{\mathrm{HT}} = \hat\mu_{1,\mathrm{HT}} - \hat\mu_{0,\mathrm{HT}}\)</span>. Define arm-specific augmentation spaces: <span class="math display">\[\Lambda_t = \left\{n^{-1}\sum_{i=1}^n \!\left(\frac{T_i^{(t)}}{\pi_i^{(t)}}-1\right) b_t(X_i) : b_t \in \mathcal{L}^2\right\}, \quad \Lambda = \Lambda_1 \oplus \Lambda_0.\]</span></p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Arm-wise Projections
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The optimal arm-wise corrections are given by <span class="math inline">\(b_t^*(x) = \E\{Y(t)\mid x\}\)</span>: <span class="math display">\[\Pi(\hat\mu_{t,\mathrm{HT}} \mid \Lambda_t) = n^{-1}\sum_{i=1}^n\!\left(\frac{T_i^{(t)}}{\pi_i^{(t)}}-1\right) \mu_t^*(X_i).\]</span> The orthogonality condition <span class="math inline">\(\E[r_{t,i}\, b_i] = 0\)</span> holds because <span class="math inline">\(\E\{\mu_t^*(X_i) - \mu_t^*(X_i)\mid X_i\} = 0\)</span> and <span class="math inline">\(\E[T_i/\pi_i\cdot(T_i/\pi_i - 1)\mid X_i] = 1/\pi_i - 1\)</span>.</p>
-</div>
-</div>
-<p>The arm-wise optimal estimators are: <span class="math display">\[\hat\mu_{t,\mathrm{opt}} = \frac{1}{n}\sum_{i=1}^n\left[\frac{T_i^{(t)}}{\pi_i^{(t)}}\{Y_i-\mu_t^*(X_i)\}+\mu_t^*(X_i)\right],\]</span> and <span class="math inline">\(\hat\tau_{\mathrm{opt}} = \hat\mu_{1,\mathrm{opt}} - \hat\mu_{0,\mathrm{opt}}\)</span> is precisely the AIPW estimator <a href="#eq-aipw" class="quarto-xref">Equation&nbsp;<span>10.4</span></a>, confirming the Optimal Control Functions theorem by a different route.</p>
-</section>
-<section id="sec-eif" class="level2" data-number="10.7">
-<h2 data-number="10.7" class="anchored" data-anchor-id="sec-eif"><span class="header-section-number">10.7</span> The Efficient Influence Function and Semiparametric Efficiency</h2>
-<p>Under the nonparametric model for <span class="math inline">\(O=(X,T,Y)\)</span>, the efficient influence function for the ATE is: <span id="eq-eif-ate"><span class="math display">\[\varphi_{\mathrm{eff}}(O) = \frac{T}{\pi(X)}\{Y-\mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau. \tag{10.7}\]</span></span></p>
-<p>Comparing <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.7</span></a> with <a href="#eq-dr-score" class="quarto-xref">Equation&nbsp;<span>10.3</span></a>, the AIPW estimating function <em>is</em> the efficient influence function <span class="math inline">\(\varphi^*(O)\)</span> from Chapter 9. The augmentation space <span class="math inline">\(\Lambda\)</span> is the nuisance tangent space of the nonparametric model.</p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Semiparametric Efficiency Bound for the ATE
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Under the nonparametric model for <span class="math inline">\(O=(X,T,Y)\)</span>, every regular asymptotically linear estimator <span class="math inline">\(\hat\tau\)</span> of the ATE satisfies <span class="math inline">\(\mathrm{Avar}(\sqrt{n}(\hat\tau - \tau)) \geq \E\{\varphi_{\mathrm{eff}}(O)^2\}\)</span>, and the bound is attained by estimators whose influence function equals <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span>.</p>
-</div>
-</div>
-<p>This is a specialization of the Hájek–Le Cam convolution theorem; see <span class="citation" data-cites="bickel1993">Bickel et al. (1993)</span> or <span class="citation" data-cites="vandervaart1998">Vaart (1998, Ch. 25)</span> for a rigorous development.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: EIF as the Semiparametric Score
+<span class="screen-reader-only">Note</span>Proof
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The efficient influence function plays the same role in semiparametric theory that the score plays in parametric models: its variance gives the information lower bound. The three derivations in this chapter — bias correction, optimal augmentation, and semiparametric identification — converge on the same estimating function. This is the deepest explanation of why AIPW occupies a central place in the causal inference toolkit.</p>
+<p>The argument mirrors <a href="#eq-expansion" class="quarto-xref">Equation&nbsp;<span>10.2</span></a> applied to the full stacked system. Taylor-expand <span class="math inline">\(\mathbb{P}_n\{U(O;\hat\theta)\}=0\)</span> around <span class="math inline">\(\theta_0\)</span>: <span class="math display">\[0 \approx \mathbb{P}_n\{U(O;\theta_0)\} + \mathbb{P}_n\!\left\{\frac{\partial}{\partial\theta^\top} U(O;\theta_0)\right\}(\hat\theta-\theta_0).\]</span> By the LLN, the matrix of derivatives converges to <span class="math inline">\(\mathcal{A}\)</span>. Rearranging and multiplying by <span class="math inline">\(\sqrt{n}\)</span> gives the stacked expansion. Extracting the first block via the block-matrix inverse formula gives <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a>. <span class="math inline">\(\square\)</span></p>
 </div>
-</div>
-</section>
-<section id="sec-ibc" class="level2" data-number="10.8">
-<h2 data-number="10.8" class="anchored" data-anchor-id="sec-ibc"><span class="header-section-number">10.8</span> Doubly Robust Regression: Weighted and Augmented Approaches</h2>
-<p>The <strong>internal bias calibration</strong> (IBC) conditions <span class="citation" data-cites="firth1998robust">(Firth and Bennett 1998)</span> enforce double robustness directly within the outcome model fit: when satisfied, the prediction estimator coincides with AIPW without a separate augmentation step: <span id="eq-ibc"><span class="math display">\[\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\} = 0, \qquad \sum_{i=1}^n \frac{1-T_i}{1-\hat\pi_i}\bigl\{Y_i - \hat\mu_0(X_i)\bigr\} = 0. \tag{10.8}\]</span></span></p>
-<p><strong>Weighted regression.</strong> Use IPW-weighted least squares: minimize <span class="math inline">\(\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\{Y_i - \mu_1(X_i;\theta_1)\}^2\)</span> for arm <span class="math inline">\(t=1\)</span>. The normal equation for the intercept is exactly the IBC condition <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.8</span></a>. IPW-weighted fitted values automatically satisfy IBC for any model containing a constant <span class="citation" data-cites="robins1994estimation bang2005doubly">(Robins et al. 1994; Bang and Robins 2005)</span>.</p>
-<p><strong>Augmented model with clever covariate.</strong> Let <span class="math inline">\(\hat\mu_1^{(0)}(X_i)\)</span> be any initial fit. Include the <strong>clever covariate</strong> <span class="math inline">\(\hat\pi_i^{-1}\)</span> <span class="citation" data-cites="vanderLaan2006targeted vanderLaan2011targeted">(Laan and Rubin 2006; Laan and Rose 2011)</span> and run OLS among treated units: <span id="eq-aug-model"><span class="math display">\[Y_i = \alpha_1 + \beta_1\hat\mu_1^{(0)}(X_i) + \gamma_1\hat\pi_i^{-1} + e_i(1), \qquad T_i = 1. \tag{10.9}\]</span></span></p>
-<p>The fitted model is <span class="math inline">\(\hat\mu_1(X_i) = \hat\alpha_1 + \hat\beta_1\hat\mu_1^{(0)}(X_i) + \hat\gamma_1\hat\pi_i^{-1}\)</span>. The normal equation for <span class="math inline">\(\hat\gamma_1\)</span> is exactly the IBC condition, so the prediction estimator can be written in AIPW form: <span id="eq-aug-aipw"><span class="math display">\[\hat\mu_1^{\mathrm{pred}} = \frac{1}{n}\sum_{i=1}^n \hat\mu_1(X_i) + \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi_i}\bigl\{Y_i - \hat\mu_1(X_i)\bigr\}. \tag{10.10}\]</span></span></p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Behavior Under Correct Outcome Model
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>If <span class="math inline">\(\hat\mu_1^{(0)}\)</span> is correctly specified, then <span class="math inline">\(\hat\alpha_1 \overset{p}{\to} 0\)</span>, <span class="math inline">\(\hat\beta_1 \overset{p}{\to} 1\)</span>, and <span class="math inline">\(\hat\gamma_1 \overset{p}{\to} 0\)</span>. Including the clever covariate carries no asymptotic efficiency cost.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -601,237 +717,62 @@ Figure&nbsp;10.1: Geometric illustration of the projection. <span class="math in
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Connection to TMLE
+<span class="screen-reader-only">Note</span>Remark: Consistency Hypothesis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This approach captures the targeting idea underlying TMLE <span class="citation" data-cites="vanderLaan2006targeted vanderLaan2011targeted">(Laan and Rubin 2006; Laan and Rose 2011)</span>. Standard TMLE uses the fixed-offset form (coefficient on <span class="math inline">\(\hat\mu_1^{(0)}\)</span> fixed at 1). Model <a href="#eq-aug-model" class="quarto-xref">Equation&nbsp;<span>10.9</span></a> goes further by freely estimating <span class="math inline">\(\hat\beta_1\)</span>. See <span class="citation" data-cites="rose2020targeted">Laan and Rose (2018)</span> for a comprehensive treatment.</p>
+<p>Hypothesis (ii) is a separate prerequisite, not a consequence of (i), (iii), and (iv). Standard arguments require identifiability of <span class="math inline">\(\theta_0\)</span> via <span class="math inline">\(\E\{U(O;\theta)\} = 0\)</span> having a unique zero, together with uniform convergence of the sample moment. See <span class="citation" data-cites="vandervaart1998">Vaart (<a href="references.html#ref-vandervaart1998" role="doc-biblioref">1998</a>, Theorem 5.9)</span> for a standard set of sufficient conditions.</p>
 </div>
 </div>
-</section>
-<section id="sec-lab" class="level2" data-number="10.9">
-<h2 data-number="10.9" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">10.9</span> Lab: Simulation Study</h2>
-<p>This lab compares four estimators of the ATE: <span class="math inline">\(\hat\tau_{\mathrm{HT}}\)</span>, <span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span>, the fixed-offset augmented-model estimator <span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span>, and the improved augmented-model estimator <span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span> of <a href="#eq-aug-model" class="quarto-xref">Equation&nbsp;<span>10.9</span></a>. A <span class="math inline">\(2\times 2\)</span> design over nuisance-model correctness — OR correct or misspecified, crossed with PS correct or misspecified — demonstrates double robustness directly. The lab also reports empirical 95% Wald coverage, illustrating the distinction between double-robust consistency and valid asymptotic inference.</p>
-<p><strong>Data-generating process.</strong> <span class="math inline">\(n = 1000\)</span> observations. Draw <span class="math inline">\(X_i \sim N(0,1)\)</span>, then <span class="math inline">\(T_i \mid X_i \sim \mathrm{Bernoulli}(\pi^*(X_i))\)</span> with: <span class="math display">\[\pi^*(x) = \mathrm{expit}\{0.2\,x + 0.2\,(x^2 - 1)\}.\]</span> The potential outcomes are <span class="math inline">\(Y_i(1) = 1 + X_i + 0.5X_i^2 + \varepsilon_i(1)\)</span> and <span class="math inline">\(Y_i(0) = X_i + 0.5X_i^2 + \varepsilon_i(0)\)</span>, with <span class="math inline">\(\varepsilon_i(t) \sim N(0,1)\)</span> i.i.d., true ATE <span class="math inline">\(\tau = 1\)</span>. The quadratic term enters both the true OR and true PS; a linear-only fit omits it.</p>
-<p><strong>The <span class="math inline">\(2\times 2\)</span> design.</strong> The fitted <span class="math inline">\(\hat\pi\)</span> is clipped to <span class="math inline">\([10^{-3}, 1-10^{-3}]\)</span>.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Scenario</th>
-<th>OR fit</th>
-<th>PS fit</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>S1</td>
-<td>correct: <span class="math inline">\(Y \sim (1, X, X^2)\)</span></td>
-<td>correct: <span class="math inline">\(T \sim (1, X, X^2)\)</span></td>
-</tr>
-<tr class="even">
-<td>S2</td>
-<td>correct: <span class="math inline">\(Y \sim (1, X, X^2)\)</span></td>
-<td>misspecified: <span class="math inline">\(T \sim (1, X)\)</span></td>
-</tr>
-<tr class="odd">
-<td>S3</td>
-<td>misspecified: <span class="math inline">\(Y \sim (1, X)\)</span></td>
-<td>correct: <span class="math inline">\(T \sim (1, X, X^2)\)</span></td>
-</tr>
-<tr class="even">
-<td>S4</td>
-<td>misspecified: <span class="math inline">\(Y \sim (1, X)\)</span></td>
-<td>misspecified: <span class="math inline">\(T \sim (1, X)\)</span></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Results</strong> (<span class="math inline">\(B = 2000\)</span> replications, <code>set.seed(2025)</code>). Bias, Var, MSE in units of <span class="math inline">\(10^{-3}\)</span>; Cov = empirical 95% Wald coverage.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Scenario</th>
-<th>Metric</th>
-<th><span class="math inline">\(\hat\tau_{\mathrm{HT}}\)</span></th>
-<th><span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span></th>
-<th><span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span></th>
-<th><span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>S1: OR ✓, PS ✓</strong></td>
-<td>Bias</td>
-<td>0.55</td>
-<td>−0.44</td>
-<td>−0.45</td>
-<td>−0.45</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Var</td>
-<td>6.82</td>
-<td>4.25</td>
-<td>4.25</td>
-<td>4.30</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>MSE</td>
-<td>6.82</td>
-<td>4.25</td>
-<td>4.25</td>
-<td>4.30</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Cov (%)</td>
-<td>99.9</td>
-<td>95.0</td>
-<td>94.9</td>
-<td>94.5</td>
-</tr>
-<tr class="odd">
-<td><strong>S2: OR ✓, PS ✗</strong></td>
-<td>Bias</td>
-<td>188.56</td>
-<td>0.62</td>
-<td>0.62</td>
-<td>0.62</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Var</td>
-<td>6.32</td>
-<td>4.33</td>
-<td>4.33</td>
-<td>4.33</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>MSE</td>
-<td>41.87</td>
-<td>4.32</td>
-<td>4.32</td>
-<td>4.32</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Cov (%)</td>
-<td>67.4</td>
-<td>94.2</td>
-<td>94.2</td>
-<td>94.2</td>
-</tr>
-<tr class="odd">
-<td><strong>S3: OR ✗, PS ✓</strong></td>
-<td>Bias</td>
-<td>1.46</td>
-<td>2.02</td>
-<td>2.25</td>
-<td>−25.26</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Var</td>
-<td>5.74</td>
-<td>4.71</td>
-<td>4.41</td>
-<td>8.02</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>MSE</td>
-<td>5.74</td>
-<td>4.71</td>
-<td>4.41</td>
-<td>8.66</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Cov (%)</td>
-<td>99.9</td>
-<td>98.4</td>
-<td>98.2</td>
-<td>93.2</td>
-</tr>
-<tr class="odd">
-<td><strong>S4: OR ✗, PS ✗</strong></td>
-<td>Bias</td>
-<td>188.42</td>
-<td>188.77</td>
-<td>188.62</td>
-<td>−5.42</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Var</td>
-<td>6.28</td>
-<td>6.30</td>
-<td>6.29</td>
-<td>4.26</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>MSE</td>
-<td>41.78</td>
-<td>41.93</td>
-<td>41.87</td>
-<td>4.29</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Cov (%)</td>
-<td>67.5</td>
-<td>33.1</td>
-<td>33.1</td>
-<td>94.7</td>
-</tr>
-</tbody>
-</table>
-<p><strong>S1 (both correct).</strong> All four estimators are approximately unbiased. <span class="math inline">\(\hat\tau_{\mathrm{HT}}\)</span> has about 60% higher MSE (<span class="math inline">\(6.82\)</span> vs <span class="math inline">\(4.25 \times 10^{-3}\)</span>) because it discards the outcome model. The three augmented estimators are essentially equivalent, confirming that <span class="math inline">\((\hat\alpha_t, \hat\beta_t, \hat\gamma_t) \to (0, 1, 0)\)</span> when the OR is correct. HT’s coverage is above nominal because its influence function has larger variance than <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span>.</p>
-<p><strong>S2 (OR correct, PS misspecified).</strong> HT is badly biased (MSE <span class="math inline">\(\approx 42 \times 10^{-3}\)</span>, coverage 67%). The three augmented estimators are indistinguishable: when the OR is correct they converge to the same limit regardless of PS specification. This is the <strong>first direct demonstration of double robustness</strong>: PS misspecification is absorbed by the correctly specified OR model.</p>
-<p><strong>S3 (OR misspecified, PS correct).</strong> HT, AIPW, and <span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span> remain consistent through the correct PS (biases under <span class="math inline">\(3 \times 10^{-3}\)</span>, coverage close to nominal). <span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span> achieves the lowest MSE (<span class="math inline">\(4.41 \times 10^{-3}\)</span>): the targeted regression reduces residual variance without disturbing the IBC constraint. <span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span> shows a finite-sample bias (<span class="math inline">\(-25 \times 10^{-3}\)</span>) from high-leverage clever-covariate values. This is the <strong>second double-robustness demonstration</strong>: OR misspecification is absorbed by the correctly specified PS.</p>
-<p><strong>S4 (both misspecified).</strong> Double robustness provides no guarantee. HT, AIPW, and <span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span> are all badly biased (MSE <span class="math inline">\(\approx 42 \times 10^{-3}\)</span>); Wald coverage collapses to 33% for AIPW and aug — the variance estimator is concentrated around the wrong value. The apparent “recovery” of <span class="math inline">\(\hat\tau_{\mathrm{aug}^+}\)</span> (coverage 94.7%) is a DGP-specific artifact: the regressors <span class="math inline">\((1, \hat\mu_t^{(0)}(X), \hat\pi^{-1}(X))\)</span> happen to capture the omitted quadratic curvature through the nonlinearity of <span class="math inline">\(\hat\pi^{-1}\)</span>, but this does <strong>not</strong> indicate triple robustness.</p>
-<p><strong>Takeaway.</strong> Comparing S2–S3 against S4 is the crisp illustration of the Double Robustness theorem: AIPW is consistent whenever at least one nuisance model is correct, and only S4 breaks the guarantee. Wald coverage mirrors this pattern. The lab also shows that <span class="math inline">\(\hat\tau_{\mathrm{aug}}\)</span> can reduce MSE in S3 by shrinking residual variance through IBC-enforced regression — the practical motivation for targeting methods such as TMLE.</p>
-</section>
-<section id="sec-asymp" class="level2" data-number="10.10">
-<h2 data-number="10.10" class="anchored" data-anchor-id="sec-asymp"><span class="header-section-number">10.10</span> Asymptotic Inference with Estimated Nuisance Functions</h2>
-<p>Under suitable regularity conditions: <span class="math display">\[\sqrt{n}(\hat\tau_{\mathrm{AIPW}}-\tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i) + o_p(1) \overset{d}{\longrightarrow} N\!\bigl(0,\;\E\{\varphi_{\mathrm{eff}}(O)^2\}\bigr).\]</span></p>
-<p>Neyman orthogonality implies nuisance estimation error enters only through a second-order remainder. A sufficient condition for this remainder to be negligible is the <strong>product-rate condition</strong>: <span id="eq-product-rate"><span class="math display">\[\|\hat\pi-\pi\|\cdot\|\hat\mu_t-\mu_t\| = o_p(n^{-1/2}), \qquad t=0,1, \tag{10.11}\]</span></span> where <span class="math inline">\(\|\cdot\|\)</span> denotes the <span class="math inline">\(L_2(P)\)</span> norm (equivalently, the root-mean-squared-error under the data distribution). This allows each nuisance estimator to converge at rate as slow as <span class="math inline">\(n^{-1/4}\)</span>. In modern applications, this is usually paired with <strong>cross-fitting</strong>; Chapter 11 develops this in detail.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Neyman Orthogonality
+<span class="screen-reader-only">Note</span>Remark: Interpreting the Correction Term
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The first-order insensitivity of the AIPW estimating function to nuisance perturbations is an instance of <em>Neyman orthogonality</em>. Chapter 11 exploits this via cross-fitting, yielding the <em>double/debiased machine learning</em> (DML) estimator <span class="citation" data-cites="chernozhukov2018double">(Chernozhukov et al. 2018)</span>.</p>
+<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> decomposes the influence function into two parts. The first term <span class="math inline">\(-A_{11}^{-1}U_1(O;\psi_0,\alpha_0)\)</span> is exactly what we would obtain if <span class="math inline">\(\alpha_0\)</span> were known. The second term <span class="math inline">\(A_{11}^{-1}A_{12}A_{22}^{-1}U_2(O;\alpha_0)\)</span> is the <em>nuisance correction</em> that accounts for the additional variability introduced by estimating <span class="math inline">\(\alpha\)</span>. If <span class="math inline">\(A_{12}=0\)</span>, the target estimating function <span class="math inline">\(U_1\)</span> does not depend on <span class="math inline">\(\alpha\)</span> at <span class="math inline">\(\alpha_0\)</span>, and the correction vanishes. This is the key condition exploited by <em>locally efficient</em> and <em>doubly robust</em> estimators in Chapter 11.</p>
 </div>
 </div>
-<p>Compute plug-in influence values: <span id="eq-ifhat"><span class="math display">\[\hat\varphi_i = \frac{T_i}{\hat\pi(X_i)}\{Y_i-\hat\mu_1(X_i)\} - \frac{1-T_i}{1-\hat\pi(X_i)}\{Y_i-\hat\mu_0(X_i)\} + \hat\mu_1(X_i)-\hat\mu_0(X_i) - \hat\tau_{\mathrm{AIPW}}, \tag{10.12}\]</span></span> and set: <span id="eq-var-aipw"><span class="math display">\[\hat V = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i-\bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i. \tag{10.13}\]</span></span> The Wald CI is <span class="math inline">\(\hat\tau_{\mathrm{AIPW}} \pm z_{1-\alpha/2}\sqrt{\hat V}\)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Double Robustness versus Efficient Inference
+<span class="screen-reader-only">Note</span>Remark: Just-Identified vs.&nbsp;Overidentified Moments
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>It is important not to conflate two distinct results. <em>Double-robust consistency</em> requires only that <em>one</em> of the two nuisance models be correctly specified; no rate conditions are imposed. <em>Efficient asymptotic inference</em> — the <span class="math inline">\(\sqrt{n}\)</span>-normal expansion and the Wald interval based on <span class="math inline">\(\hat V\)</span> — is a strictly stronger requirement. It requires <em>both</em> nuisance functions to be estimated consistently at rates satisfying the product-rate condition <a href="chapter_11.html#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>11.7</span></a>, together with overlap and moment conditions.</p>
-<p>Plugging estimated nuisance functions into <a href="#eq-var-aipw" class="quarto-xref">Equation&nbsp;<span>10.13</span></a> produces valid standard errors only when the asymptotic linear representation holds; that representation does <em>not</em> follow from double robustness alone. In particular, if the outcome regression is misspecified but the propensity score is correct, the AIPW estimator remains consistent but the influence-function variance estimator targets the variance of an estimator whose nuisance functions converge to their true values, not to misspecified limits. The simulation in <a href="chapter_11.html#sec-lab" class="quarto-xref"><span>Section 11.10</span></a> illustrates this: coverage is approximately nominal in S2 and S3 (where double robustness operates), but this relies on the surviving nuisance model being correctly specified, not just present. Careful rate verification — or cross-fitting as in Chapter 11 — is essential before reporting the Wald interval.</p>
+<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> presupposes the system is <strong>just identified</strong>: <span class="math inline">\(U_1\)</span> has the same dimension as <span class="math inline">\(\psi\)</span> and <span class="math inline">\(U_2\)</span> has the same dimension as <span class="math inline">\(\alpha\)</span>, so that <span class="math inline">\(A_{11}\)</span> and <span class="math inline">\(A_{22}\)</span> are square and invertible. When more moment conditions are available than parameters — the <em>overidentified</em> case from GMM — one minimizes <span class="math inline">\(\mathbb{P}_n U^\top W\mathbb{P}_n U\)</span> for some weight matrix <span class="math inline">\(W\)</span>, and the influence function takes the standard GMM sandwich form <span class="citation" data-cites="hansen1982large">(<a href="references.html#ref-hansen1982large" role="doc-biblioref">Hansen 1982</a>)</span>. The block formula is the just-identified specialization.</p>
+</div>
+</div>
+</section>
+<section id="sec-ipw-example" class="level3" data-number="10.7.3">
+<h3 data-number="10.7.3" class="anchored" data-anchor-id="sec-ipw-example"><span class="header-section-number">10.7.3</span> Working Example: IPW with Estimated Propensity Score</h3>
+<p>We apply the Z-estimation theorem to the IPW estimator of the ATE <span class="math inline">\(\tau\)</span> when <span class="math inline">\(\pi(X)\)</span> is estimated by logistic regression. In <a href="#sec-zthm" class="quarto-xref"><span>Section 10.7.2</span></a> the generic target was <span class="math inline">\(\psi\)</span>; here <span class="math inline">\(\psi = \tau\)</span>.</p>
+<p><strong>Setup.</strong> Assume <span class="math inline">\(\pi(X;\alpha) = \mathrm{expit}(X^\top\alpha)\)</span>. The IPW estimating equation for <span class="math inline">\(\tau\)</span> is <span class="math inline">\(U_1(O;\tau,\alpha) = TY/\pi(X;\alpha) - (1-T)Y/(1-\pi(X;\alpha)) - \tau\)</span>, and the logistic regression score is <span class="math inline">\(U_2(O;\alpha) = X\{T - \pi(X;\alpha)\}\)</span>.</p>
+<p><strong>Computing the Jacobian blocks.</strong> Since <span class="math inline">\(A_{11} = \E\{\partial_\tau U_1\} = -1\)</span> and <span class="math inline">\(A_{22} = \E\{\partial_{\alpha^\top}U_2\} = -\Sigma_\pi\)</span> where <span class="math inline">\(\Sigma_\pi = \E\{\pi(X;\alpha_0)(1-\pi(X;\alpha_0))XX^\top\}\)</span>. Using <span class="math inline">\(\partial\pi/\partial\alpha^\top = \pi(1-\pi)X^\top\)</span> and simplifying: <span class="math display">\[A_{12} = -\E\!\left[Y X^\top\!\left\{\frac{T}{\pi(X;\alpha_0)} + \frac{1-T}{1-\pi(X;\alpha_0)} - 1\right\}\right].\]</span></p>
+<p><strong>Corrected influence function.</strong> Substituting into <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> with <span class="math inline">\(A_{11} = -1\)</span> and <span class="math inline">\(A_{22}^{-1} = -\Sigma_\pi^{-1}\)</span> (the two negatives cancel): <span id="eq-if-ipw-corrected"><span class="math display">\[\varphi(O) = U_1(O;\tau_0,\alpha_0) + A_{12}\,\Sigma_\pi^{-1}\,U_2(O;\alpha_0). \tag{10.5}\]</span></span> The first term is the naive IPW influence function from <a href="#sec-if-causal" class="quarto-xref"><span>Section 10.6</span></a>; the second is the nuisance correction removing the first-order contribution of <span class="math inline">\(\hat\alpha - \alpha_0\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Variance Reduction from ML Estimation of the Propensity Score
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We show that estimating <span class="math inline">\(\alpha\)</span> by maximum likelihood (ML) can only <em>reduce</em> the asymptotic variance of <span class="math inline">\(\hat\tau_{\mathrm{IPW}}\)</span> relative to using the true <span class="math inline">\(\alpha_0\)</span>.</p>
+<p>Write <span class="math inline">\(\sigma_1^2 = \E[U_1(O;\tau_0,\alpha_0)^2]\)</span>. Expanding the variance of <a href="#eq-if-ipw-corrected" class="quarto-xref">Equation&nbsp;<span>10.5</span></a>: <span id="eq-var-decomp"><span class="math display">\[\E[\varphi(O)^2] = \sigma_1^2 + 2A_{12}\Sigma_\pi^{-1}\E[U_1 U_2] + A_{12}\Sigma_\pi^{-1}\E[U_2 U_2^\top]\Sigma_\pi^{-1}A_{12}^\top. \tag{10.6}\]</span></span></p>
+<p><strong>Bartlett identity (ML score):</strong> <span class="math inline">\(\E[U_2 U_2^\top] = \Sigma_\pi\)</span> (information equality for the correctly specified logistic model).</p>
+<p><strong>Cross-identity:</strong> Since <span class="math inline">\(\E_\alpha[U_1(O;\tau_0,\alpha)] = 0\)</span> for all <span class="math inline">\(\alpha\)</span> (under correct PS specification), differentiating through <span class="math inline">\(\alpha\)</span>: <span class="math inline">\(A_{12} = -\E[U_1 U_2^\top]\)</span>.</p>
+<p>Substituting into <a href="#eq-var-decomp" class="quarto-xref">Equation&nbsp;<span>10.6</span></a>: <span class="math display">\[\E[\varphi(O)^2] = \sigma_1^2 - A_{12}\Sigma_\pi^{-1}A_{12}^\top = \sigma_1^2 - \E[U_1 U_2^\top]\Sigma_\pi^{-1}\E[U_2 U_1] \leq \sigma_1^2,\]</span> since <span class="math inline">\(\Sigma_\pi\)</span> is positive definite. Equality holds only when <span class="math inline">\(\E[U_1 U_2^\top] = 0\)</span>.</p>
+<p><strong>Scope.</strong> This variance-reduction conclusion (sometimes called the <em>estimated propensity score paradox</em>, <span class="citation" data-cites="robins1986new">Robins (<a href="references.html#ref-robins1986new" role="doc-biblioref">1986</a>)</span>) requires: (i) correctly specified parametric propensity model; (ii) ML estimation so the Bartlett identity holds; (iii) strong overlap and moment conditions. When the parametric model is misspecified, when <span class="math inline">\(\hat\alpha\)</span> is computed by another method, or when <span class="math inline">\(\pi(X)\)</span> is estimated nonparametrically, the identity <span class="math inline">\(A_{12} = -\E[U_1 U_2^\top]\)</span> need not hold and the conclusion fails.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
@@ -840,60 +781,228 @@ Figure&nbsp;10.1: Geometric illustration of the projection. <span class="math in
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Extreme Propensity Scores
+<span class="screen-reader-only">Warning</span>The Central Challenge in Causal Estimation
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>When <span class="math inline">\(\hat\pi(X_i)\)</span> is near 0 or 1, the IPW weights become large and can destabilize the estimator. Practical remedies: overlap diagnostics, truncation of extreme propensity scores, or restricting to a subgroup with adequate overlap. The augmented model approach of <a href="#sec-ibc" class="quarto-xref"><span>Section 10.8</span></a> provides a complementary strategy.</p>
+<p>The primary difficulty in practice is often not identifying the target parameter, but <em>correctly accounting for the effect of nuisance estimation</em> on the asymptotic distribution of the final estimator. Treating <span class="math inline">\(\hat\alpha\)</span> as if it were the true <span class="math inline">\(\alpha_0\)</span> — computing standard errors from the naive IPW influence function rather than from <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> — yields correct point estimates under a correctly specified PS model but <strong>incorrect standard errors</strong>. The Z-estimation framework resolves this variance-accounting issue whenever the nuisance model is correctly specified and the nuisance estimator converges at rate <span class="math inline">\(n^{-1/2}\)</span>. It does not, by itself, protect against model misspecification: if the parametric PS model is wrong, <span class="math inline">\(\hat\tau\)</span> is inconsistent regardless of which variance formula is used.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Machine Learning for Nuisance Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Z-estimation theorem as stated requires <span class="math inline">\(\hat\alpha\)</span> to converge at rate <span class="math inline">\(n^{-1/2}\)</span>, which holds for finite-dimensional parametric models but fails for nonparametric or machine-learning estimators. When flexible methods are used for <span class="math inline">\(\pi(x)\)</span> or <span class="math inline">\(\mu_t(x)\)</span>, the correction term in <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> no longer has the simple form derived here, and a more careful analysis based on <em>sample splitting</em> or <em>cross-fitting</em> is needed. This is the starting point for the doubly robust and debiased machine-learning estimators in Chapter 11.</p>
 </div>
 </div>
 </section>
-<section id="sec-comparison" class="level2" data-number="10.11">
-<h2 data-number="10.11" class="anchored" data-anchor-id="sec-comparison"><span class="header-section-number">10.11</span> Comparison of Regression, IPW, and AIPW</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th><strong>Estimator</strong></th>
-<th><strong>Uses <span class="math inline">\(\mu_t\)</span></strong></th>
-<th><strong>Uses <span class="math inline">\(\pi\)</span></strong></th>
-<th><strong>Consistent if</strong></th>
-<th><strong>Main weakness</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Regression</td>
-<td>Yes</td>
-<td>No</td>
-<td>outcome model correct</td>
-<td>Sensitive to OR misspecification</td>
-</tr>
-<tr class="even">
-<td>IPW</td>
-<td>No</td>
-<td>Yes</td>
-<td>propensity model correct</td>
-<td>Unstable under weak overlap</td>
-</tr>
-<tr class="odd">
-<td>AIPW</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>either model correct</td>
-<td>Requires both nuisances and careful inference</td>
-</tr>
-</tbody>
-</table>
 </section>
-<section id="sec-summary" class="level2" data-number="10.12">
-<h2 data-number="10.12" class="anchored" data-anchor-id="sec-summary"><span class="header-section-number">10.12</span> Chapter Summary</h2>
+<section id="sec-variance" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="sec-variance"><span class="header-section-number">10.8</span> Variance Estimation and Confidence Intervals</h2>
+<p>Once an estimator admits the asymptotic linear representation, its asymptotic variance is <span class="math inline">\(n^{-1}\mathrm{Var}\{\varphi(O)\}\)</span>. A natural estimator is obtained by replacing <span class="math inline">\(\varphi(O_i)\)</span> with estimated influence values <span class="math inline">\(\hat\varphi_i\)</span>: <span id="eq-sandwich"><span class="math display">\[\hat V = \frac{1}{n(n-1)}\sum_{i=1}^n (\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n \hat\varphi_i. \tag{10.7}\]</span></span></p>
+<p>The asymptotically equivalent uncentered form <span class="math inline">\(\hat V = n^{-2}\sum_i \hat\varphi_i^2\)</span> is also commonly used; the two differ by <span class="math inline">\(O_p(n^{-1})\)</span>. We adopt the centered form throughout this book. The approximate Wald confidence interval at level <span class="math inline">\(1-a\)</span> is <span class="math inline">\(\hat\psi \pm z_{1-a/2}\sqrt{\hat V}\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Proposition: Variance from the Influence Function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(\sqrt{n}(\hat\psi - \psi) = n^{-1/2}\sum_{i=1}^n \varphi(O_i) + o_p(1)\)</span> with <span class="math inline">\(\E\{\varphi(O)\} = 0\)</span> and <span class="math inline">\(\E\{\varphi(O)^2\} &lt; \infty\)</span>, then: <span id="eq-variance-prop"><span class="math display">\[\sqrt{n}(\hat\psi - \psi) \overset{d}{\longrightarrow} N\!\left(0,\, \E[\varphi(O)^2]\right), \qquad \mathrm{Var}(\hat\psi) = \frac{1}{n}\,\E[\varphi(O)^2] + o(n^{-1}). \tag{10.8}\]</span></span></p>
+</div>
+</div>
+<p>The proof follows immediately from the CLT applied to the i.i.d. sum. The influence function thus plays a dual role: it characterizes both the asymptotic distribution and the asymptotic variance.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Sandwich Variance Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a> also provides the basis for the <em>sandwich variance estimator</em>. Replacing <span class="math inline">\(\theta_0\)</span> by <span class="math inline">\(\hat\theta\)</span>, the asymptotic variance of <span class="math inline">\(\hat\tau\)</span> is consistently estimated by <a href="#eq-sandwich" class="quarto-xref">Equation&nbsp;<span>10.7</span></a> with <span class="math inline">\(\hat\varphi_i\)</span> evaluated at <span class="math inline">\((\hat\tau, \hat\alpha)\)</span>. This estimator automatically accounts for nuisance estimation uncertainty and is valid without any re-sampling. Standard errors from a logistic regression routine that ignores the link between <span class="math inline">\(\hat\alpha\)</span> and <span class="math inline">\(\hat\tau\)</span> will in general be <strong>incorrect</strong>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Plug-In Influence Values in Practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In practice, <span class="math inline">\(\varphi(O_i)\)</span> depends on unknown parameters and nuisance functions, so it is replaced by an estimated influence value <span class="math inline">\(\hat\varphi_i\)</span>. This substitution is not innocuous: the plug-in variance formula is valid only when the estimator is asymptotically linear with influence function <span class="math inline">\(\varphi\)</span> <em>and</em> the error from replacing unknown quantities by estimates is asymptotically negligible. For the plug-in estimators of <a href="#sec-nuisance" class="quarto-xref"><span>Section 10.7</span></a>, these conditions require nuisance estimators to converge fast enough that the plug-in error is <span class="math inline">\(o_p(n^{-1/2})\)</span>. We return to this point in Chapter 11.</p>
+</div>
+</div>
+</section>
+<section id="sec-efficiency" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="sec-efficiency"><span class="header-section-number">10.9</span> Toward Efficiency: Semiparametric Models and the EIF</h2>
+<p><a href="#sec-asymlin" class="quarto-xref"><span>Section 10.4</span></a> showed that the influence function determines both the asymptotic distribution and variance. Different regular estimators of the same parameter may therefore have different large-sample variances. This raises a natural question: among all regular estimators in a given model, what is the smallest achievable asymptotic variance? This section introduces the basic objects — semiparametric models, regular estimators, and the efficient influence function — as preparation for Chapter 11, where they are used to construct doubly robust and efficient estimators.</p>
+<section id="semiparametric-models" class="level3" data-number="10.9.1">
+<h3 data-number="10.9.1" class="anchored" data-anchor-id="semiparametric-models"><span class="header-section-number">10.9.1</span> Semiparametric Models</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Semiparametric Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <strong>semiparametric model</strong> is a statistical model <span class="math inline">\(\mathcal{P}\)</span> for the distribution <span class="math inline">\(P\)</span> of the observed data in which: (i) the <strong>parameter of interest</strong> <span class="math inline">\(\psi = \Psi(P) \in \mathbb{R}^p\)</span> is finite-dimensional; and (ii) the remaining aspects of <span class="math inline">\(P\)</span> — the <strong>nuisance parameter</strong> — are infinite-dimensional.</p>
+</div>
+</div>
+<p>The canonical example in this course is the ATE. Under the identification assumptions of consistency, conditional exchangeability, and positivity, it equals the observed-data functional <span class="math inline">\(\tau(P) = \E_P\{\mu_1(X) - \mu_0(X)\}\)</span>. We study estimation in the nonparametric model <span class="math inline">\(\mathcal{P} = \{P : 0 &lt; \pi(X) &lt; 1\ \text{a.s.}\}\)</span>, where the nuisance consists of the entire joint distribution of <span class="math inline">\((X, T, Y)\)</span> subject only to positivity. No parametric form is assumed for <span class="math inline">\(\mu_t(x)\)</span> or <span class="math inline">\(\pi(x)\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Weak vs.&nbsp;Strong Overlap
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The positivity condition <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> a.s. suffices for <em>identification</em> of <span class="math inline">\(\tau\)</span>, but not for stable regular root-<span class="math inline">\(n\)</span> inference. Regular asymptotic theory typically requires <strong>strong overlap</strong>, <span class="math inline">\(\epsilon \leq \pi(X) \leq 1-\epsilon\)</span> a.s. for some <span class="math inline">\(\epsilon &gt; 0\)</span>, together with appropriate moment conditions on <span class="math inline">\(Y\)</span>. Under weak overlap the inverse-probability weights are unbounded in probability, and the asymptotic variance of IPW-type estimators may fail to be finite or fail to have a normal limiting distribution at the <span class="math inline">\(\sqrt{n}\)</span> rate.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Semiparametric vs.&nbsp;Parametric Efficiency
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In a <em>fully parametric</em> model, the Cramér–Rao lower bound gives the minimum variance of any unbiased estimator of <span class="math inline">\(\psi\)</span>. When the nuisance is infinite-dimensional, the classical bound no longer applies: the relevant lower bound must account for all infinitely many directions in which the likelihood can vary. The semiparametric efficiency bound is the analogue of the Cramér–Rao bound for this setting; see <span class="citation" data-cites="bickel1993">Bickel et al. (<a href="references.html#ref-bickel1993" role="doc-biblioref">1993</a>)</span> and <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (<a href="references.html#ref-tsiatis2006semiparametric" role="doc-biblioref">2006</a>)</span> for comprehensive treatments.</p>
+</div>
+</div>
+</section>
+<section id="regular-estimators" class="level3" data-number="10.9.2">
+<h3 data-number="10.9.2" class="anchored" data-anchor-id="regular-estimators"><span class="header-section-number">10.9.2</span> Regular Estimators</h3>
+<p>The efficiency bound is meaningful only within the class of <em>regular</em> estimators, which informally are estimators whose asymptotic distribution is stable under small perturbations of the data-generating distribution.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Regular Estimator (Informal)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An estimator <span class="math inline">\(\hat\psi\)</span> of <span class="math inline">\(\psi_0 = \Psi(P_0)\)</span> is called <strong>regular</strong> at <span class="math inline">\(P_0\)</span> if, along every smooth parametric submodel <span class="math inline">\(\{P_t : t \in \mathbb{R}\}\)</span> with <span class="math inline">\(P_0 = P_{t=0}\)</span>, the limiting distribution of <span class="math inline">\(\sqrt{n}(\hat\psi - \psi_t)\)</span> under <span class="math inline">\(P_{1/\sqrt{n}}\)</span> does not depend on the submodel or its direction.</p>
+</div>
+</div>
+<p>Regularity rules out pathological estimators that exploit specific features of the data-generating mechanism in a non-uniform way (superefficient estimators). All estimators in this course — regression, IPW, and augmented variants — are regular. See <span class="citation" data-cites="vandervaart1998">Vaart (<a href="references.html#ref-vandervaart1998" role="doc-biblioref">1998</a>, Chs. 8, 25)</span> and <span class="citation" data-cites="tsiatis2006semiparametric">Tsiatis (<a href="references.html#ref-tsiatis2006semiparametric" role="doc-biblioref">2006</a>, Ch. 4)</span>.</p>
+</section>
+<section id="the-semiparametric-efficiency-bound-and-the-eif" class="level3" data-number="10.9.3">
+<h3 data-number="10.9.3" class="anchored" data-anchor-id="the-semiparametric-efficiency-bound-and-the-eif"><span class="header-section-number">10.9.3</span> The Semiparametric Efficiency Bound and the EIF</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Semiparametric Convolution Theorem <span class="citation" data-cites="bickel1993">(<a href="references.html#ref-bickel1993" role="doc-biblioref">Bickel et al. 1993</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In a semiparametric model <span class="math inline">\(\mathcal{P}\)</span>, the asymptotic distribution of any regular estimator <span class="math inline">\(\hat\psi\)</span> of <span class="math inline">\(\psi_0 \in \mathbb{R}^p\)</span> satisfies: <span class="math display">\[\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\longrightarrow} N(0, V^*) * M\]</span> for some distribution <span class="math inline">\(M\)</span>, where <span class="math inline">\(*\)</span> denotes convolution and <span class="math inline">\(V^* = \E_P[\varphi^*(O)\,\varphi^*(O)^\top]\)</span> is the <strong>semiparametric efficiency bound</strong>. The function <span class="math inline">\(\varphi^*(O)\)</span> with <span class="math inline">\(\E[\varphi^*(O)] = 0\)</span> and <span class="math inline">\(\E[\varphi^*(O)\varphi^*(O)^\top] = V^*\)</span> is called the <strong>efficient influence function (EIF)</strong>. An estimator achieves <span class="math inline">\(V^*\)</span> if and only if it is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Loewner Partial Order
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a scalar parameter (<span class="math inline">\(p = 1\)</span>), <span class="math inline">\(V^*\)</span> is a scalar and any regular estimator has asymptotic variance at least <span class="math inline">\(V^*\)</span>. For vector-valued <span class="math inline">\(\psi\)</span>, <span class="math inline">\(V^*\)</span> is a <span class="math inline">\(p \times p\)</span> matrix and the comparison uses the <strong>Loewner partial order</strong>: any regular estimator has asymptotic covariance <span class="math inline">\(V \succeq V^*\)</span> (i.e., <span class="math inline">\(V - V^*\)</span> is positive semidefinite). Equivalently, every linear combination <span class="math inline">\(c^\top\hat\psi\)</span> has asymptotic variance at least <span class="math inline">\(c^\top V^* c\)</span> for every <span class="math inline">\(c \in \mathbb{R}^p\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Semiparametrically Efficient Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A regular estimator <span class="math inline">\(\hat\psi\)</span> is <strong>semiparametrically efficient</strong> at <span class="math inline">\(P_0 \in \mathcal{P}\)</span> if <span class="math inline">\(\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\to} N(0, V^*)\)</span>, i.e., it achieves <span class="math inline">\(V^*\)</span> with no additional convolution component. Equivalently, <span class="math inline">\(\hat\psi\)</span> is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: The EIF and the Parametric Score
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It is tempting to describe the EIF as the “semiparametric score” of the model. The analogy is useful: <span class="math inline">\(\varphi^*(O)\)</span> plays the role in the semiparametric efficiency bound that the score plays in the Cramér–Rao bound. Strictly speaking, however, the score and the EIF live in different spaces. The score <span class="math inline">\(\partial_\theta \log p(O;\theta_0)\)</span> is an element of the model’s <em>tangent space</em> (mean-zero functions reachable as derivatives of log-likelihoods). The EIF is the unique <em>canonical gradient</em>: the element of the tangent space that represents the derivative of the target functional <span class="math inline">\(\Psi\)</span> via <span class="math inline">\(\langle\varphi^*, S_\theta\rangle = \partial_\theta\Psi(P_\theta)|_{\theta=0}\)</span>. In a fully parametric model these coincide (scaled by the inverse Fisher information); in a semiparametric model they generally do not.</p>
+</div>
+</div>
+</section>
+<section id="sec-eif-ate" class="level3" data-number="10.9.4">
+<h3 data-number="10.9.4" class="anchored" data-anchor-id="sec-eif-ate"><span class="header-section-number">10.9.4</span> The Efficient Influence Function for the ATE</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The EIF for the ATE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For the ATE <span class="math inline">\(\tau = \E\{Y(1) - Y(0)\}\)</span> in the nonparametric observed-data model under consistency, conditional exchangeability, and positivity, the efficient influence function is: <span id="eq-eif-ate"><span class="math display">\[\varphi^*(O) = \frac{T\{Y - \mu_1(X)\}}{\pi(X)} - \frac{(1-T)\{Y - \mu_0(X)\}}{1-\pi(X)} + \mu_1(X) - \mu_0(X) - \tau. \tag{10.9}\]</span></span></p>
+<p>This expression has a natural decomposition: the first two terms are an IPW-style residual correction, and the last two are the regression estimator centered at <span class="math inline">\(\tau\)</span>. The EIF depends on <em>both</em> nuisance functions <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span>; an estimator that plugs in consistent estimates of both achieves the efficiency bound <span class="math inline">\(V^* = \E[\varphi^*(O)^2]\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Bridge to Chapter 11
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Two important properties of <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a> will be central in Chapter 11:</p>
+<p><strong>(i) Double robustness.</strong> The estimator obtained by replacing <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> by estimates and averaging <span class="math inline">\(\varphi^*(O_i)\)</span> is consistent for <span class="math inline">\(\tau\)</span> if <em>either</em> <span class="math inline">\(\hat\pi\)</span> or <span class="math inline">\(\hat\mu_t\)</span> is consistent — not necessarily both. This is the <em>doubly robust</em> property.</p>
+<p><strong>(ii) Semiparametric efficiency.</strong> When both nuisance estimators are consistent and converge at suitable rates, the resulting estimator is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span> and therefore achieves the efficiency bound <span class="math inline">\(V^*\)</span>.</p>
+<p>The augmented IPW (AIPW) estimator, sometimes called the one-step or debiased estimator, is the principal tool for exploiting both properties simultaneously; it will be derived and analyzed in Chapter 11. The EIF <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a> becomes central there: the same object generates both doubly robust estimating equations and the semiparametric efficiency bound.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="chapter-summary" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">10.10</span> Chapter Summary</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -901,105 +1010,100 @@ Figure&nbsp;10.1: Geometric illustration of the projection. <span class="math in
 </colgroup>
 <thead>
 <tr class="header">
-<th><strong>Symbol</strong></th>
-<th><strong>Meaning</strong></th>
+<th><strong>Object</strong></th>
+<th><strong>Role</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="math inline">\(\tau\)</span></td>
-<td>ATE <span class="math inline">\(= \E\{Y(1)-Y(0)\}\)</span></td>
+<td>Estimating function <span class="math inline">\(U(O;\theta)\)</span></td>
+<td>Defines the estimator via <span class="math inline">\(\mathbb{P}_n\{U(O;\hat\theta)\}=0\)</span></td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(\mu_t(x)\)</span></td>
-<td>Outcome regression <span class="math inline">\(\E(Y\mid T=t,X=x)\)</span></td>
+<td>Influence function <span class="math inline">\(\varphi(O)\)</span></td>
+<td>First-order term in expansion of <span class="math inline">\(\hat\psi - \psi\)</span>; used for CLT and variance estimation</td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\pi(x)\)</span></td>
-<td>Propensity score <span class="math inline">\(P(T=1\mid X=x)\)</span></td>
+<td>Asymptotic variance <span class="math inline">\(\E[\varphi(O)^2]/n\)</span></td>
+<td>Governs precision; the target for efficiency comparisons</td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(b_t(x)\)</span></td>
-<td>Control function; optimal <span class="math inline">\(b_t^*(x)=\E\{Y(t)\mid X=x\}\)</span></td>
+<td>Efficient influence function <span class="math inline">\(\varphi^*(O)\)</span></td>
+<td>Achieves the semiparametric efficiency bound; basis for doubly robust estimators (Chapter 11)</td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span></td>
-<td>AIPW estimator <a href="#eq-aipw" class="quarto-xref">Equation&nbsp;<span>10.4</span></a></td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(\Lambda\)</span></td>
-<td>Augmentation space <span class="math inline">\(\{\hat b : \E(\hat b)=0\}\)</span></td>
-</tr>
-<tr class="odd">
-<td><span class="math inline">\(\varphi_{\mathrm{eff}}(O)\)</span></td>
-<td>Efficient influence function <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.7</span></a></td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(\hat\pi_i^{-1}\)</span></td>
-<td>Clever covariate; enforces IBC via its normal equation</td>
-</tr>
-<tr class="odd">
-<td>IBC</td>
-<td>Internal bias calibration conditions <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.8</span></a></td>
+<td>Sandwich variance estimator <span class="math inline">\(\hat V\)</span></td>
+<td>Plug-in estimate of the asymptotic variance; valid under asymptotic linearity</td>
 </tr>
 </tbody>
 </table>
 <ol type="1">
-<li>The prediction estimator bias can be estimated and subtracted using the propensity score, yielding the AIPW estimator.</li>
-<li>AIPW has two key properties: <strong>double robustness</strong> (consistent when either model is correct) and <strong>class-optimality</strong> (<span class="math inline">\(b_t^* = \mu_t^*\)</span> minimizes variance).</li>
-<li>The optimality follows also from a Hilbert-space projection onto <span class="math inline">\(\Lambda^\perp\)</span>; the Pythagorean identity governs the variance reduction.</li>
-<li>The AIPW estimating function <em>is</em> the efficient influence function; three derivations converge on the same object.</li>
-<li>Double robustness can be built directly into the outcome regression via IPW-weighted regression or including the clever covariate <span class="math inline">\(\hat\pi_i^{-1}\)</span> (TMLE connection).</li>
-<li>The simulation (<a href="chapter_11.html#sec-lab" class="quarto-xref"><span>Section 11.10</span></a>) demonstrates double robustness across a <span class="math inline">\(2\times 2\)</span> design: AIPW remains consistent whenever at least one nuisance model is correct (S1–S3) and loses the guarantee when both are misspecified (S4). Wald coverage is approximately nominal in S1–S3 but collapses in S4, illustrating that double-robust consistency and valid asymptotic inference are distinct properties.</li>
-<li>For asymptotic inference, the central issue is whether the effect of estimating nuisance functions is asymptotically negligible. Neyman orthogonality yields a second-order remainder, and the product-rate condition <a href="chapter_11.html#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>11.7</span></a> is sufficient for root-<span class="math inline">\(n\)</span> inference. In modern machine-learning settings, cross-fitting is often used to make these conditions more plausible; Chapter 11 develops this approach.</li>
+<li><strong>Identification is not estimation.</strong> Identification provides a population formula, but not automatically a satisfactory estimator.</li>
+<li><strong>Estimating equations.</strong> Many estimators are defined as solutions to <span class="math inline">\(\mathbb{P}_n\{U(O;\theta)\}=0\)</span>, with the population moment condition identifying <span class="math inline">\(\theta_0\)</span>.</li>
+<li><strong>Asymptotic linearity.</strong> Estimating equations often yield a first-order expansion <a href="#eq-asymlin" class="quarto-xref">Equation&nbsp;<span>10.1</span></a>, which immediately implies asymptotic normality via the CLT.</li>
+<li><strong>Influence functions.</strong> The function <span class="math inline">\(\varphi(O)\)</span> describes the first-order sensitivity of the estimator to a single observation. It is the key object for both asymptotic theory and variance estimation.</li>
+<li><strong>Nuisance estimation.</strong> In causal inference, nuisance functions must be estimated, and this estimation error propagates into the target estimator via the Z-estimation framework <a href="#eq-if-corrected" class="quarto-xref">Equation&nbsp;<span>10.4</span></a>. Controlling this propagation is the central statistical challenge.</li>
+<li><strong>Variance from the influence function.</strong> The asymptotic variance is <span class="math inline">\(n^{-1}\E[\varphi(O)^2]\)</span>, consistently estimated by <a href="#eq-sandwich" class="quarto-xref">Equation&nbsp;<span>10.7</span></a>.</li>
+<li><strong>Efficiency.</strong> Among regular estimators, the one with the smallest asymptotic variance is efficient. The efficient influence function characterizes this lower bound and guides estimator construction in Chapter 11.</li>
 </ol>
 </section>
-<section id="exercises" class="level2" data-number="10.13">
-<h2 data-number="10.13" class="anchored" data-anchor-id="exercises"><span class="header-section-number">10.13</span> Exercises</h2>
-<p><strong>1. Bias of the prediction estimator.</strong></p>
+<section id="problems" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="problems"><span class="header-section-number">10.11</span> Problems</h2>
+<p><strong>1. Estimating equations and moment conditions.</strong></p>
 <ol type="a">
-<li>Verify the bias formula <a href="#eq-pred-bias" class="quarto-xref">Equation&nbsp;<span>10.1</span></a> by writing <span class="math inline">\(\tau_{\mathrm{pred}}(m)-\tau\)</span> as a difference of working-model errors and simplifying.</li>
-<li>Under what condition on the propensity score model does <span class="math inline">\(\widehat{\mathrm{Bias}}(\hat\tau_{\mathrm{pred}})\)</span> have zero expectation? Give a careful argument using iterated expectations.</li>
-<li>Construct a simple example (binary <span class="math inline">\(X\)</span>, binary <span class="math inline">\(T\)</span>, binary <span class="math inline">\(Y\)</span>) in which the estimated bias is nonzero and the outcome model is misspecified, but the AIPW estimator is still consistent.</li>
+<li>Let <span class="math inline">\(O = (X, Y)\)</span> and define <span class="math inline">\(\theta = \mathrm{Cov}(X,Y)/\mathrm{Var}(X)\)</span> (the coefficient in the population simple regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span>). Write down an estimating equation for <span class="math inline">\(\theta\)</span> and verify the population moment condition holds at <span class="math inline">\(\theta_0\)</span>.</li>
+<li>Let <span class="math inline">\(\theta = F^{-1}(0.5)\)</span> be the population median. Propose an estimating function <span class="math inline">\(U(O;\theta)\)</span> and verify the population moment condition. (<em>Hint</em>: consider <span class="math inline">\(U(O;\theta) = \mathbf{1}(Y \leq \theta) - 0.5\)</span>.)</li>
+<li>Show that the OLS estimator and the IPW estimator of the ATE are both special cases of the general M-estimator framework.</li>
 </ol>
-<p><strong>2. The AIPW class and optimal control functions.</strong></p>
+<p><strong>2. Asymptotic linearity and the CLT.</strong></p>
 <ol type="a">
-<li>Verify that <span class="math inline">\(\hat\tau_b\)</span> with <span class="math inline">\(b_t=\mu_t\)</span> equals the AIPW estimator <a href="#eq-aipw" class="quarto-xref">Equation&nbsp;<span>10.4</span></a>.</li>
-<li>Using <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.5</span></a>, show that <span class="math inline">\(b_t^*(x)=\E\{Y(t)\mid x\}\)</span> minimizes conditional variance by completing the square in <span class="math inline">\(b_t\)</span>.</li>
-<li>Suppose <span class="math inline">\(\pi(x)=1/2\)</span> for all <span class="math inline">\(x\)</span>. Simplify <a href="#eq-var-b" class="quarto-xref">Equation&nbsp;<span>10.5</span></a> and interpret the result.</li>
+<li>Let <span class="math inline">\(\hat\psi = \bar Y\)</span> be the sample mean of i.i.d. <span class="math inline">\(Y_1,\dots,Y_n\)</span> with <span class="math inline">\(\E Y = \psi\)</span> and <span class="math inline">\(\mathrm{Var}(Y) = \sigma^2 &lt; \infty\)</span>. Write down the influence function, state its asymptotic distribution, and give a consistent estimator of <span class="math inline">\(\mathrm{Var}(\hat\psi)\)</span>.</li>
+<li>Suppose <span class="math inline">\(\hat\psi_1\)</span> and <span class="math inline">\(\hat\psi_2\)</span> are two asymptotically linear estimators of the same parameter with influence functions <span class="math inline">\(\varphi_1\)</span> and <span class="math inline">\(\varphi_2\)</span>. Show that <span class="math inline">\(\hat\psi_\lambda = \lambda\hat\psi_1 + (1-\lambda)\hat\psi_2\)</span> is also asymptotically linear for any fixed <span class="math inline">\(\lambda \in \mathbb{R}\)</span>, and find its influence function.</li>
+<li>Use part (b) to derive the value of <span class="math inline">\(\lambda \in \mathbb{R}\)</span> that minimizes the asymptotic variance of <span class="math inline">\(\hat\psi_\lambda\)</span>. Express the answer in terms of <span class="math inline">\(\sigma_1^2 = \E[\varphi_1^2]\)</span>, <span class="math inline">\(\sigma_2^2 = \E[\varphi_2^2]\)</span>, and <span class="math inline">\(\rho = \E[\varphi_1\varphi_2]\)</span>. Under what condition on <span class="math inline">\((\sigma_1^2, \sigma_2^2, \rho)\)</span> does the optimal <span class="math inline">\(\lambda\)</span> equal <span class="math inline">\(1/2\)</span>?</li>
 </ol>
-<p><strong>3. Double robustness.</strong></p>
+<p><strong>3. Influence functions for causal estimators.</strong> Consider the ATE <span class="math inline">\(\tau = \E\{Y(1) - Y(0)\}\)</span> identified under consistency, conditional exchangeability, and positivity.</p>
 <ol type="a">
-<li>Verify Case 1 of the Double Robustness theorem: with <span class="math inline">\(\mu_t=\mu_t^*\)</span> and arbitrary <span class="math inline">\(\pi\)</span>, show <span class="math inline">\(\E\{\phi\}=0\)</span>.</li>
-<li>Verify Case 2: with <span class="math inline">\(\pi=\pi^*\)</span> and arbitrary <span class="math inline">\(\mu_t\)</span>, show <span class="math inline">\(\E\{\phi\}=0\)</span>.</li>
-<li>Provide a counterexample showing <span class="math inline">\(\E\{\phi\}\neq 0\)</span> when both models are misspecified.</li>
+<li>Assume <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> are both known. Compute the influence functions of: (i) the regression estimator <span class="math inline">\(\hat\tau_{\mathrm{reg}} = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}\)</span>; (ii) the IPW estimator <span class="math inline">\(\hat\tau_{\mathrm{IPW}} = \mathbb{P}_n\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}\)</span>.</li>
+<li>Under what conditions on the data-generating process will <span class="math inline">\(\hat\tau_{\mathrm{reg}}\)</span> have a smaller asymptotic variance than <span class="math inline">\(\hat\tau_{\mathrm{IPW}}\)</span>?</li>
+<li>Verify that the EIF <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a> has mean zero under <span class="math inline">\(P\)</span> by computing <span class="math inline">\(\E[\varphi^*(O)]\)</span>.</li>
 </ol>
-<p><strong>4. Projection and the Pythagorean identity.</strong></p>
+<p><strong>4. Variance estimation.</strong></p>
 <ol type="a">
-<li>Verify <span class="math inline">\(\mathrm{Cov}(\hat\theta_{\mathrm{opt}},\hat b^*)=0\)</span> from the definition of <span class="math inline">\(\hat b^*\)</span>.</li>
-<li>Deduce <a href="#eq-pythagoras" class="quarto-xref">Equation&nbsp;<span>10.6</span></a> from the decomposition <span class="math inline">\(\hat\theta_0 = \hat\theta_{\mathrm{opt}} + \hat b^*\)</span>.</li>
-<li>Explain why <span class="math inline">\(\hat\theta_{\mathrm{opt}}\)</span> is still unbiased for <span class="math inline">\(\theta\)</span> even though <span class="math inline">\(\hat b^* \in \Lambda\)</span> is subtracted.</li>
+<li>Let <span class="math inline">\(\hat\varphi_i = \hat\mu_1(X_i) - \hat\mu_0(X_i) - \hat\tau_{\mathrm{reg}}\)</span> be the estimated influence values for the regression estimator. Write down the plug-in variance estimator <span class="math inline">\(\hat V\)</span> and simplify. Under what conditions is <span class="math inline">\(\hat V\)</span> consistent for <span class="math inline">\(\mathrm{Var}(\hat\tau_{\mathrm{reg}})\)</span>?</li>
+<li>A researcher reports <span class="math inline">\(\hat\tau = 2.4\)</span> and <span class="math inline">\(\hat V = 0.09\)</span> based on <span class="math inline">\(n = 400\)</span> observations. Compute a 95% Wald confidence interval. Is the treatment effect statistically distinguishable from zero at the 5% level?</li>
+<li>Explain why simply plugging in <span class="math inline">\(\hat\mu_t\)</span> and <span class="math inline">\(\hat\pi\)</span> into the influence function formula may yield an inconsistent variance estimator when these nuisance estimators converge at a slower rate than <span class="math inline">\(n^{-1/2}\)</span>.</li>
 </ol>
-<p><strong>5. Semiparametric efficiency.</strong></p>
+<p><strong>5. Efficiency comparisons.</strong></p>
 <ol type="a">
-<li>Show <span class="math inline">\(\E\{\varphi_{\mathrm{eff}}(O)^2\} \leq \E\{\varphi_{\mathrm{IPW}}(O)^2\}\)</span> by writing <span class="math inline">\(\varphi_{\mathrm{IPW}} = \varphi_{\mathrm{eff}} + (\varphi_{\mathrm{IPW}}-\varphi_{\mathrm{eff}})\)</span> and showing the cross term vanishes.</li>
-<li>Interpret the efficiency gain <span class="math inline">\(\E\{\varphi_{\mathrm{IPW}}^2\}-\E\{\varphi_{\mathrm{eff}}^2\}\)</span> in terms of the variance of the outcome regression.</li>
-<li>Give one reason why an efficient estimator based on <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> may still be disfavored in practice.</li>
-</ol>
-<p><strong>6. Augmented model and the clever covariate.</strong></p>
-<ol type="a">
-<li>Show that the normal equation for <span class="math inline">\(\hat\gamma_1\)</span> in the augmented model <a href="#eq-aug-model" class="quarto-xref">Equation&nbsp;<span>10.9</span></a> is exactly the IBC condition <a href="#eq-ibc" class="quarto-xref">Equation&nbsp;<span>10.8</span></a>, and conclude that the prediction estimator can always be written in AIPW form <a href="#eq-aug-aipw" class="quarto-xref">Equation&nbsp;<span>10.10</span></a>.</li>
-<li>Explain why <span class="math inline">\(\hat\gamma_1 \overset{p}{\to} 0\)</span> when the initial model <span class="math inline">\(\hat\mu_1^{(0)}\)</span> is correctly specified.</li>
-<li>Explain in words why <span class="math inline">\(\hat\pi_i^{-1}\)</span> is called the clever covariate: what bias does it absorb, and why does this make the prediction estimator doubly robust?</li>
-</ol>
-<p><strong>7. Coverage of the Wald confidence interval (computational).</strong> Use the DGP of <a href="chapter_11.html#sec-lab" class="quarto-xref"><span>Section 11.10</span></a> with the propensity score generalized to <span class="math inline">\(\pi^*(x) = \mathrm{expit}\{0.2\,x + \gamma(x^2 - 1)\}\)</span>, so that the baseline (<span class="math inline">\(\gamma = 0.2\)</span>) coincides with the lab and larger <span class="math inline">\(\gamma\)</span> degrades overlap. Implement the AIPW estimator and variance estimator <a href="#eq-var-aipw" class="quarto-xref">Equation&nbsp;<span>10.13</span></a>. Following Scenario S3 of the lab, use logistic regression of <span class="math inline">\(T\)</span> on <span class="math inline">\((1, X, X^2)\)</span> for <span class="math inline">\(\hat\pi\)</span> (correct PS) and OLS of <span class="math inline">\(Y\)</span> on <span class="math inline">\((1, X)\)</span> separately in each arm for <span class="math inline">\(\hat\mu_t\)</span> (misspecified OR); truncate <span class="math inline">\(\hat\pi\)</span> to <span class="math inline">\([10^{-3}, 1-10^{-3}]\)</span>.</p>
-<ol type="a">
-<li>With <span class="math inline">\(\gamma = 0.2\)</span>, <span class="math inline">\(n = 500\)</span>, <span class="math inline">\(B = 2000\)</span> replications, compute empirical coverage of the 95% Wald interval <span class="math inline">\(\hat\tau_{\mathrm{AIPW}} \pm z_{0.975}\sqrt{\hat V}\)</span>. Compare the average SE <span class="math inline">\(\overline{\sqrt{\hat V}}\)</span> with the empirical SD of <span class="math inline">\(\hat\tau_{\mathrm{AIPW}}\)</span> across replications.</li>
-<li>Repeat with <span class="math inline">\(\gamma \in \{0.5,\, 1.0\}\)</span>, producing increasingly weak overlap at large <span class="math inline">\(|X|\)</span>. Report coverage, average SE, and empirical SD. What do you observe?</li>
-<li>Which assumption of <a href="#sec-asymp" class="quarto-xref"><span>Section 10.10</span></a> is stressed as <span class="math inline">\(\gamma\)</span> grows, and which of the remedies in the Extreme Propensity Scores warning would you try first? (No simulation required; a paragraph suffices.)</li>
+<li>Suppose <span class="math inline">\(\varphi_{\mathrm{reg}}\)</span> and <span class="math inline">\(\varphi_{\mathrm{IPW}}\)</span> denote the influence functions of the regression and IPW estimators. Without calculation, explain why neither estimator is always more efficient than the other.</li>
+<li>The semiparametric efficiency bound for the ATE is <span class="math inline">\(\E[\varphi^*(O)^2]\)</span>, where <span class="math inline">\(\varphi^*\)</span> is given in <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a>. Show that <span class="math inline">\(\E[\varphi^*(O)^2] \leq \E[\varphi_{\mathrm{IPW}}(O)^2]\)</span> by expanding the squared EIF. (<em>Hint</em>: use the law of iterated expectations to show that the cross-terms cancel.)</li>
+<li>Give one practical reason why an efficient estimator based on the EIF may not always be preferred over a simpler, less efficient estimator.</li>
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-bickel1993" class="csl-entry" role="listitem">
+Bickel, Peter J., Chris A. J. Klaassen, Ya’acov Ritov, and Jon A. Wellner. 1993. <em>Efficient and Adaptive Estimation for Semiparametric Models</em>. Johns Hopkins University Press.
+</div>
+<div id="ref-hansen1982large" class="csl-entry" role="listitem">
+Hansen, Lars Peter. 1982. <span>“Large Sample Properties of Generalized Method of Moments Estimators.”</span> <em>Econometrica</em> 50 (4): 1029–54. <a href="https://doi.org/10.2307/1912775">https://doi.org/10.2307/1912775</a>.
+</div>
+<div id="ref-hernan2020causal" class="csl-entry" role="listitem">
+Hernán, Miguel A., and James M. Robins. 2020. <em>Causal Inference: What If</em>. Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-imbens2015causal" class="csl-entry" role="listitem">
+Imbens, Guido W., and Donald B. Rubin. 2015. <em>Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction</em>. Cambridge University Press.
+</div>
+<div id="ref-robins1986new" class="csl-entry" role="listitem">
+Robins, James M. 1986. <span>“A New Approach to Causal Inference in Mortality Studies with a Sustained Exposure Period—Application to Control of the Healthy Worker Survivor Effect.”</span> <em>Mathematical Modelling</em> 7 (9–12): 1393–512.
+</div>
+<div id="ref-tsiatis2006semiparametric" class="csl-entry" role="listitem">
+Tsiatis, Anastasios A. 2006. <em>Semiparametric Theory and Missing Data</em>. Springer.
+</div>
+<div id="ref-vandervaart1998" class="csl-entry" role="listitem">
+Vaart, Aad W. van der. 1998. <em>Asymptotic Statistics</em>. Cambridge University Press.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1410,8 +1514,8 @@ Figure&nbsp;10.1: Geometric illustration of the projection. <span class="math in
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./chapter_11.html" class="pagination-link" aria-label="Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./chapter_11.html" class="pagination-link" aria-label="Doubly Robust Estimation and Semiparametric Efficiency">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
