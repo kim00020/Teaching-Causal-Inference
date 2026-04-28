@@ -305,6 +305,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -697,7 +703,7 @@ window.Quarto = {
 </div>
 <section id="the-linear-structural-model" class="level3" data-number="7.3.1">
 <h3 data-number="7.3.1" class="anchored" data-anchor-id="the-linear-structural-model"><span class="header-section-number">7.3.1</span> The Linear Structural Model</h3>
-<p>Consider the linear structural model: <span id="eq-outcome"><span class="math display">\[Y = \alpha + \beta T + \gamma^\top X + \varepsilon, \tag{7.1}\]</span></span> <span id="eq-firststage"><span class="math display">\[T = \pi Z + \delta^\top X + \eta, \tag{7.2}\]</span></span> where <span class="math inline">\(\varepsilon\)</span> and <span class="math inline">\(\eta\)</span> are structural errors with <span class="math inline">\(\mathrm{Cov}(\varepsilon, \eta) = \rho\sigma\tau \neq 0\)</span>. The non-zero covariance is the source of endogeneity: OLS applied to <a href="#eq-outcome" class="quarto-xref">Equation&nbsp;<span>7.1</span></a> gives a biased estimator of <span class="math inline">\(\beta\)</span>. The <em>reduced form</em> substitutes <a href="#eq-firststage" class="quarto-xref">Equation&nbsp;<span>7.2</span></a> into <a href="#eq-outcome" class="quarto-xref">Equation&nbsp;<span>7.1</span></a>: <span class="math display">\[Y = \alpha + \beta\pi Z + (\beta\delta + \gamma)^\top X + (\beta\eta + \varepsilon).\]</span> The reduced-form coefficient on <span class="math inline">\(Z\)</span> is <span class="math inline">\(\beta\pi\)</span>: the total effect of the instrument on the outcome. Dividing by the first-stage coefficient <span class="math inline">\(\pi\)</span> recovers <span class="math inline">\(\beta\)</span>, provided <span class="math inline">\(\pi \neq 0\)</span>.</p>
+<p>Consider the linear structural model: <span id="eq-outcome"><span class="math display">\[Y = \alpha + \beta T + \gamma^\top X + \varepsilon, \tag{7.1}\]</span></span> <span id="eq-firststage"><span class="math display">\[T = \pi Z + \delta^\top X + \eta, \tag{7.2}\]</span></span> where <span class="math inline">\(\varepsilon\)</span> and <span class="math inline">\(\eta\)</span> are structural errors with <span class="math inline">\(\mathrm{Cov}(\varepsilon, \eta) = \rho\sigma\tau \neq 0\)</span>. The non-zero covariance is the source of endogeneity: OLS applied to <a href="#eq-outcome" class="quarto-xref">Equation&nbsp;<span>7.1</span></a> gives a biased estimator of <span class="math inline">\(\beta\)</span>. The <em>reduced form</em> substitutes <a href="chapter_13.html#eq-firststage" class="quarto-xref">Equation&nbsp;<span>13.2</span></a> into <a href="#eq-outcome" class="quarto-xref">Equation&nbsp;<span>7.1</span></a>: <span class="math display">\[Y = \alpha + \beta\pi Z + (\beta\delta + \gamma)^\top X + (\beta\eta + \varepsilon).\]</span> The reduced-form coefficient on <span class="math inline">\(Z\)</span> is <span class="math inline">\(\beta\pi\)</span>: the total effect of the instrument on the outcome. Dividing by the first-stage coefficient <span class="math inline">\(\pi\)</span> recovers <span class="math inline">\(\beta\)</span>, provided <span class="math inline">\(\pi \neq 0\)</span>.</p>
 </section>
 <section id="the-ols-bias" class="level3" data-number="7.3.2">
 <h3 data-number="7.3.2" class="anchored" data-anchor-id="the-ols-bias"><span class="header-section-number">7.3.2</span> The OLS Bias</h3>

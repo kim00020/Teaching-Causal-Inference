@@ -52,7 +52,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./appendix_A.html" rel="next">
+<link href="./chapter_13.html" rel="next">
 <link href="./chapter_11.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -305,6 +305,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -527,10 +533,10 @@ window.Quarto = {
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Differentiation and expectation are interchanged under standard bounded-convergence arguments; the LIE is applied by conditioning on <span class="math inline">\(X\)</span>.</p>
-<p><strong>Perturbation in <span class="math inline">\(\pi\)</span>.</strong> Replace <span class="math inline">\(\pi\)</span> by <span class="math inline">\(\pi + rh\)</span> and differentiate. The only <span class="math inline">\(\pi\)</span>-dependent terms are the two IPW residual terms: <span class="math display">\[\left.\frac{\partial}{\partial r}\right|_{r=0} = \E\!\left[-\frac{T\,h(X)}{\pi(X)^2}\{Y-\mu_1(X)\} - \frac{(1-T)\,h(X)}{(1-\pi(X))^2}\{Y-\mu_0(X)\}\right].\]</span> Conditioning on <span class="math inline">\(X\)</span> and using <span class="math inline">\(\E(T \mid X) = \pi(X)\)</span>: <span class="math inline">\(\E[T\{Y-\mu_1(X)\} \mid X] = \pi(X)\mu_1(X) - \mu_1(X)\pi(X) = 0\)</span>, and similarly for the control term. Both conditional expectations vanish.</p>
-<p><strong>Perturbation in <span class="math inline">\(\mu_1\)</span>.</strong> Replace <span class="math inline">\(\mu_1\)</span> by <span class="math inline">\(\mu_1 + rg\)</span>. Differentiating: <span class="math display">\[\E\!\left[-\frac{T}{\pi(X)}\,g(X) + g(X)\right] = \E\!\left[g(X)\left(1 - \frac{T}{\pi(X)}\right)\right].\]</span> Conditioning on <span class="math inline">\(X\)</span>: <span class="math inline">\(\E[1 - T/\pi(X) \mid X] = 1 - \pi(X)/\pi(X) = 0\)</span>.</p>
-<p><strong>Perturbation in <span class="math inline">\(\mu_0\)</span>.</strong> Replace <span class="math inline">\(\mu_0\)</span> by <span class="math inline">\(\mu_0 + r\ell\)</span>. Differentiating: <span class="math display">\[\E\!\left[\ell(X)\left(\frac{1-T}{1-\pi(X)} - 1\right)\right].\]</span> Conditioning on <span class="math inline">\(X\)</span>: <span class="math inline">\(\E[(1-T)/(1-\pi(X)) - 1 \mid X] = (1-\pi(X))/(1-\pi(X)) - 1 = 0\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>Differentiation and expectation are interchanged under standard bounded-convergence arguments; the LIE is applied by conditioning on <span class="math inline">\(X\)</span>. The defining identity <span class="math inline">\(\E(T \mid X) = \pi(X)\)</span> is the engine of all three calculations: it implies the two <strong>balancing identities</strong> <span id="eq-ipw-balance"><span class="math display">\[\E\!\left(\frac{T}{\pi(X)}\;\middle|\; X\right) = 1, \qquad \E\!\left(\frac{1-T}{1-\pi(X)}\;\middle|\; X\right) = 1, \tag{12.5}\]</span></span> and consequently <span class="math inline">\(\E\{T(Y-\mu_1(X))\mid X\} = 0\)</span> and <span class="math inline">\(\E\{(1-T)(Y-\mu_0(X))\mid X\} = 0\)</span>. Each perturbation derivative reduces to one of these conditional expectations.</p>
+<p><strong>Perturbation in <span class="math inline">\(\pi\)</span>.</strong> Replace <span class="math inline">\(\pi\)</span> by <span class="math inline">\(\pi + rh\)</span> and differentiate. The only <span class="math inline">\(\pi\)</span>-dependent terms are the two IPW residual terms: <span class="math display">\[\left.\frac{\partial}{\partial r}\right|_{r=0} = \E\!\left[-\frac{T\,h(X)}{\pi(X)^2}\{Y-\mu_1(X)\} - \frac{(1-T)\,h(X)}{(1-\pi(X))^2}\{Y-\mu_0(X)\}\right] = 0\]</span> by the two residual identities above (factor out <span class="math inline">\(h(X)/\pi(X)^2\)</span> and <span class="math inline">\(h(X)/(1-\pi(X))^2\)</span>, then condition on <span class="math inline">\(X\)</span>).</p>
+<p><strong>Perturbation in <span class="math inline">\(\mu_1\)</span>.</strong> Replace <span class="math inline">\(\mu_1\)</span> by <span class="math inline">\(\mu_1 + rg\)</span>. Only <span class="math inline">\(-(T/\pi(X))\mu_1(X)\)</span> and <span class="math inline">\(\mu_1(X)\)</span> depend on <span class="math inline">\(\mu_1\)</span>, so: <span class="math display">\[\E\!\left[g(X)\left(1 - \frac{T}{\pi(X)}\right)\right] = 0\]</span> by the first identity in <a href="#eq-ipw-balance" class="quarto-xref">Equation&nbsp;<span>12.5</span></a>.</p>
+<p><strong>Perturbation in <span class="math inline">\(\mu_0\)</span>.</strong> Replace <span class="math inline">\(\mu_0\)</span> by <span class="math inline">\(\mu_0 + r\ell\)</span>. Symmetrically: <span class="math display">\[\E\!\left[\ell(X)\left(\frac{1-T}{1-\pi(X)} - 1\right)\right] = 0\]</span> by the second identity in <a href="#eq-ipw-balance" class="quarto-xref">Equation&nbsp;<span>12.5</span></a>. <span class="math inline">\(\square\)</span></p>
 </div>
 </div>
 </div>
@@ -544,7 +550,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Each of the three derivative calculations reduces to a single key fact: the conditional mean of the IPW weight equals one. Specifically, <span class="math inline">\(\E(T/\pi(X) \mid X) = 1\)</span> and <span class="math inline">\(\E((1-T)/(1-\pi(X)) \mid X) = 1\)</span> are immediate consequences of <span class="math inline">\(\E(T \mid X) = \pi(X)\)</span>, which is the engine behind both the balancing theorem and the IPW identification formula (Chapter 6). Neyman orthogonality of the ATE score is therefore a direct consequence of how the propensity score is defined, not an additional requirement imposed on it.</p>
+<p>The two balancing identities <a href="#eq-ipw-balance" class="quarto-xref">Equation&nbsp;<span>12.5</span></a> are immediate consequences of the defining identity <span class="math inline">\(\E(T \mid X) = \pi(X)\)</span>, which is also the engine behind the balancing theorem and the IPW identification formula (Chapter 6). Neyman orthogonality of the ATE score is therefore a direct consequence of how the propensity score is defined, not an additional requirement imposed on it.</p>
 </div>
 </div>
 <p>The score <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>12.4</span></a> simultaneously fulfills three purposes:</p>
@@ -553,14 +559,27 @@ window.Quarto = {
 <li>It is <em>doubly robust</em>, yielding a consistent estimator whenever either the outcome model or the propensity score model is correctly specified.</li>
 <li>It is the <em>efficient influence function</em>, so an estimator that is regular, asymptotically linear with this influence function, and whose nuisance remainders are asymptotically negligible achieves the semiparametric efficiency bound.</li>
 </ol>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Double Robustness versus Semiparametric Efficiency
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Properties (ii) and (iii) are distinct claims requiring distinct conditions. <em>Double robustness</em> (ii) is a consistency claim: under standard overlap and LLN regularity, the AIPW estimator is consistent for <span class="math inline">\(\tau\)</span> if either <span class="math inline">\(\hat\mu_t\)</span> converges to the true <span class="math inline">\(\mu_t\)</span> <em>or</em> <span class="math inline">\(\hat\pi\)</span> converges to the true <span class="math inline">\(\pi\)</span>, but not necessarily both. <em>Semiparametric efficiency</em> (iii) is a distributional claim about <span class="math inline">\(\sqrt{n}(\hat\tau - \tau_0)\)</span>: it requires that both nuisance estimators converge to the truth at rates satisfying the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>. When only one nuisance block is correctly specified, the estimator can remain consistent by double robustness, but the asymptotic-linearity expansion with influence function <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> and the efficient-bound variance need not apply, and inference based on them can be misleading without further analysis of the actual limiting estimating function.</p>
+</div>
+</div>
 </section>
 <section id="sec-reuse" class="level2" data-number="12.5">
 <h2 data-number="12.5" class="anchored" data-anchor-id="sec-reuse"><span class="header-section-number">12.5</span> Why Reusing the Same Data Can Be Problematic</h2>
 <section id="the-plug-in-remainder-for-the-aipw-estimator" class="level3" data-number="12.5.1">
 <h3 data-number="12.5.1" class="anchored" data-anchor-id="the-plug-in-remainder-for-the-aipw-estimator"><span class="header-section-number">12.5.1</span> The Plug-In Remainder for the AIPW Estimator</h3>
-<p>Consider the plug-in AIPW estimator defined by the moment equation <span class="math inline">\(\mathbb{P}_n\{\varphi_{\mathrm{eff}}(O;\,\hat\tau_{\mathrm{plug}},\hat\eta)\} = 0\)</span> where the same sample is used for both nuisance estimation and score evaluation. Because <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> is linear in <span class="math inline">\(\tau\)</span> with <span class="math inline">\(\partial_\tau\varphi_{\mathrm{eff}} = -1\)</span>: <span id="eq-plugin-expand"><span class="math display">\[\hat\tau_{\mathrm{plug}} - \tau_0 = \mathbb{P}_n\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\eta_0)\} + \underbrace{\mathbb{P}_n\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\hat\eta) - \varphi_{\mathrm{eff}}(O;\,\tau_0,\eta_0)\}}_{=:\,R_n}. \tag{12.5}\]</span></span></p>
-<p>The first term satisfies the CLT. The remainder <span class="math inline">\(R_n\)</span> decomposes as in <a href="#eq-decomp" class="quarto-xref">Equation&nbsp;<span>12.2</span></a>: <span id="eq-Rn-decomp"><span class="math display">\[R_n = \underbrace{P\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\eta_0)\}}_{\text{population bias}} + \underbrace{(\mathbb{P}_n - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\eta_0)\}}_{\text{empirical process term}}. \tag{12.6}\]</span></span></p>
-<p>By the Neyman orthogonality lemma, the population bias is <span class="math inline">\(o_p(n^{-1/2})\)</span> under the product-rate condition. Writing <span class="math inline">\(f_\eta(\cdot) = \varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\eta)\)</span>, the empirical process term takes the form: <span id="eq-ep-term"><span class="math display">\[(\mathbb{P}_n - P)\{f_{\hat\eta} - f_{\eta_0}\} = \frac{1}{\sqrt{n}}\,\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\}. \tag{12.7}\]</span></span></p>
+<p>Consider the plug-in AIPW estimator defined by the moment equation <span class="math inline">\(\mathbb{P}_n\{\varphi_{\mathrm{eff}}(O;\,\hat\tau_{\mathrm{plug}},\hat\eta)\} = 0\)</span> where the same sample is used for both nuisance estimation and score evaluation. Because <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> is linear in <span class="math inline">\(\tau\)</span> with <span class="math inline">\(\partial_\tau\varphi_{\mathrm{eff}} = -1\)</span>: <span id="eq-plugin-expand"><span class="math display">\[\hat\tau_{\mathrm{plug}} - \tau_0 = \mathbb{P}_n\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\eta_0)\} + \underbrace{\mathbb{P}_n\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\hat\eta) - \varphi_{\mathrm{eff}}(O;\,\tau_0,\eta_0)\}}_{=:\,R_n}. \tag{12.6}\]</span></span></p>
+<p>The first term satisfies the CLT. The remainder <span class="math inline">\(R_n\)</span> decomposes as in <a href="#eq-decomp" class="quarto-xref">Equation&nbsp;<span>12.2</span></a>: <span id="eq-Rn-decomp"><span class="math display">\[R_n = \underbrace{P\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\eta_0)\}}_{\text{population bias}} + \underbrace{(\mathbb{P}_n - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\hat\eta) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\eta_0)\}}_{\text{empirical process term}}. \tag{12.7}\]</span></span></p>
+<p>By the Neyman orthogonality lemma, the population bias is <span class="math inline">\(o_p(n^{-1/2})\)</span> under the product-rate condition. Writing <span class="math inline">\(f_\eta(\cdot) = \varphi_{\mathrm{eff}}(\,\cdot\,;\tau_0,\eta)\)</span>, the empirical process term takes the form: <span id="eq-ep-term"><span class="math display">\[(\mathbb{P}_n - P)\{f_{\hat\eta} - f_{\eta_0}\} = \frac{1}{\sqrt{n}}\,\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\}. \tag{12.8}\]</span></span></p>
 <p>This term depends on <span class="math inline">\(\hat\eta\)</span>, which is estimated from the same sample. Whether it is <span class="math inline">\(o_p(n^{-1/2})\)</span> depends on how complex the class <span class="math inline">\(\{f_\eta : \eta \in \mathcal{H}\}\)</span> is — a question the Donsker condition answers.</p>
 </section>
 <section id="the-donsker-condition" class="level3" data-number="12.5.2">
@@ -601,7 +620,7 @@ window.Quarto = {
 </section>
 <section id="connecting-the-two-terms" class="level3" data-number="12.5.3">
 <h3 data-number="12.5.3" class="anchored" data-anchor-id="connecting-the-two-terms"><span class="header-section-number">12.5.3</span> Connecting the Two Terms</h3>
-<p>Returning to <a href="#eq-Rn-decomp" class="quarto-xref">Equation&nbsp;<span>12.6</span></a>:</p>
+<p>Returning to <a href="#eq-Rn-decomp" class="quarto-xref">Equation&nbsp;<span>12.7</span></a>:</p>
 <ul>
 <li><strong>Population bias.</strong> Controlled by Neyman orthogonality alone; <span class="math inline">\(o_p(n^{-1/2})\)</span> under the product-rate condition regardless of how <span class="math inline">\(\hat\eta\)</span> is estimated.</li>
 <li><strong>Empirical process term.</strong> If <span class="math inline">\(\{f_\eta : \eta \in \mathcal{H}\}\)</span> is Donsker and <span class="math inline">\(\|\hat\eta - \eta_0\| \to 0\)</span> in probability, then by stochastic equicontinuity, <span class="math inline">\(\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\} = o_p(1)\)</span>, making the term <span class="math inline">\(o_p(n^{-1/2})\)</span>.</li>
@@ -625,13 +644,13 @@ window.Quarto = {
 <section id="sec-splitting" class="level2" data-number="12.6">
 <h2 data-number="12.6" class="anchored" data-anchor-id="sec-splitting"><span class="header-section-number">12.6</span> Sample Splitting</h2>
 <p>Sample splitting resolves the empirical process problem by construction. Partition <span class="math inline">\(\{1,\ldots,n\}\)</span> into a training sample <span class="math inline">\(\mathcal{I}_{\mathrm{train}}\)</span> and an evaluation sample <span class="math inline">\(\mathcal{I}_{\mathrm{eval}}\)</span>. Fit nuisance estimators <span class="math inline">\(\hat\eta^{(\mathrm{train})}\)</span> on <span class="math inline">\(\mathcal{I}_{\mathrm{train}}\)</span>, then solve the estimating equation on the held-out sample: <span class="math display">\[\frac{1}{|\mathcal{I}_{\mathrm{eval}}|}\sum_{i \in \mathcal{I}_{\mathrm{eval}}}\varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(\mathrm{train})}\bigr) = 0.\]</span></p>
-<p>The remainder on the evaluation fold decomposes as: <span id="eq-split-decomp"><span class="math display">\[R_n^{(\mathrm{e})} = \underbrace{P\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta^{(\mathrm{train})}) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{o_p(n^{-1/2})\text{ by orthogonality}} + \underbrace{(\mathbb{P}_{n_{\mathrm{e}}} - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta^{(\mathrm{train})}) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{\text{empirical process term}}. \tag{12.8}\]</span></span></p>
+<p>The remainder on the evaluation fold decomposes as: <span id="eq-split-decomp"><span class="math display">\[R_n^{(\mathrm{e})} = \underbrace{P\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta^{(\mathrm{train})}) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{o_p(n^{-1/2})\text{ by orthogonality}} + \underbrace{(\mathbb{P}_{n_{\mathrm{e}}} - P)\{\varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\hat\eta^{(\mathrm{train})}) - \varphi_{\mathrm{eff}}(\,\cdot\,;\tau,\eta_0)\}}_{\text{empirical process term}}. \tag{12.9}\]</span></span></p>
 <p>Because <span class="math inline">\(\hat\eta^{(\mathrm{train})}\)</span> is independent of the observations in <span class="math inline">\(\mathcal{I}_{\mathrm{eval}}\)</span>, conditioning on <span class="math inline">\(\hat\eta^{(\mathrm{train})}\)</span> makes the summands conditionally i.i.d. with mean zero. Under <span class="math inline">\(L_2\)</span> consistency, strong overlap, and finite-variance moment conditions, a conditional variance bound gives the empirical process term <span class="math inline">\(= o_p(n^{-1/2})\)</span>. <strong>No Donsker condition is needed</strong>: independence allows a conditional argument in place of stochastic equicontinuity.</p>
 <p>The main disadvantage is inefficiency: only <span class="math inline">\(|\mathcal{I}_{\mathrm{eval}}|\)</span> observations contribute to the estimation of <span class="math inline">\(\tau\)</span>, and the estimate depends on the particular random partition chosen.</p>
 </section>
 <section id="sec-crossfit" class="level2" data-number="12.7">
 <h2 data-number="12.7" class="anchored" data-anchor-id="sec-crossfit"><span class="header-section-number">12.7</span> Cross-Fitting</h2>
-<p>Cross-fitting extends sample splitting to recover full-sample efficiency while preserving the independence argument. Partition <span class="math inline">\(\{1,\ldots,n\}\)</span> into <span class="math inline">\(K\)</span> approximately equal folds <span class="math inline">\(\mathcal{I}_1,\ldots,\mathcal{I}_K\)</span>. For each fold <span class="math inline">\(k\)</span>: estimate nuisance functions on the complement <span class="math inline">\(\hat\eta^{(-k)} = (\hat\mu_0^{(-k)}, \hat\mu_1^{(-k)}, \hat\pi^{(-k)})\)</span>, then evaluate the score on the held-out fold. The cross-fitted estimator <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> solves: <span id="eq-crossfit-moment"><span class="math display">\[\frac{1}{n}\sum_{k=1}^K\sum_{i \in \mathcal{I}_k}\varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(-k)}\bigr) = 0. \tag{12.9}\]</span></span></p>
+<p>Cross-fitting extends sample splitting to recover full-sample efficiency while preserving the independence argument. Partition <span class="math inline">\(\{1,\ldots,n\}\)</span> into <span class="math inline">\(K\)</span> approximately equal folds <span class="math inline">\(\mathcal{I}_1,\ldots,\mathcal{I}_K\)</span>. For each fold <span class="math inline">\(k\)</span>: estimate nuisance functions on the complement <span class="math inline">\(\hat\eta^{(-k)} = (\hat\mu_0^{(-k)}, \hat\mu_1^{(-k)}, \hat\pi^{(-k)})\)</span>, then evaluate the score on the held-out fold. The cross-fitted estimator <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> solves: <span id="eq-crossfit-moment"><span class="math display">\[\frac{1}{n}\sum_{k=1}^K\sum_{i \in \mathcal{I}_k}\varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(-k)}\bigr) = 0. \tag{12.10}\]</span></span></p>
 <p>For each fold <span class="math inline">\(k\)</span>, the nuisance estimate <span class="math inline">\(\hat\eta^{(-k)}\)</span> is trained on <span class="math inline">\(\{1,\ldots,n\}\setminus\mathcal{I}_k\)</span>, which is independent of <span class="math inline">\(\mathcal{I}_k\)</span>. Conditioning on <span class="math inline">\(\hat\eta^{(-k)}\)</span>, the fold-<span class="math inline">\(k\)</span> summands are independent and mean zero. The fold-by-fold argument applies to each <span class="math inline">\(R_n^{(k)}\)</span> separately, giving <span class="math inline">\(\sqrt{n}R_n^{(k)} = o_p(1)\)</span> for each <span class="math inline">\(k\)</span> without any Donsker assumption.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -661,14 +680,14 @@ window.Quarto = {
 <li>Partition the sample into <span class="math inline">\(K\)</span> folds <span class="math inline">\(\mathcal{I}_1,\ldots,\mathcal{I}_K\)</span>.</li>
 <li>For each <span class="math inline">\(k = 1,\ldots,K\)</span>, fit nuisance estimators <span class="math inline">\(\hat\eta^{(-k)} = (\hat\mu_0^{(-k)}, \hat\mu_1^{(-k)}, \hat\pi^{(-k)})\)</span> on the complement <span class="math inline">\(\{1,\ldots,n\} \setminus \mathcal{I}_k\)</span>.</li>
 <li>For each observation <span class="math inline">\(i \in \mathcal{I}_k\)</span>, compute the out-of-fold score contribution <span class="math inline">\(\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\tau,\,\hat\eta^{(-k)}\bigr)\)</span>.</li>
-<li>Solve the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.9</span></a>. Because the score is linear in <span class="math inline">\(\tau\)</span>, the solution is: <span id="eq-dml-ate"><span class="math display">\[\hat\tau_{\mathrm{DML}} = \hat\mu_{1,\mathrm{DML}} - \hat\mu_{0,\mathrm{DML}}, \tag{12.10}\]</span></span> where <span class="math inline">\(\hat\mu_{t,\mathrm{DML}} = n^{-1}\sum_{k=1}^K\sum_{i \in \mathcal{I}_k}\bigl[\hat\mu_t^{(-k)}(X_i) + (t\cdot T_i + (1-t)(1-T_i))/\hat\pi_t^{(-k)}(X_i) \cdot \{Y_i - \hat\mu_t^{(-k)}(X_i)\}\bigr]\)</span>.</li>
+<li>Solve the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.10</span></a>. Because the score is linear in <span class="math inline">\(\tau\)</span>, the solution is: <span id="eq-dml-ate"><span class="math display">\[\hat\tau_{\mathrm{DML}} = \hat\mu_{1,\mathrm{DML}} - \hat\mu_{0,\mathrm{DML}}, \tag{12.11}\]</span></span> where <span class="math inline">\(\hat\mu_{t,\mathrm{DML}} = n^{-1}\sum_{k=1}^K\sum_{i \in \mathcal{I}_k}\bigl[\hat\mu_t^{(-k)}(X_i) + (t\cdot T_i + (1-t)(1-T_i))/\hat\pi_t^{(-k)}(X_i) \cdot \{Y_i - \hat\mu_t^{(-k)}(X_i)\}\bigr]\)</span>.</li>
 </ol>
 </div>
 </div>
 </section>
 <section id="sec-dml" class="level2" data-number="12.8">
 <h2 data-number="12.8" class="anchored" data-anchor-id="sec-dml"><span class="header-section-number">12.8</span> Double Machine Learning for the Average Treatment Effect</h2>
-<p>The estimator <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.10</span></a> is simply the AIPW estimator from Chapter 11, with out-of-fold nuisance estimates substituted in place of full-sample estimates. The term <em>double machine learning</em> (DML), introduced by <span class="citation" data-cites="chernozhukov2018double">Chernozhukov et al. (<a href="#ref-chernozhukov2018double" role="doc-biblioref">2018</a>)</span>, refers to the combination of three ingredients: (i) <em>Neyman orthogonality</em>, which reduces the population bias to a second-order product; (ii) <em>cross-fitting</em>, which removes same-sample dependence in the empirical-process term; and (iii) <em>flexible machine-learning estimation</em> of the nuisance functions, made valid by the first two ingredients.</p>
+<p>The estimator <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a> is simply the AIPW estimator from Chapter 11, with out-of-fold nuisance estimates substituted in place of full-sample estimates. The term <em>double machine learning</em> (DML), introduced by <span class="citation" data-cites="chernozhukov2018double">Chernozhukov et al. (<a href="#ref-chernozhukov2018double" role="doc-biblioref">2018</a>)</span>, refers to the combination of three ingredients: (i) <em>Neyman orthogonality</em>, which reduces the population bias to a second-order product; (ii) <em>cross-fitting</em>, which removes same-sample dependence in the empirical-process term; and (iii) <em>flexible machine-learning estimation</em> of the nuisance functions, made valid by the first two ingredients.</p>
 <p>The word “double” should not be read as merely meaning “two models”; it refers to the combination of nuisance learning with orthogonalization and debiasing. DML is not a new causal estimand and not a new identification strategy; it is a modern estimation protocol built around an orthogonal score. The cross-fitted AIPW estimator in the biostatistics literature is the same object.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -696,7 +715,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Suppose: (i) the score <span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\)</span> is orthogonal at the truth; (ii) the nuisance estimators are consistent in mean squared error; (iii) <strong>strong overlap</strong>: there exists <span class="math inline">\(c &gt; 0\)</span> such that <span class="math inline">\(c \leq \pi(X) \leq 1-c\)</span> and <span class="math inline">\(c \leq \hat\pi^{(-k)}(X) \leq 1-c\)</span> a.s. for each fold <span class="math inline">\(k\)</span>; (iv) the <strong>product-rate condition</strong>: <span id="eq-product-rate"><span class="math display">\[\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1. \tag{12.11}\]</span></span> Then the cross-fitted estimator satisfies: <span class="math display">\[\sqrt{n}(\hat\tau_{\mathrm{DML}} - \tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta) + o_p(1) \overset{d}{\longrightarrow} N\!\Bigl(0,\;\E\bigl[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2\bigr]\Bigr).\]</span> The asymptotic variance equals the semiparametric efficiency bound; <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is asymptotically efficient whenever <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a> holds.</p>
+<p>Suppose: (i) the score <span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\)</span> is orthogonal at the truth; (ii) the nuisance estimators are consistent in mean squared error; (iii) <strong>strong overlap</strong>: there exists <span class="math inline">\(c &gt; 0\)</span> such that <span class="math inline">\(c \leq \pi(X) \leq 1-c\)</span> and <span class="math inline">\(c \leq \hat\pi^{(-k)}(X) \leq 1-c\)</span> a.s. for each fold <span class="math inline">\(k\)</span>; (iv) the <strong>product-rate condition</strong>: <span id="eq-product-rate"><span class="math display">\[\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1. \tag{12.12}\]</span></span> Then the cross-fitted estimator satisfies: <span class="math display">\[\sqrt{n}(\hat\tau_{\mathrm{DML}} - \tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta) + o_p(1) \overset{d}{\longrightarrow} N\!\Bigl(0,\;\E\bigl[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2\bigr]\Bigr).\]</span> The asymptotic variance equals the semiparametric efficiency bound; <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is asymptotically efficient whenever <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> holds.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -713,7 +732,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -722,10 +741,10 @@ window.Quarto = {
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Write <span class="math inline">\(n_k = |\mathcal{I}_k|\)</span> and <span class="math inline">\(\mathbb{P}_{n_k}\)</span> for the empirical measure over fold <span class="math inline">\(k\)</span>. From the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.9</span></a>: <span class="math display">\[\hat\tau_{\mathrm{DML}} - \tau = \frac{1}{n}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta_0) + \frac{1}{K}\sum_{k=1}^K R_n^{(k)},\]</span> where each fold remainder <span class="math inline">\(R_n^{(k)}\)</span> decomposes as in <a href="#eq-split-decomp" class="quarto-xref">Equation&nbsp;<span>12.8</span></a>. It suffices to show <span class="math inline">\(\sqrt{n}\,R_n^{(k)} = o_p(1)\)</span> for each <span class="math inline">\(k\)</span>.</p>
-<p><strong>Step 1: Population bias.</strong> By iterated expectations conditioning on <span class="math inline">\(X\)</span>: <span class="math display">\[B_n^{(k)} = -\E\!\left[(\hat\mu_1^{(-k)}-\mu_1)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{\hat\pi^{(-k)}(X)} - (\hat\mu_0^{(-k)}-\mu_0)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{1-\hat\pi^{(-k)}(X)}\right].\]</span> Under strong overlap, the denominators are bounded below. By Cauchy-Schwarz: <span class="math display">\[|B_n^{(k)}| \leq C\Bigl(\|\hat\mu_1^{(-k)}-\mu_1\|\cdot\|\hat\pi^{(-k)}-\pi\| + \|\hat\mu_0^{(-k)}-\mu_0\|\cdot\|\hat\pi^{(-k)}-\pi\|\Bigr) = o_p(n^{-1/2})\]</span> by the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a>. Hence <span class="math inline">\(\sqrt{n}\,B_n^{(k)} = o_p(1)\)</span>.</p>
+<p>Write <span class="math inline">\(n_k = |\mathcal{I}_k|\)</span> and <span class="math inline">\(\mathbb{P}_{n_k}\)</span> for the empirical measure over fold <span class="math inline">\(k\)</span>. From the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.10</span></a>: <span class="math display">\[\hat\tau_{\mathrm{DML}} - \tau = \frac{1}{n}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta_0) + \frac{1}{K}\sum_{k=1}^K R_n^{(k)},\]</span> where each fold remainder <span class="math inline">\(R_n^{(k)}\)</span> decomposes as in <a href="#eq-split-decomp" class="quarto-xref">Equation&nbsp;<span>12.9</span></a>. It suffices to show <span class="math inline">\(\sqrt{n}\,R_n^{(k)} = o_p(1)\)</span> for each <span class="math inline">\(k\)</span>.</p>
+<p><strong>Step 1: Population bias.</strong> By iterated expectations conditioning on <span class="math inline">\(X\)</span>: <span class="math display">\[B_n^{(k)} = -\E\!\left[(\hat\mu_1^{(-k)}-\mu_1)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{\hat\pi^{(-k)}(X)} - (\hat\mu_0^{(-k)}-\mu_0)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{1-\hat\pi^{(-k)}(X)}\right].\]</span> Under strong overlap, the denominators are bounded below. By Cauchy-Schwarz: <span class="math display">\[|B_n^{(k)}| \leq C\Bigl(\|\hat\mu_1^{(-k)}-\mu_1\|\cdot\|\hat\pi^{(-k)}-\pi\| + \|\hat\mu_0^{(-k)}-\mu_0\|\cdot\|\hat\pi^{(-k)}-\pi\|\Bigr) = o_p(n^{-1/2})\]</span> by the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>. Hence <span class="math inline">\(\sqrt{n}\,B_n^{(k)} = o_p(1)\)</span>.</p>
 <p><strong>Step 2: Empirical process term.</strong> Condition on <span class="math inline">\(\hat\eta^{(-k)}\)</span>. Since <span class="math inline">\(\hat\eta^{(-k)}\)</span> is trained on <span class="math inline">\(\{1,\ldots,n\}\setminus\mathcal{I}_k\)</span>, the summands for <span class="math inline">\(i\in\mathcal{I}_k\)</span> are conditionally i.i.d. with conditional mean zero (after removing <span class="math inline">\(B_n^{(k)}\)</span>). Let <span class="math inline">\(f_k = \varphi_{\mathrm{eff}}(\cdot;\tau,\hat\eta^{(-k)}) - \varphi_{\mathrm{eff}}(\cdot;\tau,\eta_0)\)</span>. The conditional variance: <span class="math display">\[\mathrm{Var}\bigl(E_n^{(k)}\mid\hat\eta^{(-k)}\bigr) = \frac{1}{n_k}\,\|f_k\|_{L_2}^2.\]</span> Under strong overlap and consistency, <span class="math inline">\(\|f_k\|_{L_2}^2 = o_p(1)\)</span>, so <span class="math inline">\(\mathrm{Var}(\sqrt{n}\,E_n^{(k)}\mid\hat\eta^{(-k)}) = (n/n_k)\,\|f_k\|_{L_2}^2 = O(1)\cdot o_p(1) = o_p(1)\)</span>. By conditional Chebyshev, <span class="math inline">\(\sqrt{n}\,E_n^{(k)} = o_p(1)\)</span>.</p>
 <p><strong>Conclusion.</strong> Combining Steps 1 and 2, <span class="math inline">\(\sqrt{n}\,R_n^{(k)} = o_p(1)\)</span> for each <span class="math inline">\(k\)</span>, and hence <span class="math inline">\(\sqrt{n}\cdot K^{-1}\sum_k R_n^{(k)} = o_p(1)\)</span>. The first term converges in distribution to <span class="math inline">\(N(0, \E[\varphi_{\mathrm{eff}}^2])\)</span> by the ordinary CLT. Asymptotic linearity and normality follow by Slutsky. <span class="math inline">\(\square\)</span></p>
 </div>
@@ -741,7 +760,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a> requires the <em>product</em> of the two nuisance estimation errors to be <span class="math inline">\(o_p(n^{-1/2})\)</span>. A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span> in <span class="math inline">\(L_2(P)\)</span> norm. This rate is achievable by many nonparametric and machine-learning methods under regularity conditions, and is what makes flexible nuisance estimation feasible in semiparametric causal inference.</p>
+<p>Condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> requires the <em>product</em> of the two nuisance estimation errors to be <span class="math inline">\(o_p(n^{-1/2})\)</span>. A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span> in <span class="math inline">\(L_2(P)\)</span> norm. This rate is achievable by many nonparametric and machine-learning methods under regularity conditions, and is what makes flexible nuisance estimation feasible in semiparametric causal inference.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -754,7 +773,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="quarto-unresolved-ref">?thm-asymp</span> is the cross-fitting version of the asymptotic normality result in Chapter 11. The product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a> is identical to the one in Chapter 11; the difference is that here the nuisance estimates are out-of-fold, which removes the need for Donsker conditions. Cross-fitting provides the same asymptotic conclusion while accommodating a substantially broader class of nuisance learners.</p>
+<p><span class="quarto-unresolved-ref">?thm-asymp</span> is the cross-fitting version of the asymptotic normality result in Chapter 11. The product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is identical to the one in Chapter 11; the difference is that here the nuisance estimates are out-of-fold, which removes the need for Donsker conditions. Cross-fitting provides the same asymptotic conclusion while accommodating a substantially broader class of nuisance learners.</p>
 </div>
 </div>
 </section>
@@ -796,7 +815,7 @@ window.Quarto = {
 </tbody>
 </table>
 <p><strong>Oracle AIPW</strong> is nearly unbiased with small variance — the semiparametric efficiency benchmark.</p>
-<p><strong>Naive RF AIPW</strong> exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term <a href="#eq-ep-term" class="quarto-xref">Equation&nbsp;<span>12.7</span></a>: reusing the same sample allows overfitting in the random forests to propagate into the AIPW score.</p>
+<p><strong>Naive RF AIPW</strong> exhibits a clear positive bias (0.039, roughly four times the oracle bias) despite using consistent random forest estimators. The bias arises from the uncontrolled empirical process term <a href="#eq-ep-term" class="quarto-xref">Equation&nbsp;<span>12.8</span></a>: reusing the same sample allows overfitting in the random forests to propagate into the AIPW score.</p>
 <p><strong>DML</strong> reduces the bias to 0.007 — within Monte Carlo error of zero and indistinguishable from the oracle — at a modest finite-sample variance cost (from 0.0031 to 0.0036). The small variance increase is a finite-sample phenomenon: each out-of-fold nuisance estimator is trained on <span class="math inline">\((K-1)n/K = 1600\)</span> observations, so its predictions are slightly noisier than in-sample fits. The Naive estimator’s lower variance is partly a consequence of overfitting. The net effect is a lower RMSE for DML (0.060) than for Naive RF AIPW (0.068): the bias reduction outweighs the variance difference.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -815,7 +834,7 @@ window.Quarto = {
 <section id="sec-variance" class="level2" data-number="12.11">
 <h2 data-number="12.11" class="anchored" data-anchor-id="sec-variance"><span class="header-section-number">12.11</span> Variance Estimation and Confidence Intervals</h2>
 <p>Inference for <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> proceeds exactly as in Chapter 11, except that nuisance estimates are now out-of-fold. Let <span class="math inline">\(k(i)\)</span> denote the fold containing observation <span class="math inline">\(i\)</span>, and define the estimated influence value: <span class="math display">\[\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\hat\tau_{\mathrm{DML}},\,\hat\eta^{(-k(i))}\bigr).\]</span></p>
-<p>The variance estimator is: <span id="eq-var-est"><span class="math display">\[\hat{V} = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i. \tag{12.12}\]</span></span></p>
+<p>The variance estimator is: <span id="eq-var-est"><span class="math display">\[\hat{V} = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i. \tag{12.13}\]</span></span></p>
 <p>The Wald confidence interval is <span class="math inline">\(\hat\tau_{\mathrm{DML}} \pm z_{1-\alpha/2}\sqrt{\hat{V}}\)</span>.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -827,7 +846,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under the conditions of <span class="quarto-unresolved-ref">?thm-asymp</span>, the variance estimator <span class="math inline">\(\hat{V}\)</span> in <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is consistent for the asymptotic variance: <span class="math inline">\(n\hat{V} \overset{p}{\to} \E[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2]\)</span>. The Wald confidence interval is therefore asymptotically valid.</p>
+<p>Under the conditions of <span class="quarto-unresolved-ref">?thm-asymp</span>, the variance estimator <span class="math inline">\(\hat{V}\)</span> in <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.13</span></a> is consistent for the asymptotic variance: <span class="math inline">\(n\hat{V} \overset{p}{\to} \E[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2]\)</span>. The Wald confidence interval is therefore asymptotically valid.</p>
 </div>
 </div>
 <p>The formula is identical to the one in Chapter 11; the only difference is that <span class="math inline">\(\hat\varphi_i\)</span> uses the out-of-fold nuisance estimate <span class="math inline">\(\hat\eta^{(-k(i))}\)</span> rather than a full-sample estimate.</p>
@@ -841,7 +860,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Because <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> is linear in <span class="math inline">\(\tau\)</span> with <span class="math inline">\(\partial_\tau\varphi_{\mathrm{eff}} = -1\)</span>, evaluating the score at the solution <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> of <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.9</span></a> forces <span class="math inline">\(\bar\varphi = n^{-1}\sum_{i=1}^n\hat\varphi_i = 0\)</span> exactly (Exercise 5). The centering is included only because the formula then matches the conventional sample-variance expression and remains stable under finite-precision arithmetic.</p>
+<p>Because <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> is linear in <span class="math inline">\(\tau\)</span> with <span class="math inline">\(\partial_\tau\varphi_{\mathrm{eff}} = -1\)</span>, evaluating the score at the solution <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> of <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.10</span></a> forces <span class="math inline">\(\bar\varphi = n^{-1}\sum_{i=1}^n\hat\varphi_i = 0\)</span> exactly (Exercise 5). The centering is included only because the formula then matches the conventional sample-variance expression and remains stable under finite-precision arithmetic.</p>
 </div>
 </div>
 </section>
@@ -861,15 +880,15 @@ window.Quarto = {
 <ol type="1">
 <li><strong>Specify the estimand.</strong> State the target causal parameter and verify the identification assumptions — conditional exchangeability, positivity, and consistency for the ATE.</li>
 <li><strong>Choose the orthogonal score.</strong> For the ATE, this is the efficient influence function <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>12.4</span></a>. The score fixes which nuisance components must be estimated.</li>
-<li><strong>Select nuisance learners.</strong> Choose flexible learners for <span class="math inline">\(\mu_0(x)\)</span>, <span class="math inline">\(\mu_1(x)\)</span>, and <span class="math inline">\(\pi(x)\)</span>. Verify informally that the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a> is plausible.</li>
+<li><strong>Select nuisance learners.</strong> Choose flexible learners for <span class="math inline">\(\mu_0(x)\)</span>, <span class="math inline">\(\mu_1(x)\)</span>, and <span class="math inline">\(\pi(x)\)</span>. Verify informally that the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is plausible.</li>
 <li><strong>Assess covariate overlap.</strong> Before fitting, examine the empirical distribution of each covariate by treatment group. Near-violations of positivity at the design level will inflate influence values and destabilize inference.</li>
 </ol>
 <p><strong>Phase 2: Estimation</strong></p>
 <ol start="5" type="1">
 <li><strong>Partition and cross-fit.</strong> Partition into <span class="math inline">\(K\)</span> folds (<span class="math inline">\(K = 5\)</span> is a common default). For each fold <span class="math inline">\(k\)</span>, fit nuisance learners on the complement.</li>
-<li><strong>Solve the moment equation.</strong> Apply the explicit formula <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.10</span></a> with out-of-fold nuisance estimates.</li>
+<li><strong>Solve the moment equation.</strong> Apply the explicit formula <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a> with out-of-fold nuisance estimates.</li>
 <li><strong>Compute estimated influence values.</strong> For each <span class="math inline">\(i \in \mathcal{I}_k\)</span>, compute <span class="math inline">\(\hat\varphi_i = \varphi_{\mathrm{eff}}(O_i;\,\hat\tau_{\mathrm{DML}},\,\hat\eta^{(-k)})\)</span>.</li>
-<li><strong>Estimate the variance.</strong> Compute <span class="math inline">\(\hat{V}\)</span> from <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> and form the Wald confidence interval.</li>
+<li><strong>Estimate the variance.</strong> Compute <span class="math inline">\(\hat{V}\)</span> from <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.13</span></a> and form the Wald confidence interval.</li>
 </ol>
 <p><strong>Phase 3: Diagnostics and Interpretation</strong></p>
 <ol start="9" type="1">
@@ -943,7 +962,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span></td>
-<td>Cross-fitted AIPW (DML) estimator <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.10</span></a></td>
+<td>Cross-fitted AIPW (DML) estimator <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a></td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(\hat\varphi_i\)</span></td>
@@ -951,7 +970,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\hat{V}\)</span></td>
-<td>Variance estimator <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.12</span></a></td>
+<td>Variance estimator <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.13</span></a></td>
 </tr>
 </tbody>
 </table>
@@ -962,7 +981,7 @@ window.Quarto = {
 <li>Even with an orthogonal score, reusing the same data can induce overfitting bias, especially when the nuisance class falls outside classical fixed Donsker regimes.</li>
 <li>Sample splitting removes this bias but wastes data. Cross-fitting recovers efficiency by rotating training and evaluation roles across <span class="math inline">\(K\)</span> folds.</li>
 <li>The cross-fitted AIPW estimator <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is the standard DML estimator for the ATE.</li>
-<li>Under the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a>, orthogonality and cross-fitting yield asymptotic linearity, root-<span class="math inline">\(n\)</span> consistency, and asymptotic normality, with asymptotic variance equal to the semiparametric efficiency bound (<span class="quarto-unresolved-ref">?thm-asymp</span>). A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span>.</li>
+<li>Under the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>, orthogonality and cross-fitting yield asymptotic linearity, root-<span class="math inline">\(n\)</span> consistency, and asymptotic normality, with asymptotic variance equal to the semiparametric efficiency bound (<span class="quarto-unresolved-ref">?thm-asymp</span>). A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span>.</li>
 <li>The asymptotic variance is estimated consistently from the empirical variance of the out-of-fold estimated influence values.</li>
 <li>Machine learning improves nuisance estimation, but it does not resolve identification problems: unmeasured confounding, positivity failures, and untestable structural assumptions remain the researcher’s responsibility.</li>
 </ol>
@@ -982,17 +1001,17 @@ window.Quarto = {
 </ol>
 <p><strong>3. Cross-fitting with <span class="math inline">\(K = 2\)</span>.</strong> Partition a sample of <span class="math inline">\(n = 200\)</span> observations into two halves <span class="math inline">\(\mathcal{I}_1\)</span> and <span class="math inline">\(\mathcal{I}_2\)</span>.</p>
 <ol type="a">
-<li>Write down the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.9</span></a> explicitly for <span class="math inline">\(K = 2\)</span>.</li>
+<li>Write down the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.10</span></a> explicitly for <span class="math inline">\(K = 2\)</span>.</li>
 <li>Explain why the contribution from <span class="math inline">\(\mathcal{I}_1\)</span> uses nuisance estimates trained on <span class="math inline">\(\mathcal{I}_2\)</span> and vice versa.</li>
 <li>Compare this procedure to single sample splitting with <span class="math inline">\(\mathcal{I}_1\)</span> as the training fold. What is gained and what is lost?</li>
 </ol>
 <p><strong>4. The product-rate condition.</strong> Suppose <span class="math inline">\(\|\hat\pi - \pi\|_{L_2} = o_p(n^{-\alpha})\)</span> and <span class="math inline">\(\|\hat\mu_t - \mu_t\|_{L_2} = o_p(n^{-\beta})\)</span> for <span class="math inline">\(\alpha, \beta &gt; 0\)</span>.</p>
 <ol type="a">
-<li>State the condition on <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> under which the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a> holds.</li>
+<li>State the condition on <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> under which the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> holds.</li>
 <li>Show that <span class="math inline">\(\alpha = \beta = 1/4\)</span> satisfies your condition.</li>
 <li>Does <span class="math inline">\(\alpha = 1/2\)</span>, <span class="math inline">\(\beta = 0\)</span> satisfy it? What does this say about the case where the propensity score is estimated parametrically but the outcome model converges only at an unspecified rate?</li>
 </ol>
-<p><strong>5. Variance estimation.</strong> Using the explicit formula <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.10</span></a>, write out the estimated influence value <span class="math inline">\(\hat\varphi_i\)</span> for a generic observation <span class="math inline">\(i \in \mathcal{I}_k\)</span>. Show that <span class="math inline">\(n^{-1}\sum_i\hat\varphi_i = 0\)</span> exactly when <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> solves the cross-fitted moment equation, and explain why the centering in <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is numerically inconsequential.</p>
+<p><strong>5. Variance estimation.</strong> Using the explicit formula <a href="#eq-dml-ate" class="quarto-xref">Equation&nbsp;<span>12.11</span></a>, write out the estimated influence value <span class="math inline">\(\hat\varphi_i\)</span> for a generic observation <span class="math inline">\(i \in \mathcal{I}_k\)</span>. Show that <span class="math inline">\(n^{-1}\sum_i\hat\varphi_i = 0\)</span> exactly when <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> solves the cross-fitted moment equation, and explain why the centering in <a href="#eq-var-est" class="quarto-xref">Equation&nbsp;<span>12.13</span></a> is numerically inconsequential.</p>
 <p><strong>6. What machine learning cannot do.</strong> For each of the following scenarios, identify the identification assumption that is violated and explain why flexible nuisance estimation cannot remedy the problem.</p>
 <ol type="a">
 <li>A study of job-training effects on earnings omits pre-program earnings, a strong predictor of both program participation and subsequent earnings.</li>
@@ -1425,8 +1444,8 @@ Vaart, Aad W. van der. 1998. <em>Asymptotic Statistics</em>. Cambridge Universit
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./appendix_A.html" class="pagination-link" aria-label="Graphical Intuition for Conditional Independence and d-Separation">
-        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./chapter_13.html" class="pagination-link" aria-label="Estimation under Instrumental Variables">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

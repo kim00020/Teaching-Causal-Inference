@@ -97,25 +97,27 @@ and likewise for perturbations in $\mu_1$ and $\mu_0$.
 ::: {.callout-note collapse=true icon=false}
 ## Proof
 
-Differentiation and expectation are interchanged under standard bounded-convergence arguments; the LIE is applied by conditioning on $X$.
+Differentiation and expectation are interchanged under standard bounded-convergence arguments; the LIE is applied by conditioning on $X$. The defining identity $\E(T \mid X) = \pi(X)$ is the engine of all three calculations: it implies the two **balancing identities**
+$$\E\!\left(\frac{T}{\pi(X)}\;\middle|\; X\right) = 1, \qquad \E\!\left(\frac{1-T}{1-\pi(X)}\;\middle|\; X\right) = 1,$$ {#eq-ipw-balance}
+and consequently $\E\{T(Y-\mu_1(X))\mid X\} = 0$ and $\E\{(1-T)(Y-\mu_0(X))\mid X\} = 0$. Each perturbation derivative reduces to one of these conditional expectations.
 
 **Perturbation in $\pi$.** Replace $\pi$ by $\pi + rh$ and differentiate. The only $\pi$-dependent terms are the two IPW residual terms:
-$$\left.\frac{\partial}{\partial r}\right|_{r=0} = \E\!\left[-\frac{T\,h(X)}{\pi(X)^2}\{Y-\mu_1(X)\} - \frac{(1-T)\,h(X)}{(1-\pi(X))^2}\{Y-\mu_0(X)\}\right].$$
-Conditioning on $X$ and using $\E(T \mid X) = \pi(X)$: $\E[T\{Y-\mu_1(X)\} \mid X] = \pi(X)\mu_1(X) - \mu_1(X)\pi(X) = 0$, and similarly for the control term. Both conditional expectations vanish.
+$$\left.\frac{\partial}{\partial r}\right|_{r=0} = \E\!\left[-\frac{T\,h(X)}{\pi(X)^2}\{Y-\mu_1(X)\} - \frac{(1-T)\,h(X)}{(1-\pi(X))^2}\{Y-\mu_0(X)\}\right] = 0$$
+by the two residual identities above (factor out $h(X)/\pi(X)^2$ and $h(X)/(1-\pi(X))^2$, then condition on $X$).
 
-**Perturbation in $\mu_1$.** Replace $\mu_1$ by $\mu_1 + rg$. Differentiating:
-$$\E\!\left[-\frac{T}{\pi(X)}\,g(X) + g(X)\right] = \E\!\left[g(X)\left(1 - \frac{T}{\pi(X)}\right)\right].$$
-Conditioning on $X$: $\E[1 - T/\pi(X) \mid X] = 1 - \pi(X)/\pi(X) = 0$.
+**Perturbation in $\mu_1$.** Replace $\mu_1$ by $\mu_1 + rg$. Only $-(T/\pi(X))\mu_1(X)$ and $\mu_1(X)$ depend on $\mu_1$, so:
+$$\E\!\left[g(X)\left(1 - \frac{T}{\pi(X)}\right)\right] = 0$$
+by the first identity in @eq-ipw-balance.
 
-**Perturbation in $\mu_0$.** Replace $\mu_0$ by $\mu_0 + r\ell$. Differentiating:
-$$\E\!\left[\ell(X)\left(\frac{1-T}{1-\pi(X)} - 1\right)\right].$$
-Conditioning on $X$: $\E[(1-T)/(1-\pi(X)) - 1 \mid X] = (1-\pi(X))/(1-\pi(X)) - 1 = 0$. $\square$
+**Perturbation in $\mu_0$.** Replace $\mu_0$ by $\mu_0 + r\ell$. Symmetrically:
+$$\E\!\left[\ell(X)\left(\frac{1-T}{1-\pi(X)} - 1\right)\right] = 0$$
+by the second identity in @eq-ipw-balance. $\square$
 :::
 
 ::: {.callout-note icon=false}
 ## Remark: What the Proof Reveals
 
-Each of the three derivative calculations reduces to a single key fact: the conditional mean of the IPW weight equals one. Specifically, $\E(T/\pi(X) \mid X) = 1$ and $\E((1-T)/(1-\pi(X)) \mid X) = 1$ are immediate consequences of $\E(T \mid X) = \pi(X)$, which is the engine behind both the balancing theorem and the IPW identification formula (Chapter 6). Neyman orthogonality of the ATE score is therefore a direct consequence of how the propensity score is defined, not an additional requirement imposed on it.
+The two balancing identities @eq-ipw-balance are immediate consequences of the defining identity $\E(T \mid X) = \pi(X)$, which is also the engine behind the balancing theorem and the IPW identification formula (Chapter 6). Neyman orthogonality of the ATE score is therefore a direct consequence of how the propensity score is defined, not an additional requirement imposed on it.
 :::
 
 The score @eq-orth-score-ate simultaneously fulfills three purposes:
@@ -123,6 +125,12 @@ The score @eq-orth-score-ate simultaneously fulfills three purposes:
 1. It *identifies* $\tau$ through the moment condition $\E\{\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\} = 0$.
 2. It is *doubly robust*, yielding a consistent estimator whenever either the outcome model or the propensity score model is correctly specified.
 3. It is the *efficient influence function*, so an estimator that is regular, asymptotically linear with this influence function, and whose nuisance remainders are asymptotically negligible achieves the semiparametric efficiency bound.
+
+::: {.callout-note icon=false}
+## Remark: Double Robustness versus Semiparametric Efficiency
+
+Properties (ii) and (iii) are distinct claims requiring distinct conditions. *Double robustness* (ii) is a consistency claim: under standard overlap and LLN regularity, the AIPW estimator is consistent for $\tau$ if either $\hat\mu_t$ converges to the true $\mu_t$ *or* $\hat\pi$ converges to the true $\pi$, but not necessarily both. *Semiparametric efficiency* (iii) is a distributional claim about $\sqrt{n}(\hat\tau - \tau_0)$: it requires that both nuisance estimators converge to the truth at rates satisfying the product-rate condition @eq-product-rate. When only one nuisance block is correctly specified, the estimator can remain consistent by double robustness, but the asymptotic-linearity expansion with influence function $\varphi_{\mathrm{eff}}$ and the efficient-bound variance need not apply, and inference based on them can be misleading without further analysis of the actual limiting estimating function.
+:::
 
 ## Why Reusing the Same Data Can Be Problematic {#sec-reuse}
 

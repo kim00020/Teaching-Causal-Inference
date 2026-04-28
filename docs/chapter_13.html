@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>13&nbsp; Estimation under Instrumental Variables – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./appendix_A.html" rel="next">
+<link href="./chapter_12.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_13.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Do-Calculus and Identification Criteria</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Identification</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Estimation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-intro" id="toc-sec-intro" class="nav-link active" data-scroll-target="#sec-intro"><span class="header-section-number">13.1</span> From Identification to Estimation</a></li>
+  <li><a href="#sec-wald" id="toc-sec-wald" class="nav-link" data-scroll-target="#sec-wald"><span class="header-section-number">13.2</span> The Wald Estimator and the IV Regression Estimator</a>
+  <ul class="collapse">
+  <li><a href="#the-wald-estimator" id="toc-the-wald-estimator" class="nav-link" data-scroll-target="#the-wald-estimator"><span class="header-section-number">13.2.1</span> The Wald Estimator</a></li>
+  <li><a href="#the-iv-regression-estimator-with-covariates" id="toc-the-iv-regression-estimator-with-covariates" class="nav-link" data-scroll-target="#the-iv-regression-estimator-with-covariates"><span class="header-section-number">13.2.2</span> The IV Regression Estimator with Covariates</a></li>
+  <li><a href="#structural-form-reduced-form-and-the-reduced-form-regression" id="toc-structural-form-reduced-form-and-the-reduced-form-regression" class="nav-link" data-scroll-target="#structural-form-reduced-form-and-the-reduced-form-regression"><span class="header-section-number">13.2.3</span> Structural Form, Reduced Form, and the Reduced Form Regression</a></li>
+  </ul></li>
+  <li><a href="#sec-2sls" id="toc-sec-2sls" class="nav-link" data-scroll-target="#sec-2sls"><span class="header-section-number">13.3</span> Two-Stage Least Squares</a></li>
+  <li><a href="#sec-equiv" id="toc-sec-equiv" class="nav-link" data-scroll-target="#sec-equiv"><span class="header-section-number">13.4</span> Equivalence of the IV Regression Estimator and 2SLS</a></li>
+  <li><a href="#sec-gmm" id="toc-sec-gmm" class="nav-link" data-scroll-target="#sec-gmm"><span class="header-section-number">13.5</span> The Moment-Condition View and GMM</a>
+  <ul class="collapse">
+  <li><a href="#sls-as-a-method-of-moments-estimator" id="toc-sls-as-a-method-of-moments-estimator" class="nav-link" data-scroll-target="#sls-as-a-method-of-moments-estimator"><span class="header-section-number">13.5.1</span> 2SLS as a Method-of-Moments Estimator</a></li>
+  <li><a href="#overidentification-and-gmm" id="toc-overidentification-and-gmm" class="nav-link" data-scroll-target="#overidentification-and-gmm"><span class="header-section-number">13.5.2</span> Overidentification and GMM</a></li>
+  </ul></li>
+  <li><a href="#sec-asymp" id="toc-sec-asymp" class="nav-link" data-scroll-target="#sec-asymp"><span class="header-section-number">13.6</span> Asymptotic Theory of the GMM Estimator</a>
+  <ul class="collapse">
+  <li><a href="#setup-and-notation" id="toc-setup-and-notation" class="nav-link" data-scroll-target="#setup-and-notation"><span class="header-section-number">13.6.1</span> Setup and Notation</a></li>
+  <li><a href="#asymptotic-distribution" id="toc-asymptotic-distribution" class="nav-link" data-scroll-target="#asymptotic-distribution"><span class="header-section-number">13.6.2</span> Asymptotic Distribution</a></li>
+  <li><a href="#two-important-special-cases" id="toc-two-important-special-cases" class="nav-link" data-scroll-target="#two-important-special-cases"><span class="header-section-number">13.6.3</span> Two Important Special Cases</a></li>
+  <li><a href="#consistent-variance-estimation" id="toc-consistent-variance-estimation" class="nav-link" data-scroll-target="#consistent-variance-estimation"><span class="header-section-number">13.6.4</span> Consistent Variance Estimation</a></li>
+  </ul></li>
+  <li><a href="#sec-weak" id="toc-sec-weak" class="nav-link" data-scroll-target="#sec-weak"><span class="header-section-number">13.7</span> Weak Instruments and Inferential Fragility</a>
+  <ul class="collapse">
+  <li><a href="#the-weak-instrument-problem" id="toc-the-weak-instrument-problem" class="nav-link" data-scroll-target="#the-weak-instrument-problem"><span class="header-section-number">13.7.1</span> The Weak-Instrument Problem</a></li>
+  <li><a href="#diagnostic-the-first-stage-f-statistic" id="toc-diagnostic-the-first-stage-f-statistic" class="nav-link" data-scroll-target="#diagnostic-the-first-stage-f-statistic"><span class="header-section-number">13.7.2</span> Diagnostic: The First-Stage <span class="math inline">\(F\)</span>-Statistic</a></li>
+  <li><a href="#weak-instrument-robust-inference" id="toc-weak-instrument-robust-inference" class="nav-link" data-scroll-target="#weak-instrument-robust-inference"><span class="header-section-number">13.7.3</span> Weak-Instrument-Robust Inference</a></li>
+  </ul></li>
+  <li><a href="#sec-gel" id="toc-sec-gel" class="nav-link" data-scroll-target="#sec-gel"><span class="header-section-number">13.8</span> Generalized Empirical Likelihood</a>
+  <ul class="collapse">
+  <li><a href="#the-gel-estimator" id="toc-the-gel-estimator" class="nav-link" data-scroll-target="#the-gel-estimator"><span class="header-section-number">13.8.1</span> The GEL Estimator</a></li>
+  <li><a href="#the-convex-conjugate-duality-optional" id="toc-the-convex-conjugate-duality-optional" class="nav-link" data-scroll-target="#the-convex-conjugate-duality-optional"><span class="header-section-number">13.8.2</span> The Convex-Conjugate Duality (Optional)</a></li>
+  <li><a href="#asymptotic-properties-and-comparison-with-gmm" id="toc-asymptotic-properties-and-comparison-with-gmm" class="nav-link" data-scroll-target="#asymptotic-properties-and-comparison-with-gmm"><span class="header-section-number">13.8.3</span> Asymptotic Properties and Comparison with GMM</a></li>
+  </ul></li>
+  <li><a href="#sec-cf" id="toc-sec-cf" class="nav-link" data-scroll-target="#sec-cf"><span class="header-section-number">13.9</span> The Control Function Approach</a>
+  <ul class="collapse">
+  <li><a href="#linear-model-and-equivalence-to-2sls" id="toc-linear-model-and-equivalence-to-2sls" class="nav-link" data-scroll-target="#linear-model-and-equivalence-to-2sls"><span class="header-section-number">13.9.1</span> Linear Model and Equivalence to 2SLS</a></li>
+  <li><a href="#testing-endogeneity-via-residual-inclusion" id="toc-testing-endogeneity-via-residual-inclusion" class="nav-link" data-scroll-target="#testing-endogeneity-via-residual-inclusion"><span class="header-section-number">13.9.2</span> Testing Endogeneity via Residual Inclusion</a></li>
+  <li><a href="#brief-note-on-nonlinear-extensions" id="toc-brief-note-on-nonlinear-extensions" class="nav-link" data-scroll-target="#brief-note-on-nonlinear-extensions"><span class="header-section-number">13.9.3</span> Brief Note on Nonlinear Extensions</a></li>
+  </ul></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">13.10</span> Chapter Summary</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">13.11</span> Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_13.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives: Core Material
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of the core sections, students should be able to:</p>
+<ol type="1">
+<li>Construct the Wald estimator as the sample analog of the Wald estimand and interpret its numerator and denominator as the reduced form and first stage. Extend this to the IV regression estimator with covariates as the direct sample analog of <span class="math inline">\(\widehat{\mathrm{Cov}}(\tilde Z, Y)/\widehat{\mathrm{Cov}}(\tilde Z, T)\)</span>, where <span class="math inline">\(\tilde Z\)</span> is the linear-projection residual of <span class="math inline">\(Z\)</span> on the intercept and <span class="math inline">\(X\)</span>.</li>
+<li>Distinguish the structural form of a linear SEM from its reduced form; derive the reduced form by solving out endogenous variables; define the reduced form regression estimator; and interpret <span class="math inline">\(\hat\phi_{\mathrm{RF}}\)</span> as the intent-to-treat (ITT) effect when <span class="math inline">\(Z\)</span> is randomly assigned.</li>
+<li>Derive the 2SLS estimator from first principles via the constrained normal equations argument, and prove its numerical equivalence with the IV regression estimator.</li>
+<li>Interpret 2SLS as a method-of-moments estimator based on the IV orthogonality condition, connect it to the estimating-equation framework of Chapter 10, and extend to GMM for overidentified models.</li>
+<li>State the asymptotic distribution of the GMM estimator, specialize the sandwich variance formula to the exactly identified and efficient GMM cases, and construct cluster-robust standard errors.</li>
+<li>Explain the weak-instrument problem and its consequences for finite-sample bias and inferential reliability.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives: Advanced Enrichment (Sections <a href="#sec-gel" class="quarto-xref"><span>Section 13.8</span></a>–<a href="#sec-cf" class="quarto-xref"><span>Section 13.9</span></a>)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Students who complete the advanced sections should additionally be able to:</p>
+<ol type="1">
+<li>Describe the GEL framework as a one-step alternative to efficient GMM; state the saddle-point formulation; identify empirical likelihood, exponential tilting, and the continuous updating estimator as special cases; and interpret the Legendre–Fenchel duality as observation re-weighting.</li>
+<li>Describe the control function approach, explain its equivalence to 2SLS in the linear model, and state the conditions under which <span class="math inline">\(V = F_{T \mid Z,X}(T \mid Z, X)\)</span> serves as a control variable in the nonlinear triangular model of <span class="citation" data-cites="imbens2009">Imbens and Newey (<a href="#ref-imbens2009" role="doc-biblioref">2009</a>)</span>.</li>
+</ol>
+</div>
+</div>
+<section id="sec-intro" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="sec-intro"><span class="header-section-number">13.1</span> From Identification to Estimation</h2>
+<p>Chapter 7 established what IV identifies and under what assumptions. This chapter shows how to estimate that target from finite data using sample analogs of the same orthogonality restrictions.</p>
+<p>Chapter 7 showed that when an instrument <span class="math inline">\(Z\)</span> satisfies relevance, exogeneity, and exclusion, the residualized-covariance ratio <span class="math inline">\(\mathrm{Cov}(\tilde Z, Y)/\mathrm{Cov}(\tilde Z, T)\)</span> is a well-defined function of observable quantities but does not identify any specific causal parameter without a fourth structural assumption. This chapter works within the linear constant-effect model: <span id="eq-structural"><span class="math display">\[Y = \alpha + \beta T + \gamma^\top X + \varepsilon, \tag{13.1}\]</span></span> <span id="eq-firststage"><span class="math display">\[T = a_T + \pi Z + \delta^\top X + \eta, \tag{13.2}\]</span></span> where the fourth structural assumption is the constant-effect restriction: <span class="math inline">\(Y_i(1) - Y_i(0) = \beta\)</span> for all <span class="math inline">\(i\)</span>. Under the three core assumptions plus this restriction, the structural coefficient <span class="math inline">\(\beta\)</span> is identified by the Wald formula: <span class="math display">\[\beta = \frac{\mathrm{Cov}(\tilde Z,\, Y)}{\mathrm{Cov}(\tilde Z,\, T)}.\]</span></p>
+<p>This chapter addresses the estimation problem: how to recover <span class="math inline">\(\beta\)</span> from a finite sample. The answer is not a single formula but a family of estimators — the Wald estimator, two-stage least squares (2SLS), and the generalized method of moments (GMM) — each of which is a sample analog of the same underlying orthogonality restriction.</p>
+<p><strong>Chapter structure.</strong> Core material (<a href="#sec-wald" class="quarto-xref"><span>Section 13.2</span></a>–<a href="#sec-weak" class="quarto-xref"><span>Section 13.7</span></a>) develops the mainstream IV estimators and their asymptotic theory. Advanced enrichment (<a href="#sec-gel" class="quarto-xref"><span>Section 13.8</span></a>–<a href="#sec-cf" class="quarto-xref"><span>Section 13.9</span></a>) introduces GEL and the control function approach.</p>
+</section>
+<section id="sec-wald" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="sec-wald"><span class="header-section-number">13.2</span> The Wald Estimator and the IV Regression Estimator</h2>
+<section id="the-wald-estimator" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="the-wald-estimator"><span class="header-section-number">13.2.1</span> The Wald Estimator</h3>
+<p>We begin with the simplest setting: a binary instrument <span class="math inline">\(Z \in \{0,1\}\)</span>, scalar treatment <span class="math inline">\(T\)</span>, scalar outcome <span class="math inline">\(Y\)</span>, and no additional covariates <span class="math inline">\(X\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Wald Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(n_z = \sum_{i=1}^n \mathbf{1}(Z_i = z)\)</span> and define within-group sample means <span class="math inline">\(\bar{Y}_z = n_z^{-1}\sum_{i:\,Z_i=z} Y_i\)</span>, <span class="math inline">\(\bar{T}_z = n_z^{-1}\sum_{i:\,Z_i=z} T_i\)</span>. The <strong>Wald estimator</strong> is: <span id="eq-wald-est"><span class="math display">\[\hat\beta_{\mathrm{Wald}} = \frac{\bar{Y}_1 - \bar{Y}_0}{\bar{T}_1 - \bar{T}_0}. \tag{13.3}\]</span></span></p>
+</div>
+</div>
+<p>The numerator <span class="math inline">\(\bar{Y}_1 - \bar{Y}_0\)</span> estimates the <em>reduced form</em>: the total effect of the instrument on the outcome. The denominator <span class="math inline">\(\bar{T}_1 - \bar{T}_0\)</span> estimates the <em>first stage</em>: the effect of the instrument on treatment uptake. Their ratio recovers the effect of treatment on the outcome by attributing all of the instrument’s effect on <span class="math inline">\(Y\)</span> to the path <span class="math inline">\(Z \to T \to Y\)</span> — valid precisely because the exclusion restriction rules out any direct path <span class="math inline">\(Z \to Y\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Consistency by the Continuous Mapping Theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The within-group means are consistent for <span class="math inline">\(\E[Y \mid Z{=}z]\)</span> and <span class="math inline">\(\E[T \mid Z{=}z]\)</span> by the LLN. Consistency of <span class="math inline">\(\hat\beta_{\mathrm{Wald}}\)</span> for <span class="math inline">\(\beta\)</span> then follows from the continuous mapping theorem, provided the denominator <span class="math inline">\(\E[T \mid Z{=}1] - \E[T \mid Z{=}0] \neq 0\)</span> (the relevance condition).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: What the Wald Estimator Targets under Heterogeneous Effects
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Binary treatment.</strong> For binary <span class="math inline">\(T\)</span>, Chapter 7 showed that under the additional monotonicity assumption (<span class="math inline">\(T_i(1) \geq T_i(0)\)</span> for all <span class="math inline">\(i\)</span>), the Wald estimand identifies the LATE for compliers. The Wald estimator consistently estimates the LATE, not the population ATE.</p>
+<p><strong>Continuous treatment.</strong> For continuous <span class="math inline">\(T\)</span> with binary <span class="math inline">\(Z\)</span>, the IV estimand identifies a weighted average of marginal causal effects <span class="math inline">\(\partial Y_i(t)/\partial t\)</span> across the treatment distribution, with weights determined by the instrument-induced shift in <span class="math inline">\(T\)</span>. “The LATE” is no longer the right name for what is estimated.</p>
+</div>
+</div>
+</section>
+<section id="the-iv-regression-estimator-with-covariates" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="the-iv-regression-estimator-with-covariates"><span class="header-section-number">13.2.2</span> The IV Regression Estimator with Covariates</h3>
+<p>When observed covariates <span class="math inline">\(X \in \mathbb{R}^p\)</span> are present, the Wald estimator is no longer applicable. We derive the general IV estimator from the estimating-equation principle.</p>
+<p><strong>Notation.</strong> Stack observations into <span class="math inline">\(\mathbf{Y}, \mathbf{T}, \mathbf{Z} \in \mathbb{R}^n\)</span> and <span class="math inline">\(\mathbf{X} \in \mathbb{R}^{n \times p}\)</span>. Let <span class="math inline">\(\bar{\mathbf{X}} = [\mathbf{1}_n,\,\mathbf{X}]\)</span> and define the annihilator matrix: <span id="eq-mx"><span class="math display">\[M_X = I_n - \bar{\mathbf{X}}\bigl(\bar{\mathbf{X}}^\top\bar{\mathbf{X}}\bigr)^{-1}\bar{\mathbf{X}}^\top, \tag{13.4}\]</span></span> the orthogonal projection onto the orthogonal complement of <span class="math inline">\(\mathrm{col}(\bar{\mathbf{X}})\)</span>.</p>
+<p><strong>Derivation via constrained normal equations.</strong> The structural model imposes: <span id="eq-struct-moments"><span class="math display">\[\E\!\left[\begin{pmatrix} 1 \\ X_i \\ Z_i \end{pmatrix}\varepsilon_i\right] = 0, \qquad \E[T_i\,\varepsilon_i] \neq 0. \tag{13.5}\]</span></span></p>
+<p>Consider the sample normal equations one would obtain by running OLS of <span class="math inline">\(\mathbf{Y}\)</span> on <span class="math inline">\((\mathbf{T}, \bar{\mathbf{X}}, \mathbf{Z})\)</span>, with residual <span class="math inline">\(\hat{\mathbf{e}} = \mathbf{Y} - \mathbf{T}\beta - \bar{\mathbf{X}}\bar\gamma\)</span>:</p>
+<p><span class="math display">\[\mathbf{T}^\top \hat{\mathbf{e}} = \mathbf{0}, \quad (\text{NE-T}) \quad \bar{\mathbf{X}}^\top \hat{\mathbf{e}} = \mathbf{0}, \quad (\text{NE-X}) \quad \mathbf{Z}^\top \hat{\mathbf{e}} = \mathbf{0}. \quad (\text{NE-Z})\]</span></p>
+<p>At the true <span class="math inline">\(\beta\)</span>, (NE-T) fails because <span class="math inline">\(\E[T_i\varepsilon_i] \neq 0\)</span>. We <em>drop</em> the invalid (NE-T) and solve the <span class="math inline">\((p+2)\)</span>-dimensional system (NE-X), (NE-Z). From (NE-X): <span class="math inline">\(\hat{\bar\gamma} = (\bar{\mathbf{X}}^\top\bar{\mathbf{X}})^{-1}(\bar{\mathbf{X}}^\top\mathbf{Y} - \bar{\mathbf{X}}^\top\mathbf{T}\beta)\)</span>. Substituting into (NE-Z) and simplifying using <span class="math inline">\(M_X\)</span>: <span class="math inline">\(\mathbf{Z}^\top M_X \mathbf{T}\,\beta = \mathbf{Z}^\top M_X \mathbf{Y}\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: IV Regression Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>IV regression estimator</strong> in the linear IV model with scalar instrument <span class="math inline">\(Z\)</span> and covariates <span class="math inline">\(X\)</span> is: <span id="eq-iv-reg"><span class="math display">\[\hat\beta_{\mathrm{IV}} = \frac{\mathbf{Z}^\top M_X \mathbf{Y}}{\mathbf{Z}^\top M_X \mathbf{T}} = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}{\widehat{\mathrm{Cov}}(\tilde{Z},\, T)}, \tag{13.6}\]</span></span> where <span class="math inline">\(\tilde{Z}_i\)</span>, <span class="math inline">\(\tilde{Y}_i\)</span>, <span class="math inline">\(\tilde{T}_i\)</span> are the within-<span class="math inline">\(X\)</span> residuals (entries of <span class="math inline">\(M_X\mathbf{Z}\)</span>, <span class="math inline">\(M_X\mathbf{Y}\)</span>, <span class="math inline">\(M_X\mathbf{T}\)</span>).</p>
+</div>
+</div>
+<p>The Wald estimator is the special case <span class="math inline">\(Z \in \{0,1\}\)</span>, no covariates: <span class="math inline">\(M_X = I_n - n^{-1}\mathbf{1}\mathbf{1}^\top\)</span> is the centering matrix, and <span class="math inline">\(\hat\beta_{\mathrm{IV}} = \hat\beta_{\mathrm{Wald}}\)</span>.</p>
+</section>
+<section id="structural-form-reduced-form-and-the-reduced-form-regression" class="level3" data-number="13.2.3">
+<h3 data-number="13.2.3" class="anchored" data-anchor-id="structural-form-reduced-form-and-the-reduced-form-regression"><span class="header-section-number">13.2.3</span> Structural Form, Reduced Form, and the Reduced Form Regression</h3>
+<p><strong>The structural form.</strong> System <a href="#eq-structural" class="quarto-xref">Equation&nbsp;<span>13.1</span></a>–<a href="#eq-firststage" class="quarto-xref">Equation&nbsp;<span>13.2</span></a> is the <em>structural form</em>: each equation describes how one variable is determined by others, including endogenous variables on the right-hand side. The structural coefficient <span class="math inline">\(\beta\)</span> has a causal interpretation, but <span class="math inline">\(T\)</span> is correlated with <span class="math inline">\(\varepsilon\)</span>, so OLS applied to the structural form is inconsistent.</p>
+<p><strong>The reduced form.</strong> The <em>reduced form</em> is obtained by solving the structural system so each endogenous variable is expressed purely as a function of exogenous variables <span class="math inline">\(Z\)</span> and <span class="math inline">\(X\)</span>. Substituting <a href="#eq-firststage" class="quarto-xref">Equation&nbsp;<span>13.2</span></a> into <a href="#eq-structural" class="quarto-xref">Equation&nbsp;<span>13.1</span></a>: <span id="eq-reduced-form"><span class="math display">\[Y = \underbrace{(\alpha + \beta a_T)}_{\alpha_{\mathrm{rf}}} + \underbrace{\beta\pi}_{\phi}\, Z + \underbrace{(\beta\delta + \gamma)^\top}_{\gamma_{\mathrm{rf}}^\top}\, X + \underbrace{(\beta\eta + \varepsilon)}_{\nu}. \tag{13.7}\]</span></span></p>
+<p>Writing compactly: <span class="math inline">\(Y = \alpha_{\mathrm{rf}} + \phi Z + \gamma_{\mathrm{rf}}^\top X + \nu\)</span>, where <span class="math inline">\(\phi = \beta\pi\)</span>, <span class="math inline">\(\nu = \beta\eta + \varepsilon\)</span>. Both right-hand-side variables (<span class="math inline">\(Z\)</span> and <span class="math inline">\(X\)</span>) are exogenous, so OLS is consistent for <span class="math inline">\(\phi\)</span>. Neither <span class="math inline">\(\beta\)</span> nor <span class="math inline">\(\pi\)</span> is separately identified from the reduced form alone.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Reduced Form Regression Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>reduced form regression estimator</strong> is OLS of <span class="math inline">\(\phi\)</span> in the reduced form equation <a href="#eq-reduced-form" class="quarto-xref">Equation&nbsp;<span>13.7</span></a>: <span id="eq-rf-est"><span class="math display">\[\hat\phi_{\mathrm{RF}} = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}{\widehat{\mathrm{Var}}(\tilde{Z})}, \tag{13.8}\]</span></span> consistent for <span class="math inline">\(\phi = \beta\pi\)</span> under <span class="math inline">\(\E[\nu \mid Z, X] = 0\)</span>.</p>
+</div>
+</div>
+<p><strong>Relationship to the first stage and IV estimator.</strong> The first-stage regression estimator is <span class="math inline">\(\hat\pi_{\mathrm{FS}} = \widehat{\mathrm{Cov}}(\tilde{Z}, T)/\widehat{\mathrm{Var}}(\tilde{Z})\)</span>. Since <span class="math inline">\(\phi = \beta\pi\)</span>, the sample analog gives: <span id="eq-iv-ratio"><span class="math display">\[\hat\beta_{\mathrm{IV}} = \frac{\hat\phi_{\mathrm{RF}}}{\hat\pi_{\mathrm{FS}}}, \tag{13.9}\]</span></span> reproducing <a href="#eq-iv-reg" class="quarto-xref">Equation&nbsp;<span>13.6</span></a>. The reduced form delivers the instrument’s total effect on the outcome; the first stage scales it by the instrument’s effect on treatment; the ratio recovers the structural parameter.</p>
+<p><strong>Intent-to-treat interpretation.</strong> When <span class="math inline">\(Z\)</span> is randomly assigned, <span class="math inline">\(\hat\phi_{\mathrm{RF}}\)</span> estimates the <em>intent-to-treat</em> (ITT) effect: the average effect on <span class="math inline">\(Y\)</span> of being assigned <span class="math inline">\(Z = 1\)</span> rather than <span class="math inline">\(Z = 0\)</span>, regardless of actual treatment uptake. The ITT requires only exogeneity of <span class="math inline">\(Z\)</span>, not the exclusion restriction, and is often of direct policy interest.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Reporting All Three Quantities
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In applied work it is standard practice to report the first stage, reduced form, and IV (or 2SLS) estimates side by side. The reduced form and first stage each have a transparent OLS interpretation and can be assessed independently before the ratio is formed. The IV estimate carries no identifying content beyond what the reduced form and first stage together contain.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-2sls" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="sec-2sls"><span class="header-section-number">13.3</span> Two-Stage Least Squares</h2>
+<p>Two-stage least squares (2SLS) extends the Wald estimator to settings with continuous or multi-valued instruments, multiple instruments, and observed covariates.</p>
+<p><strong>Stage 1: The First-Stage Regression.</strong> Regress <span class="math inline">\(T\)</span> on <span class="math inline">\(Z\)</span> and <span class="math inline">\(X\)</span> by OLS, obtaining fitted values <span class="math inline">\(\hat{T}_i = \hat{a}_T + \hat\pi^\top Z_i + \hat\delta^\top X_i\)</span>. In matrix form, <span class="math inline">\(\hat{\mathbf{T}} = P_W \mathbf{T}\)</span> where <span class="math inline">\(P_W\)</span> is the projection onto the column space of the instrument design matrix <span class="math inline">\(\mathbf{W}\)</span>. The fitted values <span class="math inline">\(\hat{T}_i\)</span> isolate the component of treatment variation spanned by <span class="math inline">\((1, Z, X)\)</span> — the variation that is exogenous under IV validity.</p>
+<p><strong>Stage 2: The Second-Stage Regression.</strong> Regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(\hat{T}\)</span> and <span class="math inline">\(X\)</span> by OLS.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: 2SLS Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>two-stage least squares estimator</strong> <span class="math inline">\(\hat\beta_{\mathrm{2SLS}}\)</span> is the OLS coefficient on <span class="math inline">\(\hat{T}\)</span> in the second-stage regression. In the single-instrument case (<span class="math inline">\(q = 1\)</span>): <span id="eq-2sls-closed"><span class="math display">\[\hat\beta_{\mathrm{2SLS}} = \frac{\sum_{i=1}^n \tilde{Z}_i\, Y_i}{\sum_{i=1}^n \tilde{Z}_i\, T_i} = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}{\widehat{\mathrm{Cov}}(\tilde{Z},\, T)}. \tag{13.10}\]</span></span></p>
+</div>
+</div>
+<p>The component of <span class="math inline">\(T\)</span> orthogonal to <span class="math inline">\((Z, X)\)</span> — the residual <span class="math inline">\(\hat\eta_i = T_i - \hat{T}_i\)</span>, correlated with <span class="math inline">\(\varepsilon_i\)</span> when <span class="math inline">\(T\)</span> is endogenous — is dropped before the causal coefficient is estimated.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Standard Errors from the Second-Stage OLS Are Incorrect
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A common error is to report the standard errors from the second-stage OLS regression directly. Those standard errors use <span class="math inline">\(\hat{T}\)</span> rather than <span class="math inline">\(T\)</span> and residuals that do not equal the structural errors <span class="math inline">\(\varepsilon_i\)</span>, so they are invalid. Correct inference requires the sandwich variance formula from <a href="#sec-asymp" class="quarto-xref"><span>Section 13.6</span></a>, or software that implements 2SLS natively.</p>
+</div>
+</div>
+</section>
+<section id="sec-equiv" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="sec-equiv"><span class="header-section-number">13.4</span> Equivalence of the IV Regression Estimator and 2SLS</h2>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: IV Regression–2SLS Equivalence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the linear IV model with a scalar instrument <span class="math inline">\(Z\)</span> and covariates <span class="math inline">\(X \in \mathbb{R}^p\)</span>, the IV regression estimator and the 2SLS estimator coincide: <span class="math inline">\(\hat\beta_{\mathrm{2SLS}} = \hat\beta_{\mathrm{IV}}\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>First-stage projection.</strong> The first-stage fitted value is <span class="math inline">\(\hat{\mathbf{T}} = P_{[\bar{\mathbf{X}},\mathbf{Z}]}\mathbf{T}\)</span>. By the Frisch–Waugh–Lovell theorem: <span class="math display">\[M_X\hat{\mathbf{T}} = M_X\mathbf{Z}(\mathbf{Z}^\top M_X\mathbf{Z})^{-1}\mathbf{Z}^\top M_X\mathbf{T}.\]</span></p>
+<p><strong>2SLS second-stage closed form.</strong> Applying FWL to the second-stage regression of <span class="math inline">\(\mathbf{Y}\)</span> on <span class="math inline">\((\hat{\mathbf{T}}, \bar{\mathbf{X}})\)</span>: <span class="math display">\[\hat\beta_{\mathrm{2SLS}} = \frac{\hat{\mathbf{T}}^\top M_X \mathbf{Y}}{\hat{\mathbf{T}}^\top M_X \hat{\mathbf{T}}} = \frac{\mathbf{T}^\top M_X\mathbf{Z}(\mathbf{Z}^\top M_X\mathbf{Z})^{-1}\mathbf{Z}^\top M_X\mathbf{Y}}{\mathbf{T}^\top M_X\mathbf{Z}(\mathbf{Z}^\top M_X\mathbf{Z})^{-1}\mathbf{Z}^\top M_X\mathbf{T}}.\]</span></p>
+<p>Under exact identification (<span class="math inline">\(q = 1\)</span>), the scalars <span class="math inline">\(\mathbf{T}^\top M_X\mathbf{Z}\)</span> and <span class="math inline">\((\mathbf{Z}^\top M_X\mathbf{Z})^{-1}\)</span> cancel from numerator and denominator, leaving <span class="math inline">\(\hat\beta_{\mathrm{2SLS}} = \mathbf{Z}^\top M_X\mathbf{Y}/\mathbf{Z}^\top M_X\mathbf{T} = \hat\beta_{\mathrm{IV}}\)</span>. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: What the Proof Reveals
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In OLS, the normal equation for each regressor forces the residual to be orthogonal to that regressor. When <span class="math inline">\(T\)</span> is endogenous, its normal equation is corrupted: <span class="math inline">\(\E[\mathbf{T}^\top\boldsymbol\varepsilon] \neq 0\)</span>. IV simply replaces this corrupted equation with the instrument equation <span class="math inline">\(\mathbf{Z}^\top\hat{\mathbf{e}} = 0\)</span>, which is valid because <span class="math inline">\(Z\)</span> is exogenous. The IV estimator is OLS on the structural model but with one invalid normal equation swapped for a valid one. The 2SLS derivation reaches the same formula by a projection argument.</p>
+</div>
+</div>
+<p>In the scalar-instrument linear model, Wald, IV regression, and 2SLS are not competing methods; they are different representations of the same sample analog of the identification formula.</p>
+</section>
+<section id="sec-gmm" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="sec-gmm"><span class="header-section-number">13.5</span> The Moment-Condition View and GMM</h2>
+<section id="sls-as-a-method-of-moments-estimator" class="level3" data-number="13.5.1">
+<h3 data-number="13.5.1" class="anchored" data-anchor-id="sls-as-a-method-of-moments-estimator"><span class="header-section-number">13.5.1</span> 2SLS as a Method-of-Moments Estimator</h3>
+<p>Stack the constant, covariates, and instrument into <span class="math inline">\(W = (1,\,X^\top,\,Z^\top)^\top\)</span>. The IV moment condition is <span class="math inline">\(\E[W\,(Y - \alpha - \beta T - \gamma^\top X)] = 0\)</span>. Setting <span class="math inline">\(\theta = (\alpha, \beta, \gamma^\top)^\top\)</span> and defining <span class="math inline">\(U(O;\,\theta) = W\,(Y - D^\top\theta)\)</span> where <span class="math inline">\(D = (1, T, X^\top)^\top\)</span>, the identifying condition is <span class="math inline">\(\E\{U(O;\,\theta_0)\} = 0\)</span> — exactly an estimating equation in the sense of Chapter 10.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: 2SLS as a Method-of-Moments Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the exactly identified linear IV model (<span class="math inline">\(q = 1\)</span>), the 2SLS estimator <span class="math inline">\(\hat\theta_{\mathrm{2SLS}}\)</span> is the unique solution to the sample moment system: <span class="math display">\[\frac{1}{n}\sum_{i=1}^n W_i\,\bigl(Y_i - \hat\alpha - \hat\beta_{\mathrm{2SLS}}\,T_i - \hat\gamma^\top X_i\bigr) = 0, \qquad W_i = (1,\,X_i^\top,\,Z_i)^\top.\]</span></p>
+</div>
+</div>
+</section>
+<section id="overidentification-and-gmm" class="level3" data-number="13.5.2">
+<h3 data-number="13.5.2" class="anchored" data-anchor-id="overidentification-and-gmm"><span class="header-section-number">13.5.2</span> Overidentification and GMM</h3>
+<p>When <span class="math inline">\(q &gt; 1\)</span> instruments are available, the model is <em>overidentified</em>: more moment conditions than parameters. The system <span class="math inline">\(\mathbb{P}_n U(O;\,\theta) = 0\)</span> is generically overdetermined and has no exact solution.</p>
+<p>The <em>generalized method of moments</em> (GMM) minimizes a weighted quadratic form in the sample moments: <span class="math display">\[\hat\theta_{\mathrm{GMM}} = \arg\min_{\theta}\;\bigl[\mathbb{P}_n U(O;\,\theta)\bigr]^\top\,\hat\Omega_n\,\bigl[\mathbb{P}_n U(O;\,\theta)\bigr].\]</span></p>
+<p>Different choices of <span class="math inline">\(\hat\Omega_n\)</span> yield different estimators: <span class="math inline">\(\hat\Omega_n = (n^{-1}\sum_i W_i W_i^\top)^{-1}\)</span> yields 2SLS; <span class="math inline">\(\hat\Omega_n = [\mathbb{P}_n U(O;\,\hat\theta)U(O;\,\hat\theta)^\top]^{-1}\)</span> yields the <em>efficient GMM estimator</em>. Under homoskedasticity, efficient GMM and 2SLS coincide. Under heteroskedasticity, efficient GMM is weakly (and generically strictly) more efficient.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Overidentification as a Testable Restriction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An overidentified model imposes more moment conditions than needed for point identification. The Sargan–Hansen <span class="math inline">\(J\)</span>-statistic <span class="citation" data-cites="sargan1958estimation">(<a href="#ref-sargan1958estimation" role="doc-biblioref">Sargan 1958</a>)</span> tests the joint null that all moment conditions hold: under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(J \xrightarrow{d} \chi^2_{q-1}\)</span>. A rejection indicates that the full set of maintained moment conditions is incompatible with the data. The test does not identify which assumption failed.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: GMM with Two Instruments
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider <span class="math inline">\(Y = \beta T + \varepsilon\)</span> (after demeaning), with two instruments <span class="math inline">\(Z_1, Z_2\)</span> giving moment conditions <span class="math inline">\(\E[Z_j\varepsilon] = 0\)</span>, <span class="math inline">\(j = 1, 2\)</span>.</p>
+<p>Sample covariances: <span class="math inline">\(\widehat{\mathrm{Cov}}(Z_1, Y) = 0.40\)</span>, <span class="math inline">\(\widehat{\mathrm{Cov}}(Z_1, T) = 0.50\)</span>, <span class="math inline">\(\widehat{\mathrm{Cov}}(Z_2, Y) = 0.60\)</span>, <span class="math inline">\(\widehat{\mathrm{Cov}}(Z_2, T) = 0.80\)</span>.</p>
+<p>Just-identified IV estimates: <span class="math inline">\(\hat\beta^{(1)} = 0.40/0.50 = 0.80\)</span>, <span class="math inline">\(\hat\beta^{(2)} = 0.60/0.80 = 0.75\)</span>.</p>
+<p><strong>GMM with identity weighting (<span class="math inline">\(\hat\Omega = I_2\)</span>).</strong> With <span class="math inline">\(a = (0.50, 0.80)^\top\)</span> and <span class="math inline">\(c = (0.40, 0.60)^\top\)</span>, the sample moment vector is <span class="math inline">\(\hat{U}(\beta) = c - a\beta\)</span>. The first-order condition <span class="math inline">\(a^\top(c - a\beta) = 0\)</span> gives: <span class="math display">\[\hat\beta_{\mathrm{GMM}} = \frac{a^\top c}{a^\top a} = \frac{(0.50)(0.40)+(0.80)(0.60)}{(0.50)^2+(0.80)^2} = \frac{0.68}{0.89} \approx 0.764.\]</span> A precision-weighted average lying between 0.75 and 0.80, with more weight on <span class="math inline">\(Z_2\)</span> (larger first-stage covariance).</p>
+<p><strong>Sargan–Hansen <span class="math inline">\(J\)</span>-test.</strong> Residual moments at <span class="math inline">\(\hat\beta = 0.764\)</span>: <span class="math inline">\(\hat{U}_1 = 0.018\)</span>, <span class="math inline">\(\hat{U}_2 = -0.011\)</span>. The <span class="math inline">\(J\)</span>-statistic <span class="math inline">\(J = n\,\hat{U}(\hat\beta)^\top\hat\Sigma^{-1}\hat{U}(\hat\beta)\)</span> has a <span class="math inline">\(\chi^2_1\)</span> null distribution. A failure to reject is consistent with both instruments satisfying the exclusion restriction.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-asymp" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="sec-asymp"><span class="header-section-number">13.6</span> Asymptotic Theory of the GMM Estimator</h2>
+<section id="setup-and-notation" class="level3" data-number="13.6.1">
+<h3 data-number="13.6.1" class="anchored" data-anchor-id="setup-and-notation"><span class="header-section-number">13.6.1</span> Setup and Notation</h3>
+<p>Stack the structural regressors and instruments: <span class="math display">\[D_i = (1,\, T_i,\, X_i^\top)^\top \in \mathbb{R}^k, \qquad W_i = (1,\, X_i^\top,\, Z_i^\top)^\top \in \mathbb{R}^m,\]</span> where <span class="math inline">\(k = p + 2\)</span> and <span class="math inline">\(m = p + 1 + q\)</span>. The IV moment condition is <span class="math inline">\(\E[U(O_i;\,\theta_0)] = 0\)</span>, <span class="math inline">\(U(O_i;\,\theta) = W_i(Y_i - D_i^\top\theta)\)</span>. Define the sensitivity matrix <span class="math inline">\(A = \E[W_i D_i^\top] \in \mathbb{R}^{m \times k}\)</span> and moment variance matrix <span class="math inline">\(\Sigma = \E[\varepsilon_i^2\, W_i W_i^\top]\)</span>.</p>
+</section>
+<section id="asymptotic-distribution" class="level3" data-number="13.6.2">
+<h3 data-number="13.6.2" class="anchored" data-anchor-id="asymptotic-distribution"><span class="header-section-number">13.6.2</span> Asymptotic Distribution</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Asymptotic Distribution of the GMM Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose the IV moment condition holds, <span class="math inline">\(O_i\)</span> are i.i.d. with finite fourth moments, <span class="math inline">\(A\)</span> has full column rank, and <span class="math inline">\(\Sigma\)</span> is positive definite. Then: <span class="math display">\[\sqrt{n}\,\bigl(\hat\theta_{\mathrm{GMM}} - \theta_0\bigr) \;\xrightarrow{d}\; N\!\bigl(0,\; V_{\mathrm{GMM}}(\Omega)\bigr),\]</span> where the <strong>sandwich variance</strong> is: <span id="eq-gmm-var"><span class="math display">\[V_{\mathrm{GMM}}(\Omega) = (A^\top\Omega A)^{-1}\,A^\top\Omega\,\Sigma\,\Omega A\,(A^\top\Omega A)^{-1}. \tag{13.11}\]</span></span></p>
+</div>
+</div>
+<p>The formula is an instance of the general estimating-equation theory from Chapter 10: the sensitivity matrix <span class="math inline">\(A\)</span> plays the role of <span class="math inline">\(-\E[\partial U/\partial\theta^\top]\)</span> and the moment variance <span class="math inline">\(\Sigma\)</span> plays the role of <span class="math inline">\(\E[UU^\top]\)</span>.</p>
+</section>
+<section id="two-important-special-cases" class="level3" data-number="13.6.3">
+<h3 data-number="13.6.3" class="anchored" data-anchor-id="two-important-special-cases"><span class="header-section-number">13.6.3</span> Two Important Special Cases</h3>
+<p><strong>Exactly identified case (<span class="math inline">\(q = 1\)</span>, <span class="math inline">\(m = k\)</span>).</strong> <span class="math inline">\(A\)</span> is square and invertible. All weighting matrices yield the same estimator. The sandwich variance simplifies to: <span id="eq-iv-var"><span class="math display">\[V_{\mathrm{IV}} = A^{-1}\,\Sigma\,(A^\top)^{-1}. \tag{13.12}\]</span></span> In the scalar no-covariate case (<span class="math inline">\(p = 0\)</span>), the block corresponding to <span class="math inline">\(\beta\)</span> is: <span class="math display">\[V_\beta = \frac{\E[\varepsilon^2 \tilde{Z}^2]}{(\E[\tilde{Z}\,T])^2}, \qquad \tilde{Z} = Z - \E[Z].\]</span> Under homoskedasticity and first-stage relation <span class="math inline">\(T = a_T + \pi Z + \eta\)</span>: <span class="math inline">\(V_\beta = \sigma^2/(\pi^2\,\mathrm{Var}(Z))\)</span>.</p>
+<p><strong>Efficient GMM.</strong> The asymptotic variance <span class="math inline">\(V_{\mathrm{GMM}}(\Omega)\)</span> is minimized by <span class="math inline">\(\Omega^\ast = \Sigma^{-1}\)</span>, giving: <span id="eq-eff-var"><span class="math display">\[V_{\mathrm{eff}} = \bigl(A^\top\Sigma^{-1}A\bigr)^{-1}. \tag{13.13}\]</span></span> This is the semiparametric efficiency lower bound for IV estimation within the linear IV moment-restriction model <span class="math inline">\(\E[W\varepsilon] = 0\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: When 2SLS Is Efficient
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The 2SLS weighting matrix is <span class="math inline">\(\Omega_{\mathrm{2SLS}} = \E[W_i W_i^\top]^{-1}\)</span>. Under homoskedasticity, <span class="math inline">\(\Sigma = \sigma^2\E[WW^\top]\)</span>, so <span class="math inline">\(\Sigma^{-1} \propto \Omega_{\mathrm{2SLS}}\)</span>, and 2SLS achieves <span class="math inline">\(V_{\mathrm{eff}}\)</span>. Under heteroskedasticity, efficient GMM is weakly (and generically strictly) more efficient.</p>
+</div>
+</div>
+</section>
+<section id="consistent-variance-estimation" class="level3" data-number="13.6.4">
+<h3 data-number="13.6.4" class="anchored" data-anchor-id="consistent-variance-estimation"><span class="header-section-number">13.6.4</span> Consistent Variance Estimation</h3>
+<p>Let <span class="math inline">\(\hat\varepsilon_i = Y_i - D_i^\top\hat\theta\)</span> denote the structural residuals. Consistent estimators: <span class="math inline">\(\hat{A} = n^{-1}\sum_i W_i D_i^\top\)</span>, <span class="math inline">\(\hat\Sigma = n^{-1}\sum_i \hat\varepsilon_i^2\, W_i W_i^\top\)</span>. The heteroskedasticity-robust sandwich variance estimator is: <span id="eq-sandwich-est"><span class="math display">\[\hat{V}_{\mathrm{GMM}} = (\hat{A}^\top\hat\Omega_n\hat{A})^{-1}\,\hat{A}^\top\hat\Omega_n\,\hat\Sigma\,\hat\Omega_n\hat{A}\,(\hat{A}^\top\hat\Omega_n\hat{A})^{-1}. \tag{13.14}\]</span></span></p>
+<p>In the exactly identified case, <a href="#eq-sandwich-est" class="quarto-xref">Equation&nbsp;<span>13.14</span></a> reduces to <span class="math inline">\(\hat{A}^{-1}\hat\Sigma(\hat{A}^\top)^{-1}\)</span>, independent of <span class="math inline">\(\hat\Omega_n\)</span>. In applications, the default should be heteroskedasticity-robust standard errors; cluster-robust standard errors are required when observations within groups share unmodeled common shocks.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Two-Step Efficient GMM
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Because the optimal weighting <span class="math inline">\(\hat\Omega_n = \hat\Sigma^{-1}\)</span> requires preliminary residuals <span class="math inline">\(\hat\varepsilon_i\)</span>, efficient GMM is typically implemented in two steps: obtain a consistent first-step estimator (e.g., 2SLS) to form <span class="math inline">\(\hat\varepsilon_i\)</span>, construct <span class="math inline">\(\hat\Sigma\)</span>, and re-minimize the GMM criterion with <span class="math inline">\(\hat\Omega_n = \hat\Sigma^{-1}\)</span>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-weak" class="level2" data-number="13.7">
+<h2 data-number="13.7" class="anchored" data-anchor-id="sec-weak"><span class="header-section-number">13.7</span> Weak Instruments and Inferential Fragility</h2>
+<p>When the first-stage relationship is weak, IV estimation becomes severely fragile. A weak instrument is not merely an efficiency problem: it makes the finite-sample distribution of IV estimators highly non-normal, magnifies bias toward OLS, and undermines conventional confidence intervals.</p>
+<section id="the-weak-instrument-problem" class="level3" data-number="13.7.1">
+<h3 data-number="13.7.1" class="anchored" data-anchor-id="the-weak-instrument-problem"><span class="header-section-number">13.7.1</span> The Weak-Instrument Problem</h3>
+<p>The 2SLS closed form <a href="#eq-2sls-closed" class="quarto-xref">Equation&nbsp;<span>13.10</span></a> divides by the sample covariance <span class="math inline">\(\widehat{\mathrm{Cov}}(\tilde{Z}, T)\)</span>. When the population first-stage coefficient <span class="math inline">\(\pi\)</span> is near zero, the consequences are <span class="citation" data-cites="bound1995problems">(<a href="#ref-bound1995problems" role="doc-biblioref">Bound et al. 1995</a>)</span>:</p>
+<ul>
+<li><strong>Finite-sample bias toward OLS.</strong> As <span class="math inline">\(\pi \to 0\)</span>, the 2SLS bias approaches the OLS bias rather than zero.</li>
+<li><strong>Non-Gaussian finite-sample distribution.</strong> The distribution of <span class="math inline">\(\hat\beta_{\mathrm{2SLS}}\)</span> can be highly skewed or heavy-tailed, rendering the <span class="math inline">\(N(0,\,V_{\mathrm{2SLS}})\)</span> approximation unreliable.</li>
+<li><strong>Size distortion.</strong> Wald-type confidence intervals can severely undercover the true parameter.</li>
+</ul>
+</section>
+<section id="diagnostic-the-first-stage-f-statistic" class="level3" data-number="13.7.2">
+<h3 data-number="13.7.2" class="anchored" data-anchor-id="diagnostic-the-first-stage-f-statistic"><span class="header-section-number">13.7.2</span> Diagnostic: The First-Stage <span class="math inline">\(F\)</span>-Statistic</h3>
+<p>The most widely used diagnostic is the <span class="math inline">\(F\)</span>-statistic from the first-stage regression, testing the joint significance of <span class="math inline">\(Z\)</span> after partialling out <span class="math inline">\(X\)</span>. Staiger and Stock (1997) argued informally for <span class="math inline">\(F \geq 10\)</span> as adequate instrument strength; Stock and Yogo (2005) provided formal critical values. <strong>A large first-stage <span class="math inline">\(F\)</span> supports relevance, but says nothing directly about exogeneity or exclusion.</strong> The first-stage <span class="math inline">\(F\)</span>-statistic is a relevance diagnostic, not a certificate of instrument validity.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The <span class="math inline">\(F &gt; 10\)</span> Rule of Thumb
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The threshold <span class="math inline">\(F_{\text{first stage}} &gt; 10\)</span> is a widely cited but coarse diagnostic. It targets finite-sample bias relative to OLS, not validity of the exclusion restriction. A more reliable diagnostic is the effective <span class="math inline">\(F\)</span>-statistic of Olea and Pflueger (2013), which remains valid under heteroskedasticity and within-cluster correlation.</p>
+</div>
+</div>
+</section>
+<section id="weak-instrument-robust-inference" class="level3" data-number="13.7.3">
+<h3 data-number="13.7.3" class="anchored" data-anchor-id="weak-instrument-robust-inference"><span class="header-section-number">13.7.3</span> Weak-Instrument-Robust Inference</h3>
+<p>When first-stage strength is uncertain, alternative inferential procedures with size guarantees are needed.</p>
+<p>The <strong>Anderson–Rubin (AR) test</strong> (Anderson and Rubin, 1949) inverts the question: it tests whether a hypothesized value <span class="math inline">\(\beta_0\)</span> is consistent with the IV moment condition. Substituting <span class="math inline">\(\beta_0\)</span> into the structural model gives <span class="math inline">\(Y - \beta_0 T = \alpha + \gamma^\top X + (\varepsilon + (\beta - \beta_0)T)\)</span>. If <span class="math inline">\(\beta_0 = \beta\)</span>, the composite error is uncorrelated with <span class="math inline">\(Z\)</span> by instrument validity. The AR test regresses <span class="math inline">\(Y - \beta_0 T\)</span> on <span class="math inline">\(Z\)</span> and <span class="math inline">\(X\)</span> and tests the null that the coefficient on <span class="math inline">\(Z\)</span> is zero. Under the classical homoskedastic Gaussian linear model the <span class="math inline">\(F\)</span>-statistic has an <em>exact</em> finite-sample <span class="math inline">\(F\)</span>-distribution regardless of instrument strength. Inverting this test yields a confidence set valid whether or not the instrument is weak.</p>
+<p>The <strong>conditional likelihood ratio (CLR) test</strong> of Moreira (2003) extends the AR idea more efficiently to the multiple-instrument case.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Two Distinct IV Concerns
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The weak-instrument problem is a <em>statistical</em> concern: it questions the quality of estimation given a valid identification strategy. It is distinct from the <em>interpretive</em> concern of Chapter 7 — that even a perfectly strong instrument identifies only the LATE for compliers, not the population ATE. Any complete IV analysis must address both.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-gel" class="level2" data-number="13.8">
+<h2 data-number="13.8" class="anchored" data-anchor-id="sec-gel"><span class="header-section-number">13.8</span> Generalized Empirical Likelihood</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Advanced Topic
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This section introduces GEL as a one-step alternative to efficient GMM. The main takeaway is that every GEL estimator shares the same first-order asymptotic efficiency as efficient GMM, while GEL can have better higher-order finite-sample properties in overidentified models. The duality formulation and special-cases table may be treated as optional reading.</p>
+</div>
+</div>
+<p>GEL uses the same IV moment restrictions but incorporates them through an implied reweighting of the sample rather than through a separately estimated covariance weight matrix. Section <a href="#sec-asymp" class="quarto-xref"><span>Section 13.6</span></a> showed that efficient GMM requires a two-step procedure; this two-step structure introduces finite-sample bias <span class="citation" data-cites="neweysmith2004">(<a href="#ref-neweysmith2004" role="doc-biblioref">Newey and Smith 2004</a>)</span>. GEL provides a one-step alternative.</p>
+<section id="the-gel-estimator" class="level3" data-number="13.8.1">
+<h3 data-number="13.8.1" class="anchored" data-anchor-id="the-gel-estimator"><span class="header-section-number">13.8.1</span> The GEL Estimator</h3>
+<p>Let <span class="math inline">\(U_i(\theta) = W_i(Y_i - D_i^\top\theta)\)</span> and <span class="math inline">\(\bar{U}(\theta) = n^{-1}\sum_i U_i(\theta)\)</span>. GEL introduces a strictly convex function <span class="math inline">\(G\colon \mathcal{V} \to \mathbb{R}\)</span> (open interval <span class="math inline">\(\mathcal{V}\)</span> containing zero) and solves the saddle-point problem: <span id="eq-gel"><span class="math display">\[\hat\theta_{\mathrm{GEL}} = \arg\min_{\theta}\;\sup_{\lambda \in \Lambda_n(\theta)}\;\frac{1}{n}\sum_{i=1}^n [-G(\lambda^\top U_i(\theta))], \tag{13.15}\]</span></span> where <span class="math inline">\(\lambda \in \mathbb{R}^m\)</span> is an auxiliary dual variable. <span class="math inline">\(G\)</span> is normalized: <span class="math inline">\(G(0) = 0\)</span>, <span class="math inline">\(g(0) = 1\)</span>, <span class="math inline">\(g'(0) = 1\)</span> where <span class="math inline">\(g = G'\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Definition: Special Cases of GEL
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Empirical likelihood (EL):</strong> <span class="math inline">\(G(v) = -\log(1 - v)\)</span>, <span class="math inline">\(\mathcal{V} = (-\infty, 1)\)</span>.</li>
+<li><strong>Exponential tilting (ET):</strong> <span class="math inline">\(G(v) = e^v - 1\)</span>, <span class="math inline">\(\mathcal{V} = \mathbb{R}\)</span>.</li>
+<li><strong>Continuous updating estimator (CUE):</strong> <span class="math inline">\(G(v) = v + v^2/2\)</span>, <span class="math inline">\(\mathcal{V} = \mathbb{R}\)</span>. The GEL saddle-point problem reduces to simultaneous minimization of the GMM criterion with the weighting matrix <span class="math inline">\(\hat\Omega(\theta) = [n^{-1}\sum_i U_i(\theta)U_i(\theta)^\top]^{-1}\)</span> continuously updated at the current <span class="math inline">\(\theta\)</span>.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="the-convex-conjugate-duality-optional" class="level3" data-number="13.8.2">
+<h3 data-number="13.8.2" class="anchored" data-anchor-id="the-convex-conjugate-duality-optional"><span class="header-section-number">13.8.2</span> The Convex-Conjugate Duality (Optional)</h3>
+<p>The GEL saddle-point problem <a href="#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.15</span></a> is the Lagrangian dual of a <em>minimum-discrepancy</em> (MD) primal problem that re-weights observations. Define the Legendre–Fenchel conjugate of <span class="math inline">\(G\)</span>: <span id="eq-gel-conjugate"><span class="math display">\[F(\omega) = \sup_{v \in \mathcal{V}}\,[\omega v - G(v)], \tag{13.16}\]</span></span> a strictly convex function with <span class="math inline">\(F(1) = 0\)</span> (by the normalization). The MD estimator minimizes a convex divergence between observation weights <span class="math inline">\(\omega_i\)</span> and the reference <span class="math inline">\(\omega_i = 1\)</span>, subject to <span class="math inline">\(\sum_i \omega_i U_i(\theta) = 0\)</span>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: GEL–MD Duality <span class="citation" data-cites="neweysmith2004 ragusa2011">(<a href="#ref-neweysmith2004" role="doc-biblioref">Newey and Smith 2004</a>; <a href="#ref-ragusa2011" role="doc-biblioref">Ragusa 2011</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The GEL problem <a href="#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.15</span></a> is the Lagrangian dual of the MD problem: their first-order conditions coincide, so <span class="math inline">\(\hat\theta_{\mathrm{GEL}} = \hat\theta_{\mathrm{MD}}\)</span>. The dual variable <span class="math inline">\(\hat\lambda\)</span> and primal weights <span class="math inline">\(\hat\omega_i\)</span> are related by <span class="math inline">\(\hat\omega_i = g(\hat\lambda^\top U_i(\hat\theta))\)</span>.</p>
+</div>
+</div>
+<p>The GEL special cases correspond to different divergences: EL uses reverse KL; ET uses forward KL; CUE uses a quadratic distance.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Re-weighting Observations vs.&nbsp;Re-weighting Moments
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>GMM re-weights the <em>moment conditions</em> via the matrix <span class="math inline">\(\hat\Omega\)</span>. MD/GEL instead re-weights the <em>observations</em>, finding the empirical distribution closest to uniform in the <span class="math inline">\(F\)</span>-divergence sense consistent with the moment restrictions. The two approaches are asymptotically equivalent to first order.</p>
+</div>
+</div>
+</section>
+<section id="asymptotic-properties-and-comparison-with-gmm" class="level3" data-number="13.8.3">
+<h3 data-number="13.8.3" class="anchored" data-anchor-id="asymptotic-properties-and-comparison-with-gmm"><span class="header-section-number">13.8.3</span> Asymptotic Properties and Comparison with GMM</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: First-Order Asymptotic Equivalence <span class="citation" data-cites="neweysmith2004">(<a href="#ref-neweysmith2004" role="doc-biblioref">Newey and Smith 2004</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under regularity conditions, every GEL estimator achieves the efficient GMM variance: <span class="math display">\[\sqrt{n}\,(\hat\theta_{\mathrm{GEL}} - \theta_0) \;\xrightarrow{d}\; N\!\left(0,\; (A^\top\Sigma^{-1}A)^{-1}\right).\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: GEL Overidentification Test (Wilks’ Theorem) <span class="citation" data-cites="neweysmith2004">(<a href="#ref-neweysmith2004" role="doc-biblioref">Newey and Smith 2004</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the same conditions, the GEL profile divergence satisfies: <span id="eq-gel-wilks"><span class="math display">\[T_{\mathrm{GEL}} \equiv 2\sum_{i=1}^n F(\hat\omega_i) = -2\sum_{i=1}^n G(\hat\lambda^\top U_i(\hat\theta_{\mathrm{GEL}})) \;\xrightarrow{d}\; \chi^2_{m-k}. \tag{13.17}\]</span></span></p>
+</div>
+</div>
+<p>For EL specifically, <span class="math inline">\(T_{\mathrm{EL}} = -2\sum_i \log(n\hat\pi_i)\)</span>, the empirical likelihood ratio statistic. To higher order, GEL estimators have smaller bias than two-step GMM: GEL eliminates the bias from estimating the Jacobian; EL additionally eliminates bias from estimating the weighting matrix <span class="math inline">\(\Sigma\)</span>.</p>
+</section>
+</section>
+<section id="sec-cf" class="level2" data-number="13.9">
+<h2 data-number="13.9" class="anchored" data-anchor-id="sec-cf"><span class="header-section-number">13.9</span> The Control Function Approach</h2>
+<p>The control-function approach offers an alternative route to handling endogeneity: instead of projecting treatment onto instruments, it augments the outcome model with a control variable that absorbs the endogenous component of treatment selection.</p>
+<p>2SLS achieves identification by replacing the endogenous regressor <span class="math inline">\(T\)</span> with its exogenous projection <span class="math inline">\(\hat{T}\)</span>. The <em>control function</em> approach adds the first-stage residual to the outcome regression as an explicit control for the endogenous variation, rather than removing it from the treatment variable.</p>
+<section id="linear-model-and-equivalence-to-2sls" class="level3" data-number="13.9.1">
+<h3 data-number="13.9.1" class="anchored" data-anchor-id="linear-model-and-equivalence-to-2sls"><span class="header-section-number">13.9.1</span> Linear Model and Equivalence to 2SLS</h3>
+<p>The linear control-function representation requires the <strong>linear control-function assumption</strong>: <span id="eq-cf-linearity"><span class="math display">\[\E[\varepsilon \mid \eta, Z, X] = \rho\,\eta, \qquad \rho = \frac{\mathrm{Cov}(\varepsilon, \eta)}{\mathrm{Var}(\eta)}. \tag{13.18}\]</span></span></p>
+<p>This holds under joint normality of <span class="math inline">\((\varepsilon, \eta)\)</span> given <span class="math inline">\((Z, X)\)</span>. Defining <span class="math inline">\(\xi = \varepsilon - \rho\eta\)</span>, assumption <a href="#eq-cf-linearity" class="quarto-xref">Equation&nbsp;<span>13.18</span></a> is equivalent to <span class="math inline">\(\E[\xi \mid \eta, Z, X] = 0\)</span>. Substituting into the outcome equation: <span class="math inline">\(Y = \alpha + \beta T + \gamma^\top X + \rho\eta + \xi\)</span>. Including <span class="math inline">\(\eta\)</span> as an additional regressor renders <span class="math inline">\(T\)</span> exogenous in the augmented regression.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Control Function Estimator (Linear Case)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>First stage.</strong> Regress <span class="math inline">\(T\)</span> on <span class="math inline">\(Z\)</span> and <span class="math inline">\(X\)</span> by OLS; obtain residuals <span class="math inline">\(\hat\eta_i = T_i - \hat\pi^\top Z_i - \hat\delta^\top X_i\)</span>.</li>
+<li><strong>Second stage.</strong> Regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span>, <span class="math inline">\(X\)</span>, and <span class="math inline">\(\hat\eta\)</span> by OLS; the coefficient on <span class="math inline">\(T\)</span> is the control function estimator <span class="math inline">\(\hat\beta_{\mathrm{CF}}\)</span>.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Equivalence of 2SLS and the Control Function Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the linear IV model, <span class="math inline">\(\hat\beta_{\mathrm{CF}}\)</span> from the augmented OLS regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, X, \hat\eta)\)</span> is numerically identical to <span class="math inline">\(\hat\beta_{\mathrm{2SLS}}\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-30" class="callout-30-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The Frisch–Waugh–Lovell theorem states that the coefficient on <span class="math inline">\(T\)</span> in the OLS regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, X, \hat\eta)\)</span> equals the coefficient on <span class="math inline">\(\tilde{T}\)</span> in the regression of <span class="math inline">\(\tilde{Y}\)</span> on <span class="math inline">\(\tilde{T}\)</span>, where tildes denote residuals after projecting out <span class="math inline">\((X, \hat\eta)\)</span>. Since <span class="math inline">\(\hat\eta = T - \hat{T}\)</span>, projecting out <span class="math inline">\(\hat\eta\)</span> and <span class="math inline">\(X\)</span> from <span class="math inline">\(T\)</span> is equivalent to projecting out <span class="math inline">\(X\)</span> and <span class="math inline">\(T - \hat{T}\)</span> from <span class="math inline">\(T\)</span>, which leaves <span class="math inline">\(\hat{T}\)</span> after partialling out <span class="math inline">\(X\)</span>. Thus <span class="math inline">\(\tilde{T}\)</span> is the residual from projecting <span class="math inline">\(\hat{T}\)</span> on <span class="math inline">\(X\)</span> — the same residual used in the 2SLS second stage. <span class="math inline">\(\square\)</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Standard Errors in the Second Stage
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The coefficient on <span class="math inline">\(T\)</span> is identical to 2SLS, but the OLS standard errors are not. They ignore the sampling variation in <span class="math inline">\(\hat\eta_i\)</span> and are therefore incorrect. Correct inference requires the 2SLS sandwich formula, or a bootstrap that resamples both stages jointly.</p>
+</div>
+</div>
+</section>
+<section id="testing-endogeneity-via-residual-inclusion" class="level3" data-number="13.9.2">
+<h3 data-number="13.9.2" class="anchored" data-anchor-id="testing-endogeneity-via-residual-inclusion"><span class="header-section-number">13.9.2</span> Testing Endogeneity via Residual Inclusion</h3>
+<p>The control function representation yields a natural test of <span class="math inline">\(H_0: \rho = 0\)</span> (exogeneity of <span class="math inline">\(T\)</span>). The <span class="math inline">\(t\)</span>-statistic on <span class="math inline">\(\hat\eta\)</span> in the augmented regression tests endogeneity. A rejection suggests endogeneity under the maintained instrument assumptions; it is not a stand-alone validation of the instrument, since the test takes instrument validity as given. This is the regression-based form of the <span class="citation" data-cites="hausman1978specification">Hausman (<a href="#ref-hausman1978specification" role="doc-biblioref">1978</a>)</span> endogeneity test.</p>
+</section>
+<section id="brief-note-on-nonlinear-extensions" class="level3" data-number="13.9.3">
+<h3 data-number="13.9.3" class="anchored" data-anchor-id="brief-note-on-nonlinear-extensions"><span class="header-section-number">13.9.3</span> Brief Note on Nonlinear Extensions</h3>
+<p><strong>2SLS does not carry over.</strong> In a probit or Poisson outcome model, 2SLS is generally inconsistent: plugging in <span class="math inline">\(\hat T\)</span> breaks the nonlinear link function.</p>
+<p><strong>Related control-variable methods exist.</strong> <span class="citation" data-cites="imbens2009">Imbens and Newey (<a href="#ref-imbens2009" role="doc-biblioref">2009</a>)</span> showed that under <em>independence</em>, <span class="math inline">\((\varepsilon, \eta) \indep Z \mid X\)</span>, and <em>scalar monotonicity</em>, <span class="math inline">\(T = h(Z, X, \eta)\)</span> strictly monotonic in a scalar <span class="math inline">\(\eta\)</span>, the conditional CDF: <span id="eq-cf-control-var"><span class="math display">\[V = F_{T \mid Z, X}(T \mid Z, X) \tag{13.19}\]</span></span> is a valid control variable in the sense that <span class="math inline">\(T \indep \varepsilon \mid X, V\)</span>. Conditioning on <span class="math inline">\((X, V)\)</span> recovers structural variation in <span class="math inline">\(T\)</span>, allowing identification of the average structural function. Note that <span class="math inline">\(X\)</span> must be retained in the conditioning set; dropping it gives the stronger <span class="math inline">\(T \indep \varepsilon \mid V\)</span>, which fails whenever <span class="math inline">\(X\)</span> has any direct effect on <span class="math inline">\(\varepsilon\)</span>.</p>
+</section>
+</section>
+<section id="chapter-summary" class="level2" data-number="13.10">
+<h2 data-number="13.10" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">13.10</span> Chapter Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Symbol</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\hat\beta_{\mathrm{Wald}}\)</span></td>
+<td>Wald estimator: <span class="math inline">\((\bar{Y}_1 - \bar{Y}_0)/(\bar{T}_1 - \bar{T}_0)\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\phi_{\mathrm{RF}}\)</span></td>
+<td>Reduced form regression estimator of <span class="math inline">\(\phi = \beta\pi\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat\pi_{\mathrm{FS}}\)</span></td>
+<td>First-stage regression estimator of <span class="math inline">\(\pi\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(M_X\)</span></td>
+<td>Annihilator matrix (within-<span class="math inline">\(X\)</span> residuals)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat\beta_{\mathrm{IV}}\)</span></td>
+<td>IV regression estimator <a href="#eq-iv-reg" class="quarto-xref">Equation&nbsp;<span>13.6</span></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\beta_{\mathrm{2SLS}}\)</span></td>
+<td>2SLS estimator <a href="#eq-2sls-closed" class="quarto-xref">Equation&nbsp;<span>13.10</span></a></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(V_{\mathrm{GMM}}(\Omega)\)</span></td>
+<td>Sandwich variance <a href="#eq-gmm-var" class="quarto-xref">Equation&nbsp;<span>13.11</span></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(V_{\mathrm{eff}}\)</span></td>
+<td>Efficient GMM variance <a href="#eq-eff-var" class="quarto-xref">Equation&nbsp;<span>13.13</span></a></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat{V}_{\mathrm{GMM}}\)</span></td>
+<td>Consistent variance estimator <a href="#eq-sandwich-est" class="quarto-xref">Equation&nbsp;<span>13.14</span></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(J\)</span>-statistic</td>
+<td>Sargan–Hansen overidentification test</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat\theta_{\mathrm{GEL}}\)</span></td>
+<td>GEL estimator <a href="#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.15</span></a></td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li><strong>Wald, IV regression, and 2SLS are one estimator.</strong> The Wald estimator, IV regression estimator, and 2SLS are numerically identical in the single-instrument case: they are different representations of the same sample analog of the identification formula. 2SLS extends to multiple instruments; the Wald estimator is the further special case <span class="math inline">\(Z \in \{0,1\}\)</span>, <span class="math inline">\(X\)</span> absent.</li>
+<li><strong>Structural form vs.&nbsp;reduced form.</strong> The structural form contains endogenous regressors; the reduced form expresses each endogenous variable as a function of exogenous variables. The reduced form coefficient <span class="math inline">\(\phi = \beta\pi\)</span> is estimable by OLS; <span class="math inline">\(\beta\)</span> is recovered only via the ratio <span class="math inline">\(\hat\phi_{\mathrm{RF}}/\hat\pi_{\mathrm{FS}}\)</span>.</li>
+<li><strong>2SLS as moment-of-moments.</strong> 2SLS is the method-of-moments estimator for the IV orthogonality condition <span class="math inline">\(\E[W\varepsilon] = 0\)</span>, an instance of Chapter 10’s estimating-equation framework.</li>
+<li><strong>GMM and efficient weighting.</strong> Efficient GMM achieves the semiparametric efficiency bound; 2SLS is efficient under homoskedasticity but not generally under heteroskedasticity. All standard errors should be heteroskedasticity-robust; cluster-robust when observations within groups share common shocks.</li>
+<li><strong>Weak instruments.</strong> Weak instruments cause finite-sample bias toward OLS, non-Gaussian distributions, and size distortion. The first-stage <span class="math inline">\(F\)</span>-statistic is a relevance diagnostic, not a validity certificate. Anderson–Rubin confidence sets provide weak-instrument-robust inference.</li>
+<li><strong>GEL.</strong> GEL estimators achieve the efficient GMM variance in one step without a preliminary weighting step. To higher order, they have smaller bias than two-step GMM in overidentified models.</li>
+<li><strong>Control function.</strong> In the linear model, the control function approach is numerically equivalent to 2SLS; it provides a direct test of endogeneity via the <span class="math inline">\(t\)</span>-statistic on <span class="math inline">\(\hat\eta\)</span>. In nonlinear models, related control-variable methods exist under the stronger independence and scalar-monotonicity conditions of <span class="citation" data-cites="imbens2009">Imbens and Newey (<a href="#ref-imbens2009" role="doc-biblioref">2009</a>)</span>.</li>
+</ol>
+</section>
+<section id="problems" class="level2" data-number="13.11">
+<h2 data-number="13.11" class="anchored" data-anchor-id="problems"><span class="header-section-number">13.11</span> Problems</h2>
+<p><strong>1. The Wald estimator as a ratio-of-moments estimator.</strong></p>
+<ol type="a">
+<li>Augment <span class="math inline">\(\beta\)</span> with an intercept <span class="math inline">\(\alpha\)</span> and express the structural model as the solution to the two-dimensional moment condition <span class="math inline">\(\E[(1, Z)^\top(Y - \alpha - \beta T)] = 0\)</span>. Verify exact identification and solve to recover <span class="math inline">\(\beta = \Delta_Y/\Delta_T\)</span>.</li>
+<li>Using <span class="math inline">\(\bar{Y}_z \xrightarrow{p} \mu_Y(z)\)</span> and <span class="math inline">\(\bar{T}_z \xrightarrow{p} \mu_T(z)\)</span>, prove <span class="math inline">\(\hat\beta_{\mathrm{Wald}} \xrightarrow{p} \beta\)</span> via the continuous mapping theorem.</li>
+<li>Apply the delta method to <span class="math inline">\((\hat\Delta_Y, \hat\Delta_T)^\top\)</span> to show <span class="math inline">\(\sqrt{n}(\hat\beta_{\mathrm{Wald}} - \beta) \xrightarrow{d} N(0, V)\)</span> where <span class="math inline">\(V = \Delta_T^{-2}\sum_{z \in \{0,1\}}\mathrm{Var}(Y_i - \beta T_i \mid Z_i = z)/p_z\)</span>, and confirm this matches the IV variance formula <a href="#eq-iv-var" class="quarto-xref">Equation&nbsp;<span>13.12</span></a> in the scalar no-covariate case.</li>
+</ol>
+<p><strong>2. Matrix form of 2SLS and why second-stage standard errors are wrong.</strong></p>
+<p>Let <span class="math inline">\(\mathbf{D} \in \mathbb{R}^{n \times k}\)</span> be the full regressor matrix and <span class="math inline">\(\mathbf{W} \in \mathbb{R}^{n \times m}\)</span> the full instrument matrix. Let <span class="math inline">\(P_\mathbf{W} = \mathbf{W}(\mathbf{W}^\top\mathbf{W})^{-1}\mathbf{W}^\top\)</span>.</p>
+<ol type="a">
+<li>Show the 2SLS estimator can be written as <span class="math inline">\(\hat\theta_{\mathrm{2SLS}} = (\mathbf{D}^\top P_\mathbf{W}\mathbf{D})^{-1}\mathbf{D}^\top P_\mathbf{W}\mathbf{Y}\)</span>.</li>
+<li>In the single-instrument, no-covariate case, verify from the matrix formula that <span class="math inline">\(\hat\beta_{\mathrm{2SLS}} = \hat\beta_{\mathrm{IV}}\)</span>.</li>
+<li>The second-stage OLS uses <span class="math inline">\(\hat{\mathbf{D}}\)</span> in place of <span class="math inline">\(\mathbf{D}\)</span>. Let <span class="math inline">\(\hat{\boldsymbol\varepsilon}_{\mathrm{2nd}} = \mathbf{Y} - \hat{\mathbf{D}}\hat\theta_{\mathrm{2SLS}}\)</span>. Show <span class="math inline">\(\hat{\boldsymbol\varepsilon}_{\mathrm{2nd}} \neq \mathbf{Y} - \mathbf{D}\hat\theta_{\mathrm{2SLS}}\)</span> in general. Explain why this discrepancy makes the second-stage OLS standard errors invalid, and identify the correct residuals for the sandwich variance <a href="#eq-sandwich-est" class="quarto-xref">Equation&nbsp;<span>13.14</span></a>.</li>
+</ol>
+<p><strong>3. Efficiency of GMM and the Sargan–Hansen <span class="math inline">\(J\)</span>-statistic.</strong></p>
+<ol type="a">
+<li>Prove <span class="math inline">\(V_{\mathrm{GMM}}(\Omega) \succeq V_{\mathrm{eff}}\)</span> for every positive-definite <span class="math inline">\(\Omega\)</span>, where <span class="math inline">\(V_{\mathrm{eff}} = (A^\top\Sigma^{-1}A)^{-1}\)</span>. (<em>Hint:</em> factor <span class="math inline">\(V_{\mathrm{GMM}}(\Omega) - V_{\mathrm{eff}}\)</span> as <span class="math inline">\(C^\top\Sigma^{-1}C\)</span> for a suitable matrix <span class="math inline">\(C\)</span>.)</li>
+<li>Under homoskedasticity, show that 2SLS is the efficient GMM estimator by verifying <span class="math inline">\(\Omega_{\mathrm{2SLS}}\)</span> is a scalar multiple of <span class="math inline">\(\Sigma^{-1}\)</span>.</li>
+<li>Return to the two-instrument example. At <span class="math inline">\(\hat\beta \approx 0.764\)</span> with <span class="math inline">\(\hat\Sigma = I_2\)</span> and <span class="math inline">\(n = 200\)</span>, compute <span class="math inline">\(J = n\,\hat{U}(\hat\beta)^\top\hat\Sigma^{-1}\hat{U}(\hat\beta)\)</span> and determine using the <span class="math inline">\(\chi^2_1\)</span> critical value at the 5% level whether the overidentifying restriction is rejected.</li>
+</ol>
+<p><strong>4. GEL first-order conditions and the minimum-discrepancy dual.</strong></p>
+<ol type="a">
+<li>For EL, <span class="math inline">\(G(v) = -\log(1 - v)\)</span>. Write the first-order condition for the inner supremum and show it implies <span class="math inline">\(\sum_i \hat\pi_i U_i(\theta) = 0\)</span> where <span class="math inline">\(\hat\pi_i \propto (1 - \hat\lambda^\top U_i(\theta))^{-1}\)</span>.</li>
+<li>For CUE, <span class="math inline">\(G(v) = v + v^2/2\)</span>. Solve the inner supremum explicitly at fixed <span class="math inline">\(\theta\)</span> to show <span class="math inline">\(\hat\lambda = -[n^{-1}\sum_i U_i(\theta)U_i(\theta)^\top]^{-1}\bar{U}(\theta)\)</span>, and confirm the profile objective equals <span class="math inline">\(\frac{1}{2}\bar{U}^\top[n^{-1}\sum_i U_iU_i^\top]^{-1}\bar{U}\)</span>.</li>
+<li>In the exactly identified case (<span class="math inline">\(m = k\)</span>), show that <span class="math inline">\(\hat\lambda = 0\)</span> at any GEL solution <span class="math inline">\(\hat\theta\)</span>. Conclude that every GEL estimator coincides with the just-identified GMM estimator and the empirical probabilities all equal <span class="math inline">\(1/n\)</span>.</li>
+</ol>
+<p><strong>5. Control function, endogeneity testing, and the limits of instrument diagnostics.</strong></p>
+<p>Let <span class="math inline">\(\varepsilon = \rho\eta + \xi\)</span> with <span class="math inline">\(\rho = \mathrm{Cov}(\varepsilon,\eta)/\mathrm{Var}(\eta)\)</span>.</p>
+<ol type="a">
+<li>Show <span class="math inline">\(\E[\xi] = 0\)</span> and <span class="math inline">\(\mathrm{Cov}(\xi, \eta) = 0\)</span> by construction. Then assume <span class="math inline">\(\E[\varepsilon \mid \eta, Z] = \rho\eta\)</span> and verify <span class="math inline">\(\E[\xi \mid \eta, Z] = 0\)</span>. Explain why this renders <span class="math inline">\(T\)</span> exogenous in the augmented regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((T, \eta)\)</span>.</li>
+<li>Show that the coefficient on <span class="math inline">\(\hat\eta\)</span> in the augmented regression is a consistent estimator of <span class="math inline">\(\rho\)</span>, and connect the <span class="math inline">\(t\)</span>-test on <span class="math inline">\(\hat\eta\)</span> to the <span class="citation" data-cites="hausman1978specification">Hausman (<a href="#ref-hausman1978specification" role="doc-biblioref">1978</a>)</span> endogeneity test.</li>
+<li>Suppose an instrument <span class="math inline">\(Z\)</span> affects wages both through education and through a direct network effect, but the model is exactly identified. Explain why neither the first-stage <span class="math inline">\(F\)</span>-test nor the control function endogeneity test can detect this exclusion-restriction violation, and what additional information would be needed.</li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-bound1995problems" class="csl-entry" role="listitem">
+Bound, John, David A. Jaeger, and Regina M. Baker. 1995. <span>“Problems with Instrumental Variables Estimation When the Correlation Between the Instruments and the Endogenous Explanatory Variable Is Weak.”</span> <em>Journal of the American Statistical Association</em> 90 (430): 443–50.
+</div>
+<div id="ref-hausman1978specification" class="csl-entry" role="listitem">
+Hausman, Jerry A. 1978. <span>“Specification Tests in Econometrics.”</span> <em>Econometrica</em> 46 (6): 1251–71.
+</div>
+<div id="ref-imbens2009" class="csl-entry" role="listitem">
+Imbens, Guido W., and Whitney K. Newey. 2009. <span>“Identification and Estimation of Triangular Simultaneous Equations Models Without Additivity.”</span> <em>Econometrica</em> 77 (5): 1481–512.
+</div>
+<div id="ref-neweysmith2004" class="csl-entry" role="listitem">
+Newey, Whitney K., and Richard J. Smith. 2004. <span>“Higher Order Properties of <span>GMM</span> and Generalized Empirical Likelihood Estimators.”</span> <em>Econometrica</em> 72 (1): 219–55.
+</div>
+<div id="ref-ragusa2011" class="csl-entry" role="listitem">
+Ragusa, Giuseppe. 2011. <span>“Minimum Divergence, Generalized Empirical Likelihoods, and Higher Order Expansions.”</span> <em>Econometric Reviews</em> 30 (4): 406–56.
+</div>
+<div id="ref-sargan1958estimation" class="csl-entry" role="listitem">
+Sargan, John D. 1958. <span>“The Estimation of Economic Relationships Using Instrumental Variables.”</span> <em>Econometrica</em> 26 (3): 393–415. <a href="https://doi.org/10.2307/1907619">https://doi.org/10.2307/1907619</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_12.html" class="pagination-link" aria-label="Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./appendix_A.html" class="pagination-link" aria-label="Graphical Intuition for Conditional Independence and d-Separation">
+        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
