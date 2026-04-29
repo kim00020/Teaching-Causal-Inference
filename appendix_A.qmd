@@ -1,17 +1,16 @@
 ---
 engine: knitr
-suppress-bibliography: true
 ---
 
-# Graphical Intuition for Conditional Independence and d-Separation {#sec-appendix-a}
+# Graphical Intuition for Conditional Independence and $d$-Separation {#sec-appendix-a}
 
-This appendix provides a gentle introduction to the probabilistic and graphical ideas that underlie Chapters 2 and 3. Our goal is not to give a complete treatment of graphical models, but rather to develop enough intuition so that the formal machinery of d-separation, back-door adjustment, and intervention graphs does not appear abruptly.
+This appendix provides a gentle introduction to the probabilistic and graphical ideas that underlie Chapters 2 and 3. Our goal is not to give a complete treatment of graphical models, but rather to develop enough intuition so that the formal machinery of $d$-separation, back-door adjustment, and intervention graphs does not appear abruptly.
 
-A directed acyclic graph (DAG) is more than a picture. It is a compact language for expressing assumptions about how variables are related. Once those assumptions are represented graphically, the graph tells us which variables may be associated, which paths transmit dependence, and which variables should or should not be conditioned on.
+A directed acyclic graph (DAG) is more than a picture. It is a compact language for expressing assumptions about how variables are related. Once those assumptions are represented graphically, the graph tells us which variables may be associated, which paths transmit dependence, and which variables should or should not be conditioned on. These ideas become central in Chapter 2, where we study $d$-separation, and in Chapter 3, where we use graph surgery to derive identification results.
 
-The key pedagogical idea of this appendix is simple: before learning the full d-separation criterion, it is helpful to understand three elementary three-node patterns. Those local patterns explain most of what happens later in larger graphs.
+The key pedagogical idea of this appendix is simple: before learning the full $d$-separation criterion, it is helpful to understand three elementary three-node patterns. Those local patterns explain most of what happens later in larger graphs.
 
-## Conditional Independence: The Probabilistic Language Behind Graphs
+## Conditional Independence: The Probabilistic Language Behind Graphs {#sec-appA-ci}
 
 Before introducing graphs, we first recall the probabilistic notion that graphs are designed to encode.
 
@@ -19,18 +18,19 @@ Before introducing graphs, we first recall the probabilistic notion that graphs 
 ## Definition: Conditional Independence
 
 Let $X$, $Y$, and $Z$ be random variables. We say that $X$ and $Y$ are *conditionally independent given $Z$*, written $X \indep Y \mid Z$, if
-$$p(x, y \mid z) = p(x \mid z)\,p(y \mid z)$$
-for all $z$ with positive probability.
+$$p(x, y \mid z) = p(x \mid z)\,p(y \mid z) \qquad \text{for } P_Z\text{-almost every } z.$$
 :::
 
-Equivalently, once $Z$ is known, learning $X$ gives no additional information about $Y$. In terms of densities, conditional independence admits the following equivalent characterizations:
+Equivalently, once $Z$ is known, learning $X$ gives no additional information about $Y$, and learning $Y$ gives no additional information about $X$.
+
+In terms of densities (with respect to a dominating measure on $(X, Y, Z)$), conditional independence admits the following equivalent characterizations, each interpreted almost everywhere:
 $$X \indep Y \mid Z \;\iff\; f(x,y,z)\,f(z) = f(x,z)\,f(y,z) \;\iff\; \exists\, a, b \colon f(x,y,z) = a(x,z)\,b(y,z).$$
 The last form is especially useful: it says that the joint density factors into one piece depending on $(x,z)$ and another depending on $(y,z)$, with no cross-term in $x$ and $y$.
 
 ::: {.callout-tip icon=false}
-## Proposition: Fundamental Properties of Conditional Independence
+## Proposition: Fundamental Properties of Conditional Independence [@dawid1979conditional; @dawid1980conditional]
 
-[@dawid1979conditional; @dawid1980conditional] For random variables $X$, $Y$, $Z$, and $W$, the following hold:
+For random variables $X$, $Y$, $Z$, and $W$, the following hold:
 
 - **(C1) Symmetry.** $X \indep Y \mid Z \;\Rightarrow\; Y \indep X \mid Z$.
 - **(C2) Decomposition.** $X \indep (Y,W) \mid Z \;\Rightarrow\; X \indep Y \mid Z$.
@@ -44,7 +44,7 @@ Properties (C1)--(C4) hold for any probability distribution and are known as the
 Conditional independence is not the same as marginal independence. Two variables may be dependent marginally but independent after conditioning on a third variable. Conversely, two variables may be independent marginally but become dependent after conditioning. Both phenomena occur repeatedly in causal inference.
 
 ::: {.callout-note icon=false}
-## Example: Ice Cream, Drowning, and Season
+## Example: Ice cream, drowning, and season
 
 Let $X = \text{ice cream sales}$, $Y = \text{drowning incidents}$, and $Z = \text{season}$. Marginally, $X$ and $Y$ are positively associated because both tend to be higher in summer. This does not mean that ice cream sales cause drowning. A more plausible explanation is that season is a common cause of both variables. Once season is fixed, the association largely disappears: $X \indep Y \mid Z$.
 :::
@@ -57,93 +57,140 @@ This example illustrates a recurring theme in causal inference: an observed asso
 At this stage, the main question for the reader is: *Does conditioning on a variable remove association, preserve it, or create it?* Graphs provide a systematic answer to exactly this question.
 :::
 
-## Three Basic Motifs: Chain, Fork, and Collider {#sec-motifs}
+## Three Basic Motifs: Chain, Fork, and Collider {#sec-appA-motifs}
 
-Every path in a DAG is built from local three-node configurations. There are three fundamental types: a *chain*, a *fork*, and a *collider*. Their behavior under conditioning is the foundation of d-separation.
+Every path in a DAG is built from local three-node configurations. There are three fundamental types: a *chain*, a *fork*, and a *collider*. Their behavior under conditioning is the foundation of $d$-separation.
 
+::: {.content-visible when-format="html"}
+```{=html}
+<figure style="text-align:center;margin:1.5em auto;">
+<svg viewBox="0 0 540 90" width="100%" style="max-width:540px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="arrA" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"/>
+    </marker>
+  </defs>
+  <!-- Chain -->
+  <circle cx="30" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="30" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₁</text>
+  <circle cx="90" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="90" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₂</text>
+  <circle cx="150" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="150" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₃</text>
+  <line x1="48" y1="30" x2="70" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"/>
+  <line x1="108" y1="30" x2="130" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"/>
+  <text x="90" y="72" text-anchor="middle" fill="#555" font-style="italic">Chain</text>
+  <!-- Fork -->
+  <circle cx="220" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="220" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₁</text>
+  <circle cx="280" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="280" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₂</text>
+  <circle cx="340" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="340" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₃</text>
+  <line x1="262" y1="30" x2="240" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"/>
+  <line x1="298" y1="30" x2="320" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"/>
+  <text x="280" y="72" text-anchor="middle" fill="#555" font-style="italic">Fork</text>
+  <!-- Collider -->
+  <circle cx="400" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="400" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₁</text>
+  <circle cx="460" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="460" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₂</text>
+  <circle cx="520" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
+  <text x="520" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₃</text>
+  <line x1="418" y1="30" x2="440" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"/>
+  <line x1="502" y1="30" x2="480" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"/>
+  <text x="460" y="72" text-anchor="middle" fill="#555" font-style="italic">Collider</text>
+</svg>
+<figcaption>The three fundamental three-node motifs. Chains and forks are blocked by conditioning on the middle node. Colliders are blocked by default but opened by conditioning on the middle node or one of its descendants.</figcaption>
+</figure>
+```
+:::
+
+::: {.content-visible when-format="pdf"}
 ```{tikz}
 #| label: fig-three-motifs
-#| fig-cap: "The three fundamental three-node motifs. Chains and forks are blocked by conditioning on the middle node. Colliders are blocked by default but opened by conditioning on the middle node or one of its descendants."
-#| echo: false
-#| fig-width: 6
+#| fig-cap: "The three fundamental three-node motifs."
+#| fig-width: 5.5
 \usetikzlibrary{arrows.meta, positioning}
-\definecolor{isublue}{RGB}{30,56,100}
+\definecolor{isublue}{RGB}{46,117,182}
 \definecolor{defbg}{RGB}{238,244,251}
-\tikzset{
-  node/.style={circle, draw=isublue, fill=defbg, thick, minimum size=8mm, font=\small},
-  edge/.style={-{Stealth[length=5pt]}, thick, color=isublue}
-}
+\tikzset{node/.style={circle,draw=isublue,fill=defbg,thick,minimum size=9mm,font=\small}}
+\tikzset{edge/.style={-{Stealth[length=4pt]},thick,color=isublue}}
 \begin{tikzpicture}
-  \node[node] (x1) at (0.0, 0) {$X_1$};
-  \node[node] (x2) at (1.8, 0) {$X_2$};
-  \node[node] (x3) at (3.6, 0) {$X_3$};
-  \draw[edge] (x1) -- (x2);
-  \draw[edge] (x2) -- (x3);
-  \node[font=\small, below=0.55cm of x2] {Chain};
-  \node[node] (y1) at (5.5, 0) {$X_1$};
-  \node[node] (y2) at (7.3, 0) {$X_2$};
-  \node[node] (y3) at (9.1, 0) {$X_3$};
-  \draw[edge] (y2) -- (y1);
-  \draw[edge] (y2) -- (y3);
-  \node[font=\small, below=0.55cm of y2] {Fork};
-  \node[node] (z1) at (11.0, 0) {$X_1$};
-  \node[node] (z2) at (12.8, 0) {$X_2$};
-  \node[node] (z3) at (14.6, 0) {$X_3$};
-  \draw[edge] (z1) -- (z2);
-  \draw[edge] (z3) -- (z2);
-  \node[font=\small, below=0.55cm of z2] {Collider};
+  \node[node] (x1) at (0.0,0){$X_1$};
+  \node[node] (x2) at (1.8,0){$X_2$};
+  \node[node] (x3) at (3.6,0){$X_3$};
+  \draw[edge](x1)--(x2); \draw[edge](x2)--(x3);
+  \node[font=\small,below=4mm of x2]{Chain};
+  \node[node] (y1) at (5.5,0){$X_1$};
+  \node[node] (y2) at (7.3,0){$X_2$};
+  \node[node] (y3) at (9.1,0){$X_3$};
+  \draw[edge](y2)--(y1); \draw[edge](y2)--(y3);
+  \node[font=\small,below=4mm of y2]{Fork};
+  \node[node] (z1) at (11.0,0){$X_1$};
+  \node[node] (z2) at (12.8,0){$X_2$};
+  \node[node] (z3) at (14.6,0){$X_3$};
+  \draw[edge](z1)--(z2); \draw[edge](z3)--(z2);
+  \node[font=\small,below=4mm of z2]{Collider};
 \end{tikzpicture}
 ```
+:::
 
-### Chain
+### Chain {#sec-appA-chain}
 
 Consider the pattern $X_1 \to X_2 \to X_3$, where the middle node $X_2$ lies on a directed pathway from $X_1$ to $X_3$.
 
 ::: {.callout-note icon=false}
-## Example: Exercise, Body Weight, and Blood Pressure
+## Example: Exercise, body weight, and blood pressure
 
-Let $X_1 = \text{exercise}$, $X_2 = \text{body weight}$, and $X_3 = \text{blood pressure}$. Exercise may affect blood pressure partly through its effect on body weight, so the path $X_1 \to X_2 \to X_3$ transmits association from $X_1$ to $X_3$. Marginally, exercise and blood pressure are associated; but if we condition on body weight, that particular pathway is blocked: $X_1 \indep X_3 \mid X_2$.
+Let $X_1 = \text{exercise}$, $X_2 = \text{body weight}$, and $X_3 = \text{blood pressure}$. Exercise may affect blood pressure partly through its effect on body weight. Marginally, exercise and blood pressure are associated; conditioning on body weight blocks this particular pathway. In the isolated three-node DAG, $X_1 \indep X_3 \mid X_2$.
 :::
 
 Once the middle variable is fixed, the chain no longer transmits additional information from $X_1$ to $X_3$.
 
-### Fork
+### Fork {#sec-appA-fork}
 
 Consider the pattern $X_1 \leftarrow X_2 \to X_3$, where the middle node $X_2$ is a common cause of $X_1$ and $X_3$.
 
 ::: {.callout-note icon=false}
-## Example: Ice Cream, Season, and Drowning
+## Example: Ice cream, season, and drowning
 
 With $X_1 = \text{ice cream sales}$, $X_2 = \text{season}$, and $X_3 = \text{drowning incidents}$, season affects both variables, so $X_1$ and $X_3$ are associated even though neither causes the other. Conditioning on season blocks this path: $X_1 \indep X_3 \mid X_2$.
 :::
 
 A fork is the simplest graphical form of confounding: the middle node creates association, and conditioning on it blocks the path.
 
-### Collider
+### Collider {#sec-appA-collider}
 
 Consider the pattern $X_1 \to X_2 \leftarrow X_3$, where the middle node $X_2$ is a common effect of $X_1$ and $X_3$.
 
 ::: {.callout-note icon=false}
-## Example: Talent, Legacy Status, and College Admission
+## Example: Talent, legacy status, and college admission
 
-Let $X_1 = \text{academic talent}$, $X_3 = \text{legacy status}$, and $X_2 = \text{admission to an elite university}$. Talent and legacy status may be unrelated in the general applicant pool. But among admitted students they can become statistically associated: low legacy status makes unusually high talent more likely among admitted applicants, and vice versa. Symbolically, $X_1 \indep X_3$ but $X_1 \nindep X_3 \mid X_2$.
+Let $X_1 = \text{academic talent}$, $X_3 = \text{legacy status}$, and $X_2 = \text{admission to an elite university}$. Talent and legacy status may be unrelated in the general applicant pool. But among admitted students they can become statistically associated: low legacy status makes unusually high talent more likely among admitted applicants, and vice versa. Symbolically, $X_1 \indep X_3$, but conditioning on $X_2$ opens the path, so $X_1$ and $X_3$ are typically dependent given $X_2$.
 :::
 
 Unlike chains and forks, a collider *blocks* the path by default. Conditioning on the collider opens the path and may induce association that was not present marginally.
 
-### Summary of the Three Motifs
+### Summary of the Three Motifs {#sec-appA-motif-summary}
 
 A chain ($X_1 \to X_2 \to X_3$) and a fork ($X_1 \leftarrow X_2 \to X_3$) are each open by default and blocked by conditioning on the middle node $X_2$. A collider ($X_1 \to X_2 \leftarrow X_3$) is blocked by default and opened by conditioning on the middle node or any of its descendants.
+
+::: {.callout-note icon=false}
+## Remark: Path-Blocking versus Conditional Independence
+
+The independence statements in the chain, fork, and collider examples above are read in the isolated three-node DAGs as drawn. In a larger DAG, conditioning on the middle node $X_2$ of a chain or fork blocks *that particular path*, but $X_1$ and $X_3$ are conditionally independent only if every other path between them is also blocked.
+:::
 
 ::: {.callout-warning icon=false}
 ## Conditioning Is Not Always Beneficial
 
-Many adjustment mistakes arise from forgetting this asymmetry. Conditioning on a collider can create bias rather than remove it. The informal rule "control for more variables" is unsafe in causal inference; d-separation teaches a more precise lesson: condition on the *right* variables, not simply on many variables.
+Many adjustment mistakes arise from forgetting this asymmetry. Conditioning on a collider can create bias rather than remove it. The informal rule "control for more variables" is unsafe in causal inference; $d$-separation teaches a more precise lesson: condition on the *right* variables, not simply on many variables.
 :::
 
-Chapter 2 develops these three motifs into the full d-separation criterion; see in particular Section 2.3 for the blocking rules and Section 2.4 for an extended treatment of collider bias.
+Chapter 2 develops these three motifs into the full $d$-separation criterion; see in particular the blocking rules and the extended treatment of collider bias.
 
-## d-Separation: When Does Conditioning Block a Path?
+## $d$-Separation: When Does Conditioning Block a Path? {#sec-appA-dsep}
 
 The three-node motifs explain what happens locally on a path. The next step is to extend this logic to a general DAG, where two variables may be connected by many paths.
 
@@ -154,173 +201,91 @@ A *path* between two nodes is a sequence of distinct nodes such that each consec
 :::
 
 ::: {.callout-note icon=false}
-## Definition: Blocked Path and d-Separation
+## Definition: Blocked Path
 
-A path is *blocked* by a conditioning set $S$ if at least one of the following holds:
-
-1. The path contains a chain or fork node that belongs to $S$, or
-2. The path contains a collider such that neither the collider nor any of its descendants belongs to $S$.
-
-A path is *open* given $S$ if it is not blocked. Two nodes $X$ and $Y$ are *d-separated* by a set $S$ if every path between $X$ and $Y$ is blocked by $S$.
+A path is *blocked* by a conditioning set $S$ if at least one of the following holds: (1) the path contains a chain or fork node that belongs to $S$, or (2) the path contains a collider such that neither the collider nor any of its descendants belongs to $S$. A path is *open* given $S$ if it is not blocked.
 :::
 
-### A Confounding Example
+::: {.callout-note icon=false}
+## Definition: $d$-Separation
+
+Two nodes $X$ and $Y$ are *$d$-separated* by a set $S$ if every path between $X$ and $Y$ is blocked by $S$. More generally, two disjoint sets of nodes $\mathbf{X}$ and $\mathbf{Y}$, each disjoint from $S$, are $d$-separated by $S$ if every $X \in \mathbf{X}$ is $d$-separated from every $Y \in \mathbf{Y}$ by $S$.
+:::
+
+::: {.callout-note icon=false}
+## Remark: $d$-Separation versus Conditional Independence
+
+$d$-Separation is a graphical condition; conditional independence is a probabilistic one. The Markov property guarantees only one direction: $d$-separation in $\mathcal{G}$ implies the corresponding conditional independence in every distribution that factorizes according to $\mathcal{G}$. The reverse implication --- that $d$-connection forces conditional dependence --- requires a faithfulness or no-cancellation assumption. We therefore read an open path as "the graph does not force independence," not as "dependence is guaranteed." This distinction is taken up in detail in Chapter 2.
+:::
+
+### A Confounding Example {#sec-appA-confounding}
 
 Consider the DAG with edges $X \to T$, $T \to Y$, and $X \to Y$. Here $T$ is the treatment, $Y$ is the outcome, and $X$ is a pre-treatment covariate that affects both. There are two paths from $T$ to $Y$: the directed causal path $T \to Y$, and the back-door path $T \leftarrow X \to Y$.
 
-Without conditioning, the back-door path is open, so the observed association between $T$ and $Y$ mixes the causal effect with confounding. Conditioning on $X$ blocks the fork $T \leftarrow X \to Y$, thereby isolating the causal path.
+Without conditioning, the back-door path is open, so the observed association between $T$ and $Y$ mixes the causal effect with confounding. Conditioning on $X$ blocks the fork $T \leftarrow X \to Y$, thereby isolating the causal path. This confounding graph anticipates the back-door criterion of Chapter 3: the graphical condition that makes adjustment valid is precisely that all back-door paths are blocked.
 
-```{tikz}
-#| label: fig-confounding
-#| fig-cap: "A simple confounding graph. The path $T \\leftarrow X \\to Y$ is a back-door path from treatment to outcome. Conditioning on $X$ blocks this noncausal path."
-#| echo: false
-#| fig-width: 3.5
-\usetikzlibrary{arrows.meta, positioning}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{defbg}{RGB}{238,244,251}
-\definecolor{darkgrey}{RGB}{80,80,80}
-\tikzset{
-  node/.style={circle, draw=isublue, fill=defbg, thick, minimum size=8mm, font=\small},
-  edge/.style={-{Stealth[length=5pt]}, thick, color=isublue}
-}
-\begin{tikzpicture}[node distance=2cm and 1.8cm]
-  \node[node] (X) at (0,0)   {$X$};
-  \node[node] (T) at (2.5,0) {$T$};
-  \node[node] (Y) at (5,0)   {$Y$};
-  \draw[edge] (X) -- (T);
-  \draw[edge] (T) -- (Y);
-  \draw[edge] (X) to[bend left=35] (Y);
-  \node[font=\small\color{darkgrey}, above=0.25cm of X] {Confounder};
-  \node[font=\small\color{darkgrey}, above=0.25cm of T] {Treatment};
-  \node[font=\small\color{darkgrey}, above=0.25cm of Y] {Outcome};
-\end{tikzpicture}
-```
-
-This confounding graph anticipates the back-door criterion of Chapter 3: the graphical condition that makes adjustment valid is precisely that all back-door paths are blocked.
-
-### A Collider Warning
+### A Collider Warning {#sec-appA-collider-warning}
 
 Now consider the DAG with edges $T \to C$, $U \to C$, and $U \to Y$. Here $C$ is a collider on the path $T \to C \leftarrow U \to Y$. Without conditioning on $C$, the path is blocked at the collider. Conditioning on $C$ opens the path, creating a spurious association between $T$ and $Y$ through $U$.
 
-Even more subtly, conditioning on a *descendant* of $C$ can also open the path. If additionally $C \to D$, then conditioning on $D$ may also induce association between $T$ and $Y$ through the collider at $C$.
+Even more subtly, conditioning on a *descendant* of $C$ can also open the path: if additionally $C \to D$, then conditioning on $D$ may also induce association between $T$ and $Y$ through the collider at $C$.
 
-```{tikz}
-#| label: fig-collider-descendant
-#| fig-cap: "Collider bias with a descendant. The path $T \\to C \\leftarrow U \\to Y$ is blocked by default at the collider $C$. Conditioning on $C$, or on its descendant $D$, can open the path and induce a spurious association between $T$ and $Y$."
-#| echo: false
-#| fig-width: 3.5
-\usetikzlibrary{arrows.meta, positioning}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{defbg}{RGB}{238,244,251}
-\definecolor{darkgrey}{RGB}{80,80,80}
-\tikzset{
-  node/.style={circle, draw=isublue, fill=defbg, thick, minimum size=8mm, font=\small},
-  edge/.style={-{Stealth[length=5pt]}, thick, color=isublue}
-}
-\begin{tikzpicture}[node distance=1.8cm and 1.8cm]
-  \node[node] (T) at (0,0)    {$T$};
-  \node[node] (C) at (2.5,0)  {$C$};
-  \node[node] (U) at (5,0)    {$U$};
-  \node[node] (D) at (2.5,-2) {$D$};
-  \node[node] (Y) at (5,-2)   {$Y$};
-  \draw[edge] (T) -- (C);
-  \draw[edge] (U) -- (C);
-  \draw[edge] (C) -- (D);
-  \draw[edge] (U) -- (Y);
-  \node[font=\small\color{darkgrey}, above=0.25cm of C] {Collider};
-  \node[font=\small\color{darkgrey}, below=0.25cm of D] {Descendant};
-\end{tikzpicture}
-```
+### A Practical Checklist {#sec-appA-checklist}
 
-### A Practical Checklist
+To decide whether $X$ and $Y$ are $d$-separated by $S$, proceed as follows. First, list all paths between $X$ and $Y$. On each path, classify each interior node as part of a chain, fork, or collider. Then check whether each path is blocked by $S$. Finally, conclude that $X$ and $Y$ are $d$-separated if and only if every path is blocked.
 
-To decide whether $X$ and $Y$ are d-separated by $S$, proceed as follows. First, list all paths between $X$ and $Y$. On each path, classify each interior node as part of a chain, fork, or collider. Then check whether each path is blocked by $S$. Finally, conclude that $X$ and $Y$ are d-separated if and only if every path is blocked.
+## DAG Factorization and the Markov Property {#sec-appA-markov}
 
-For beginners, this path-by-path procedure is often more useful than starting with the most compact formal definition.
-
-## DAG Factorization and the Markov Property {#sec-markov}
-
-Up to this point, we have used DAGs qualitatively, to decide which paths are open or blocked. We now connect the graph to probability algebra: the same parent structure that governs d-separation also determines how the joint distribution factorizes.
+Up to this point, we have used DAGs qualitatively, to decide which paths are open or blocked. We now connect the graph to probability algebra.
 
 ::: {.callout-note icon=false}
 ## Definition: DAG Factorization
 
 Let $\mathcal{G}$ be a DAG with nodes $V_1, \ldots, V_p$. A joint distribution $p(v_1, \ldots, v_p)$ is said to *factorize according to $\mathcal{G}$* if
-$$p(v_1, \ldots, v_p) = \prod_{j=1}^{p} p\!\left(v_j \mid \Pa(V_j)\right),$$
-where $\Pa(V_j)$ denotes the set of parents of $V_j$ in $\mathcal{G}$.
+$$p(v_1, \ldots, v_p) = \prod_{j=1}^{p} p\!\left(v_j \mid \mathrm{Pa}(V_j)\right),$$
+where $\mathrm{Pa}(V_j)$ denotes the set of parents of $V_j$ in $\mathcal{G}$.
 :::
 
-::: {.callout-note icon=false}
-## Example: A Simple Confounding Graph
+This factorization implies the local Markov property: once its parents are known, a node is conditionally independent of all variables that are neither its descendants nor its parents.
 
-For the DAG with edges $X \to T$, $T \to Y$, and $X \to Y$, the joint density factorizes as
-$$p(x, t, y) = p(x)\,p(t \mid x)\,p(y \mid t, x).$$
+::: {.callout-note icon=false}
+## Example: A simple confounding graph
+
+For the DAG with edges $X \to T$, $T \to Y$, and $X \to Y$, the joint density factorizes as $p(x, t, y) = p(x)\,p(t \mid x)\,p(y \mid t, x)$.
 :::
 
 ::: {.callout-note icon=false}
 ## Definition: Local Markov Property
 
-A distribution $P$ satisfies the *local Markov property* with respect to $\mathcal{G}$ if, for every node $V_i \in V$,
-$$V_i \indep \bigl(\Nd(V_i) \setminus \Pa(V_i)\bigr) \mid \Pa(V_i).$$
-That is, once we condition on the direct causes of a node, that node is independent of all variables that are neither its descendants nor its parents.
+Let $\mathrm{Nd}(V_i) = V \setminus \bigl(\{V_i\} \cup \mathrm{De}(V_i)\bigr)$ denote the set of *non-descendants* of $V_i$. A distribution $P$ satisfies the *local Markov property* with respect to $\mathcal{G}$ if, for every node $V_i \in V$,
+$$V_i \indep \bigl(\mathrm{Nd}(V_i) \setminus \mathrm{Pa}(V_i)\bigr) \mid \mathrm{Pa}(V_i).$$
 :::
 
 ::: {.callout-note icon=false}
 ## Remark: Global Markov Property
 
-The global Markov property is the statement that every d-separation in $\mathcal{G}$ implies a conditional independence in $P$. Thus, if two sets of variables are d-separated by a set $S$ in the graph, then they are conditionally independent given $S$ in the distribution. This is studied in detail in Chapter 2.
+The global Markov property is the statement that every $d$-separation in $\mathcal{G}$ implies a conditional independence in $P$. This is studied in detail in Chapter 2.
 :::
 
 ::: {.callout-note icon=false}
 ## Remark: Equivalence for DAGs
 
-For DAGs, the local and global Markov properties are equivalent under the usual graphical-model assumptions. The local property implies the global one via the Markov factorization, which is what is actually used in identification arguments.
+For DAGs, under the existence of regular conditional distributions, the recursive factorization, the local Markov property, and the global Markov property are all equivalent. The local property is the version most commonly verified in practice, since the factorization makes it immediate.
 :::
 
-```{tikz}
-#| label: fig-education-earnings
-#| fig-cap: "Education--earnings DAG used to illustrate factorization and the local and global Markov properties."
-#| echo: false
-#| fig-width: 4
-\usetikzlibrary{arrows.meta, positioning}
-\definecolor{isublue}{RGB}{30,56,100}
-\definecolor{defbg}{RGB}{238,244,251}
-\definecolor{darkgrey}{RGB}{80,80,80}
-\tikzset{
-  node/.style={circle, draw=isublue, fill=defbg, thick, minimum size=8mm, font=\small},
-  edge/.style={-{Stealth[length=5pt]}, thick, color=isublue}
-}
-\begin{tikzpicture}[node distance=2cm and 1.8cm]
-  \node[node] (N) at (0,1.6) {$N$};
-  \node[node] (B) at (0,0)   {$B$};
-  \node[node] (E) at (3,0.8) {$E$};
-  \node[node] (Y) at (6,0.8) {$Y$};
-  \draw[edge] (N) -- (E);
-  \draw[edge] (B) -- (E);
-  \draw[edge] (B) to[bend right=12] (Y);
-  \draw[edge] (E) -- (Y);
-  \node[font=\small\color{darkgrey}, left=0.15cm of N] {neighborhood};
-  \node[font=\small\color{darkgrey}, left=0.15cm of B] {family background};
-  \node[font=\small\color{darkgrey}, above=0.1cm of E] {education};
-  \node[font=\small\color{darkgrey}, above=0.1cm of Y] {earnings};
-\end{tikzpicture}
-```
-
 ::: {.callout-note icon=false}
-## Example: Education--Earnings Graph
+## Example: Education--earnings graph
 
-Consider the DAG in @fig-education-earnings, with edges $N \to E$, $B \to E$, $E \to Y$, and $B \to Y$. The corresponding factorization is
-$$p(n,b,e,y) = p(n)\,p(b)\,p(e \mid n,b)\,p(y \mid e,b).$$
-The parent set of $Y$ is $\Pa(Y) = \{E, B\}$, so the local Markov property gives $Y \indep N \mid \{E, B\}$. The same conclusion follows from the global viewpoint: the only path from $N$ to $Y$ is $N \to E \to Y$, which is blocked by conditioning on $E$, and conditioning additionally on $B$ opens no new path.
+Consider the DAG with edges $N \to E$, $B \to E$, $E \to Y$, and $B \to Y$ ($N$ = neighborhood, $B$ = family background, $E$ = education, $Y$ = earnings). The corresponding factorization is $p(n,b,e,y) = p(n)\,p(b)\,p(e \mid n,b)\,p(y \mid e,b)$. The parent set of $Y$ is $\mathrm{Pa}(Y) = \{E, B\}$, so the local Markov property gives $Y \indep N \mid \{E, B\}$. The factorization also implies $N \indep B$, since neither node has a common ancestor; this is a substantive modeling assumption.
 :::
 
 ::: {.callout-note icon=false}
 ## Remark: Edges as Scientific Claims
 
-In a causal DAG, an arrow is typically drawn only when a direct dependence-generating relation is believed to be present. This explains why edges are not included gratuitously: every arrow represents a substantive scientific claim. Minimality and faithfulness are discussed in Chapter 2.
+In a causal DAG, an arrow is typically drawn only when a direct dependence-generating relation is believed to be present. Every arrow represents a substantive scientific claim. Minimality and faithfulness are discussed in Chapter 2.
 :::
 
-## Optional: Moralization as an Alternative Criterion {#sec-moralization}
+## Optional: Moralization as an Alternative Criterion {#sec-appA-moralization .unnumbered}
 
 ::: {.callout-note icon=false}
 ## Note to Reader
@@ -328,16 +293,14 @@ In a causal DAG, an arrow is typically drawn only when a direct dependence-gener
 This section may be skipped on a first reading.
 :::
 
-There is an alternative graph-theoretic way to check d-separation based on constructing an undirected graph called the *moral graph*. The method is elegant and useful in more advanced graphical-model theory, but it is not necessary for understanding the main causal ideas of Chapters 2 and 3. For most students, the path-by-path method using chains, forks, and colliders is more intuitive on first exposure.
-
-The procedure is as follows. First, restrict attention to the ancestors of the variables of interest. Second, connect any two parents of a common child by an undirected edge. Third, drop all arrow directions. Finally, check ordinary graph separation in the resulting undirected graph. This procedure yields a criterion equivalent to d-separation.
+There is an alternative graph-theoretic way to check $d$-separation based on constructing an undirected graph called the *moral graph*. To check whether $X \indep Y \mid S$: First, take the induced subgraph on $\mathrm{An}(X \cup Y \cup S)$, the ancestors of all variables under consideration. Second, connect any two parents of a common child by an undirected edge. Third, drop all arrow directions. Finally, check whether $S$ separates $X$ and $Y$ in the resulting undirected graph. This procedure yields a criterion equivalent to $d$-separation.
 
 ::: {.callout-note icon=false}
-## Example: Moral Graph of a Collider
+## Example: Moral graph of a collider
 
-Suppose a DAG contains the pattern $A \to C \leftarrow B$. In the moral graph, the two parents $A$ and $B$ are connected by an undirected edge, producing the triangle $A - C - B$ together with $A - B$. This added edge reflects the special role of colliders in d-separation.
+Consider the DAG $A \to C \leftarrow B$. For the conditional query $A \indep B \mid C$, the ancestral set is $\{A, B, C\}$. Moralization connects the two parents $A$ and $B$, and after deleting the conditioned node $C$ the edge $A - B$ remains; therefore $A$ and $B$ are not separated, matching the fact that conditioning on a collider opens the path. By contrast, for the marginal query $A \indep B$, the ancestral set is $\{A, B\}$, so $C$ is discarded before moralization and no moral edge is added; $A$ and $B$ are separated, as expected.
 :::
 
-## Summary
+## Summary {.unnumbered}
 
-This appendix introduced the graphical ideas that support Chapters 2 and 3. Conditional independence is the probabilistic language that graphs are designed to encode. The three local motifs --- chain, fork, and collider --- determine how conditioning affects association along a path. D-separation extends these local rules to arbitrary graphs: two variables are d-separated by $S$ if every path between them is blocked by $S$. The most important application in causal inference is to distinguish confounding paths from causal paths and to identify valid adjustment sets. Finally, the Markov property gives a probabilistic interpretation to the graph by linking graphical structure to a factorization of the joint distribution.
+This appendix introduced the graphical ideas that support Chapters 2 and 3. Conditional independence is the probabilistic language that graphs are designed to encode. The three local motifs --- chain, fork, and collider --- determine how conditioning affects association along a path. $d$-Separation extends these local rules to arbitrary graphs: two variables are $d$-separated by $S$ if every path between them is blocked by $S$. The most important application in causal inference is to distinguish confounding paths from causal paths and to identify valid adjustment sets. Finally, the Markov property gives a probabilistic interpretation to the graph by linking graphical structure to a factorization of the joint distribution.

@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -306,7 +325,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -333,12 +352,12 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-swig-def" id="toc-sec-swig-def" class="nav-link active" data-scroll-target="#sec-swig-def"><span class="header-section-number">B.1</span> The SWIG Construction</a></li>
-  <li><a href="#sec-fixed-half" id="toc-sec-fixed-half" class="nav-link" data-scroll-target="#sec-fixed-half"><span class="header-section-number">B.2</span> The Fixed Half as a Source Node</a></li>
-  <li><a href="#sec-hidden" id="toc-sec-hidden" class="nav-link" data-scroll-target="#sec-hidden"><span class="header-section-number">B.3</span> When Ignorability Fails: Hidden Confounding</a></li>
-  <li><a href="#sec-swig-achieve" id="toc-sec-swig-achieve" class="nav-link" data-scroll-target="#sec-swig-achieve"><span class="header-section-number">B.4</span> What SWIGs Achieve</a></li>
-  <li><a href="#sec-biconditional" id="toc-sec-biconditional" class="nav-link" data-scroll-target="#sec-biconditional"><span class="header-section-number">B.5</span> Biconditional Equivalence under Faithfulness</a></li>
-  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">B.6</span> Problems</a></li>
+  <li><a href="#sec-appB-swig-def" id="toc-sec-appB-swig-def" class="nav-link active" data-scroll-target="#sec-appB-swig-def"><span class="header-section-number">B.1</span> The SWIG Construction</a></li>
+  <li><a href="#sec-appB-fixed-half" id="toc-sec-appB-fixed-half" class="nav-link" data-scroll-target="#sec-appB-fixed-half"><span class="header-section-number">B.2</span> The Fixed Half as a Source Node</a></li>
+  <li><a href="#sec-appB-hidden" id="toc-sec-appB-hidden" class="nav-link" data-scroll-target="#sec-appB-hidden"><span class="header-section-number">B.3</span> When Ignorability Fails: Hidden Confounding</a></li>
+  <li><a href="#sec-appB-achieve" id="toc-sec-appB-achieve" class="nav-link" data-scroll-target="#sec-appB-achieve"><span class="header-section-number">B.4</span> What SWIGs Achieve</a></li>
+  <li><a href="#sec-appB-biconditional" id="toc-sec-appB-biconditional" class="nav-link" data-scroll-target="#sec-appB-biconditional"><span class="header-section-number">B.5</span> Single-World Ignorability and the Back-Door Criterion</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   </ul>
 </nav>
     </div>
@@ -364,11 +383,11 @@ window.Quarto = {
 </header>
 
 
-<p>This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by <span class="citation" data-cites="richardson2014ace">Richardson and Robins (2014)</span> and given an accessible practical treatment by <span class="citation" data-cites="bezuidenhout2025swigs">Bezuidenhout et al. (2025)</span>. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram. A reader familiar with Chapters 2–4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.</p>
-<p>Chapter 4 used the back-door criterion and the adjustment formula to identify causal effects. SWIGs make that identification argument graphically explicit: potential outcomes appear as labeled nodes inside the graph, so ignorability becomes a routine d-separation statement rather than a free-standing probabilistic assumption. <a href="#sec-biconditional" class="quarto-xref"><span>Section B.5</span></a> completes the picture by establishing the biconditional equivalence between ignorability and the back-door criterion that was only stated in one direction in Chapter 4.</p>
-<section id="sec-swig-def" class="level2" data-number="B.1">
-<h2 data-number="B.1" class="anchored" data-anchor-id="sec-swig-def"><span class="header-section-number">B.1</span> The SWIG Construction</h2>
-<p>In the original DAG <span class="math inline">\(\Gcal\)</span>, the node <span class="math inline">\(T\)</span> represents the treatment as it naturally occurs. Under <span class="math inline">\(\doop(T{=}t)\)</span>, however, the treatment is externally fixed. The SWIG separates these two roles by <em>splitting</em> <span class="math inline">\(T\)</span> into two pieces displayed side by side in the graph:</p>
+<p>This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by <span class="citation" data-cites="richardson2014ace">Richardson and Robins (<a href="#ref-richardson2014ace" role="doc-biblioref">2014</a>)</span> and given an accessible practical treatment by <span class="citation" data-cites="bezuidenhout2025swigs">Bezuidenhout et al. (<a href="#ref-bezuidenhout2025swigs" role="doc-biblioref">2025</a>)</span>. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram. A reader familiar with Chapters 2–4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.</p>
+<p>Chapter 4 used the back-door criterion and the adjustment formula to identify causal effects. SWIGs make that identification argument graphically explicit: potential outcomes appear as labeled nodes inside the graph, so ignorability becomes a routine d-separation statement rather than a free-standing probabilistic assumption. <a href="#sec-appB-biconditional" class="quarto-xref"><span>Section B.5</span></a> restates the back-door identification result of Chapter 4 as a graph-theoretic theorem inside the SWIG, and examines a partial converse: under faithfulness of the SWIG and a restriction of the adjustment set to nondescendants of the treatment, the single-world ignorability statement <span class="math inline">\(Y(t) \indep T \mid X\)</span> entails the back-door criterion.</p>
+<section id="sec-appB-swig-def" class="level2" data-number="B.1">
+<h2 data-number="B.1" class="anchored" data-anchor-id="sec-appB-swig-def"><span class="header-section-number">B.1</span> The SWIG Construction</h2>
+<p>In the original DAG <span class="math inline">\(\mathcal{G}\)</span>, the node <span class="math inline">\(T\)</span> represents the treatment as it naturally occurs. Under <span class="math inline">\(\doop(T{=}t)\)</span>, however, the treatment is externally fixed. The SWIG separates these two roles by <em>splitting</em> <span class="math inline">\(T\)</span> into two pieces displayed side by side in the graph:</p>
 <ul>
 <li>a <strong>random half</strong> (left side, capital letter <span class="math inline">\(T\)</span>): represents the treatment value that would naturally occur, and retains all incoming edges from <span class="math inline">\(T\)</span>’s causal parents;</li>
 <li>a <strong>fixed half</strong> (right side, lowercase letter <span class="math inline">\(t\)</span>): represents the externally imposed intervention value, carries all outgoing edges that formerly left <span class="math inline">\(T\)</span>, and has <em>no</em> edge to or from the random half.</li>
@@ -379,38 +398,62 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Single World Intervention Graph
+<span class="screen-reader-only">Note</span>Definition: Single World Intervention Graph <span class="citation" data-cites="richardson2014ace">(<a href="#ref-richardson2014ace" role="doc-biblioref">Richardson and Robins 2014</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="richardson2014ace">(Richardson and Robins 2014)</span> The <em>SWIG</em> <span class="math inline">\(\Gcal(t)\)</span> is constructed from <span class="math inline">\(\Gcal\)</span> by:</p>
+<p>The <em>SWIG</em> <span class="math inline">\(\mathcal{G}(t)\)</span> is constructed from <span class="math inline">\(\mathcal{G}\)</span> by:</p>
 <ol type="1">
 <li>Replacing <span class="math inline">\(T\)</span> with two nodes: random half <span class="math inline">\(T\)</span> (all incoming edges retained) and fixed half <span class="math inline">\(t\)</span> (all outgoing edges retained).</li>
 <li>Severing the direct connection between the two halves.</li>
 <li>Redrawing causal arrows at the split node: <em>all arrows into the split node land on the random half</em>; <em>all arrows departing the split node leave from the fixed half</em>.</li>
-<li>Relabeling every descendant <span class="math inline">\(V\)</span> of <span class="math inline">\(T\)</span> in <span class="math inline">\(\Gcal\)</span> as <span class="math inline">\(V(t)\)</span>, indicating it is a potential outcome under <span class="math inline">\(\doop(T{=}t)\)</span>.</li>
+<li>Relabeling every descendant <span class="math inline">\(V\)</span> of <span class="math inline">\(T\)</span> in <span class="math inline">\(\mathcal{G}\)</span> as <span class="math inline">\(V(t)\)</span>, indicating it is a potential outcome under <span class="math inline">\(\doop(T{=}t)\)</span>.</li>
 </ol>
 </div>
 </div>
-<p><a href="#fig-swig" class="quarto-xref">Figure&nbsp;<span>B.1</span></a> illustrates the construction for the simple confounded-treatment graph.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-swig" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-swig-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="appendix_B_files/figure-html/fig-swig-1.pdf" class="img-fluid" width="480">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-swig-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;B.1: Converting the confounded-treatment DAG (<span class="math inline">\(L\)</span> is a confounder) into the SWIG for <span class="math inline">\(\doop(A{=}a)\)</span>. The treatment node splits: the random half <span class="math inline">\(A\)</span> (circle) retains the incoming arrow from <span class="math inline">\(L\)</span>; the fixed half <span class="math inline">\(a\)</span> (square) carries the outgoing arrow to <span class="math inline">\(Y(a)\)</span>. D-separation in the SWIG gives <span class="math inline">\(A \indep Y(a) \mid L\)</span> (conditional ignorability).
-</figcaption>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 500 150" width="100%" style="max-width:500px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="arrB" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path>
+    </marker>
+  </defs>
+  <!-- DAG left panel -->
+  <text x="70" y="18" text-anchor="middle" font-style="italic" fill="#555" font-size="11">DAG</text>
+  <circle cx="70" cy="55" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="70" y="60" text-anchor="middle" fill="#2E74B6" font-weight="bold">L</text>
+  <circle cx="25" cy="105" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="25" y="110" text-anchor="middle" fill="#2E74B6" font-weight="bold">A</text>
+  <circle cx="115" cy="105" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="115" y="110" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <line x1="56" y1="68" x2="37" y2="92" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrB)"></line>
+  <line x1="84" y1="68" x2="103" y2="92" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrB)"></line>
+  <line x1="45" y1="105" x2="93" y2="105" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrB)"></line>
+  <!-- Arrow between -->
+  <text x="185" y="85" text-anchor="middle" font-size="22" fill="#555">⇒</text>
+  <!-- SWIG right panel -->
+  <text x="350" y="18" text-anchor="middle" font-style="italic" fill="#555" font-size="11">SWIG 𝒢(a)</text>
+  <circle cx="350" cy="55" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="350" y="60" text-anchor="middle" fill="#2E74B6" font-weight="bold">L</text>
+  <!-- random half A (circle) -->
+  <circle cx="295" cy="105" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="295" y="110" text-anchor="middle" fill="#2E74B6" font-weight="bold">A</text>
+  <!-- fixed half a (rectangle) -->
+  <rect x="317" y="90" width="28" height="28" rx="4" fill="#f0f0f0" stroke="#2E74B6" stroke-width="1.5"></rect>
+  <text x="331" y="110" text-anchor="middle" fill="#2E74B6" font-weight="bold">a</text>
+  <!-- Y(a) -->
+  <circle cx="420" cy="105" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="420" y="110" text-anchor="middle" fill="#2E74B6">Y(a)</text>
+  <line x1="338" y1="68" x2="308" y2="92" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrB)"></line>
+  <line x1="362" y1="68" x2="400" y2="92" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrB)"></line>
+  <line x1="345" y1="104" x2="396" y2="104" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrB)"></line>
+</svg>
+<figcaption>Converting the confounded-treatment DAG ($L$ is a confounder) into the SWIG for $\doop(A{=}a)$. The treatment node splits: the random half $A$ (circle) retains the incoming arrow from $L$; the fixed half $a$ (square) carries the outgoing arrow to $Y(a)$. D-separation in the SWIG gives $A \indep Y(a) \mid L$ (conditional ignorability).</figcaption>
 </figure>
-</div>
-</div>
-</div>
 </section>
-<section id="sec-fixed-half" class="level2" data-number="B.2">
-<h2 data-number="B.2" class="anchored" data-anchor-id="sec-fixed-half"><span class="header-section-number">B.2</span> The Fixed Half as a Source Node</h2>
-<p>After the SWIG <span class="math inline">\(\Gcal(t)\)</span> is constructed, d-separation among its nodes is evaluated using the standard rules of Chapter 2. The key structural fact that governs all path analysis in a SWIG is:</p>
+<section id="sec-appB-fixed-half" class="level2" data-number="B.2">
+<h2 data-number="B.2" class="anchored" data-anchor-id="sec-appB-fixed-half"><span class="header-section-number">B.2</span> The Fixed Half as a Source Node</h2>
+<p>After the SWIG <span class="math inline">\(\mathcal{G}(t)\)</span> is constructed, d-separation among its nodes is evaluated using the standard rules of Chapter 2. The key structural fact is:</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -421,36 +464,80 @@ Figure&nbsp;B.1: Converting the confounded-treatment DAG (<span class="math inli
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In <span class="math inline">\(\Gcal(t)\)</span>, the fixed half <span class="math inline">\(t\)</span> has <strong>no incoming edges</strong>. Step 2 of the construction severs the connection from the random half <span class="math inline">\(T\)</span>, and no other node in <span class="math inline">\(\Gcal\)</span> has a direct arrow into <span class="math inline">\(t\)</span>. Three consequences follow immediately.</p>
+<p>In <span class="math inline">\(\mathcal{G}(t)\)</span>, <strong>no directed edge points into</strong> the fixed half <span class="math inline">\(t\)</span>. Two structural consequences follow.</p>
 <ol type="1">
-<li><strong>No path arrives at <span class="math inline">\(t\)</span> from another node.</strong> The edge <span class="math inline">\(T \to t\)</span> does not exist in <span class="math inline">\(\Gcal(t)\)</span>. In particular, the path <span class="math inline">\(T \to t \to Y(t)\)</span> <em>cannot be formed</em>: it is not “blocked” by a d-separation rule — it simply does not exist as a path in the graph.</li>
-<li><strong><span class="math inline">\(t\)</span> cannot lie strictly between two other nodes on a path.</strong> Because <span class="math inline">\(t\)</span> has no parents, it is never a transit node; it can only be an <em>origin</em> of paths leading to descendants <span class="math inline">\(V(t)\)</span>.</li>
-<li><strong>The random half <span class="math inline">\(T\)</span> and the fixed half <span class="math inline">\(t\)</span> are d-separated by the empty set.</strong> With no edge between them and no common ancestor, <span class="math inline">\(T \indep t\)</span> holds unconditionally in <span class="math inline">\(\Gcal(t)\)</span>.</li>
+<li><strong>The route <span class="math inline">\(T \to t \to Y(t)\)</span> does not exist.</strong> Because no edge connects the random half <span class="math inline">\(T\)</span> to the fixed half <span class="math inline">\(t\)</span>, the directed concatenation <span class="math inline">\(T \to t \to Y(t)\)</span> is <em>not a path in the graph</em> — there is nothing for d-separation to block.</li>
+<li><strong>Every path from <span class="math inline">\(T\)</span> to a potential outcome <span class="math inline">\(V(t)\)</span> leaves <span class="math inline">\(T\)</span> through one of <span class="math inline">\(T\)</span>’s natural causes.</strong> The only edges incident to the random half <span class="math inline">\(T\)</span> in <span class="math inline">\(\mathcal{G}(t)\)</span> are the incoming edges from <span class="math inline">\(T\)</span>’s parents in <span class="math inline">\(\mathcal{G}\)</span>. Any path from <span class="math inline">\(T\)</span> to <span class="math inline">\(V(t)\)</span> must therefore start with an arrow pointing <em>into</em> <span class="math inline">\(T\)</span> — that is, every such path is a back-door path.</li>
 </ol>
-<p>This is not an additional d-separation rule: it is a direct consequence of the SWIG construction. The fixed half <span class="math inline">\(t\)</span> represents an externally stipulated intervention — it is not <em>caused</em> by anything within the system, so it has no parents.</p>
 </div>
 </div>
-<p><strong>Path analysis in <span class="math inline">\(\Gcal(t)\)</span>.</strong> With <span class="math inline">\(t\)</span> as a source node, every path from the random half <span class="math inline">\(T\)</span> to a potential outcome <span class="math inline">\(V(t)\)</span> must travel <em>away</em> from <span class="math inline">\(T\)</span> through <span class="math inline">\(T\)</span>’s parents in <span class="math inline">\(\Gcal\)</span> — that is, every such path is a back-door path. This is the structural fact that makes the back-door criterion readable directly from the SWIG.</p>
-<p><strong>Recovering ignorability from the SWIG.</strong> In <a href="#fig-swig" class="quarto-xref">Figure&nbsp;<span>B.1</span></a>, the only paths from the random half <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span> are back-door paths through <span class="math inline">\(A\)</span>’s parents. The path <span class="math inline">\(A \leftarrow L \to Y(a)\)</span> is open, but blocked by conditioning on <span class="math inline">\(L\)</span>. No other path connects <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span>. Conditioning on <span class="math inline">\(L\)</span> achieves d-separation: <span class="math display">\[A \;\indep\; Y(a) \;\big|\; L \quad \text{in } \Gcal(a),\]</span> which is exactly the conditional ignorability of the Strong Ignorability definition in Chapter 4, now <em>derived</em> as a graph-structural consequence rather than asserted as an assumption.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>“Source Node” Means No Parents, Not “On No Path”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Calling <span class="math inline">\(t\)</span> a source node refers to the absence of <em>directed edges into <span class="math inline">\(t\)</span></em>, nothing more. An undirected path can still pass through a source node. What the source-node property delivers is the asymmetry that matters for the back-door argument: at the random half <span class="math inline">\(T\)</span>, <em>all</em> edges point inward, so any path leaving <span class="math inline">\(T\)</span> must do so through one of <span class="math inline">\(T\)</span>’s causes.</p>
+</div>
+</div>
+<p><strong>Reading the back-door criterion off the SWIG.</strong> By the source-node analysis above, every path from the random half <span class="math inline">\(T\)</span> to a potential outcome <span class="math inline">\(V(t)\)</span> in <span class="math inline">\(\mathcal{G}(t)\)</span> is a back-door path in <span class="math inline">\(\mathcal{G}\)</span>, so blocking all back-door paths is exactly what d-separation of <span class="math inline">\(T\)</span> and <span class="math inline">\(V(t)\)</span> in the SWIG asks for.</p>
+<p><strong>Recovering ignorability from the SWIG.</strong> In the SWIG of the confounded-treatment example, the only path from the random half <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span> is <span class="math inline">\(A \leftarrow L \to Y(a)\)</span>: open, but blocked by conditioning on <span class="math inline">\(L\)</span>. Conditioning on <span class="math inline">\(L\)</span> achieves d-separation, and the standard rules give <span class="math inline">\(A \indep Y(a) \mid L\)</span> in <span class="math inline">\(\mathcal{G}(a)\)</span>, which is exactly the conditional ignorability of Chapter 4, now <em>derived</em> as a graph-structural consequence rather than asserted as an assumption.</p>
 </section>
-<section id="sec-hidden" class="level2" data-number="B.3">
-<h2 data-number="B.3" class="anchored" data-anchor-id="sec-hidden"><span class="header-section-number">B.3</span> When Ignorability Fails: Hidden Confounding</h2>
-<p>The SWIG is equally useful for diagnosing <em>failures</em> of ignorability. <a href="#fig-swig-hidden" class="quarto-xref">Figure&nbsp;<span>B.2</span></a> shows the SWIG when a hidden common cause <span class="math inline">\(U\)</span> affects both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-swig-hidden" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-swig-hidden-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<embed src="appendix_B_files/figure-html/fig-swig-hidden-1.pdf" class="img-fluid" width="528">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-swig-hidden-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;B.2: Adding a hidden confounder <span class="math inline">\(U\)</span> (dashed circle) to the confounded-treatment DAG and its SWIG. In <span class="math inline">\(\mathcal{G}(a)\)</span>, two back-door paths connect <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span>: the observed path <span class="math inline">\(A \leftarrow L \to Y(a)\)</span>, which can be blocked by conditioning on <span class="math inline">\(L\)</span>, and the hidden path <span class="math inline">\(A \leftarrow U \to Y(a)\)</span>, which cannot. Ignorability fails.
-</figcaption>
+<section id="sec-appB-hidden" class="level2" data-number="B.3">
+<h2 data-number="B.3" class="anchored" data-anchor-id="sec-appB-hidden"><span class="header-section-number">B.3</span> When Ignorability Fails: Hidden Confounding</h2>
+<p>The SWIG is equally useful for diagnosing <em>failures</em> of ignorability. Suppose the DAG is augmented by a hidden common cause <span class="math inline">\(U\)</span> that affects both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> but is not recorded in the data.</p>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 500 190" width="100%" style="max-width:500px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="arrBh" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path>
+    </marker>
+    <marker id="arrBhd" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#888"></path>
+    </marker>
+  </defs>
+  <!-- DAG left -->
+  <text x="70" y="18" text-anchor="middle" font-style="italic" fill="#555" font-size="11">DAG (with hidden U)</text>
+  <circle cx="70" cy="55" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="70" y="60" text-anchor="middle" fill="#2E74B6" font-weight="bold">L</text>
+  <circle cx="25" cy="100" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="25" y="105" text-anchor="middle" fill="#2E74B6" font-weight="bold">A</text>
+  <circle cx="115" cy="100" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="115" y="105" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <circle cx="70" cy="150" r="18" fill="white" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3"></circle>
+  <text x="70" y="155" text-anchor="middle" fill="#888" font-weight="bold">U</text>
+  <line x1="57" y1="66" x2="36" y2="88" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrBh)"></line>
+  <line x1="83" y1="66" x2="104" y2="88" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrBh)"></line>
+  <line x1="43" y1="100" x2="95" y2="100" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrBh)"></line>
+  <line x1="57" y1="140" x2="37" y2="116" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrBhd)"></line>
+  <line x1="83" y1="140" x2="103" y2="116" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrBhd)"></line>
+  <!-- Arrow -->
+  <text x="185" y="100" text-anchor="middle" font-size="22" fill="#555">⇒</text>
+  <!-- SWIG right -->
+  <text x="355" y="18" text-anchor="middle" font-style="italic" fill="#555" font-size="11">SWIG 𝒢(a) (with hidden U)</text>
+  <circle cx="355" cy="55" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="355" y="60" text-anchor="middle" fill="#2E74B6" font-weight="bold">L</text>
+  <circle cx="295" cy="100" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="295" y="105" text-anchor="middle" fill="#2E74B6" font-weight="bold">A</text>
+  <rect x="316" y="87" width="26" height="26" rx="3" fill="#f0f0f0" stroke="#2E74B6" stroke-width="1.5"></rect>
+  <text x="329" y="105" text-anchor="middle" fill="#2E74B6" font-weight="bold">a</text>
+  <circle cx="420" cy="100" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
+  <text x="420" y="105" text-anchor="middle" fill="#2E74B6">Y(a)</text>
+  <circle cx="355" cy="150" r="18" fill="white" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3"></circle>
+  <text x="355" y="155" text-anchor="middle" fill="#888" font-weight="bold">U</text>
+  <line x1="342" y1="66" x2="309" y2="88" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrBh)"></line>
+  <line x1="368" y1="66" x2="400" y2="88" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrBh)"></line>
+  <line x1="342" y1="100" x2="396" y2="100" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrBh)"></line>
+  <line x1="342" y1="140" x2="309" y2="116" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrBhd)"></line>
+  <line x1="368" y1="140" x2="400" y2="116" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrBhd)"></line>
+</svg>
+<figcaption>Adding a hidden confounder $U$ (dashed circle) to the confounded-treatment DAG and its SWIG. In $\mathcal{G}(a)$, the hidden path $A \leftarrow U \to Y(a)$ cannot be blocked by conditioning on observed covariates. Ignorability fails.</figcaption>
 </figure>
-</div>
-</div>
-</div>
-<p>In the SWIG <span class="math inline">\(\Gcal(a)\)</span> with hidden <span class="math inline">\(U\)</span>, the paths from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span> are: (1) <span class="math inline">\(A \leftarrow L \to Y(a)\)</span>: blocked by conditioning on <span class="math inline">\(L\)</span>; (2) <span class="math inline">\(A \leftarrow U \to Y(a)\)</span>: open regardless of <span class="math inline">\(L\)</span>, since <span class="math inline">\(U\)</span> is unobserved. Even after conditioning on <span class="math inline">\(L\)</span>, the path through <span class="math inline">\(U\)</span> remains open, so <span class="math inline">\(A \nindep Y(a) \mid L\)</span> in <span class="math inline">\(\Gcal(a)\)</span>, and ignorability fails. The failure is <em>immediately visible</em> from the SWIG: an unblocked dashed arrow entering the random half <span class="math inline">\(A\)</span> signals that selection into treatment carries information about the potential outcome that no set of observed covariates can remove.</p>
+<p>In the SWIG <span class="math inline">\(\mathcal{G}(a)\)</span> with hidden <span class="math inline">\(U\)</span>, the paths from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y(a)\)</span> are: (1) <span class="math inline">\(A \leftarrow L \to Y(a)\)</span>: blocked by conditioning on <span class="math inline">\(L\)</span>; and (2) <span class="math inline">\(A \leftarrow U \to Y(a)\)</span>: open regardless of <span class="math inline">\(L\)</span>, since <span class="math inline">\(U\)</span> is unobserved and cannot be conditioned on. Even after conditioning on <span class="math inline">\(L\)</span>, <span class="math inline">\(A \not\perp\!\!\!\perp Y(a) \mid L\)</span>, so ignorability fails and no adjustment for observed covariates alone can identify the ATE. The failure is <em>immediately visible</em> from the SWIG: an unblocked dashed arrow entering the random half <span class="math inline">\(A\)</span> signals that selection into treatment carries information about the potential outcome that no set of observed covariates can remove.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -465,12 +552,12 @@ Figure&nbsp;B.2: Adding a hidden confounder <span class="math inline">\(U\)</spa
 </div>
 </div>
 </section>
-<section id="sec-swig-achieve" class="level2" data-number="B.4">
-<h2 data-number="B.4" class="anchored" data-anchor-id="sec-swig-achieve"><span class="header-section-number">B.4</span> What SWIGs Achieve</h2>
-<p><strong>1. Potential outcomes as random variables in a DAG.</strong> In <span class="math inline">\(\Gcal(t)\)</span>, the variable <span class="math inline">\(Y(t)\)</span> is an ordinary node with well-defined parents: the fixed half <span class="math inline">\(t\)</span> and any other causes of <span class="math inline">\(Y\)</span> retained from <span class="math inline">\(\Gcal\)</span>. Its marginal distribution equals the interventional distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>. <span class="math inline">\(Y(t)\)</span> is the counterfactual random variable, and <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span> is its induced interventional distribution; the SWIG makes both explicit in the same graph.</p>
-<p><strong>2. The mutilated graph as a special case.</strong> Removing the random half <span class="math inline">\(T\)</span> from <span class="math inline">\(\Gcal(t)\)</span> yields exactly the mutilated graph <span class="math inline">\(\Gcal_{\overline{T}}\)</span> of Chapter 1. The SWIG is a more informative version that retains the random half alongside the fixed half, making it possible to ask — and answer by d-separation — questions about the relationship between the natural treatment <span class="math inline">\(T\)</span> and the potential outcomes <span class="math inline">\(V(t)\)</span>.</p>
-<p><strong>3. Unconfoundedness as a d-separation statement.</strong> The ignorability condition <span class="math inline">\((Y(t) \indep T \mid X)\)</span> is a standard d-separation statement <em>in the SWIG</em> <span class="math inline">\(\Gcal(t)\)</span>, verifiable by path-tracing. This gives the analyst a concrete graphical check: draw the SWIG, identify all paths from the random half <span class="math inline">\(T\)</span> to <span class="math inline">\(Y(t)\)</span>, and verify that <span class="math inline">\(X\)</span> blocks all of them.</p>
-<p><strong>4. A single graph for both frameworks.</strong> The SWIG simultaneously hosts the natural treatment <span class="math inline">\(T\)</span> (random half), the intervention value <span class="math inline">\(t\)</span> (fixed half), the potential outcomes <span class="math inline">\(V(t)\)</span>, and all d-separation relationships among them.</p>
+<section id="sec-appB-achieve" class="level2" data-number="B.4">
+<h2 data-number="B.4" class="anchored" data-anchor-id="sec-appB-achieve"><span class="header-section-number">B.4</span> What SWIGs Achieve</h2>
+<p><strong>1. Potential outcomes as random variables in a DAG.</strong> In <span class="math inline">\(\mathcal{G}(t)\)</span>, the variable <span class="math inline">\(Y(t)\)</span> is an ordinary node with well-defined parents: the fixed half <span class="math inline">\(t\)</span> and any other causes of <span class="math inline">\(Y\)</span> retained from <span class="math inline">\(\mathcal{G}\)</span>. Its marginal distribution equals the interventional distribution <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>.</p>
+<p><strong>2. The mutilated graph as a special case.</strong> Removing the random half <span class="math inline">\(T\)</span> from <span class="math inline">\(\mathcal{G}(t)\)</span>, and suppressing the fixed-half labeling on its descendants, recovers the usual mutilated graph <span class="math inline">\(\mathcal{G}_{\overline{T}}\)</span> of Chapter 1 representing <span class="math inline">\(\doop(T{=}t)\)</span>. The SWIG is more informative: it retains the random half alongside the fixed half, making it possible to ask questions about the relationship between the natural treatment <span class="math inline">\(T\)</span> and the potential outcomes <span class="math inline">\(V(t)\)</span> via d-separation.</p>
+<p><strong>3. Unconfoundedness as a d-separation statement.</strong> The ignorability condition <span class="math inline">\(Y(t) \indep T \mid X\)</span> corresponds, under the Markov property of the SWIG, to a d-separation statement <em>in</em> <span class="math inline">\(\mathcal{G}(t)\)</span> verifiable by path-tracing. Ignorability is no longer an assertion encoded in potential-outcome notation alone; it is a structural claim about the graph.</p>
+<p><strong>4. A single graph for both frameworks.</strong> Before SWIGs, combining the potential outcomes framework and the do-calculus required switching notation. The SWIG eliminates this translation step: one graph simultaneously hosts the natural treatment <span class="math inline">\(T\)</span> (random half), the intervention value <span class="math inline">\(t\)</span> (fixed half), the potential outcomes <span class="math inline">\(V(t)\)</span>, and all d-separation relationships among them.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -481,7 +568,7 @@ Figure&nbsp;B.2: Adding a hidden confounder <span class="math inline">\(U\)</spa
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Consider <span class="math inline">\(Y(1) \indep Y(0)\)</span>: <span class="math inline">\(Y(1)\)</span> lives in SWIG <span class="math inline">\(\Gcal(1)\)</span> and <span class="math inline">\(Y(0)\)</span> lives in SWIG <span class="math inline">\(\Gcal(0)\)</span>. No unit is ever observed in both worlds simultaneously, so no data can directly test this independence. More generally, statements such as <span class="math inline">\(Y(t) \indep T(t') \mid X\)</span> for <span class="math inline">\(t \neq t'\)</span> involve variables from <em>different SWIGs</em>. SWIGs make such assumptions explicit: the analyst must specify a joint distribution across multiple SWIGs — a commitment that potential-outcome notation alone does not force.</p>
+<p>Consider <span class="math inline">\(Y(1) \indep Y(0)\)</span>: <span class="math inline">\(Y(1)\)</span> lives in SWIG <span class="math inline">\(\mathcal{G}(1)\)</span> and <span class="math inline">\(Y(0)\)</span> lives in SWIG <span class="math inline">\(\mathcal{G}(0)\)</span>. No unit is ever observed in both worlds simultaneously, so no data can directly test this independence. A more substantive cross-world example arises in mediation analysis (Chapter 8): identification of natural direct and indirect effects relies on assumptions of the form <span class="math inline">\(Y(t, m) \indep M(t') \mid X\)</span> (<span class="math inline">\(t \neq t'\)</span>), which combine potential outcomes from <em>different SWIGs</em>. SWIGs make such assumptions explicit: the analyst must specify a joint distribution across multiple SWIGs. The single-world results of <a href="#sec-appB-biconditional" class="quarto-xref"><span>Section B.5</span></a> therefore cannot themselves supply cross-world assumptions.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -498,72 +585,100 @@ Figure&nbsp;B.2: Adding a hidden confounder <span class="math inline">\(U\)</spa
 </div>
 </div>
 </section>
-<section id="sec-biconditional" class="level2" data-number="B.5">
-<h2 data-number="B.5" class="anchored" data-anchor-id="sec-biconditional"><span class="header-section-number">B.5</span> Biconditional Equivalence under Faithfulness</h2>
-<p>Proposition 4.1 in Chapter 4 established the practically important direction: if <span class="math inline">\(X\)</span> satisfies the back-door criterion, then unconfoundedness holds. That proof required only the Markov property. The converse — that every ignorability statement corresponds to a back-door condition — additionally requires faithfulness and follows naturally from the SWIG construction.</p>
+<section id="sec-appB-biconditional" class="level2" data-number="B.5">
+<h2 data-number="B.5" class="anchored" data-anchor-id="sec-appB-biconditional"><span class="header-section-number">B.5</span> Single-World Ignorability and the Back-Door Criterion</h2>
+<p>This section restates the back-door identification result of Chapter 4 graphically as a theorem inside the SWIG, and then examines a partial converse. The target conditional independence is the <em>single-world</em> (or <em>weak</em>) ignorability statement <span class="math inline">\(Y(t) \indep T \mid X\)</span> (<span class="math inline">\(t = 0, 1\)</span>). The cross-world joint statement <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> involves <span class="math inline">\(Y(0)\)</span> and <span class="math inline">\(Y(1)\)</span>, which live in two distinct SWIGs; a single SWIG cannot encode it as a d-separation.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Faithfulness
+<span class="screen-reader-only">Note</span>Definition: Faithfulness of the SWIG
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A distribution <span class="math inline">\(P\)</span> is <strong>faithful</strong> to a DAG <span class="math inline">\(\Gcal\)</span> if every conditional independence that holds in <span class="math inline">\(P\)</span> is entailed by d-separation in <span class="math inline">\(\Gcal\)</span>: that is, <span class="math inline">\(X \indep Y \mid \mathbf{Z}\)</span> in <span class="math inline">\(P\)</span> only if <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are d-separated by <span class="math inline">\(\mathbf{Z}\)</span> in <span class="math inline">\(\Gcal\)</span>.</p>
-<p>Equivalently, faithfulness rules out <em>accidental</em> cancellations of causal paths. Together, the Markov property and faithfulness make d-separation a <em>complete</em> characterization of the conditional independence structure of <span class="math inline">\(P\)</span>. Faithfulness fails only on a measure-zero set of parameter values, so it is considered a mild regularity condition in practice.</p>
+<p>Let <span class="math inline">\(\mathcal{G}(t)\)</span> be the SWIG induced by an intervention <span class="math inline">\(\doop(T{=}t)\)</span>, and let <span class="math inline">\(P_t\)</span> denote the joint distribution it induces over the random nodes. The distribution <span class="math inline">\(P_t\)</span> is <strong>faithful</strong> to <span class="math inline">\(\mathcal{G}(t)\)</span> if every conditional independence that holds in <span class="math inline">\(P_t\)</span> corresponds to a d-separation in <span class="math inline">\(\mathcal{G}(t)\)</span>: <span class="math display">\[A \indep B \mid C \text{ in } P_t \;\Longrightarrow\; A \text{ and } B \text{ are d-separated by } C \text{ in } \mathcal{G}(t).\]</span> Faithfulness rules out accidental cancellations of causal paths in the structural model. In smooth parametric families with a fixed graph, the parameter configurations that produce unfaithfulness typically form a lower-dimensional subset, so faithfulness is, in that sense, generic. The qualifier matters: deterministic relationships, context-specific independencies, and graph misspecification can all produce substantive failures of faithfulness.</p>
 </div>
 </div>
+<p>Faithfulness is invoked only for the converse direction below.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Ignorability and the Back-Door Criterion Are Equivalent
+<span class="screen-reader-only">Tip</span>Theorem: Back-Door Criterion Implies Single-World Ignorability
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under the Markov and faithfulness assumptions for <span class="math inline">\(\Gcal\)</span>, unconfoundedness <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> holds if and only if <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span>.</p>
+<p>Fix an intervention value <span class="math inline">\(t\)</span>. Suppose the structural causal model underlying <span class="math inline">\(\mathcal{G}\)</span> induces a distribution <span class="math inline">\(P_t\)</span> over the random nodes of the SWIG <span class="math inline">\(\mathcal{G}(t)\)</span> that is Markov with respect to <span class="math inline">\(\mathcal{G}(t)\)</span>. If <span class="math inline">\(X\)</span> contains no descendants of <span class="math inline">\(T\)</span> in <span class="math inline">\(\mathcal{G}\)</span> and blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>, then <span class="math inline">\(Y(t) \indep T \mid X\)</span>.</p>
 </div>
 </div>
+<p><em>Proof.</em> By the source-node analysis of <a href="#sec-appB-fixed-half" class="quarto-xref"><span>Section B.2</span></a>, every path from the random half <span class="math inline">\(T\)</span> to the potential outcome <span class="math inline">\(Y(t)\)</span> in <span class="math inline">\(\mathcal{G}(t)\)</span> leaves <span class="math inline">\(T\)</span> through one of <span class="math inline">\(T\)</span>’s parents in <span class="math inline">\(\mathcal{G}\)</span> and is therefore a back-door path. By hypothesis, <span class="math inline">\(X\)</span> blocks every such path; the no-descendants clause ensures that conditioning on members of <span class="math inline">\(X\)</span> does not open a previously blocked collider path. Hence <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span> are d-separated by <span class="math inline">\(X\)</span> in <span class="math inline">\(\mathcal{G}(t)\)</span>, and the Markov property of <span class="math inline">\(P_t\)</span> delivers <span class="math inline">\(Y(t) \indep T \mid X\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>For binary treatment, applying the theorem separately at <span class="math inline">\(t = 0\)</span> and <span class="math inline">\(t = 1\)</span> yields the weak ignorability conditions <span class="math inline">\(Y(0) \indep T \mid X\)</span> and <span class="math inline">\(Y(1) \indep T \mid X\)</span> that justify the adjustment formula of Chapter 4.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof
+<span class="screen-reader-only">Note</span>Remark: A Partial Converse
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><span class="math inline">\((\Rightarrow)\)</span> This is Proposition 4.1 in Chapter 4, which uses only the Markov property.</p>
-<p><span class="math inline">\((\Leftarrow)\)</span> Suppose <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> holds. By faithfulness, every conditional independence in <span class="math inline">\(P\)</span> corresponds to a d-separation in <span class="math inline">\(\Gcal\)</span>. Consider the SWIG <span class="math inline">\(\Gcal(t)\)</span>. Because the fixed half <span class="math inline">\(t\)</span> has no incoming edges (<a href="#sec-fixed-half" class="quarto-xref"><span>Section B.2</span></a>), every path from the random half <span class="math inline">\(T\)</span> to a potential outcome <span class="math inline">\(Y(t)\)</span> must pass through <span class="math inline">\(T\)</span>’s parents in <span class="math inline">\(\Gcal\)</span> — that is, every such path is a back-door path. The d-separation <span class="math inline">\((Y(t) \indep T \mid X)_{\Gcal(t)}\)</span> therefore requires <span class="math inline">\(X\)</span> to block all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. If any member of <span class="math inline">\(X\)</span> were a descendant of <span class="math inline">\(T\)</span>, conditioning on it could open a previously blocked collider path, contradicting the assumed independence; hence no node in <span class="math inline">\(X\)</span> is a descendant of <span class="math inline">\(T\)</span>. Both conditions of the back-door criterion are therefore satisfied. <span class="math inline">\(\square\)</span></p>
+<p>If <span class="math inline">\(X\)</span> is restricted <em>a priori</em> to pre-treatment (nondescendant) variables in <span class="math inline">\(\mathcal{G}\)</span> and <span class="math inline">\(P_t\)</span> is faithful to <span class="math inline">\(\mathcal{G}(t)\)</span>, the implication above can be partially reversed: <span class="math display">\[Y(t) \indep T \mid X \text{ in } P_t \;\Longrightarrow\; X \text{ blocks every back-door path from } T \text{ to } Y.\]</span> By faithfulness, the assumed independence corresponds to d-separation of the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span> by <span class="math inline">\(X\)</span> in <span class="math inline">\(\mathcal{G}(t)\)</span>; since every path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y(t)\)</span> is a back-door path, <span class="math inline">\(X\)</span> must block all of them. Without the nondescendant restriction, however, conditional exchangeability alone does not imply the full back-door criterion.</p>
 </div>
 </div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<p>The SWIG thus provides a <em>unified</em> perspective: ignorability is neither an assumption of the potential outcomes framework alone nor of the do-calculus in isolation, but a graph-structural property that both frameworks share. The back-door criterion and conditional exchangeability are two names for the same identifying condition, seen from two different representational languages.</p>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Why “No Descendants of <span class="math inline">\(T\)</span>” Is a Hypothesis, Not a Conclusion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The partial converse imposes “no descendants of <span class="math inline">\(T\)</span>” as a hypothesis. This is essential: the conditional independence <span class="math inline">\(Y(t) \indep T \mid X\)</span> does <em>not</em> by itself imply that <span class="math inline">\(X\)</span> contains no descendant of <span class="math inline">\(T\)</span>. For instance, take the DAG with edges <span class="math inline">\(T \to Y\)</span> and <span class="math inline">\(T \to D\)</span> and no confounding, and let <span class="math inline">\(X = \{D\}\)</span>. <span class="math inline">\(D\)</span> is a descendant of <span class="math inline">\(T\)</span>, so <span class="math inline">\(X\)</span> violates the back-door criterion. Nonetheless, <span class="math inline">\(Y(t) \indep T \mid D\)</span> may continue to hold because there is no back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> at all. Conditioning on a descendant of <span class="math inline">\(T\)</span> <em>may</em> open a previously blocked collider path, but it need not. The no-descendants clause belongs to the <em>definition</em> of an admissible graphical adjustment set and cannot be inferred from observed conditional independencies alone.</p>
+</div>
+</div>
+<p><strong>From single-world to cross-world.</strong> The strong ignorability condition <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> is a statement about the joint distribution of <span class="math inline">\(Y(0)\)</span> and <span class="math inline">\(Y(1)\)</span> together with <span class="math inline">\(T\)</span>. Because <span class="math inline">\(Y(0)\)</span> and <span class="math inline">\(Y(1)\)</span> are nodes in two distinct SWIGs, no single SWIG represents this joint distribution as a d-separation, and the theorem above correspondingly speaks only about the single-world form. For ATE identification this is no obstacle: the single-world form <span class="math inline">\(Y(t) \indep T \mid X\)</span> for each <span class="math inline">\(t \in \{0,1\}\)</span> is enough. Identification of joint or distributional functionals of <span class="math inline">\((Y(0), Y(1))\)</span> — for instance, the variance of the unit-level treatment effect, or the proportion of units harmed by treatment — requires the cross-world joint form and assumptions across multiple SWIGs that single-world graphical reasoning cannot supply.</p>
+<p><strong>Conceptual takeaway.</strong> The back-door criterion is a graphical sufficient condition for the single-world conditional exchangeability assumption needed for ATE identification. Under the additional restriction that the candidate adjustment set is composed of nondescendants of <span class="math inline">\(T\)</span>, and under faithfulness of the relevant counterfactual distribution to the SWIG, the absence of unblocked back-door paths corresponds to the single-world independence <span class="math inline">\(Y(t) \indep T \mid X\)</span>. In this sense the graphical and counterfactual languages describe the same identifying structure. Strict logical equivalence in full generality is more delicate: ignorability can hold in particular models for parametric reasons that no graphical criterion will detect.</p>
 </section>
-<section id="problems" class="level2" data-number="B.6">
-<h2 data-number="B.6" class="anchored" data-anchor-id="problems"><span class="header-section-number">B.6</span> Problems</h2>
+<section id="problems" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="problems">Problems</h2>
 <p><strong>1. SWIG construction.</strong> Consider the DAG: <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(T \to Y\)</span>, with <span class="math inline">\(X\)</span> fully observed.</p>
 <ol type="a">
-<li>Construct the SWIG <span class="math inline">\(\Gcal(t)\)</span> by splitting <span class="math inline">\(T\)</span> into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome <span class="math inline">\(Y(t)\)</span>.</li>
-<li>In <span class="math inline">\(\Gcal(t)\)</span>, identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>. Apply d-separation to determine which are blocked and which are open before conditioning.</li>
-<li>Use d-separation in <span class="math inline">\(\Gcal(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\Gcal(t)}\)</span> holds. Conclude that <span class="math inline">\(X\)</span> satisfies the back-door criterion, confirming Theorem B.1 above.</li>
+<li>Construct the SWIG <span class="math inline">\(\mathcal{G}(t)\)</span> by splitting <span class="math inline">\(T\)</span> into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome <span class="math inline">\(Y(t)\)</span>.</li>
+<li>In <span class="math inline">\(\mathcal{G}(t)\)</span>, identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>. Apply d-separation to determine which are blocked and which are open before conditioning.</li>
+<li>Verify that <span class="math inline">\(X\)</span> satisfies the back-door criterion in <span class="math inline">\(\mathcal{G}\)</span>: show that <span class="math inline">\(X\)</span> blocks the unique back-door path <span class="math inline">\(T \leftarrow X \to Y\)</span> and that <span class="math inline">\(X\)</span> contains no descendant of <span class="math inline">\(T\)</span>. Apply the theorem above to conclude <span class="math inline">\(Y(t) \indep T \mid X\)</span>, and confirm that the same conclusion can be read directly off <span class="math inline">\(\mathcal{G}(t)\)</span> via d-separation.</li>
 <li>Now add a hidden common cause <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure (if any) would be needed for identification.</li>
 </ol>
-<p><strong>2. Sequential exchangeability in a longitudinal SWIG.</strong> Suppose the treatment is time-varying: <span class="math inline">\(T_0\)</span> is assigned at baseline and <span class="math inline">\(T_1\)</span> at a second time point. The DAG has edges <span class="math inline">\(X \to T_0 \to T_1 \to Y\)</span>, <span class="math inline">\(X \to Y\)</span>, and <span class="math inline">\(T_0 \to Y\)</span>.</p>
+<p><strong>2. Sequential exchangeability in a longitudinal SWIG.</strong> Suppose the treatment is time-varying: <span class="math inline">\(T_0\)</span> is assigned at baseline and <span class="math inline">\(T_1\)</span> at a second time point, and a time-varying covariate <span class="math inline">\(L\)</span> is measured between the two assignments. The DAG has edges <span class="math inline">\(X \to T_0\)</span>, <span class="math inline">\(X \to L\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(T_0 \to L\)</span>, <span class="math inline">\(T_0 \to T_1\)</span>, <span class="math inline">\(T_0 \to Y\)</span>, <span class="math inline">\(L \to T_1\)</span>, <span class="math inline">\(L \to Y\)</span>, and <span class="math inline">\(T_1 \to Y\)</span>.</p>
 <ol type="a">
-<li>Construct the SWIG <span class="math inline">\(\Gcal(t_0, t_1)\)</span> by splitting both <span class="math inline">\(T_0\)</span> and <span class="math inline">\(T_1\)</span>. Label all random halves, fixed halves, and potential outcomes.</li>
-<li>List all back-door paths from the random half <span class="math inline">\(T_0\)</span> to <span class="math inline">\(Y(t_0,t_1)\)</span> and from <span class="math inline">\(T_1\)</span> to <span class="math inline">\(Y(t_0,t_1)\)</span>. For each, determine whether conditioning on <span class="math inline">\(X\)</span> and the history up to that point is sufficient to achieve d-separation.</li>
-<li>State the two sequential exchangeability conditions that the SWIG makes graphically transparent, and explain what they say about treatment assignment at each time point.</li>
+<li>Construct the SWIG <span class="math inline">\(\mathcal{G}(t_0, t_1)\)</span> by splitting both <span class="math inline">\(T_0\)</span> and <span class="math inline">\(T_1\)</span>. Label the random halves, the fixed halves <span class="math inline">\(t_0\)</span> and <span class="math inline">\(t_1\)</span>, and the potential outcomes. In particular, the random half of <span class="math inline">\(T_1\)</span> should be labeled <span class="math inline">\(T_1(t_0)\)</span> and the time-varying covariate should be labeled <span class="math inline">\(L(t_0)\)</span>.</li>
+<li>List the back-door paths in <span class="math inline">\(\mathcal{G}(t_0, t_1)\)</span> from the random half <span class="math inline">\(T_0\)</span> to <span class="math inline">\(Y(t_0, t_1)\)</span>, and from <span class="math inline">\(T_1(t_0)\)</span> to <span class="math inline">\(Y(t_0, t_1)\)</span>. For each, identify the smallest subset of <span class="math inline">\(\{X,\, T_0,\, L(t_0)\}\)</span> whose conditioning achieves d-separation.</li>
+<li>State the two sequential exchangeability conditions that the SWIG makes graphically transparent: <span class="math inline">\(Y(t_0, t_1) \indep T_0 \mid X\)</span> and <span class="math inline">\(Y(t_0, t_1) \indep T_1(t_0) \mid X,\, T_0 = t_0,\, L(t_0)\)</span>. Explain in plain language what each says about treatment assignment at the corresponding time point.</li>
+<li>In observed-data shorthand, the second condition is often written <span class="math inline">\(Y(\bar t) \indep T_1 \mid X,\, T_0 = t_0,\, L\)</span>. State the implicit consistency step that licenses replacing <span class="math inline">\(L(t_0)\)</span> with the observed <span class="math inline">\(L\)</span> on the event <span class="math inline">\(\{T_0 = t_0\}\)</span>.</li>
+<li>What goes wrong if the analyst omits <span class="math inline">\(L\)</span> from the conditioning set at the second stage? What goes wrong if the analyst conditions on <span class="math inline">\(L\)</span> but treats it as a baseline covariate? Connect your answers to the role of <span class="math inline">\(L(t_0)\)</span> as a treatment-induced confounder.</li>
+</ol>
+<p><strong>3. Why the no-descendants clause is a hypothesis.</strong> Consider the DAG with edges <span class="math inline">\(T \to Y\)</span> and <span class="math inline">\(T \to D\)</span>, no confounders, and let <span class="math inline">\(X = \{D\}\)</span>.</p>
+<ol type="a">
+<li>Construct the SWIG <span class="math inline">\(\mathcal{G}(t)\)</span>. Identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>, and determine whether any back-door paths exist.</li>
+<li>Argue that, in this graph, <span class="math inline">\(Y(t) \indep T \mid D\)</span> holds in <span class="math inline">\(P_t\)</span> even though <span class="math inline">\(X = \{D\}\)</span> violates the back-door criterion.</li>
+<li>Explain in your own words why this example shows that the no-descendants clause must be imposed as a hypothesis on the adjustment set rather than derived from a conditional independence statement.</li>
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-bezuidenhout2025swigs" class="csl-entry" role="listitem">
+Bezuidenhout, Dana, Sarah Forthal, Kara Rudolph, and Matthew R. Lamb. 2025. <span>“Single World Intervention Graphs (<span>SWIGs</span>): A Practical Guide.”</span> <em>American Journal of Epidemiology</em> 194: 2047–52. <a href="https://doi.org/10.1093/aje/kwae353">https://doi.org/10.1093/aje/kwae353</a>.
+</div>
+<div id="ref-richardson2014ace" class="csl-entry" role="listitem">
+Richardson, Thomas S., and James M. Robins. 2014. <em><span>ACE</span> Bounds; Single World Intervention Graphs (<span>SWIGs</span>) and Identification of Causal Effects</em>. University of Washington.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -969,8 +1084,8 @@ Figure&nbsp;B.2: Adding a hidden confounder <span class="math inline">\(U\)</spa
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./appendix_A.html" class="pagination-link" aria-label="Graphical Intuition for Conditional Independence and d-Separation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and d-Separation</span></span>
+      <a href="./appendix_A.html" class="pagination-link" aria-label="Graphical Intuition for Conditional Independence and $d$-Separation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
