@@ -4,7 +4,7 @@ engine: knitr
 
 # Single World Intervention Graphs {#sec-appendix-b}
 
-This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by @richardson2014ace and given an accessible practical treatment by @bezuidenhout2025swigs. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram. A reader familiar with Chapters 2--4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.
+This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by @richardson2014ace and given an accessible practical treatment by @bezuidenhout2025swigs. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram; see @wang2026tale for a recent overview situating SWIGs within the broader landscape of causal inference frameworks. A reader familiar with Chapters 2--4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.
 
 Chapter 4 used the back-door criterion and the adjustment formula to identify causal effects. SWIGs make that identification argument graphically explicit: potential outcomes appear as labeled nodes inside the graph, so ignorability becomes a routine d-separation statement rather than a free-standing probabilistic assumption. @sec-appB-biconditional restates the back-door identification result of Chapter 4 as a graph-theoretic theorem inside the SWIG, and examines a partial converse: under faithfulness of the SWIG and a restriction of the adjustment set to nondescendants of the treatment, the single-world ignorability statement $Y(t) \indep T \mid X$ entails the back-door criterion.
 
@@ -278,6 +278,18 @@ The partial converse imposes "no descendants of $T$" as a hypothesis. This is es
 :::
 
 **From single-world to cross-world.** The strong ignorability condition $(Y(0), Y(1)) \indep T \mid X$ is a statement about the joint distribution of $Y(0)$ and $Y(1)$ together with $T$. Because $Y(0)$ and $Y(1)$ are nodes in two distinct SWIGs, no single SWIG represents this joint distribution as a d-separation, and the theorem above correspondingly speaks only about the single-world form. For ATE identification this is no obstacle: the single-world form $Y(t) \indep T \mid X$ for each $t \in \{0,1\}$ is enough. Identification of joint or distributional functionals of $(Y(0), Y(1))$ --- for instance, the variance of the unit-level treatment effect, or the proportion of units harmed by treatment --- requires the cross-world joint form and assumptions across multiple SWIGs that single-world graphical reasoning cannot supply.
+
+::: {.callout-note icon=false}
+## Remark: How Much Extra Structure Does NPSEM-IE Impose?
+
+A binary example, following @wang2026tale, makes the comparison quantitative. Take $X$, $T$, and $Y$ all binary, so the full joint distribution of $(X,\, T(x),\, Y(t,x))$ for $t, x \in \{0,1\}$ has $2^{1 + 2 + 4} - 1 = 127$ free parameters. Three nested assumptions shrink this model:
+
+- Weak (single-world) ignorability $T \indep Y(t) \mid X$ for each $t$ separately: 123 parameters.
+- Strong cross-world ignorability $(Y(0), Y(1)) \indep T \mid X$: 121 parameters.
+- Full NPSEM-IE (all exogenous errors $(\varepsilon_X, \varepsilon_T, \varepsilon_Y)$ mutually independent): 19 parameters.
+
+NPSEM-IE therefore imposes $123 - 19 = 104$ additional constraints beyond what is needed for ATE identification. Most of these are cross-world statements such as $T(X{=}0) \indep Y(t, X{=}1)$ that remain untestable even under randomized treatment assignment. This makes concrete the point above: working under NPSEM-IE is a substantive modeling choice, not a free consequence of using structural equations.
+:::
 
 **Conceptual takeaway.** The back-door criterion is a graphical sufficient condition for the single-world conditional exchangeability assumption needed for ATE identification. Under the additional restriction that the candidate adjustment set is composed of nondescendants of $T$, and under faithfulness of the relevant counterfactual distribution to the SWIG, the absence of unblocked back-door paths corresponds to the single-world independence $Y(t) \indep T \mid X$. In this sense the graphical and counterfactual languages describe the same identifying structure. Strict logical equivalence in full generality is more delicate: ignorability can hold in particular models for parametric reasons that no graphical criterion will detect.
 

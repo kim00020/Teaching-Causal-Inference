@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -542,7 +561,7 @@ Figure&nbsp;1.1
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The assumption that the disturbances <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are <em>mutually independent</em> is a substantive restriction. Because <span class="math inline">\(U\)</span> is unobserved and enters both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, error independence does not remove the <span class="math inline">\(T\)</span>–<span class="math inline">\(Y(t)\)</span> dependence induced by <span class="math inline">\(U\)</span>; it restricts only the additional channel through the equation-specific errors <span class="math inline">\((\delta, \varepsilon)\)</span>. <span class="citation" data-cites="richardson2014ace">Richardson and Robins (2014)</span> call SEMs with this structure <em>Nonparametric Structural Equation Models with Independent Errors</em> (NPSEM-IEs). These notes adopt the NPSEM-IE framework throughout: it ensures the Markov condition holds and integrates cleanly with the graphical identification theory of later chapters.</p>
+<p>The assumption that the disturbances <span class="math inline">\(\delta\)</span> and <span class="math inline">\(\varepsilon\)</span> are <em>mutually independent</em> is a substantive restriction. Because <span class="math inline">\(U\)</span> is unobserved and enters both <span class="math inline">\(f_T\)</span> and <span class="math inline">\(f_Y\)</span>, error independence does not remove the <span class="math inline">\(T\)</span>–<span class="math inline">\(Y(t)\)</span> dependence induced by <span class="math inline">\(U\)</span>; it restricts only the additional channel through the equation-specific errors <span class="math inline">\((\delta, \varepsilon)\)</span>. <span class="citation" data-cites="richardson2014ace">Richardson and Robins (<a href="#ref-richardson2014ace" role="doc-biblioref">2014</a>)</span> call SEMs with this structure <em>Nonparametric Structural Equation Models with Independent Errors</em> (NPSEM-IEs). These notes adopt the NPSEM-IE framework throughout: it ensures the Markov condition holds and integrates cleanly with the graphical identification theory of later chapters.</p>
 </div>
 </div>
 <p><strong>Observational regime.</strong> Because <span class="math inline">\(U\)</span> enters both equations, conditioning on <span class="math inline">\(T\)</span> changes the distribution of <span class="math inline">\(U\)</span>, so <span class="math inline">\(P(y \mid T{=}t) \neq P(y \mid \doop(T{=}t))\)</span>. An analyst who regresses <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> without observing <span class="math inline">\(U\)</span> faces a residual correlated with <span class="math inline">\(T\)</span> — even though the structural error <span class="math inline">\(\varepsilon\)</span> is independent of <span class="math inline">\(T\)</span> by NPSEM-IE.</p>
@@ -572,7 +591,7 @@ Figure&nbsp;1.1
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Potential Outcome <span class="citation" data-cites="rubin1974estimating">(Rubin 1974)</span>
+<span class="screen-reader-only">Note</span>Definition: Potential Outcome <span class="citation" data-cites="rubin1974estimating">(<a href="#ref-rubin1974estimating" role="doc-biblioref">Rubin 1974</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -605,7 +624,7 @@ Figure&nbsp;1.1
 <p><strong>Structural Equation Models: genetics and econometrics.</strong> Sewall Wright (1921) introduced <em>path analysis</em> to decompose correlations among hereditary traits. The framework was transplanted into economics by Haavelmo (1943), who argued that economic relationships should be modeled as autonomous structural equations robust to policy interventions. The Cowles Commission formalized simultaneous equation systems throughout the 1940s–50s. Lucas’s (1976) critique is essentially a statement of the interventional/observational distinction, decades before that phrase existed.</p>
 <p><strong>Potential Outcomes: experimental statistics and epidemiology.</strong> Neyman (1923) introduced the notation <span class="math inline">\(Y_i(t)\)</span> in the context of randomized agricultural experiments. The crucial extension to <em>observational</em> studies was made by Rubin (1974), who formalized the assignment mechanism and stated SUTVA explicitly. Holland’s (1986) <em>JASA</em> paper brought the framework to mainstream statistics. Robins (1986) extended potential outcomes to longitudinal treatments via <span class="math inline">\(g\)</span>-computation. Imbens and Angrist (1994) connected the framework to instrumental variables and defined the LATE.</p>
 <p><strong>DAGs and do-calculus: computer science and philosophy.</strong> Pearl developed Bayesian networks through the 1980s. The pivotal step came in Pearl (1995), where the <em>do-operator</em> was introduced. The 2000 monograph <em>Causality</em> synthesized DAGs, the do-calculus, identification theory, and connections to potential outcomes. Spirtes, Glymour, and Scheines (1993) — working from philosophy at Carnegie Mellon — developed constraint-based algorithms for learning causal structure from data.</p>
-<p><strong>Convergence.</strong> The three frameworks are closely related and often intertranslatable, but exact equivalence requires additional assumptions. These notes work mainly in an NPSEM-IE setting, where translation between the languages is especially clean.</p>
+<p><strong>Convergence.</strong> The three frameworks are closely related and often intertranslatable, but exact equivalence requires additional assumptions about the causal model; see <span class="citation" data-cites="wang2026tale">Wang et al. (<a href="#ref-wang2026tale" role="doc-biblioref">2026</a>)</span> for a recent side-by-side comparison. These notes work mainly in an NPSEM-IE setting, where translation between the languages is especially clean. Under weaker counterfactual models — for example, Robins’s FFRCISTG <span class="citation" data-cites="robins1986new">(<a href="#ref-robins1986new" role="doc-biblioref">Robins 1986</a>)</span> — some cross-world quantities that an NPSEM-IE identifies are no longer well-defined, so equivalence across the three languages is more qualified. The historical differences between the three schools are primarily in notation, native strengths, and disciplinary culture, with substantive differences appearing mainly in how much cross-world structure each framework commits to.</p>
 </section>
 </section>
 <section id="sec-core" class="level2" data-number="1.3">
@@ -1079,6 +1098,20 @@ Figure&nbsp;1.2
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-richardson2014ace" class="csl-entry" role="listitem">
+Richardson, Thomas S., and James M. Robins. 2014. <em><span>ACE</span> Bounds; Single World Intervention Graphs (<span>SWIGs</span>) and Identification of Causal Effects</em>. University of Washington.
+</div>
+<div id="ref-robins1986new" class="csl-entry" role="listitem">
+Robins, James M. 1986. <span>“A New Approach to Causal Inference in Mortality Studies with a Sustained Exposure Period—Application to Control of the Healthy Worker Survivor Effect.”</span> <em>Mathematical Modelling</em> 7 (9–12): 1393–512.
+</div>
+<div id="ref-rubin1974estimating" class="csl-entry" role="listitem">
+Rubin, Donald B. 1974. <span>“Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies.”</span> <em>Journal of Educational Psychology</em> 66 (5): 688–701.
+</div>
+<div id="ref-wang2026tale" class="csl-entry" role="listitem">
+Wang, Linbo, Thomas S. Richardson, and James M. Robins. 2026. <span>“Causal Inference: <span>A</span> Tale of Three Frameworks.”</span> <em>Journal of Data Science</em> 24 (1): 53–85. <a href="https://doi.org/10.6339/25-JDS1211">https://doi.org/10.6339/25-JDS1211</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

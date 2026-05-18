@@ -1,6 +1,5 @@
 ---
 engine: knitr
-suppress-bibliography: true
 ---
 
 # Potential Outcomes and Adjustment
@@ -247,6 +246,18 @@ Both frameworks are indispensable. We use *potential outcomes* to *define* causa
 3. Strong ignorability $(Y(0), Y(1)) \indep T \mid X$ with overlap identifies the ATE via @eq-ate-id. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption.
 4. Single world intervention graphs [@richardson2014ace] provide a formal graphical representation of counterfactual variables, making ignorability a d-separation statement (Appendix B).
 5. The frameworks are complementary: potential outcomes define estimands; the do-calculus identifies them. The back-door criterion connects the two by providing the graphical condition under which adjustment recovers the causal effect.
+
+::: {.callout-note icon=false}
+## Remark: How Much Extra Structure Does NPSEM-IE Impose?
+
+A binary example, following @wang2026tale, makes the comparison quantitative. Take $X$, $T$, and $Y$ all binary, so the full joint distribution of $(X,\, T(x),\, Y(t,x))$ for $t, x \in \{0,1\}$ has $2^{1 + 2 + 4} - 1 = 127$ free parameters. Three nested assumptions progressively shrink this model:
+
+- Weak (single-world) ignorability $T \indep Y(t) \mid X$ for each $t$ separately: 123 parameters.
+- Strong cross-world ignorability $(Y(0), Y(1)) \indep T \mid X$: 121 parameters.
+- Full NPSEM-IE (all exogenous errors mutually independent): 19 parameters.
+
+NPSEM-IE therefore imposes $123 - 19 = 104$ additional constraints beyond what is needed for ATE identification. Most are cross-world statements such as $T(X{=}0) \indep Y(t, X{=}1)$ that remain untestable even under randomized treatment. Working under NPSEM-IE is a substantive modeling choice, not a free consequence of using structural equations.
+:::
 
 **From ignorability to randomization.** In observational studies, ignorability must be justified by substantive knowledge encoded in a causal graph. Randomized experiments provide a different solution: when treatment is assigned randomly, $(Y(0), Y(1)) \indep T$ holds by design, guaranteeing ignorability *without any covariate adjustment*. Chapter 5 studies this design.
 

@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -402,7 +421,7 @@ window.Quarto = {
 </div>
 <section id="sec-motivation" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">4.1</span> Motivation: A Third Language for Causality</h2>
-<p>The first three chapters developed causal inference primarily in the languages of structural equations and directed acyclic graphs. Those languages are especially effective for expressing interventions syntactically: the SEM shows how an intervention replaces an assignment mechanism, and the DAG shows how it deletes incoming arrows. This chapter introduces a third language: the <em>potential outcomes framework</em> of <span class="citation" data-cites="neyman1923application">Neyman (1923)</span> and <span class="citation" data-cites="rubin1974estimating">Rubin (1974)</span>.</p>
+<p>The first three chapters developed causal inference primarily in the languages of structural equations and directed acyclic graphs. Those languages are especially effective for expressing interventions syntactically: the SEM shows how an intervention replaces an assignment mechanism, and the DAG shows how it deletes incoming arrows. This chapter introduces a third language: the <em>potential outcomes framework</em> of <span class="citation" data-cites="neyman1923application">Neyman (<a href="#ref-neyman1923application" role="doc-biblioref">1923</a>)</span> and <span class="citation" data-cites="rubin1974estimating">Rubin (<a href="#ref-rubin1974estimating" role="doc-biblioref">1974</a>)</span>.</p>
 <p>Potential outcomes provide a direct language for defining causal estimands. Quantities such as the average treatment effect, the average treatment effect on the treated, and related contrasts are most naturally written in terms of counterfactual outcomes <span class="math inline">\(Y(1)\)</span>, <span class="math inline">\(Y(0)\)</span>, and more generally <span class="math inline">\(Y(t)\)</span>. For this reason, the potential outcomes framework has become standard in statistics, biostatistics, epidemiology, and much of econometrics.</p>
 <p>Assumptions such as ignorability, positivity, and exclusion can be stated in this language, but DAGs and the do-operator often make their structural content more transparent. The two frameworks should be viewed as complementary rather than competing: <em>potential outcomes define the causal quantities of interest, while DAGs and the do-calculus clarify identification</em>.</p>
 <figure style="text-align:center;margin:1.5em auto;" class="figure">
@@ -446,7 +465,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Potential Outcome <span class="citation" data-cites="neyman1923application rubin1974estimating">(Neyman 1923; Rubin 1974)</span>
+<span class="screen-reader-only">Note</span>Definition: Potential Outcome <span class="citation" data-cites="neyman1923application rubin1974estimating">(<a href="#ref-neyman1923application" role="doc-biblioref">Neyman 1923</a>; <a href="#ref-rubin1974estimating" role="doc-biblioref">Rubin 1974</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -461,7 +480,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>The Fundamental Problem of Causal Inference <span class="citation" data-cites="holland1986statistics">(Holland 1986)</span>
+<span class="screen-reader-only">Warning</span>The Fundamental Problem of Causal Inference <span class="citation" data-cites="holland1986statistics">(<a href="#ref-holland1986statistics" role="doc-biblioref">Holland 1986</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -477,7 +496,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: SUTVA <span class="citation" data-cites="rubin1980randomization">(Rubin 1980)</span>
+<span class="screen-reader-only">Note</span>Definition: SUTVA <span class="citation" data-cites="rubin1980randomization">(<a href="#ref-rubin1980randomization" role="doc-biblioref">Rubin 1980</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -566,7 +585,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Strong Ignorability <span class="citation" data-cites="rosenbaum1983central">(Rosenbaum and Rubin 1983)</span>
+<span class="screen-reader-only">Note</span>Definition: Strong Ignorability <span class="citation" data-cites="rosenbaum1983central">(<a href="#ref-rosenbaum1983central" role="doc-biblioref">Rosenbaum and Rubin 1983</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -658,7 +677,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Following <span class="citation" data-cites="lalonde1986evaluating">LaLonde (1986)</span> and <span class="citation" data-cites="dehejia1999causal">Dehejia and Wahba (1999)</span>, let <span class="math inline">\(T\)</span> = receipt of job training, <span class="math inline">\(Y\)</span> = earnings two years later, <span class="math inline">\(X\)</span> = (age, education, prior earnings, race, marital status).</p>
+<p>Following <span class="citation" data-cites="lalonde1986evaluating">LaLonde (<a href="#ref-lalonde1986evaluating" role="doc-biblioref">1986</a>)</span> and <span class="citation" data-cites="dehejia1999causal">Dehejia and Wahba (<a href="#ref-dehejia1999causal" role="doc-biblioref">1999</a>)</span>, let <span class="math inline">\(T\)</span> = receipt of job training, <span class="math inline">\(Y\)</span> = earnings two years later, <span class="math inline">\(X\)</span> = (age, education, prior earnings, race, marital status).</p>
 <p>The back-door path <span class="math inline">\(T \leftarrow X \to Y\)</span> is blocked by conditioning on <span class="math inline">\(X\)</span>, leaving only the causal path <span class="math inline">\(T \to Y\)</span>. Ignorability holds if this DAG is correctly specified. If there is an unobserved variable <span class="math inline">\(U\)</span> (motivation, ability) that affects both training participation and earnings, <span class="math inline">\(X\)</span> fails the back-door criterion and ignorability fails.</p>
 </div>
 </div>
@@ -764,9 +783,28 @@ window.Quarto = {
 <li>The potential outcome <span class="math inline">\(Y(t)\)</span> is the outcome that would be observed under intervention <span class="math inline">\(T = t\)</span>. Under consistency, no interference, and the structural causal semantics adopted in these notes, the observed outcome satisfies <span class="math inline">\(Y_i = Y_i(T_i)\)</span>, and <span class="math inline">\(Y(t)\)</span> has the same distribution as <span class="math inline">\(Y \mid \doop(T{=}t)\)</span>.</li>
 <li>The ATE and ATT are averages of the unit-level causal effect <span class="math inline">\(g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})\)</span> over the full population and the treated subpopulation respectively. In the linear SEM, both equal <span class="math inline">\(\beta\)</span>. They diverge under heterogeneous effects when treatment selection correlates with individual effect size.</li>
 <li>Strong ignorability <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> with overlap identifies the ATE via <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.5</span></a>. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption.</li>
-<li>Single world intervention graphs <span class="citation" data-cites="richardson2014ace">(Richardson and Robins 2014)</span> provide a formal graphical representation of counterfactual variables, making ignorability a d-separation statement (Appendix B).</li>
+<li>Single world intervention graphs <span class="citation" data-cites="richardson2014ace">(<a href="#ref-richardson2014ace" role="doc-biblioref">Richardson and Robins 2014</a>)</span> provide a formal graphical representation of counterfactual variables, making ignorability a d-separation statement (Appendix B).</li>
 <li>The frameworks are complementary: potential outcomes define estimands; the do-calculus identifies them. The back-door criterion connects the two by providing the graphical condition under which adjustment recovers the causal effect.</li>
 </ol>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: How Much Extra Structure Does NPSEM-IE Impose?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A binary example, following <span class="citation" data-cites="wang2026tale">Wang et al. (<a href="#ref-wang2026tale" role="doc-biblioref">2026</a>)</span>, makes the comparison quantitative. Take <span class="math inline">\(X\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(Y\)</span> all binary, so the full joint distribution of <span class="math inline">\((X,\, T(x),\, Y(t,x))\)</span> for <span class="math inline">\(t, x \in \{0,1\}\)</span> has <span class="math inline">\(2^{1 + 2 + 4} - 1 = 127\)</span> free parameters. Three nested assumptions progressively shrink this model:</p>
+<ul>
+<li>Weak (single-world) ignorability <span class="math inline">\(T \indep Y(t) \mid X\)</span> for each <span class="math inline">\(t\)</span> separately: 123 parameters.</li>
+<li>Strong cross-world ignorability <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span>: 121 parameters.</li>
+<li>Full NPSEM-IE (all exogenous errors mutually independent): 19 parameters.</li>
+</ul>
+<p>NPSEM-IE therefore imposes <span class="math inline">\(123 - 19 = 104\)</span> additional constraints beyond what is needed for ATE identification. Most are cross-world statements such as <span class="math inline">\(T(X{=}0) \indep Y(t, X{=}1)\)</span> that remain untestable even under randomized treatment. Working under NPSEM-IE is a substantive modeling choice, not a free consequence of using structural equations.</p>
+</div>
+</div>
 <p><strong>From ignorability to randomization.</strong> In observational studies, ignorability must be justified by substantive knowledge encoded in a causal graph. Randomized experiments provide a different solution: when treatment is assigned randomly, <span class="math inline">\((Y(0), Y(1)) \indep T\)</span> holds by design, guaranteeing ignorability <em>without any covariate adjustment</em>. Chapter 5 studies this design.</p>
 <p><strong>Identification vs.&nbsp;estimation.</strong> Chapters 1–4 have focused on <em>identification</em>: whether <span class="math inline">\(\tau = \E[Y(1) - Y(0)]\)</span> can be written as a functional <span class="math inline">\(\Phi(P(Y,T,X))\)</span> of the observed distribution. Estimation — constructing <span class="math inline">\(\hat\tau\)</span> from a finite sample to approximate <span class="math inline">\(\Phi(P)\)</span> — is studied in Part III, covering regression adjustment, IPW, doubly robust estimators, and instrumental variables.</p>
 </section>
@@ -795,11 +833,40 @@ window.Quarto = {
 <ol type="a">
 <li>Construct the SWIG <span class="math inline">\(\mathcal{G}(t)\)</span> by splitting <span class="math inline">\(T\)</span> into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome <span class="math inline">\(Y(t)\)</span>.</li>
 <li>In <span class="math inline">\(\mathcal{G}(t)\)</span>, identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>. Determine which are blocked and which are open before conditioning.</li>
-<li>Use d-separation in <span class="math inline">\(\mathcal{G}(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\mathcal{G}(t)}\)</span> holds. Conclude that <span class="math inline">\(X\)</span> satisfies the back-door criterion, confirming <span class="citation" data-cites="prop-ign-bd">(<strong>prop-ign-bd?</strong>)</span>.</li>
+<li>Use d-separation in <span class="math inline">\(\mathcal{G}(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\mathcal{G}(t)}\)</span> holds. Conclude that <span class="math inline">\(X\)</span> satisfies the back-door criterion, confirming <span class="citation" data-cites="prop-ign-bd">(<a href="#ref-prop-ign-bd" role="doc-biblioref"><strong>prop-ign-bd?</strong></a>)</span>.</li>
 <li>Now add a hidden common cause <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure would be needed for identification.</li>
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-dehejia1999causal" class="csl-entry" role="listitem">
+Dehejia, Rajeev H., and Sadek Wahba. 1999. <span>“Causal Effects in Nonexperimental Studies: Reevaluating the Evaluation of Training Programmes.”</span> <em>Journal of the American Statistical Association</em> 94 (448): 1053–62.
+</div>
+<div id="ref-holland1986statistics" class="csl-entry" role="listitem">
+Holland, Paul W. 1986. <span>“Statistics and Causal Inference.”</span> <em>Journal of the American Statistical Association</em> 81 (396): 945–60.
+</div>
+<div id="ref-lalonde1986evaluating" class="csl-entry" role="listitem">
+LaLonde, Robert J. 1986. <span>“Evaluating the Econometric Evaluations of Training Programmes with Experimental Data.”</span> <em>American Economic Review</em> 76 (4): 604–20.
+</div>
+<div id="ref-neyman1923application" class="csl-entry" role="listitem">
+Neyman, Jerzy Splawa. 1923. <span>“On the Application of Probability Theory to Agricultural Experiments: Essay on Principles, Section&nbsp;9.”</span> <em>Statistical Science</em> 5 (4): 465–72.
+</div>
+<div id="ref-richardson2014ace" class="csl-entry" role="listitem">
+Richardson, Thomas S., and James M. Robins. 2014. <em><span>ACE</span> Bounds; Single World Intervention Graphs (<span>SWIGs</span>) and Identification of Causal Effects</em>. University of Washington.
+</div>
+<div id="ref-rosenbaum1983central" class="csl-entry" role="listitem">
+Rosenbaum, Paul R., and Donald B. Rubin. 1983. <span>“The Central Role of the Propensity Score in Observational Studies for Causal Effects.”</span> <em>Biometrika</em> 70 (1): 41–55.
+</div>
+<div id="ref-rubin1974estimating" class="csl-entry" role="listitem">
+Rubin, Donald B. 1974. <span>“Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies.”</span> <em>Journal of Educational Psychology</em> 66 (5): 688–701.
+</div>
+<div id="ref-rubin1980randomization" class="csl-entry" role="listitem">
+Rubin, Donald B. 1980. <span>“Randomization Analysis of Experimental Data: The <span>Fisher</span> Randomization Test.”</span> <em>Journal of the American Statistical Association</em> 75 (371): 591–93.
+</div>
+<div id="ref-wang2026tale" class="csl-entry" role="listitem">
+Wang, Linbo, Thomas S. Richardson, and James M. Robins. 2026. <span>“Causal Inference: <span>A</span> Tale of Three Frameworks.”</span> <em>Journal of Data Science</em> 24 (1): 53–85. <a href="https://doi.org/10.6339/25-JDS1211">https://doi.org/10.6339/25-JDS1211</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
