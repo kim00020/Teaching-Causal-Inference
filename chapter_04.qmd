@@ -188,7 +188,7 @@ Hence $\tau_{\mathrm{ATE}} = 6.2 - 4.8 = 1.4$. The formula works by comparing tr
 The potential-outcomes assumption $(Y(0), Y(1)) \indep T \mid X$ is the counterfactual expression of the idea that, after conditioning on $X$, treatment assignment carries no residual information about the outcome that would be observed under intervention $T{=}t$. In DAG language, the closely related condition is that $X$ blocks all back-door paths from $T$ to $Y$.
 
 ::: {.callout-tip icon=false}
-## Proposition: Back-Door Criterion Implies Ignorability {#prop-ign-bd}
+## Proposition: Back-Door Criterion Implies Ignorability {#prp-ign-bd}
 
 Under the NPSEM/SWIG semantics adopted in these notes, if $X$ satisfies the back-door criterion for the effect of $T$ on $Y$ — i.e., (1) no node in $X$ is a descendant of $T$, and (2) $X$ blocks every back-door path from $T$ to $Y$ — then unconfoundedness $(Y(t) \indep T \mid X)$ holds for all $t$.
 :::
@@ -288,5 +288,5 @@ NPSEM-IE therefore imposes $123 - 19 = 104$ additional constraints beyond what i
 
 (a) Construct the SWIG $\mathcal{G}(t)$ by splitting $T$ into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome $Y(t)$.
 (b) In $\mathcal{G}(t)$, identify all paths between the random half $T$ and $Y(t)$. Determine which are blocked and which are open before conditioning.
-(c) Use d-separation in $\mathcal{G}(t)$ to verify that $(Y(t) \indep T \mid X)_{\mathcal{G}(t)}$ holds. Conclude that $X$ satisfies the back-door criterion, confirming @prop-ign-bd.
+(c) Use d-separation in $\mathcal{G}(t)$ to verify that $(Y(t) \indep T \mid X)_{\mathcal{G}(t)}$ holds. Conclude that $X$ satisfies the back-door criterion, confirming @prp-ign-bd.
 (d) Now add a hidden common cause $U \to T$, $U \to Y$. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure would be needed for identification.
