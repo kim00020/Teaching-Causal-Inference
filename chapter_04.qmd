@@ -2,64 +2,67 @@
 engine: knitr
 ---
 
-# Potential Outcomes and Adjustment
+# Potential Outcomes and Adjustment {#sec-w4}
 
 ::: {.callout-note icon=false}
 ## Learning Objectives
 
 By the end of this chapter, students should be able to:
 
-1. Define the potential outcome $Y(t)$, state SUTVA precisely, and derive the consistency equation $Y = Y(T)$.
+1. Define the potential outcome $Y(t)$, state SUTVA and consistency precisely, and explain how the consistency equation $Y = Y(T)$ links observed and potential outcomes.
 2. Define the ATE and ATT, explain how they relate to each other, and re-express them as functionals of the structural equation for $Y$.
-3. Show that the linear SEM structural coefficient $\beta$ equals the ATE under homogeneous effects, and explain why ATE and ATT diverge under treatment effect heterogeneity.
-4. State the ignorability assumption, interpret it graphically as a back-door condition, and explain why overlap is a necessary companion assumption.
-5. Derive the adjustment formula for the ATE under strong ignorability and positivity, and explain how the back-door criterion provides the graphical justification for conditional exchangeability.
+3. Show that the linear SEM structural coefficient $\beta$ equals the ATE under homogeneous effects, and explain how the ATE and ATT can diverge under treatment-effect heterogeneity when treatment selection is associated with the individual treatment effect.
+4. State the ignorability assumption, distinguish its weak (single-world) and strong (joint) forms, interpret it graphically as a back-door condition, and explain why positivity is required for nonparametric adjustment over the target population.
+5. Derive the adjustment formula for the ATE under consistency, weak conditional exchangeability, and positivity, and explain how the back-door criterion provides the graphical justification for conditional exchangeability.
 :::
 
-## Motivation: A Third Language for Causality {#sec-motivation}
+## Motivation: A Third Language for Causality {#sec-w4-motivation}
 
-The first three chapters developed causal inference primarily in the languages of structural equations and directed acyclic graphs. Those languages are especially effective for expressing interventions syntactically: the SEM shows how an intervention replaces an assignment mechanism, and the DAG shows how it deletes incoming arrows. This chapter introduces a third language: the *potential outcomes framework* of @neyman1923application and @rubin1974estimating.
+The first three chapters developed causal inference primarily in the languages of structural equations and directed acyclic graphs. Those two languages are especially effective for expressing interventions syntactically: the structural equation model shows how an intervention replaces an assignment mechanism, and the DAG shows how the same intervention deletes incoming arrows into the treatment node. In this chapter we introduce a third language: the potential outcomes framework of @neyman1923application and @rubin1974estimating.
 
-Potential outcomes provide a direct language for defining causal estimands. Quantities such as the average treatment effect, the average treatment effect on the treated, and related contrasts are most naturally written in terms of counterfactual outcomes $Y(1)$, $Y(0)$, and more generally $Y(t)$. For this reason, the potential outcomes framework has become standard in statistics, biostatistics, epidemiology, and much of econometrics.
+Potential outcomes provide a direct language for defining causal estimands. Quantities such as the average treatment effect, the average treatment effect on the treated, and related causal contrasts are most naturally written in terms of counterfactual outcomes $Y(1)$, $Y(0)$, and more generally $Y(t)$. For this reason, the potential outcomes framework has become standard in statistics, biostatistics, epidemiology, and much of econometrics.
 
-Assumptions such as ignorability, positivity, and exclusion can be stated in this language, but DAGs and the do-operator often make their structural content more transparent. The two frameworks should be viewed as complementary rather than competing: *potential outcomes define the causal quantities of interest, while DAGs and the do-calculus clarify identification*.
+Assumptions such as ignorability and exclusion can certainly be stated in this language, but DAGs and the do-operator often make their structural content more transparent by showing which paths are blocked, which variables are confounders, and which interventions are being considered. Positivity, by contrast, is a support condition on the observed-data distribution and is not encoded by any graph. Thus the two frameworks should be viewed as complementary rather than competing: potential outcomes define the causal quantities of interest, while DAGs and the do-calculus clarify identification.
+
+The purpose of this chapter is therefore not to replace the graphical viewpoint developed earlier, but to connect it to the potential-outcomes notation that dominates much of the applied literature. We first define potential outcomes and the standard causal estimands built from them. We then show how consistency, exchangeability, and positivity together identify the average treatment effect, and how the back-door criterion provides the graphical justification for that identification.
 
 ::: {.content-visible when-format="html"}
 ```{=html}
 <figure style="text-align:center;margin:1.5em auto;">
-<svg viewBox="0 0 640 100" width="100%" style="max-width:640px;font-family:sans-serif;">
-  <defs>
-    <marker id="pa" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#2E74B6"/>
-    </marker>
-  </defs>
-  <!-- Foundations box -->
-  <rect x="5" y="20" width="145" height="55" rx="6" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"/>
-  <text x="77" y="42" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="12">Foundations</text>
-  <text x="77" y="57" text-anchor="middle" fill="#1E3864" font-size="10">Chs. 1–3</text>
-  <!-- PO box (highlighted) -->
-  <rect x="173" y="20" width="155" height="55" rx="6" fill="#EEF4FB" stroke="#2E74B6" stroke-width="2.5"/>
-  <text x="250" y="40" text-anchor="middle" fill="#2E74B6" font-weight="bold" font-size="12">Potential Outcomes</text>
-  <text x="250" y="55" text-anchor="middle" fill="#2E74B6" font-size="10">Ch. 4 ← here</text>
-  <!-- Designs box -->
-  <rect x="351" y="20" width="138" height="55" rx="6" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"/>
-  <text x="420" y="42" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="12">Designs</text>
-  <text x="420" y="57" text-anchor="middle" fill="#1E3864" font-size="10">Chs. 5–9</text>
-  <!-- Estimation box -->
-  <rect x="513" y="20" width="122" height="55" rx="6" fill="#EEF4FB" stroke="#1E3864" stroke-width="2"/>
-  <text x="574" y="42" text-anchor="middle" fill="#1E3864" font-weight="bold" font-size="12">Estimation</text>
-  <text x="574" y="57" text-anchor="middle" fill="#1E3864" font-size="10">Part III</text>
-  <!-- Arrows -->
-  <line x1="150" y1="47" x2="170" y2="47" stroke="#2E74B6" stroke-width="2" marker-end="url(#pa)"/>
-  <line x1="328" y1="47" x2="348" y2="47" stroke="#2E74B6" stroke-width="2" marker-end="url(#pa)"/>
-  <line x1="489" y1="47" x2="510" y2="47" stroke="#2E74B6" stroke-width="2" marker-end="url(#pa)"/>
+<svg viewBox="0 0 640 150" width="100%" style="max-width:640px;font-family:sans-serif;font-size:12px;">
+  <defs><marker id="w4r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2E74B6"/></marker></defs>
+  <rect x="12" y="20" width="130" height="46" rx="6" fill="#EEF4FB" stroke="#1e3864" stroke-width="1.7"/>
+  <text x="77" y="40" text-anchor="middle" fill="#1e3864" font-weight="bold">Foundations</text>
+  <text x="77" y="56" text-anchor="middle" fill="#1e3864" font-weight="bold">(Chs. 1–3)</text>
+  <text x="77" y="90" text-anchor="middle" fill="#666" font-size="10" font-style="italic">DAGs, do-calculus,</text>
+  <text x="77" y="103" text-anchor="middle" fill="#666" font-size="10" font-style="italic">identification</text>
+  <rect x="176" y="20" width="150" height="46" rx="6" fill="#FFF6E5" stroke="#C77A00" stroke-width="2.2"/>
+  <text x="251" y="40" text-anchor="middle" fill="#8a5500" font-weight="bold">Potential Outcomes</text>
+  <text x="251" y="56" text-anchor="middle" fill="#8a5500" font-weight="bold">(Ch. 4) ← here</text>
+  <text x="251" y="90" text-anchor="middle" fill="#666" font-size="10" font-style="italic">Define estimands;</text>
+  <text x="251" y="103" text-anchor="middle" fill="#666" font-size="10" font-style="italic">bridge frameworks</text>
+  <rect x="360" y="20" width="130" height="46" rx="6" fill="#EEF4FB" stroke="#1e3864" stroke-width="1.7"/>
+  <text x="425" y="40" text-anchor="middle" fill="#1e3864" font-weight="bold">Designs</text>
+  <text x="425" y="56" text-anchor="middle" fill="#1e3864" font-weight="bold">(Chs. 5–9)</text>
+  <text x="425" y="90" text-anchor="middle" fill="#666" font-size="10" font-style="italic">Randomization, PS,</text>
+  <text x="425" y="103" text-anchor="middle" fill="#666" font-size="10" font-style="italic">IV, mediation, sensitivity</text>
+  <rect x="524" y="20" width="112" height="46" rx="6" fill="#EEF4FB" stroke="#1e3864" stroke-width="1.7"/>
+  <text x="580" y="40" text-anchor="middle" fill="#1e3864" font-weight="bold">Estimation</text>
+  <text x="580" y="56" text-anchor="middle" fill="#1e3864" font-weight="bold">(Part III)</text>
+  <text x="580" y="90" text-anchor="middle" fill="#666" font-size="10" font-style="italic">Regression, IPW,</text>
+  <text x="580" y="103" text-anchor="middle" fill="#666" font-size="10" font-style="italic">doubly robust</text>
+  <line x1="142" y1="43" x2="170" y2="43" stroke="#2E74B6" stroke-width="2" marker-end="url(#w4r)"/>
+  <line x1="326" y1="43" x2="354" y2="43" stroke="#2E74B6" stroke-width="2" marker-end="url(#w4r)"/>
+  <line x1="490" y1="43" x2="518" y2="43" stroke="#2E74B6" stroke-width="2" marker-end="url(#w4r)"/>
 </svg>
-<figcaption style="font-size:0.9em;color:#555">Chapter 4 bridges the graphical framework of Chapters 1–3 to the applied designs of Part II and the estimation methods of Part III.</figcaption>
+<figcaption>Where this chapter sits in the course. Potential outcomes supply the language for defining estimands and bridge the graphical machinery of Part I to the designs and estimation theory that follow.</figcaption>
 </figure>
 ```
 :::
 
-## The Neyman--Rubin Potential Outcomes Framework {#sec-po}
+@sec-w4-po defines the potential outcome framework rigorously. @sec-w4-estimands develops the two principal causal estimands: ATE and ATT. @sec-w4-ignorability develops the identification chain from consistency, exchangeability, and positivity to the adjustment formula, and explains how the back-door criterion provides the graphical justification. @sec-w4-comparison situates the potential outcomes framework relative to the do-calculus and the SEM. For readers who want a formal graphical representation of counterfactual variables, Appendix B introduces single-world intervention graphs (SWIGs).
+
+## The Neyman--Rubin Potential Outcomes Framework {#sec-w4-po}
 
 ### The Potential Outcome
 
@@ -71,51 +74,70 @@ For each unit $i$ and each possible treatment value $t \in \mathcal{T}$, the *po
 The collection $\{Y_i(t) : t \in \mathcal{T}\}$ is called the *schedule of potential outcomes* for unit $i$. In the binary case $\mathcal{T} = \{0,1\}$, the schedule is $(Y_i(0),\, Y_i(1))$.
 :::
 
-$Y_i(1)$ is the outcome unit $i$ would achieve under treatment; $Y_i(0)$ is the outcome under control. Only one of these is ever observed for any given unit. The unobserved potential outcome is called the *counterfactual*.
+**Interpretation.** $Y_i(1)$ is the outcome unit $i$ would achieve *under treatment*; $Y_i(0)$ is the outcome under *control*. Only one of these is ever observed for any given unit. The unobserved potential outcome is called the *counterfactual*.
 
 ::: {.callout-warning icon=false}
-## The Fundamental Problem of Causal Inference [@holland1986statistics]
+## The Fundamental Problem of Causal Inference
 
-For any unit $i$, at most one potential outcome $Y_i(t)$ is observed. The individual-level causal effect $Y_i(1) - Y_i(0)$ is therefore *never directly observable*. Causal inference is an inference problem precisely because this quantity must be recovered from a population of units rather than a single unit.
+[@holland1986statistics] For a single treatment occasion, only $Y_i(T_i)$ is observed; the pair $\bigl(Y_i(0), Y_i(1)\bigr)$ is never jointly observed for the same unit, so the individual-level causal effect $Y_i(1) - Y_i(0)$ is *never directly observable*. Without much stronger structural assumptions, individual treatment effects are not identified. Causal inference therefore typically targets population summaries --- such as the ATE and ATT --- that can be identified from cross-unit comparisons under explicit assumptions.
 :::
 
-### SUTVA and Consistency
+The structure of the problem is visible in a small table --- often called the *science table* --- listing the full potential-outcome schedule next to what is actually observed:
+
+| Unit | $Y_i(0)$ | $Y_i(1)$ | $T_i$ | $Y_i = Y_i(T_i)$ |
+|---|---|---|---|---|
+| 1 | observed | ? | 0 | $Y_1(0)$ |
+| 2 | ? | observed | 1 | $Y_2(1)$ |
+| 3 | observed | ? | 0 | $Y_3(0)$ |
+
+Each row is missing exactly one entry, and *which* entry is missing is determined by $T_i$: this is the fundamental problem in tabular form. The final column is the consistency equation at work, and the impossibility of filling in the "?" entries within a row is why causal inference must rely on cross-unit comparisons --- which is precisely what the exchangeability assumptions of @sec-w4-ignorability will license.
+
+### SUTVA, Treatment Versions, and Consistency
+
+The potential outcome $Y_i(t)$ is only well-defined if it does not depend on the treatments assigned to *other* units, and if there is a single, unambiguous version of each treatment level. These requirements are formalized as SUTVA.
 
 ::: {.callout-note icon=false}
 ## Definition: SUTVA [@rubin1980randomization]
 
 The *stable unit treatment value assumption* has two components:
 
-1. **No interference.** The potential outcome $Y_i(t)$ depends only on unit $i$'s own treatment: $Y_i(t_1, \ldots, t_n) = Y_i(t_i)$.
-2. **No hidden versions.** For each treatment level $t$, there is a single well-defined version. If two units both receive $T=1$, the treatment is the same in both cases.
+1. **No interference.** The potential outcome $Y_i(t)$ depends only on unit $i$'s own treatment, not on the treatments of other units: $Y_i(t_1, \ldots, t_n) = Y_i(t_i)$.
+2. **No hidden versions.** For each labeled treatment level $t$, all outcome-relevant treatment versions are either explicitly encoded in $t$ or are causally equivalent for the estimand under study, so that $Y_i(t)$ refers to a unique, well-defined intervention.
 :::
 
-Under SUTVA, the observed outcome equals the potential outcome at the treatment actually received:
-$$Y_i = Y_i(T_i).$$ {#eq-consistency}
+::: {.callout-note icon=false}
+## Definition: Consistency
 
-This *consistency equation* is the bridge between the potential outcome world and the observed data world. It fails whenever SUTVA fails: if treatment spills over between units (e.g., vaccination provides herd immunity), or if the treatment label $T=1$ covers multiple distinct interventions.
+For every unit $i$ and every treatment level $t$: if $T_i = t$, then $Y_i = Y_i(t)$. Compactly, the observed outcome equals the potential outcome at the treatment actually received:
+$$Y_i \;=\; Y_i(T_i).$$ {#eq-consistency}
+For binary treatment this can be written $Y_i = T_i\, Y_i(1) + (1 - T_i)\, Y_i(0)$.
+:::
+
+Consistency is the bridge between the potential-outcome world and the observed-data world, and it is conceptually distinct from the exchangeability and positivity assumptions of @sec-w4-ignorability. It is best regarded as an assumption in its own right rather than as an automatic consequence of SUTVA, although SUTVA is what makes the scalar notation $Y_i(t)$ in @eq-consistency adequate.
+
+Two clarifications about SUTVA itself are worth recording. First, interference does not make potential outcomes meaningless; it makes the *scalar notation* inadequate. Under interference one writes $Y_i(t_1, \ldots, t_n)$, or reduces the assignment vector through an *exposure mapping*, and causal analysis proceeds with the richer index set. Second, "no hidden versions" does not require the physical treatment received by any two treated units to be literally identical; it requires that any outcome-relevant versions be either encoded in the treatment variable or causally equivalent for the estimand at hand. When these conditions fail --- vaccination that provides herd immunity, or a label $T{=}1$ that covers interventions with different effects --- it is the scalar consistency equation @eq-consistency that breaks down.
 
 ### Connection to the Do-Operator
 
+The notation $Y(t)$ and the expression $P(Y \mid \doop(T{=}t))$ refer to the same causal idea viewed from two complementary angles. The potential outcome $Y(t)$ denotes the outcome that would be realized for a unit if the treatment were set to $t$. The do-operator, by contrast, describes an intervention at the level of the data-generating mechanism: it replaces the original treatment assignment rule by the constant value $t$.
+
+When $Y(t)$ is constructed by applying the same structural intervention that defines $\doop(T{=}t)$, equality of the resulting laws holds by construction: intervening to set $T = t$ in the underlying structural equation model produces an outcome variable with the same distribution as $Y(t)$. No interference makes the scalar unit-level notation $Y_i(t)$ adequate. The separate consistency assumption links these counterfactual variables to observed outcomes when the realized treatment equals $t$. Thus the potential-outcomes notation and the interventional distribution are two ways of encoding the same manipulated world.
+
 ::: {.callout-tip icon=false}
-## Proposition: Potential Outcomes and the Do-Operator
+## Proposition: Potential Outcomes and the Do-Operator {#prp-po-do}
 
-Under the structural causal model of Chapters 1–3, together with consistency and no interference (SUTVA):
-$$Y(t) \;\overset{d}{=}\; Y \mid \doop(T{=}t),$$ {#eq-po-do}
-so that $P(Y(t) \le y) = P(Y \le y \mid \doop(T{=}t))$ for every $y$. Equivalently, $\E[Y(t)] = \E[Y \mid \doop(T{=}t)]$.
+Consider the structural causal model of Chapters 1--3, and construct $Y(t)$ by replacing the structural equation for $T$ with the constant assignment $T := t$ --- the same intervention that defines $\doop(T{=}t)$. Under no interference (SUTVA), the potential outcome has the interventional distribution:
+$$P\{Y(t) \le y\} \;=\; P\{Y \le y \mid \doop(T{=}t)\} \qquad \text{for every } y;$$ {#eq-po-do}
+in particular, $\E[Y(t)] = \E[Y \mid \doop(T{=}t)]$.
 :::
 
-*Proof sketch.* In the mutilated SEM $\mathcal{G}_{\overline{T}}$, the structural equation for $T$ is replaced by $T := t$ for every unit. The structural model then determines $Y$ from $t$ and unit $i$'s own background variables — which is precisely what the potential outcomes framework defines as $Y_i(t)$. SUTVA's no-interference condition ensures $Y_i(t)$ does not depend on other units' treatment values, so the marginal distribution of $Y$ in $\mathcal{G}_{\overline{T}}$ equals the marginal distribution of $Y(t)$. $\square$
+*Proof sketch.* In the intervened SCM, whose graph is $\Gcal_{\overline{T}}$, the structural equation for $T$ is replaced by $T := t$ for every unit. The structural model then determines the value of $Y$ for unit $i$ from $t$ and unit $i$'s own background variables --- which is precisely what the potential outcomes framework defines as $Y_i(t)$. SUTVA's no-interference condition ensures $Y_i(t)$ does not depend on other units' treatment values, so the marginal distribution of $Y$ in the intervened model equals the marginal distribution of $Y(t)$. By definition of the do-operator, the former is $f(y \mid \doop(T{=}t))$. $\square$
 
-This equivalence lets us move freely between two notational traditions. When defining estimands such as $\E[Y(1) - Y(0)]$, potential-outcome notation is most natural. When proving identification results from a graph, the do-operator is often more transparent: $P(y \mid \doop(t)) \neq P(y \mid T{=}t)$ whenever $T$ is endogenous (established in Chapter 1), whereas $Y(t)$ carries no syntactic marker for this gap.
+This proposition should be interpreted carefully. Consistency alone does not create the link between $Y(t)$ and the do-operator; the link comes from the underlying causal model that assigns meaning to the intervention $\doop(T{=}t)$. Consistency and no interference ensure that the *observed* outcome agrees with the appropriate potential outcome at the realized treatment, while the structural model explains how the intervention generates the counterfactual world.
 
-::: {.callout-note icon=false}
-## Remark
+This equivalence matters because it lets us move freely between two notational traditions. When defining estimands such as $\E[Y(1) - Y(0)]$, potential-outcome notation is often most natural. When proving identification results from a graph, the do-operator is often more convenient because it integrates directly with graph surgery and the do-calculus. In general $f(y \mid \doop(t))$ differs from $f(y \mid T{=}t)$ when $T$ is endogenous (Chapter 1), although equality can occur through special cancellations. Potential-outcome notation marks the same distinction --- $\E[Y(t)]$ and $\E[Y \mid T{=}t]$ are different expressions --- but it does not by itself supply the graphical calculus for deciding when the two coincide. In a well-specified causal model these are not competing definitions, but compatible representations of the same intervention.
 
-The SEM representation $Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i})$ clarifies why the two frameworks are equivalent in content but different in emphasis. The do-calculus works with the interventional distribution $P(y \mid \doop(t))$ as a population-level object and asks when it can be recovered from observational data. The potential outcomes framework works with unit-level quantities $Y_i(t)$ and asks what population summaries (ATE, ATT) are scientifically meaningful. The SEM ties the two together.
-:::
-
-## Causal Estimands {#sec-estimands}
+## Causal Estimands {#sec-w4-estimands}
 
 ### The Average Treatment Effect and Its Relatives
 
@@ -124,127 +146,258 @@ The SEM representation $Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i})$ clarifies why the 
 
 For a binary treatment $T \in \{0,1\}$:
 
-- The *average treatment effect* (ATE): $\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)]$.
-- The *average treatment effect on the treated* (ATT): $\tau_{\mathrm{ATT}} = \E[Y(1) - Y(0) \mid T{=}1]$.
+- The *average treatment effect* (ATE) is $\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)]$.
+- The *average treatment effect on the treated* (ATT) is $\tau_{\mathrm{ATT}} = \E[Y(1) - Y(0) \mid T{=}1]$.
 :::
 
-The ATE and ATT coincide only when the treatment effect does not depend on who selected into treatment — i.e., when $\E[Y(t) \mid T] = \E[Y(t)]$ for $t \in \{0,1\}$. In a randomized experiment this holds by design.
+Let $\tau = Y(1) - Y(0)$ denote the unit-level effect and let $p = P(T{=}1) \in (0,1)$. Alongside the ATT one may define the *average treatment effect on the controls*, $\tau_{\mathrm{ATC}} = \E[\tau \mid T{=}0]$. The law of total expectation gives the exact decomposition
+$$\tau_{\mathrm{ATE}} \;=\; p\,\tau_{\mathrm{ATT}} + (1-p)\,\tau_{\mathrm{ATC}},$$ {#eq-ate-att-atc}
+so the ATE and ATT coincide if and only if $\tau_{\mathrm{ATT}} = \tau_{\mathrm{ATC}}$: the mean effect among the treated must equal the mean effect among the controls. Equivalently, $\tau_{\mathrm{ATT}} - \tau_{\mathrm{ATE}} = \mathrm{Cov}(T, \tau)/p$. Treatment effects may therefore be heterogeneous across units while the ATE and ATT still coincide; what matters is whether selection into treatment is related to the effect *in the mean*. Unit-level constancy of the effect is sufficient but not necessary.
 
-Neither quantity is directly observable. The naïve estimator $\hat\tau_{\mathrm{naive}} = \bar{Y}_{T=1} - \bar{Y}_{T=0}$ estimates $\E[Y \mid T{=}1] - \E[Y \mid T{=}0] \neq \E[Y(1)] - \E[Y(0)]$, with the gap being the selection bias induced by endogeneity.
+None of these quantities is directly observable. The naive estimator $\hat\tau_{\mathrm{naive}} = \bar{Y}_{T=1} - \bar{Y}_{T=0}$ estimates the observed treatment-group contrast $D_{\mathrm{obs}} = \E[Y \mid T{=}1] - \E[Y \mid T{=}0]$, which in general differs from the ATE. Under consistency, $D_{\mathrm{obs}} = \E[Y(1) \mid T{=}1] - \E[Y(0) \mid T{=}0]$, and adding and subtracting $\E[Y(0) \mid T{=}1]$ yields the exact decomposition
+$$D_{\mathrm{obs}} - \tau_{\mathrm{ATE}} \;=\; \underbrace{\E[Y(0) \mid T{=}1] - \E[Y(0) \mid T{=}0]}_{\text{baseline-selection bias}} \;+\; \underbrace{\bigl(\tau_{\mathrm{ATT}} - \tau_{\mathrm{ATE}}\bigr)}_{\text{effect-selection difference}}.$$ {#eq-obs-decomp}
+The first term reflects baseline differences between the two groups --- units who select into treatment may have fared differently even untreated --- and the second reflects selection on the size of the effect. In a randomized experiment both terms vanish. Problem 2 works through a numerical case.
 
-### Causal Estimands as Functionals of the Structural Equation {#sec-sem-po}
+::: {.callout-note icon=false}
+## Remark: When ATE and ATT Coincide
 
-In the SEM framework, the outcome is determined by a structural equation $Y = g(T, \mathbf{X}, U_Y)$, where $U_Y$ collects all sources of variation not accounted for by $(T, \mathbf{X})$. The potential outcome under $\doop(T{=}t)$ is:
-$$Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i}).$$ {#eq-po-from-sem}
+ATE and ATT coincide when $\E[Y(t) \mid T] = \E[Y(t)]$ for $t \in \{0,1\}$, i.e. when treatment assignment is mean-independent of potential outcomes. In a randomized experiment this holds by design, and both terms of the decomposition @eq-obs-decomp vanish.
+:::
 
-Substituting into the definitions:
-$$\tau_{\mathrm{ATE}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y)\right], \qquad \tau_{\mathrm{ATT}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y) \mid T{=}1\right].$$ {#eq-ate-sem}
+### Causal Estimands as Functionals of the Structural Model {#sec-w4-sem-po}
 
-**The linear SEM as a special case.** In the Gaussian linear SEM $Y = \beta T + \boldsymbol{\gamma}^\top\mathbf{X} + \varepsilon$, the unit-level effect is $Y_i(1) - Y_i(0) = \beta$ for every unit. Consequently, $\tau_{\mathrm{ATE}} = \tau_{\mathrm{ATT}} = \beta$. The structural coefficient $\beta$ *is* the average treatment effect. This homogeneity is a special property of the linear additive model, not a general feature.
+The potential outcome $Y_i(t)$ was introduced as a *hypothetical*: the value unit $i$ would have exhibited under treatment $t$. The SEM framework of Chapter 1 gives this hypothetical a precise generative meaning, and thereby expresses the potential-outcome estimands as functionals of the structural equation for $Y$.
 
-**Heterogeneous effects.** In the nonparametric SEM, the unit-level effect $g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ varies across units. The ATE and ATT differ whenever treatment selection correlates with individual effect size — i.e., whenever units who benefit more also tend to self-select into treatment.
+**From structural equation to potential outcome.** In the SEM, the outcome is determined by a structural equation
+$$Y \;=\; g(T,\, \mathbf{X},\, U_Y),$$ {#eq-sem-y}
+where $U_Y$ collects all sources of variation in $Y$ not already accounted for by $(T, \mathbf{X})$. The potential outcome under $\doop(T{=}t)$ is obtained by substituting $t$ for $T$ while holding everything else fixed:
+$$Y_i(t) \;=\; g(t,\, \mathbf{X}_i,\, U_{Y,i}).$$ {#eq-po-from-sem}
+Here we assume, as throughout this chapter, that $\mathbf{X}$ is *pretreatment*: no component of $\mathbf{X}$ is a descendant of $T$, so setting $T = t$ leaves $\mathbf{X}_i$ unchanged. If some component of $\mathbf{X}$ were itself affected by treatment, recursive substitution would replace it by its own counterfactual value $\mathbf{X}_i(t)$ in @eq-po-from-sem. This is precisely what graph surgery does: the mutilated graph $\Gcal_{\overline{T}}$ replaces the equation for $T$ with the constant $t$, leaving the equation for $Y$ unchanged. Equation @eq-po-from-sem makes explicit that the potential outcome is a unit-level quantity determined by $g$, $\mathbf{X}_i$, and the unit's own error $U_{Y,i}$ --- never by the treatments of other units, which is the no-interference component of SUTVA.
 
-## Ignorability, Positivity, and Adjustment {#sec-ignorability}
+**ATE and ATT as structural parameters.** Substituting @eq-po-from-sem into the definitions gives:
+$$\tau_{\mathrm{ATE}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y)\right],$$ {#eq-ate-sem}
+$$\tau_{\mathrm{ATT}} = \E\!\left[g(1, \mathbf{X}, U_Y) - g(0, \mathbf{X}, U_Y) \mid T{=}1\right].$$ {#eq-att-sem}
+Both quantities are averages of the unit-level causal effect $g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ over different reference populations.
 
-### Strong Ignorability
+**The linear SEM as a special case.** In the Gaussian linear SEM of Chapter 1,
+$$Y \;=\; \beta T + \boldsymbol{\gamma}^{\top}\mathbf{X} + \varepsilon,$$ {#eq-linear-sem}
+the structural equation is additive and separable in $T$, so $Y_i(t) = \beta t + \boldsymbol{\gamma}^{\top}\mathbf{X}_i + \varepsilon_i$ and the unit-level effect is $Y_i(1) - Y_i(0) = \beta$ for every unit. Consequently,
+$$\tau_{\mathrm{ATE}} \;=\; \tau_{\mathrm{ATT}} \;=\; \beta.$$
+The structural coefficient $\beta$ *is* the average treatment effect: no averaging over heterogeneity is needed because there is none. This homogeneity is a special property of the linear additive model, not a general feature.
+
+**Heterogeneous effects.** In the nonparametric SEM @eq-sem-y, the unit-level effect $g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ varies across units. The ATE averages this over the full population; the ATT averages it over the treated subpopulation. The two differ whenever treatment selection correlates with the individual effect size --- i.e., whenever units who tend to benefit more also tend to self-select into treatment.
+
+::: {.callout-note icon=false}
+## Remark: Equivalent in Content, Different in Emphasis
+
+The SEM representation @eq-po-from-sem clarifies why the potential outcomes framework and the do-calculus are *equivalent in content but different in emphasis*. The do-calculus works with the interventional distribution $f(y \mid \doop(T{=}t))$ as a population-level object and asks when it can be recovered from observational data. The potential outcomes framework works with unit-level quantities $Y_i(t)$ and asks what population summaries (ATE, ATT) are scientifically meaningful. The SEM ties the two together: $Y_i(t) = g(t, \mathbf{X}_i, U_{Y,i})$ is the unit-level object, and integrating over the distribution of $(\mathbf{X}, U_Y)$ recovers the interventional distribution.
+:::
+
+## Ignorability, Positivity, and Adjustment {#sec-w4-ignorability}
+
+### Exchangeability: Mean, Weak, and Strong Forms {#sec-w4-exchangeability}
 
 The central identifying assumption in observational studies is that treatment assignment is as good as random after conditioning on observed covariates $X$.
 
 ::: {.callout-note icon=false}
-## Definition: Strong Ignorability [@rosenbaum1983central]
+## Definition: Strong Ignorability [@rosenbaum1983central] {#def-ignorability}
 
 The treatment assignment $T$ is *strongly ignorable* given $X$ if:
 
-1. **Unconfoundedness:** $(Y(0), Y(1)) \indep T \mid X$.
-2. **Overlap (positivity):** $0 < P(T{=}1 \mid X{=}x) < 1$ for all $x$ in the support of $X$.
+1. **Unconfoundedness:** $\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X$.
+2. **Overlap (positivity):** $0 < P(T{=}1 \mid X) < 1$, $P_X$-almost surely (see the positivity taxonomy remark in @sec-w4-overlap for why the almost-sure formulation is the natural one).
 :::
 
-### Adjustment Formula under Ignorability
+@def-ignorability states the *joint*, or *strong*, form of the exchangeability condition. For identifying the ATE, strictly weaker conditions suffice, and the hierarchy is worth recording explicitly:
 
-Under strong ignorability, the ATE is identified by the standardization formula:
-$$\tau_{\mathrm{ATE}} = \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right].$$ {#eq-ate-id}
+- **Mean exchangeability:** $\E[Y(t) \mid T, X] = \E[Y(t) \mid X]$. Together with consistency, positivity, and the relevant moment condition, this suffices to identify the mean $\E[Y(t)]$.
+- **Weak (single-world) exchangeability:** $Y(t) \indep T \mid X$ for each $t$ separately. Together with consistency and positivity, this identifies the entire marginal distribution of each $Y(t)$.
+- **Strong (joint) exchangeability:** $\bigl(Y(0), Y(1)\bigr) \indep T \mid X$. This constrains the joint counterfactual pair and is the condition stated in @def-ignorability.
 
-*Derivation.* For each treatment level $t$, by the law of iterated expectations:
-$$\E[Y(t)] = \E_X\!\left[\E[Y(t) \mid X]\right].$$
-Under unconfoundedness, $\E[Y(t) \mid X] = \E[Y(t) \mid T{=}t, X]$. By consistency, $\E[Y(t) \mid T{=}t, X] = \E[Y \mid T{=}t, X]$. Therefore $\E[Y(t)] = \E_X[\E[Y \mid T{=}t, X]]$. Applying once for $t=1$ and once for $t=0$ and taking the difference yields @eq-ate-id. $\square$
+Each condition in the list implies those above it, and none of the implications reverses in general. The adjustment argument below uses only weak exchangeability, one treatment level at a time; the joint form becomes relevant for functionals of the joint law of $(Y(0), Y(1))$, such as the variance of the unit-level effect. Even the joint form, however, is not generally sufficient to identify such functionals: adjustment identifies the two marginal laws, but the observed data do not determine the cross-world dependence between $Y(0)$ and $Y(1)$; the covariance term in $\mathrm{Var}\{Y(1) - Y(0)\}$ requires additional cross-world restrictions, such as rank invariance, for point identification; in the absence of such restrictions one may instead derive partial-identification bounds for the joint counterfactual functional (Appendix B).
+
+### Adjustment Formula under Ignorability {#sec-w4-adjustment}
+
+::: {.callout-tip icon=false}
+## Proposition: Adjustment under Conditional Exchangeability {#prp-adjustment}
+
+Fix $t \in \{0,1\}$ and assume:
+
+1. **Consistency:** $T = t$ implies $Y = Y(t)$;
+2. **Weak conditional exchangeability:** $Y(t) \indep T \mid X$;
+3. **Positivity:** $P(T{=}t \mid X) > 0$, $P_X$-almost surely;
+4. **Integrability:** $\E|Y(t)| < \infty$.
+
+Then $\E[Y(t)] = \E_X\!\left[\E(Y \mid T{=}t,\, X)\right]$. If the assumptions hold for both $t = 0$ and $t = 1$, the ATE is identified by the standardization formula
+$$\tau_{\mathrm{ATE}} \;=\; \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right].$$ {#eq-ate-id}
+:::
+
+Strong ignorability (@def-ignorability) implies assumptions 2--3 for both treatment levels, so it is sufficient but not necessary; note also that consistency, which the argument uses explicitly, is not part of @def-ignorability and must be assumed alongside it. Equation @eq-ate-id is the back-door adjustment formula of Chapter 3 written in potential-outcome notation.
+
+*Proof.* For the fixed treatment level $t$,
+$$\begin{aligned}
+\E[Y(t)] &= \E_X\!\bigl[\E\{Y(t) \mid X\}\bigr] && \text{(iterated expectations)} \\
+&= \E_X\!\bigl[\E\{Y(t) \mid T{=}t,\, X\}\bigr] && \text{(weak exchangeability)} \\
+&= \E_X\!\bigl[\E\{Y \mid T{=}t,\, X\}\bigr] && \text{(consistency)}.
+\end{aligned}$$
+Positivity is not an algebraic step but a support condition: it guarantees that the conditional mean $\E(Y \mid T{=}t, X)$ is well-defined for $P_X$-almost every covariate value, so the outer expectation is meaningful; integrability licenses the iterated expectations. Subtracting the $t = 0$ display from the $t = 1$ display yields @eq-ate-id. $\square$
 
 ::: {.callout-note icon=false}
 ## Example: A Two-Stratum Adjustment Calculation
 
-Let $X \in \{0,1\}$ with $P(X{=}1) = 0.4$, $P(X{=}0) = 0.6$, and observed conditional means:
-
-|  | $T=1$ | $T=0$ |
-|---|---|---|
-| $X=1$ | $\E[Y \mid T=1, X=1] = 8$ | $\E[Y \mid T=0, X=1] = 6$ |
-| $X=0$ | $\E[Y \mid T=1, X=0] = 5$ | $\E[Y \mid T=0, X=0] = 4$ |
-
-Under ignorability and positivity:
-$$\E[Y(1)] = 0.4 \times 8 + 0.6 \times 5 = 6.2, \qquad \E[Y(0)] = 0.4 \times 6 + 0.6 \times 4 = 4.8.$$
-Hence $\tau_{\mathrm{ATE}} = 6.2 - 4.8 = 1.4$. The formula works by comparing treated and control outcomes within each stratum and averaging those within-stratum comparisons over the marginal distribution of $X$.
+Suppose $X \in \{0,1\}$ with $P(X{=}1) = 0.4$ and $P(X{=}0) = 0.6$, and the observed conditional means are
+$$\E[Y \mid T{=}1, X{=}1] = 8, \quad \E[Y \mid T{=}0, X{=}1] = 6,$$
+$$\E[Y \mid T{=}1, X{=}0] = 5, \quad \E[Y \mid T{=}0, X{=}0] = 4.$$
+Under consistency, weak exchangeability, and positivity, @eq-ate-id gives
+$$\begin{aligned}
+\E[Y(1)] &= P(X{=}1)\cdot\E[Y\mid T{=}1,X{=}1] + P(X{=}0)\cdot\E[Y\mid T{=}1,X{=}0] \\
+&= 0.4\times 8 + 0.6\times 5 \;=\; 6.2, \\[4pt]
+\E[Y(0)] &= P(X{=}1)\cdot\E[Y\mid T{=}0,X{=}1] + P(X{=}0)\cdot\E[Y\mid T{=}0,X{=}0] \\
+&= 0.4\times 6 + 0.6\times 4 \;=\; 4.8.
+\end{aligned}$$
+Hence $\tau_{\mathrm{ATE}} = \E[Y(1) - Y(0)] = 6.2 - 4.8 = 1.4$. The adjustment formula works by comparing treated and control outcomes within each covariate stratum and then averaging those within-stratum comparisons over the marginal distribution of $X$.
 :::
 
 ### Back-Door Interpretation
 
-The potential-outcomes assumption $(Y(0), Y(1)) \indep T \mid X$ is the counterfactual expression of the idea that, after conditioning on $X$, treatment assignment carries no residual information about the outcome that would be observed under intervention $T{=}t$. In DAG language, the closely related condition is that $X$ blocks all back-door paths from $T$ to $Y$.
+For a fixed treatment level $t$, the weak conditional-exchangeability condition
+$$Y(t) \;\indep\; T \mid X$$
+states that, after conditioning on $X$, treatment assignment carries no residual information about the outcome that would be observed under the intervention $T{=}t$. The joint condition $\bigl(Y(0), Y(1)\bigr) \indep T \mid X$ of @def-ignorability is a stronger cross-world package; the adjustment formula requires only the single-world condition for each treatment level separately. In the language of DAGs, the closely related idea is that $X$ blocks all back-door paths from $T$ to $Y$.
+
+The graphical criterion is especially useful because it makes the source of ignorability visible. If $X$ satisfies the back-door criterion relative to $(T, Y)$, then, under the structural causal model semantics adopted in these notes, treatment assignment is conditionally exchangeable given $X$, which justifies standardization, regression adjustment, and related methods. In that case the observed conditional distribution within levels of $X$ can be used to recover the interventional distribution, leading to the adjustment formula @eq-ate-id developed above.
 
 ::: {.callout-tip icon=false}
 ## Proposition: Back-Door Criterion Implies Ignorability {#prp-ign-bd}
 
-Under the NPSEM/SWIG semantics adopted in these notes, if $X$ satisfies the back-door criterion for the effect of $T$ on $Y$ — i.e., (1) no node in $X$ is a descendant of $T$, and (2) $X$ blocks every back-door path from $T$ to $Y$ — then unconfoundedness $(Y(t) \indep T \mid X)$ holds for all $t$.
+Under the NPSEM/SWIG semantics adopted in these notes, if $X$ satisfies the back-door criterion for the effect of $T$ on $Y$ --- that is,
+
+1. no node in $X$ is a descendant of $T$, and
+2. $X$ blocks every back-door path from $T$ to $Y$ ---
+
+then weak (single-world) unconfoundedness $Y(t) \indep T \mid X$ holds for all $t$.
 :::
 
-*Proof sketch.* The target statement $Y(t) \indep T \mid X$ is *cross-world*: it mixes the counterfactual $Y(t)$ with the factual treatment $T$, and is not a d-separation statement in $\mathcal{G}$ itself. The rigorous translation proceeds through the single-world intervention graph $\mathcal{G}(t)$ (Appendix B). Under the NPSEM semantics, $Y(t)$ and $T$ depend on disjoint exogenous errors together with their own ancestors, and the back-door criterion is precisely the d-separation condition on $\mathcal{G}(t)$ that makes these conditionally independent given $X$. See Appendix B for the explicit SWIG derivation. $\square$
+*Proof sketch.* The target statement $Y(t) \indep T \mid X$ is a *single-world* counterfactual independence: it is not an ordinary d-separation statement in $\Gcal$ itself, but it is represented as a d-separation statement in the single-world intervention graph $\Gcal(t)$ (Appendix B). The rigorous translation can be carried out directly in the SWIG $\Gcal(t)$. A stronger sufficient construction is the NPSEM-IE representation
+$$Y(t) \;=\; g\!\bigl(t,\, \Pa(Y)\!\setminus\!\{T\},\, U_Y\bigr), \qquad T \;=\; f_T\!\bigl(\Pa(T),\, U_T\bigr),$$
+with mutually independent exogenous errors (writing, for simplicity, the case in which the non-treatment parents of $Y$ are non-descendants of $T$; in general $Y(t)$ is defined by recursive substitution, with any mediating parents replaced by their own counterfactual values). Under this semantics, $Y(t)$ and $T$ depend on disjoint exogenous errors together with their own ancestors, and the back-door criterion implies the d-separation condition on $\Gcal(t)$ that makes these two sets of inputs conditionally independent given $X$. Functional independence of inputs then transfers to the outputs, yielding $Y(t) \indep T \mid X$ for every $t$. See Appendix B for the explicit SWIG derivation, and @wang2026tale for a discussion of the extra cross-world constraints that NPSEM-IE imposes beyond what is strictly required to identify the ATE. $\square$
 
 ::: {.callout-note icon=false}
-## Remark
+## Remark: Which Direction Matters in Practice
 
-This is the direction most important for practice: a graphical adjustment set justifies the counterfactual independence needed for standardization, regression adjustment, and propensity-score methods. The converse — whether every ignorability statement corresponds to a back-door condition — is more delicate; see Appendix B.
+This is the direction most important for practice: a graphical adjustment set justifies the counterfactual independence needed for standardization, regression adjustment, and propensity-score methods. The converse --- whether every ignorability statement corresponds to a back-door condition --- is more delicate and depends on the precise graphical-counterfactual representation used; see Appendix B.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Independent Errors --- Mild or Strong? (Advanced/Optional)
+
+The additional independent-error assumption used in the NPSEM-IE construction --- mentioned as one sufficient route in @prp-ign-bd, whose conclusion can also be established directly in the SWIG --- deserves careful emphasis, because its strength is easy to underestimate.
+
+Consider the causally sufficient triangle $X \to T$, $X \to Y$, $T \to Y$ written as an NPSEM,
+$$X = U_X, \qquad T = f_T(X, U_T), \qquad Y = f_Y(X, T, U_Y),$$
+with $U_X \indep U_T \indep U_Y$ mutually independent. Two lines suffice to show that error independence *implies* the unconfoundedness half of strong ignorability (@def-ignorability). Given $X$, the treatment $T = f_T(X, U_T)$ is a function of $U_T$ alone, while the entire collection $\{Y(t) = f_Y(X, t, U_Y) : t \in \{0,1\}\}$ is a function of $U_Y$ alone; since $U_T \indep U_Y$ conditional on $X$ (itself a function of $U_X$), independence of the inputs transfers to the outputs:
+$$\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X.$$
+In this causally sufficient model --- where $X$ contains every common cause of $T$ and $Y$ --- an analyst who writes down a system of regression equations with mutually independent errors and reads it structurally has therefore already assumed conditional ignorability given $X$: the assumption commonly regarded as heroic follows from the one commonly regarded as routine [@wang2026tale]. Independent equation-specific errors alone do not remove confounding by a shared background cause omitted from $X$: the model of Chapter 1, with $T = f_T(U, \delta)$, $Y = f_Y(T, U, \varepsilon)$, and $(U, \delta, \varepsilon)$ mutually independent, remains confounded by the shared $U$.
+
+The implication is strict, because error independence says far more. A single error term $U_Y$ generates the *entire array* of counterfactuals $\{Y(x,t) : \text{all } x, t\}$ simultaneously, and $U_T$ generates the entire vector $\{T(x) : \text{all } x\}$, where $T(x) = f_T(x, U_T)$ denotes the potential treatment under $X$ set to $x$. Mutual independence of the errors therefore implies the *cross-world* statement
+$$X \;\indep\; \bigl(T(x),\ \forall x\bigr) \;\indep\; \bigl(Y(x,t),\ \forall x, t\bigr)$$
+(and under the canonical representation, in which the errors are the counterfactual arrays themselves, the two statements are equivalent). This ties together counterfactuals from mutually exclusive interventions --- for example, $Y(x{=}0, t{=}1)$ and $Y(x{=}1, t{=}0)$ jointly --- yet no unit ever inhabits two worlds, so no experiment, not even one randomizing both $X$ and $T$, can test these joint constraints. Weak, single-world ignorability, by contrast, restricts one world at a time, and it can be *guaranteed by design*: randomizing $T$ within levels of $X$ enforces it. Even then it is not empirically verified from the observed outcomes of a single experiment; its credibility comes from the known assignment mechanism. Indeed, there exist counterfactual models --- the FFRCISTGs of @robins1986new; see @richardson2014ace --- in which every single-world independence holds, so that ignorability is satisfied for each $t$, while cross-world dependence remains; such models are observationally and experimentally indistinguishable from an NPSEM-IE.
+
+Why, then, does error independence *feel* mild? Because in ordinary regression practice it is a statement about the observational joint distribution only, where it is close to a bookkeeping convention. What converts it into a strong assumption is autonomy: the structural reading insists that the same equations and the same error distributions persist across interventional worlds, so that $U_Y$ is no longer "whatever residual makes the regression fit" but the unit's latent response type, held fixed across all hypothetical treatments. The extra cross-world strength is not vacuous: it supplies one ingredient in the standard identification of the natural direct and indirect effects --- quantities that the weaker FFRCISTG model leaves unidentified. The mediation formula additionally requires consistency, appropriate positivity, and the relevant treatment--mediator and mediator--outcome exchangeability conditions; these are developed in Chapter 8.
 :::
 
 ::: {.callout-note icon=false}
 ## Example: Labor Training Program
 
-Following @lalonde1986evaluating and @dehejia1999causal, let $T$ = receipt of job training, $Y$ = earnings two years later, $X$ = (age, education, prior earnings, race, marital status).
+Following @lalonde1986evaluating and @dehejia1999causal, let $T$ = receipt of job training, $Y$ = earnings two years later, $X$ = (age, education, prior earnings, race, marital status), all measured before training (pretreatment).
 
-The back-door path $T \leftarrow X \to Y$ is blocked by conditioning on $X$, leaving only the causal path $T \to Y$. Ignorability holds if this DAG is correctly specified. If there is an unobserved variable $U$ (motivation, ability) that affects both training participation and earnings, $X$ fails the back-door criterion and ignorability fails.
+```{=html}
+<div style="text-align:center;margin:1em auto;">
+<svg viewBox="0 0 280 155" width="100%" style="max-width:280px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="w4e1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"/></marker>
+    <marker id="w4e2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1A7A3A"/></marker>
+    <marker id="w4e3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#888"/></marker>
+  </defs>
+  <circle cx="140" cy="28" r="19" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="140" y="34" text-anchor="middle" fill="#2E74B6" font-weight="bold">X</text>
+  <circle cx="35" cy="100" r="19" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="35" y="106" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="245" cy="100" r="19" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="245" y="106" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <circle cx="140" cy="132" r="18" fill="white" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3"/><text x="140" y="138" text-anchor="middle" fill="#888" font-weight="bold">U</text>
+  <line x1="123" y1="38" x2="50" y2="89" stroke="#2E74B6" stroke-width="1.6" marker-end="url(#w4e1)"/>
+  <line x1="157" y1="38" x2="230" y2="89" stroke="#2E74B6" stroke-width="1.6" marker-end="url(#w4e1)"/>
+  <line x1="54" y1="100" x2="222" y2="100" stroke="#1A7A3A" stroke-width="2.2" marker-end="url(#w4e2)"/>
+  <line x1="123" y1="127" x2="52" y2="110" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#w4e3)"/>
+  <line x1="157" y1="127" x2="228" y2="110" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#w4e3)"/>
+</svg>
+</div>
+```
+
+The hidden confounder $U$ (dashed) is drawn to represent the threat discussed below; the solid graph is the working model.
+
+The back-door path $T \leftarrow X \to Y$ is blocked by conditioning on $X$, leaving only the causal path $T \to Y$ (green). Ignorability holds if this DAG is correctly specified. If there is an unobserved variable $U$ (motivation, ability) that affects both training participation and earnings, $X$ no longer satisfies the back-door criterion, so the graph no longer justifies ignorability; weak exchangeability then generally fails (absent special cancellations).
 :::
 
-### Overlap and Positivity
+This is one of the central translations in causal inference: the potential-outcomes notation states the assumption in terms of counterfactual independence, while the DAG states it in terms of blocked paths. Together, consistency, weak exchangeability, and positivity identify the ATE via the adjustment formula @eq-ate-id, and the back-door criterion provides the graphical justification for why that formula recovers the causal effect. Appendix B provides a formal graphical representation of this connection through single-world intervention graphs (SWIGs).
+
+### Overlap and Positivity {#sec-w4-overlap}
 
 ::: {.callout-warning icon=false}
-## Why Overlap Is Non-Negotiable
+## Why Overlap Is Non-Negotiable for Nonparametric Adjustment
 
 Without overlap, some covariate strata contain only treated or only control units. In those strata, $\E[Y \mid T{=}0, X{=}x]$ or $\E[Y \mid T{=}1, X{=}x]$ is unobservable, and @eq-ate-id cannot be evaluated at those values of $x$. Identification of the ATE fails not because the causal structure is wrong, but because the data do not span the support needed.
 
-The ATT can remain identified under a *weaker, one-sided* overlap condition: $P(T{=}0 \mid X{=}x) > 0$ almost surely on the support of $X$ in the treated subpopulation. Full two-sided overlap is not required for ATT, because ATT averages only over the treated population.
+The ATT can remain identified under a *weaker, one-sided* overlap condition: together with consistency and the single control-arm exchangeability condition $Y(0) \indep T \mid X$, it suffices that $P(T{=}0 \mid X{=}x) > 0$ almost surely on the support of $X$ in the treated subpopulation, so that the control-arm regression $\E[Y \mid T{=}0, X{=}x]$ is well-defined at every covariate value where a treated unit appears. Full two-sided overlap is not required: strata containing only *control* units pose no obstacle for ATT, because ATT averages only over the treated population and such strata never enter that average. Strata containing only treated units, by contrast, are precisely where the one-sided condition fails.
 :::
 
-## Where the Frameworks Agree and Diverge {#sec-comparison}
+::: {.callout-note icon=false}
+## Remark: Three Grades of Positivity Failure
+
+Positivity is a *data-support* condition, not a causal one: unconfoundedness is a property of the assignment mechanism, but positivity is a property of the joint distribution of $(T, X)$. Three cases should be distinguished.
+
+First, when positivity fails only on a set of $X$-values of measure zero, the adjustment formula @eq-ate-id still identifies the estimand, because the offending strata contribute zero mass to the outer expectation --- this is why the condition is naturally stated almost-everywhere, $P(T{=}t \mid X) > 0$ for $P_X$-almost every $x$.
+
+Second, a stratum of *positive* probability in which treatment level $t$ is never received --- a population zero rather than a sample zero --- is a genuine identification failure for the ATE: $\E[Y \mid T{=}t, X{=}x]$ is undefined on a set of positive mass (though a different estimand, such as the ATT under the one-sided condition above, may remain identified). The failure is one of *nonparametric* identification by adjustment over the original target population: a parametric outcome model can extrapolate into unsupported strata, but such values are identified by the model restriction, not by the observed data.
+
+Third, small but positive treatment probabilities, or empty cells in a finite sample, are practical *estimation* problems --- sparse strata and inflated variance --- and do not by themselves establish population nonpositivity. Part III returns to the estimation consequences of near-positivity violations.
+:::
+
+::: {.callout-note icon=false}
+## Remark: Continuous Treatments (Technical; Second Reading)
+
+For continuous $T$, the standardization formula is understood for $P_T$-almost every treatment value $t$ such that the conditional density satisfies $f_{T \mid X}(t \mid x) > 0$ for $P_X$-almost every relevant $x$: regular conditional distributions are unique only almost everywhere, so a positive density at a single point does not by itself select a unique version of $\E[Y \mid T{=}t, X{=}x]$ at that point. Pointwise identification at a prespecified treatment value $t$ additionally requires a regularity condition that selects a unique version of the conditional law, such as continuity in $t$. The same qualification applies to other identification formulas evaluated at fixed treatment or mediator values, such as the front-door formula of Chapter 8.
+:::
+
+## Where the Frameworks Agree and Diverge {#sec-w4-comparison}
+
+### A Systematic Comparison
 
 | **Task** | **Potential Outcomes** | **Do-Calculus / DAG** | **SEM** |
 |---|---|---|---|
-| Define ATE, ATT | ✓ Most natural notation | Via $\E[Y \mid \doop(t)]$ | Via structural equations |
-| Encode causal assumptions | Typically informal; graph implicit | ✓ Explicit directed edges | ✓ Structural equations |
-| Read conditional independence | Requires auxiliary graph | ✓ d-separation | With graph only |
-| Identification from data | Via ignorability | ✓ Back-door, front-door, do-calculus | ✓ Via exclusion restrictions |
-| Likelihood construction | Estimating equations / semiparametric | Observational functionals only | ✓ Structural model |
-| Cross-world assumptions | ✓ Natural to state | See Appendix B | Implicit in model |
-| Standard in statistics | ✓ Dominant | Growing rapidly | Econometrics |
+| Define causal estimands (ATE, ATT) | ✓ Especially natural notation | ATE via $\E[Y \mid \doop(t)]$; ATT requires counterfactual augmentation (Appendix B) | Via structural equations |
+| Encode causal assumptions | Formal counterfactual restrictions; a causal graph may be added but is not implicit in the notation | ✓ Explicit directed edges | ✓ Structural equations |
+| Read conditional independence | Requires auxiliary graph or model to read off | ✓ d-separation | Read from the induced graph under dependence restrictions on the exogenous inputs |
+| Identification from observational data | Via assignment and counterfactual assumptions plus probability algebra | ✓ Back-door, front-door, do-calculus | Via functional, exclusion, rank, and background-input restrictions |
+| Likelihood construction | Typically paired with estimating equations or semiparametric models | Identifies observed-data functionals; a likelihood requires an additional statistical model | Induced once the structural functions and error laws are sufficiently specified |
+| Cross-world assumptions (e.g. monotonicity) | ✓ Natural to state | Not expressible in single-world graphs; see Appendix B | Joint counterfactuals are defined, but restrictions such as monotonicity must be imposed separately |
+| Standard in statistics/epidemiology | ✓ Dominant | Growing rapidly | Econometrics |
 
 ::: {.callout-note icon=false}
 ## Our Position in This Course
 
-Both frameworks are indispensable. We use *potential outcomes* to *define* causal estimands. We use the *do-calculus and DAGs* for *identification*. The back-door criterion is the graphical condition that justifies conditional ignorability and hence the adjustment formula. The do-operator language is preferred throughout this course because it makes the interventional/observational distinction *syntactically enforced*: $P(y \mid \doop(t))$ cannot be confused with $P(y \mid T{=}t)$, whereas $\E[Y(t)]$ carries no such syntactic marker.
+All three frameworks are indispensable. We use *potential outcomes* to *define* causal estimands. We use the *do-calculus and DAGs* for *identification*. The back-door criterion is the graphical condition that justifies conditional ignorability and hence the adjustment formula through which causal effects are identified. For a formal graphical representation that hosts both frameworks simultaneously, see Appendix B.
+
+Both notations mark the interventional/observational distinction syntactically: $\E[Y(t)]$ and $\E[Y \mid T{=}t]$ are different expressions, just as $f(y \mid \doop(t))$ and $f(y \mid T{=}t)$ are. The do-operator is preferred in this course because it integrates directly with graph surgery and the do-calculus --- the tools by which identification is actually decided. After an interventional estimand has been identified as an observed-data functional, Part III derives estimating equations, influence functions, and efficiency bounds for that functional.
 :::
 
-## Summary {#sec-summary}
+## Summary {#sec-w4-summary}
 
-**Causal inference = counterfactual questions + graphical assumptions + statistical estimation.**
+1. The potential outcome $Y(t)$ is the outcome that would be observed under the intervention $T = t$. Under the structural causal semantics adopted in these notes (with no interference), $Y(t)$ has the same distribution as the outcome under the intervention $\doop(T{=}t)$; the separate consistency assumption links counterfactuals to data through $Y_i = Y_i(T_i)$.
 
-1. The potential outcome $Y(t)$ is the outcome that would be observed under intervention $T = t$. Under consistency, no interference, and the structural causal semantics adopted in these notes, the observed outcome satisfies $Y_i = Y_i(T_i)$, and $Y(t)$ has the same distribution as $Y \mid \doop(T{=}t)$.
-2. The ATE and ATT are averages of the unit-level causal effect $g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ over the full population and the treated subpopulation respectively. In the linear SEM, both equal $\beta$. They diverge under heterogeneous effects when treatment selection correlates with individual effect size.
-3. Strong ignorability $(Y(0), Y(1)) \indep T \mid X$ with overlap identifies the ATE via @eq-ate-id. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption.
-4. Single world intervention graphs [@richardson2014ace] provide a formal graphical representation of counterfactual variables, making ignorability a d-separation statement (Appendix B).
+2. The ATE and ATT are averages of the unit-level causal effect $Y_i(1) - Y_i(0) = g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})$ over the full population and the treated subpopulation respectively. In the linear SEM, both equal the structural coefficient $\beta$. They diverge under heterogeneous effects when treatment selection correlates with individual effect size.
+
+3. Consistency, weak conditional exchangeability $Y(t) \indep T \mid X$, and positivity identify the ATE via @eq-ate-id (@prp-adjustment); strong ignorability (@def-ignorability) is a sufficient package. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption used in adjustment formulas.
+
+4. Single-world intervention graphs (SWIGs) [@richardson2014ace] provide a formal graphical representation of counterfactual variables, making the single-world independence $Y(t) \indep T \mid X$, for one fixed $t$, a d-separation statement in a single diagram that hosts both the potential outcome and the natural treatment. The joint strong-ignorability condition involves counterfactuals from two different worlds and is not represented by any single SWIG. This material is developed in Appendix B and is not required for a first-pass understanding of adjustment.
+
 5. The frameworks are complementary: potential outcomes define estimands; the do-calculus identifies them. The back-door criterion connects the two by providing the graphical condition under which adjustment recovers the causal effect.
 
 ::: {.callout-note icon=false}
@@ -259,34 +412,49 @@ A binary example, following @wang2026tale, makes the comparison quantitative. Ta
 NPSEM-IE therefore imposes $123 - 19 = 104$ additional constraints beyond what is needed for ATE identification. Most are cross-world statements such as $T(X{=}0) \indep Y(t, X{=}1)$ that remain untestable even under randomized treatment. Working under NPSEM-IE is a substantive modeling choice, not a free consequence of using structural equations.
 :::
 
-**From ignorability to randomization.** In observational studies, ignorability must be justified by substantive knowledge encoded in a causal graph. Randomized experiments provide a different solution: when treatment is assigned randomly, $(Y(0), Y(1)) \indep T$ holds by design, guaranteeing ignorability *without any covariate adjustment*. Chapter 5 studies this design.
+### From Ignorability to Randomization {.unnumbered}
 
-**Identification vs. estimation.** Chapters 1–4 have focused on *identification*: whether $\tau = \E[Y(1) - Y(0)]$ can be written as a functional $\Phi(P(Y,T,X))$ of the observed distribution. Estimation — constructing $\hat\tau$ from a finite sample to approximate $\Phi(P)$ — is studied in Part III, covering regression adjustment, IPW, doubly robust estimators, and instrumental variables.
+In observational studies, ignorability must be justified by substantive knowledge encoded in a causal graph. Because unobserved confounding can never be ruled out empirically, this justification is often debated.
+
+Randomized experiments provide a fundamentally different solution. When treatment is assigned randomly --- with $T$ denoting the randomized assignment, which coincides with treatment received in the simple full-compliance trial --- $(Y(0),Y(1)) \indep T$ holds by design, guaranteeing ignorability *without any covariate adjustment*. Chapter 5 studies randomized experiments as the canonical design where causal effects are identifiable directly from the data-generating mechanism.
+
+> **Causal inference** $=$ counterfactual questions $+$ graphical assumptions $+$ statistical estimation.
+
+### Identification vs. Estimation {.unnumbered}
+
+The first four chapters have focused on *identification*: whether a causal quantity $\tau = \E[Y(1) - Y(0)]$ can be written as $\tau = \Phi(P(Y,T,X))$ for some functional $\Phi$ of the observed distribution. Basic estimators --- regression adjustment, standardization, stratification, and inverse probability weighting --- are introduced in Chapters 5--6; their systematic asymptotic, influence-function, and semiparametric analysis, together with doubly robust estimators and instrumental variables, is developed in Part III.
 
 ## Problems
 
 **1. SUTVA and consistency.** Suppose $n = 3$ units receive binary treatments $(T_1, T_2, T_3)$ and unit $i$'s outcome may depend on all three treatments: $Y_i = Y_i(T_1, T_2, T_3)$.
 
 (a) How many potential outcomes does unit 1 have? Write them out explicitly.
-(b) SUTVA imposes no interference: $Y_i(T_1, T_2, T_3) = Y_i(T_i)$. How many distinct potential outcomes remain?
-(c) Give a real-world example where no-interference plausibly holds and one where it plausibly fails. In the latter case, explain what identification strategy (if any) remains available.
+(b) SUTVA imposes no interference: $Y_i(T_1,T_2,T_3) = Y_i(T_i)$. How many distinct potential outcomes remain?
+(c) Give a real-world example where no-interference plausibly holds and one where it plausibly fails. In the latter case, redefine the potential outcome using *one* of: the complete assignment vector, an exposure mapping, partial interference, or cluster-level treatment, and explain what additional design or structural assumption would then be needed.
 
-**2. ATE, ATT, and selection bias.** Let $(Y(0), Y(1), T) \sim P$ with $P(T{=}1) = 0.5$, $\E[Y(1)] = 3$, $\E[Y(0)] = 1$, $\E[Y(1) \mid T{=}1] = 4$, $\E[Y(0) \mid T{=}1] = 2$, $\E[Y(1) \mid T{=}0] = 2$, $\E[Y(0) \mid T{=}0] = 0$.
+**2. ATE, ATT, and selection bias.** Let $(Y(0), Y(1), T) \sim P$ with $P(T{=}1) = 0.5$. Suppose $\E[Y(1)] = 3$, $\E[Y(0)] = 1$, $\E[Y(1) \mid T{=}1] = 4$, $\E[Y(0) \mid T{=}1] = 2$, $\E[Y(1) \mid T{=}0] = 2$, $\E[Y(0) \mid T{=}0] = 0$.
 
 (a) Compute the ATE and ATT. Are they equal?
-(b) Compute the naïve estimator $\E[Y \mid T{=}1] - \E[Y \mid T{=}0]$. Decompose the gap between this and the ATE into a selection bias term and an ATT--ATE difference.
-(c) Under what graphical condition on the DAG would the naïve estimator equal the ATE? State this condition in both potential outcome language (ignorability) and do-calculus language (back-door criterion).
+(b) Compute the naive contrast $D_{\mathrm{obs}} = \E[Y \mid T{=}1] - \E[Y \mid T{=}0]$ (the population quantity targeted by the naive estimator). Decompose the gap between this and the ATE into a selection bias term and an ATT--ATE difference.
+(c) Give a sufficient graphical condition on the DAG under which the naive contrast $D_{\mathrm{obs}}$ equals the ATE: the *empty set* satisfies the back-door criterion, i.e. there is no open back-door path from $T$ to $Y$. State the corresponding condition in potential-outcome language (marginal ignorability), and explain why the mere existence of some nonempty adjustment set is not enough.
 
-**3. Causal estimands from the structural equation.** Consider the nonparametric SEM $Y = g(T, X, U_Y)$ with binary $T \in \{0,1\}$, observed covariate $X$, and $U_Y$ independent of $(T, X)$ in the mutilated graph.
+**3. Causal estimands from the structural equation.** Consider the nonparametric SEM $Y = g(T, X, U_Y)$ with binary treatment $T \in \{0,1\}$, observed covariate $X$, and unobserved error $U_Y$ with $\E[U_Y] = 0$; any further distributional assumptions are stated in the individual parts.
 
 (a) Write $\tau_{\mathrm{ATE}}$ and $\tau_{\mathrm{ATT}}$ as expectations of $g(1, X, U_Y) - g(0, X, U_Y)$ over the appropriate distribution. Under what condition do they coincide?
 (b) Specialize to the linear SEM $g(t, x, u) = \alpha + \beta t + \gamma x + u$. Show that the unit-level causal effect $Y_i(1) - Y_i(0)$ is constant across all units, and hence $\tau_{\mathrm{ATE}} = \tau_{\mathrm{ATT}} = \beta$.
-(c) Now consider the heterogeneous SEM $g(t, x, u) = (\alpha + u)\,t + \gamma x$, where $U_Y \sim \mathcal{N}(0, \sigma^2)$, $\mathrm{Cov}(U_Y, T) = \rho$, and $P(T{=}1) = p \in (0,1)$. Compute $\tau_{\mathrm{ATE}}$ and $\tau_{\mathrm{ATT}}$. Show that they differ when $\rho \neq 0$, and interpret this difference.
-(d) In part (c), show that the population OLS slope on $T$ in the regression of $Y$ on $(1, T, X)$ equals $\alpha + \rho/p = \tau_{\mathrm{ATT}}$, not $\tau_{\mathrm{ATE}} = \alpha$. What additional structure would be needed to identify $\tau_{\mathrm{ATE}}$?
+(c) Now consider the heterogeneous SEM $g(t, x, u) = (\alpha + u)\,t + \gamma x$, where $\E[U_Y] = 0$, $\mathrm{Var}(U_Y) = \sigma^2 < \infty$, $\mathrm{Cov}(U_Y, T) = \rho$, $P(T{=}1) = p \in (0,1)$, and $X$ is independent of $(T, U_Y)$; assume a joint law compatible with these moments (the Cauchy--Schwarz inequality gives the necessary condition $|\rho| \le \sigma\sqrt{p(1-p)}$). Compute $\tau_{\mathrm{ATE}}$ and $\tau_{\mathrm{ATT}}$. Show that they differ when $\rho \neq 0$, and interpret this difference in words.
+(d) In part (c), show that the population OLS slope on $T$ in the regression of $Y$ on $(1, T, X)$ equals $\alpha + \rho/p = \tau_{\mathrm{ATT}}$, not $\tau_{\mathrm{ATE}} = \alpha$. Explain why: the stratum-specific difference $\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]$ equals $\alpha + \rho/p$ at every $X$ (the heterogeneity carried by $U_Y$ is not observable through $X$), so adjusted OLS recovers the ATT, shifted away from $\tau_{\mathrm{ATE}} = \alpha$ by the selection term $\E[U_Y \mid T{=}1] = \rho/p$. What additional structure would identify $\tau_{\mathrm{ATE}}$? (*Hint*: randomization of $T$ would imply $\E[U_Y \mid T] = 0$. Alternatively, if a richer set of pretreatment covariates $W$ rendered $Y(t) \indep T \mid W$, then $\tau_{\mathrm{ATE}}$ would be identified by standardization over $W$, even though $\E[U_Y \mid T]$ need not vanish. A valid instrument does not generally identify the ATE under treatment-effect heterogeneity; in the binary-instrument, binary-treatment setting, relevance, exogeneity, exclusion, *and monotonicity* together identify the LATE for compliers --- see Chapter 7.)
 
 **4. SWIGs and ignorability.** *(Requires Appendix B.)* Consider the DAG: $X \to T$, $X \to Y$, $T \to Y$, with $X$ fully observed.
 
-(a) Construct the SWIG $\mathcal{G}(t)$ by splitting $T$ into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome $Y(t)$.
-(b) In $\mathcal{G}(t)$, identify all paths between the random half $T$ and $Y(t)$. Determine which are blocked and which are open before conditioning.
-(c) Use d-separation in $\mathcal{G}(t)$ to verify that $(Y(t) \indep T \mid X)_{\mathcal{G}(t)}$ holds. Conclude that $X$ satisfies the back-door criterion, confirming @prp-ign-bd.
-(d) Now add a hidden common cause $U \to T$, $U \to Y$. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure would be needed for identification.
+(a) Construct the SWIG $\Gcal(t)$ by splitting $T$ into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome $Y(t)$.
+(b) In $\Gcal(t)$, identify all paths between the random half $T$ and $Y(t)$. Apply the SWIG d-separation rules to determine which paths are blocked and which are open before conditioning.
+(c) First verify, in the original DAG, that $X$ satisfies the back-door criterion for $(T, Y)$. Then use d-separation in $\Gcal(t)$ to verify that $(Y(t) \indep T \mid X)_{\Gcal(t)}$ holds, illustrating the direction of @prp-ign-bd.
+(d) Now add a hidden common cause $U \to T$, $U \to Y$. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure (if any) would be needed for identification.
+
+**5. Positivity and target populations.** Let $X \in \{0,1\}$ with $P(X{=}1) > 0$, and suppose $P(T{=}1 \mid X{=}1) = 1$.
+
+(a) Is the ATE identified by nonparametric adjustment over the original target population? Explain.
+(b) State conditions under which the ATT may remain identified.
+(c) Contrast this population positivity failure with a finite sample that happens to contain no control units with $X = 1$ even though $P(T{=}0 \mid X{=}1) > 0$ in the population.
+(d) Explain what additional assumption is being relied upon if a parametric outcome model is extrapolated into the unsupported stratum.
