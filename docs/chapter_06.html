@@ -352,37 +352,51 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">6.1</span> Motivation: The Curse of Dimensionality</a></li>
-  <li><a href="#sec-balance" id="toc-sec-balance" class="nav-link" data-scroll-target="#sec-balance"><span class="header-section-number">6.2</span> The Propensity Score and Its Balancing Properties</a>
+  <li><a href="#motivation-the-curse-of-dimensionality" id="toc-motivation-the-curse-of-dimensionality" class="nav-link active" data-scroll-target="#motivation-the-curse-of-dimensionality"><span class="header-section-number">6.1</span> Motivation: The Curse of Dimensionality</a></li>
+  <li><a href="#the-propensity-score-and-its-balancing-properties" id="toc-the-propensity-score-and-its-balancing-properties" class="nav-link" data-scroll-target="#the-propensity-score-and-its-balancing-properties"><span class="header-section-number">6.2</span> The Propensity Score and Its Balancing Properties</a>
   <ul class="collapse">
   <li><a href="#balancing-scores-and-the-propensity-score" id="toc-balancing-scores-and-the-propensity-score" class="nav-link" data-scroll-target="#balancing-scores-and-the-propensity-score"><span class="header-section-number">6.2.1</span> Balancing Scores and the Propensity Score</a></li>
   <li><a href="#the-propensity-score-theorem" id="toc-the-propensity-score-theorem" class="nav-link" data-scroll-target="#the-propensity-score-theorem"><span class="header-section-number">6.2.2</span> The Propensity Score Theorem</a></li>
   </ul></li>
-  <li><a href="#sec-estimation" id="toc-sec-estimation" class="nav-link" data-scroll-target="#sec-estimation"><span class="header-section-number">6.3</span> Estimation of the Propensity Score</a></li>
-  <li><a href="#sec-matching" id="toc-sec-matching" class="nav-link" data-scroll-target="#sec-matching"><span class="header-section-number">6.4</span> Matching on the Propensity Score</a></li>
-  <li><a href="#sec-ipw" id="toc-sec-ipw" class="nav-link" data-scroll-target="#sec-ipw"><span class="header-section-number">6.5</span> Inverse Probability Weighting</a>
+  <li><a href="#constructing-the-propensity-score" id="toc-constructing-the-propensity-score" class="nav-link" data-scroll-target="#constructing-the-propensity-score"><span class="header-section-number">6.3</span> Constructing the Propensity Score</a>
+  <ul class="collapse">
+  <li><a href="#sec-w6-covariate-selection" id="toc-sec-w6-covariate-selection" class="nav-link" data-scroll-target="#sec-w6-covariate-selection"><span class="header-section-number">6.3.1</span> Covariate Selection: What Belongs in <span class="math inline">\(X\)</span>?</a></li>
+  <li><a href="#parametric-estimation-by-logistic-regression" id="toc-parametric-estimation-by-logistic-regression" class="nav-link" data-scroll-target="#parametric-estimation-by-logistic-regression"><span class="header-section-number">6.3.2</span> Parametric Estimation by Logistic Regression</a></li>
+  <li><a href="#flexible-and-machine-learning-estimators" id="toc-flexible-and-machine-learning-estimators" class="nav-link" data-scroll-target="#flexible-and-machine-learning-estimators"><span class="header-section-number">6.3.3</span> Flexible and Machine-Learning Estimators</a></li>
+  <li><a href="#the-goal-is-balance-not-treatment-prediction" id="toc-the-goal-is-balance-not-treatment-prediction" class="nav-link" data-scroll-target="#the-goal-is-balance-not-treatment-prediction"><span class="header-section-number">6.3.4</span> The Goal Is Balance, Not Treatment Prediction</a></li>
+  <li><a href="#sec-w6-balance-diagnostics" id="toc-sec-w6-balance-diagnostics" class="nav-link" data-scroll-target="#sec-w6-balance-diagnostics"><span class="header-section-number">6.3.5</span> Balance and Overlap Diagnostics</a></li>
+  <li><a href="#design-objectives-depend-on-the-estimand" id="toc-design-objectives-depend-on-the-estimand" class="nav-link" data-scroll-target="#design-objectives-depend-on-the-estimand"><span class="header-section-number">6.3.6</span> Design Objectives Depend on the Estimand</a></li>
+  <li><a href="#sec-w6-design-workflow" id="toc-sec-w6-design-workflow" class="nav-link" data-scroll-target="#sec-w6-design-workflow"><span class="header-section-number">6.3.7</span> A Design-Stage Workflow</a></li>
+  </ul></li>
+  <li><a href="#matching-on-the-propensity-score" id="toc-matching-on-the-propensity-score" class="nav-link" data-scroll-target="#matching-on-the-propensity-score"><span class="header-section-number">6.4</span> Matching on the Propensity Score</a>
+  <ul class="collapse">
+  <li><a href="#one-to-one-nearest-neighbor-matching" id="toc-one-to-one-nearest-neighbor-matching" class="nav-link" data-scroll-target="#one-to-one-nearest-neighbor-matching"><span class="header-section-number">6.4.1</span> One-to-One Nearest Neighbor Matching</a></li>
+  <li><a href="#caliper-matching" id="toc-caliper-matching" class="nav-link" data-scroll-target="#caliper-matching"><span class="header-section-number">6.4.2</span> Caliper Matching</a></li>
+  </ul></li>
+  <li><a href="#sec-w6-ipw" id="toc-sec-w6-ipw" class="nav-link" data-scroll-target="#sec-w6-ipw"><span class="header-section-number">6.5</span> Inverse Probability Weighting</a>
   <ul class="collapse">
   <li><a href="#the-ipw-identification-formula" id="toc-the-ipw-identification-formula" class="nav-link" data-scroll-target="#the-ipw-identification-formula"><span class="header-section-number">6.5.1</span> The IPW Identification Formula</a></li>
-  <li><a href="#horvitzthompson-and-hájek-estimators" id="toc-horvitzthompson-and-hájek-estimators" class="nav-link" data-scroll-target="#horvitzthompson-and-hájek-estimators"><span class="header-section-number">6.5.2</span> Horvitz–Thompson and Hájek Estimators</a></li>
+  <li><a href="#the-horvitzthompson-estimator" id="toc-the-horvitzthompson-estimator" class="nav-link" data-scroll-target="#the-horvitzthompson-estimator"><span class="header-section-number">6.5.2</span> The Horvitz–Thompson Estimator</a></li>
+  <li><a href="#why-the-weights-work-weighted-balance-identities" id="toc-why-the-weights-work-weighted-balance-identities" class="nav-link" data-scroll-target="#why-the-weights-work-weighted-balance-identities"><span class="header-section-number">6.5.3</span> Why the Weights Work: Weighted-Balance Identities</a></li>
   </ul></li>
-  <li><a href="#sec-overlap" id="toc-sec-overlap" class="nav-link" data-scroll-target="#sec-overlap"><span class="header-section-number">6.6</span> Overlap and Positivity</a>
+  <li><a href="#overlap-and-positivity" id="toc-overlap-and-positivity" class="nav-link" data-scroll-target="#overlap-and-positivity"><span class="header-section-number">6.6</span> Overlap and Positivity</a>
   <ul class="collapse">
   <li><a href="#positivity-and-strong-overlap" id="toc-positivity-and-strong-overlap" class="nav-link" data-scroll-target="#positivity-and-strong-overlap"><span class="header-section-number">6.6.1</span> Positivity and Strong Overlap</a></li>
   <li><a href="#practical-consequences-of-near-violations" id="toc-practical-consequences-of-near-violations" class="nav-link" data-scroll-target="#practical-consequences-of-near-violations"><span class="header-section-number">6.6.2</span> Practical Consequences of Near-Violations</a></li>
   <li><a href="#trimming-strategies" id="toc-trimming-strategies" class="nav-link" data-scroll-target="#trimming-strategies"><span class="header-section-number">6.6.3</span> Trimming Strategies</a></li>
-  <li><a href="#re-targeting-the-estimand" id="toc-re-targeting-the-estimand" class="nav-link" data-scroll-target="#re-targeting-the-estimand"><span class="header-section-number">6.6.4</span> Re-targeting the Estimand</a></li>
+  <li><a href="#sec-w6-retargeting" id="toc-sec-w6-retargeting" class="nav-link" data-scroll-target="#sec-w6-retargeting"><span class="header-section-number">6.6.4</span> Re-targeting the Estimand to Avoid Overlap Failures</a></li>
   </ul></li>
-  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">6.7</span> Lab: Simulation Study of IPW and Matching Estimators</a>
+  <li><a href="#sec-w6-lab" id="toc-sec-w6-lab" class="nav-link" data-scroll-target="#sec-w6-lab"><span class="header-section-number">6.7</span> Lab: Simulation Study of IPW and Matching Estimators</a>
   <ul class="collapse">
-  <li><a href="#part-1-correctly-specified-propensity-score" id="toc-part-1-correctly-specified-propensity-score" class="nav-link" data-scroll-target="#part-1-correctly-specified-propensity-score"><span class="header-section-number">6.7.1</span> Part 1: Correctly Specified Propensity Score</a></li>
-  <li><a href="#part-2-robustness-to-ps-model-misspecification" id="toc-part-2-robustness-to-ps-model-misspecification" class="nav-link" data-scroll-target="#part-2-robustness-to-ps-model-misspecification"><span class="header-section-number">6.7.2</span> Part 2: Robustness to PS Model Misspecification</a></li>
+  <li><a href="#sec-w6-lab-part1" id="toc-sec-w6-lab-part1" class="nav-link" data-scroll-target="#sec-w6-lab-part1"><span class="header-section-number">6.7.1</span> Part 1: Correctly Specified Propensity Score</a></li>
+  <li><a href="#sec-w6-lab-part2" id="toc-sec-w6-lab-part2" class="nav-link" data-scroll-target="#sec-w6-lab-part2"><span class="header-section-number">6.7.2</span> Part 2: Robustness to PS Model Misspecification</a></li>
   </ul></li>
-  <li><a href="#sec-limits" id="toc-sec-limits" class="nav-link" data-scroll-target="#sec-limits"><span class="header-section-number">6.8</span> The Limits of Propensity Score Methods</a>
+  <li><a href="#the-limits-of-propensity-score-methods" id="toc-the-limits-of-propensity-score-methods" class="nav-link" data-scroll-target="#the-limits-of-propensity-score-methods"><span class="header-section-number">6.8</span> The Limits of Propensity Score Methods</a>
   <ul class="collapse">
   <li><a href="#the-untestable-assumption" id="toc-the-untestable-assumption" class="nav-link" data-scroll-target="#the-untestable-assumption"><span class="header-section-number">6.8.1</span> The Untestable Assumption</a></li>
   <li><a href="#the-road-to-instrumental-variables" id="toc-the-road-to-instrumental-variables" class="nav-link" data-scroll-target="#the-road-to-instrumental-variables"><span class="header-section-number">6.8.2</span> The Road to Instrumental Variables</a></li>
   </ul></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">6.9</span> Chapter Summary</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">6.9</span> Summary</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems"><span class="header-section-number">6.10</span> Problems</a></li>
   </ul>
 </nav>
@@ -392,7 +406,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_04.html">Identification</a></li><li class="breadcrumb-item"><a href="./chapter_06.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></h1>
+<h1 class="title"><span id="sec-w6" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></h1>
 </div>
 
 
@@ -421,24 +435,38 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter, students should be able to:</p>
 <ol type="1">
-<li>Define the propensity score <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span> and explain why it is a balancing score.</li>
-<li>State and prove the Balancing Property (<span class="math inline">\(T \indep X \mid \pi(X)\)</span>), the Coarsest Balancing Score Lemma, and the Propensity Score Theorem.</li>
-<li>Describe standard methods for estimating the propensity score and the practical pitfalls of each.</li>
+<li>Define the propensity score <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span> and explain why it is a <em>balancing score</em>.</li>
+<li>State and prove the Balancing Property (<span class="math inline">\(T \indep X \mid \pi(X)\)</span>); prove that conditional exchangeability given <span class="math inline">\(X\)</span> transfers to any balancing score <span class="math inline">\(b(X)\)</span>, and explain separately why positivity transfers from <span class="math inline">\(X\)</span> to <span class="math inline">\(b(X)\)</span> (the Propensity Score Theorem).</li>
+<li>Select covariates for the propensity model on causal grounds, estimate the score, and evaluate the fitted design through balance and overlap diagnostics rather than treatment-prediction accuracy.</li>
 <li>Derive the IPW identification formula for the ATE and explain the role of the Horvitz–Thompson representation.</li>
-<li>Distinguish the IPW estimator (targets ATE) from the nearest-neighbor matching estimator (targets ATT).</li>
-<li>Distinguish positivity (weak overlap) from strong overlap, describe the practical consequences of near-violations, and apply trimming strategies.</li>
-<li>Articulate the fundamental limitation of propensity score methods — the unconfoundedness assumption — and explain why this motivates instrumental variables (Chapter 7).</li>
+<li>Explain how IPW estimators can target either the ATE or the ATT depending on the weighting scheme, and how the nearest-neighbor matching estimator presented in this chapter targets the ATT.</li>
+<li>Distinguish <em>positivity</em> (weak overlap) from <em>strong overlap</em>, describe the practical consequences of near-violations, and explain the estimand consequences of trimming.</li>
+<li>Articulate the fundamental limitation of propensity-score methods — the unconfoundedness assumption — and explain why this motivates instrumental variables (Chapter 7).</li>
 </ol>
 </div>
 </div>
-<section id="sec-motivation" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">6.1</span> Motivation: The Curse of Dimensionality</h2>
-<p>Chapter 5 established that under strong ignorability, the ATE is identified by the back-door adjustment formula, and developed three estimation strategies: regression adjustment, standardization, and stratification. All three require conditioning on a covariate vector <span class="math inline">\(X\)</span>. When <span class="math inline">\(X\)</span> is low-dimensional, this is feasible. When <span class="math inline">\(X\)</span> has many components, it is not.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Reading Guide
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>First reading</strong>: the curse-of-dimensionality motivation; the balancing property and the <em>statements</em> of <span class="quarto-unresolved-ref">?lem-coarsest</span> and <span class="quarto-unresolved-ref">?thm-ps</span>; the whole of the design-stage material — covariate selection (<a href="#sec-w6-covariate-selection" class="quarto-xref"><span>Section 6.3.1</span></a>), balance versus prediction, diagnostics (<a href="#sec-w6-balance-diagnostics" class="quarto-xref"><span>Section 6.3.5</span></a>), and the workflow (<a href="#sec-w6-design-workflow" class="quarto-xref"><span>Section 6.3.7</span></a>); the matching and IPW estimator definitions with the weighted-balance identities (<span class="quarto-unresolved-ref">?lem-weighted-balance</span>); positivity, trimming, and re-targeting; and the lab’s headline lessons. <strong>Second reading</strong>: the general-balancing-score proof of <span class="quarto-unresolved-ref">?thm-ps</span>; the nonstandard-inference remark for matching; the lab’s estimated-score efficiency analysis and control-variate interpretation, and the level-versus-shape decomposition of the misspecification bias.</p>
+</div>
+</div>
+<section id="motivation-the-curse-of-dimensionality" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="motivation-the-curse-of-dimensionality"><span class="header-section-number">6.1</span> Motivation: The Curse of Dimensionality</h2>
+<p>Chapter 5 established that under consistency, conditional exchangeability, positivity, and integrability, the ATE is identified by the back-door adjustment formula, and developed three estimation strategies: regression adjustment, standardization, and stratification. All three require, in practice, that we condition on a covariate vector <span class="math inline">\(X\)</span>. When <span class="math inline">\(X\)</span> is low-dimensional, this is feasible. When <span class="math inline">\(X\)</span> has many components, it is not.</p>
 <p><strong>The problem.</strong> Stratification requires cells <span class="math inline">\(\{X = x\}\)</span> to contain both treated and control units. With <span class="math inline">\(p\)</span> binary covariates, there are <span class="math inline">\(2^p\)</span> cells. With <span class="math inline">\(p = 10\)</span>, that is 1024 cells — far more than most datasets can support. Regression adjustment avoids the cell-count problem but requires a correctly specified model for <span class="math inline">\(\E[Y \mid T, X]\)</span>, which becomes harder to specify reliably as <span class="math inline">\(p\)</span> grows.</p>
-<p><strong>The solution.</strong> <span class="citation" data-cites="rosenbaum1983central">Rosenbaum and Rubin (<a href="#ref-rosenbaum1983central" role="doc-biblioref">1983</a>)</span> showed that it is sufficient to condition on a single scalar function of <span class="math inline">\(X\)</span>: the <em>propensity score</em> <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span>. The propensity score reduces the adjustment dimension without changing the identified estimand, provided strong ignorability and positivity hold.</p>
+<p><strong>The solution.</strong> <span class="citation" data-cites="rosenbaum1983central">Rosenbaum and Rubin (<a href="#ref-rosenbaum1983central" role="doc-biblioref">1983</a>)</span> showed that it is sufficient to condition on a single scalar function of <span class="math inline">\(X\)</span>: the <em>propensity score</em> <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span>. The propensity score reduces the adjustment dimension without changing the identified estimand, provided unconfoundedness and positivity hold. Identification power is preserved; finite-sample efficiency, covariate balance, and robustness to model misspecification, however, depend on how well the score is estimated and how it is used in the downstream estimator.</p>
 </section>
-<section id="sec-balance" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="sec-balance"><span class="header-section-number">6.2</span> The Propensity Score and Its Balancing Properties</h2>
+<section id="the-propensity-score-and-its-balancing-properties" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="the-propensity-score-and-its-balancing-properties"><span class="header-section-number">6.2</span> The Propensity Score and Its Balancing Properties</h2>
+<p>The central insight of <span class="citation" data-cites="rosenbaum1983central">Rosenbaum and Rubin (<a href="#ref-rosenbaum1983central" role="doc-biblioref">1983</a>)</span> is that the <span class="math inline">\(p\)</span>-dimensional adjustment problem of Chapter 5 reduces to a one-dimensional one. The right abstraction is the <em>balancing score</em>: any function of <span class="math inline">\(X\)</span> that renders treatment assignment conditionally independent of the covariates. The propensity score is the canonical — and coarsest — such function.</p>
 <section id="balancing-scores-and-the-propensity-score" class="level3" data-number="6.2.1">
 <h3 data-number="6.2.1" class="anchored" data-anchor-id="balancing-scores-and-the-propensity-score"><span class="header-section-number">6.2.1</span> Balancing Scores and the Propensity Score</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -454,7 +482,7 @@ window.Quarto = {
 <p>A function <span class="math inline">\(b(X)\)</span> is called a <strong>balancing score</strong> if <span class="math inline">\(T \indep X \mid b(X)\)</span>.</p>
 </div>
 </div>
-<p>The full covariate vector <span class="math inline">\(X\)</span> is trivially a balancing score. The propensity score is the <em>coarsest</em> balancing score, providing the greatest dimension reduction without sacrificing identification.</p>
+<p>The full covariate vector <span class="math inline">\(X\)</span> is trivially a balancing score: <span class="math inline">\(T \indep X \mid X\)</span> holds because, conditional on <span class="math inline">\(X\)</span>, the conditional distribution of <span class="math inline">\(X\)</span> is degenerate and therefore cannot depend on treatment status. The propensity score is the <em>coarsest</em> balancing score (<span class="quarto-unresolved-ref">?lem-coarsest</span> below), and therefore provides the greatest dimension reduction without sacrificing identification.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -468,8 +496,8 @@ window.Quarto = {
 <p>For a binary treatment <span class="math inline">\(T \in \{0,1\}\)</span> and observed covariates <span class="math inline">\(X\)</span>, the <strong>propensity score</strong> is <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span>.</p>
 </div>
 </div>
-<p>In a randomized experiment, <span class="math inline">\(\pi(X) = 0.5\)</span> for all units. In an observational study, <span class="math inline">\(\pi(X)\)</span> varies with <span class="math inline">\(X\)</span> and must be estimated from data.</p>
-<p><strong>Connection to strong ignorability.</strong> Under strong ignorability <span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span>, the potential outcomes carry no further information about treatment assignment once <span class="math inline">\(X\)</span> is given: <span class="math inline">\(P(T{=}1 \mid X, Y(0), Y(1)) = P(T{=}1 \mid X) = \pi(X)\)</span>. This equality is a <em>consequence</em> of the ignorability assumption, not part of the definition of <span class="math inline">\(\pi(X)\)</span>.</p>
+<p>In a randomized experiment, <span class="math inline">\(\pi(X)\)</span> is a known constant for all units — equal to <span class="math inline">\(0.5\)</span> under balanced Bernoulli assignment, and, marginally for each unit, under complete randomization with exactly <span class="math inline">\(n/2\)</span> treated, where the assignment indicators are dependent because the treated count is fixed. In an observational study, <span class="math inline">\(\pi(X)\)</span> varies with <span class="math inline">\(X\)</span> and must be estimated from data.</p>
+<p><strong>Connection to strong ignorability.</strong> Under strong ignorability <span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span>, the potential outcomes carry no further information about treatment assignment once <span class="math inline">\(X\)</span> is given, so the treatment assignment mechanism satisfies <span class="math display">\[P\bigl(T{=}1 \mid X,\, Y(0),\, Y(1)\bigr) = P(T{=}1 \mid X) = \pi(X).\]</span> This equality is a <em>consequence</em> of the ignorability assumption, not part of the definition of <span class="math inline">\(\pi(X)\)</span>. What unconfoundedness rules out is precisely any residual dependence of treatment on the potential outcomes after conditioning on <span class="math inline">\(X\)</span>.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -483,22 +511,7 @@ window.Quarto = {
 <p><span class="math inline">\(T \indep X \mid \pi(X)\)</span>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>It suffices to show <span class="math inline">\(P(T{=}1 \mid X, \pi(X)) = P(T{=}1 \mid \pi(X))\)</span>. Since <span class="math inline">\(\pi(X)\)</span> is a deterministic function of <span class="math inline">\(X\)</span>, <span class="math inline">\(P(T{=}1 \mid X, \pi(X)) = P(T{=}1 \mid X) = \pi(X)\)</span>. For the right-hand side, the law of iterated expectations gives: <span class="math display">\[P(T{=}1 \mid \pi(X)) = \E[P(T{=}1 \mid X) \mid \pi(X)] = \E[\pi(X) \mid \pi(X)] = \pi(X). \quad\square\]</span></p>
-</div>
-</div>
-</div>
+<p><em>Proof.</em> It suffices to show <span class="math inline">\(P(T{=}1 \mid X, \pi(X)) = P(T{=}1 \mid \pi(X))\)</span>. Since <span class="math inline">\(\pi(X)\)</span> is a deterministic function of <span class="math inline">\(X\)</span>, conditioning on both <span class="math inline">\(X\)</span> and <span class="math inline">\(\pi(X)\)</span> is the same as conditioning on <span class="math inline">\(X\)</span> alone, so <span class="math inline">\(P(T{=}1 \mid X, \pi(X)) = P(T{=}1 \mid X) = \pi(X)\)</span>. For the right-hand side, the law of iterated expectations gives <span class="math display">\[P\bigl(T{=}1 \mid \pi(X)\bigr) = \E\bigl[P(T{=}1 \mid X) \,\big|\, \pi(X)\bigr] = \E\bigl[\pi(X) \,\big|\, \pi(X)\bigr] = \pi(X),\]</span> where the last equality holds because <span class="math inline">\(\pi(X)\)</span> is measurable with respect to itself. Hence both sides equal <span class="math inline">\(\pi(X)\)</span>. <span class="math inline">\(\square\)</span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -509,7 +522,8 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The balancing property implies <span class="math inline">\(f(X \mid T{=}1, \pi(X)) = f(X \mid T{=}0, \pi(X))\)</span> a.s. <span class="citation" data-cites="imbens2015causal">Imbens and Rubin (<a href="#ref-imbens2015causal" role="doc-biblioref">2015</a>)</span> call this <em>design before analysis</em>: covariate balance can be assessed by stratifying on a discretized <span class="math inline">\(\hat\pi(X)\)</span> and comparing covariate distributions within strata — without consulting the outcome <span class="math inline">\(Y\)</span>, making the diagnostic immune to outcome-fishing.</p>
+<p><span class="quarto-unresolved-ref">?thm-balance</span> has a practical consequence that <span class="citation" data-cites="imbens2015causal">Imbens and Rubin (<a href="#ref-imbens2015causal" role="doc-biblioref">2015</a>)</span> call <em>design before analysis</em>: covariate balance can be assessed before the outcome data are consulted. The balancing property implies <span class="math display">\[f\bigl(X \mid T{=}1,\, \pi(X)\bigr) = f\bigl(X \mid T{=}0,\, \pi(X)\bigr) \quad \text{a.s. on } \{0 &lt; \pi(X) &lt; 1\},\]</span> i.e., at every score value where both arms occur with positive probability, the conditional distribution of <span class="math inline">\(X\)</span> given the propensity score is the same in the two arms.</p>
+<p>Stratifying on a discretized <span class="math inline">\(\hat\pi(X)\)</span> and comparing covariate distributions within strata — via standardized mean differences (<a href="#sec-w6-balance-diagnostics" class="quarto-xref"><span>Section 6.3.5</span></a>), which are preferred over <span class="math inline">\(t\)</span>-tests because they do not conflate imbalance with sample size — diagnoses whether the propensity score model achieves adequate balance, without ever looking at <span class="math inline">\(Y\)</span>. Because the diagnostic does not involve the outcome, specifications cannot be selected on the basis of favorable effect estimates. Analysts can — and generally should — iterate the propensity model in response to observed imbalance; doing so while blinded to <span class="math inline">\(Y\)</span> is what keeps the design stage objective.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -522,12 +536,13 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The Balancing Property is a statement about the <em>observed</em> covariate distribution. It does <em>not</em> say anything about unobserved confounders <span class="math inline">\(U\)</span>: if <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> and is not captured by <span class="math inline">\(X\)</span>, the balancing property fails to close the back-door path through <span class="math inline">\(U\)</span>.</p>
+<p><span class="quarto-unresolved-ref">?thm-balance</span> is a statement about the <em>observed</em> covariate distribution. It says that within strata of <span class="math inline">\(\pi(X)\)</span>, the distribution of <span class="math inline">\(X\)</span> is the same in the treated and control groups. It does <em>not</em> say anything about unobserved confounders <span class="math inline">\(U\)</span>: if <span class="math inline">\(U\)</span> affects both <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> and is not captured by <span class="math inline">\(X\)</span>, the balancing property fails to close the back-door path through <span class="math inline">\(U\)</span>.</p>
 </div>
 </div>
 </section>
 <section id="the-propensity-score-theorem" class="level3" data-number="6.2.2">
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="the-propensity-score-theorem"><span class="header-section-number">6.2.2</span> The Propensity Score Theorem</h3>
+<p>The balancing property has a fundamental identification consequence: unconfoundedness at <span class="math inline">\(X\)</span> implies unconfoundedness at <em>any</em> balancing score of <span class="math inline">\(X\)</span>, and in particular at the scalar <span class="math inline">\(\pi(X)\)</span>. Before stating that result we record a structural fact about balancing scores: among all of them, the propensity score is the coarsest.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -538,26 +553,11 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>If <span class="math inline">\(b(X)\)</span> is any balancing score — that is, <span class="math inline">\(T \indep X \mid b(X)\)</span> — then <span class="math inline">\(\pi(X)\)</span> is a function of <span class="math inline">\(b(X)\)</span>: <span class="math inline">\(\pi(X) = g(b(X))\)</span> for some measurable <span class="math inline">\(g\)</span>.</p>
+<p>If <span class="math inline">\(b(X)\)</span> is any balancing score — that is, <span class="math inline">\(T \indep X \mid b(X)\)</span> — then <span class="math inline">\(\pi(X)\)</span> is a function of <span class="math inline">\(b(X)\)</span>: <span class="math inline">\(\pi(X) = g(b(X))\)</span> for some measurable function <span class="math inline">\(g\)</span>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Since <span class="math inline">\(b(X)\)</span> is a balancing score, <span class="math inline">\(P(T{=}1 \mid X, b(X)) = P(T{=}1 \mid b(X))\)</span>. Since <span class="math inline">\(b(X)\)</span> is a function of <span class="math inline">\(X\)</span>: <span class="math inline">\(\pi(X) = P(T{=}1 \mid X) = P(T{=}1 \mid X, b(X)) = P(T{=}1 \mid b(X))\)</span>. Hence <span class="math inline">\(\pi(X)\)</span> is a measurable function of <span class="math inline">\(b(X)\)</span> alone. <span class="math inline">\(\square\)</span></p>
-</div>
-</div>
-</div>
-<p>The lemma states that <span class="math inline">\(\pi(X)\)</span> is the smallest sufficient statistic for <span class="math inline">\(T\)</span> among functions of <span class="math inline">\(X\)</span>: any other balancing score retains at least as much information about <span class="math inline">\(X\)</span>.</p>
+<p><em>Proof.</em> Since <span class="math inline">\(b(X)\)</span> is a balancing score, <span class="math inline">\(P(T{=}1 \mid X,\, b(X)) = P(T{=}1 \mid b(X))\)</span>. But <span class="math inline">\(b(X)\)</span> is a function of <span class="math inline">\(X\)</span>, so conditioning on <span class="math inline">\(b(X)\)</span> is already implicit in conditioning on <span class="math inline">\(X\)</span>: <span class="math display">\[\pi(X) = P(T{=}1 \mid X) = P\bigl(T{=}1 \mid X,\, b(X)\bigr) = P\bigl(T{=}1 \mid b(X)\bigr).\]</span> Hence <span class="math inline">\(\pi(X)\)</span> is a measurable function of <span class="math inline">\(b(X)\)</span> alone. <span class="math inline">\(\square\)</span></p>
+<p>The lemma is the precise statement of the <em>Rosenbaum–Rubin coarsest-balancing-score property</em>: the propensity score is a measurable function of every balancing score, or equivalently <span class="math inline">\(\sigma\{\pi(X)\} \subseteq \sigma\{b(X)\}\)</span>. Every balancing score is therefore at least as fine as <span class="math inline">\(\pi(X)\)</span>, which is what makes <span class="math inline">\(\pi(X)\)</span> the coarsest balancing score and the maximally parsimonious adjustment variable. The reverse factorization need <em>not</em> hold: a general balancing score — <span class="math inline">\(X\)</span> itself, for example — need not be a function of <span class="math inline">\(\pi(X)\)</span>. (By analogy with classical sufficiency, <span class="math inline">\(\pi(X)\)</span> plays the role of a minimal sufficient reduction of <span class="math inline">\(X\)</span> for the treatment indicator, although no parametric model is involved here.)</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -568,22 +568,27 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Suppose strong ignorability holds: <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> and <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> a.s. Then for any balancing score <span class="math inline">\(b(X)\)</span>: <span class="math display">\[(Y(0), Y(1)) \indep T \mid b(X).\]</span> In particular, <span class="math inline">\((Y(0), Y(1)) \indep T \mid \pi(X)\)</span>.</p>
+<p>Suppose joint conditional exchangeability holds: <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span>. Then for any balancing score <span class="math inline">\(b(X)\)</span>, <span class="math display">\[\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \;\Big|\; b(X);\]</span> no positivity is needed for this conditional-independence transfer. If, in addition, <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> almost surely, then <span class="math inline">\(0 &lt; P(T{=}1 \mid b(X)) &lt; 1\)</span> almost surely as well, so <em>strong</em> ignorability given <span class="math inline">\(X\)</span> implies strong ignorability given <span class="math inline">\(b(X)\)</span>, and adjustment for <span class="math inline">\(b(X)\)</span> identifies the potential-outcome means. In particular, taking <span class="math inline">\(b(X) = \pi(X)\)</span> gives strong ignorability with the scalar propensity score in place of the full covariate vector.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof
+<span class="screen-reader-only">Note</span>Proof (second reading)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>We prove the result for <span class="math inline">\(b(X) = \pi(X)\)</span>. For any <span class="math inline">\(t \in \{0,1\}\)</span>: <span class="math display">\[P(T{=}1 \mid Y(t), \pi(X)) = \E[P(T{=}1 \mid Y(t), X) \mid Y(t), \pi(X)] = \E[P(T{=}1 \mid X) \mid Y(t), \pi(X)] = \E[\pi(X) \mid Y(t), \pi(X)] = \pi(X),\]</span> where the second equality uses ignorability (<span class="math inline">\(T \indep Y(t) \mid X\)</span>). Hence <span class="math inline">\(T \indep Y(t) \mid \pi(X)\)</span>. By the Coarsest Balancing Score Lemma, the result extends to any <span class="math inline">\(b(X)\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>Write <span class="math inline">\(\mathbf{Y} = (Y(0), Y(1))\)</span> and let <span class="math inline">\(b(X)\)</span> be any balancing score. By <span class="quarto-unresolved-ref">?lem-coarsest</span> there is a measurable function <span class="math inline">\(g\)</span> with <span class="math inline">\(\pi(X) = g(b(X))\)</span>. Since <span class="math inline">\(b(X)\)</span> is a function of <span class="math inline">\(X\)</span>, the law of iterated expectations gives <span class="math display">\[\begin{aligned}
+P\bigl(T{=}1 \mid \mathbf{Y},\, b(X)\bigr) &amp;= \E\bigl[P(T{=}1 \mid \mathbf{Y}, X) \mid \mathbf{Y}, b(X)\bigr] \\
+&amp;= \E\bigl[P(T{=}1 \mid X) \mid \mathbf{Y}, b(X)\bigr] \quad\text{(joint ignorability)} \\
+&amp;= \E\bigl[g\bigl(b(X)\bigr) \mid \mathbf{Y}, b(X)\bigr] = g\bigl(b(X)\bigr).
+\end{aligned}\]</span> The same computation without <span class="math inline">\(\mathbf{Y}\)</span> in the conditioning set yields <span class="math inline">\(P(T{=}1 \mid b(X)) = \E[\pi(X) \mid b(X)] = g(b(X))\)</span>. Hence <span class="math inline">\(P(T{=}1 \mid \mathbf{Y}, b(X)) = P(T{=}1 \mid b(X))\)</span>, and because <span class="math inline">\(T\)</span> is binary, <span class="math inline">\(\mathbf{Y} \indep T \mid b(X)\)</span>; note that positivity was not used in this argument.</p>
+<p>If additionally <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> almost surely, positivity transfers to the balancing score: <span class="math inline">\(P(T{=}1 \mid b(X)) = \pi(X) \in (0,1)\)</span> almost surely. Taking <span class="math inline">\(b(X) = \pi(X)\)</span>, with <span class="math inline">\(g\)</span> the identity, gives the propensity score case. <span class="math inline">\(\square\)</span></p>
 </div>
 </div>
 </div>
@@ -597,7 +602,8 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="quarto-unresolved-ref">?thm-ps</span> gives an alternative identification formula: <span class="math inline">\(\E[Y(t)] = \E[\E[Y \mid \pi(X), T{=}t]]\)</span>. A common misconception is that <span class="math inline">\(\E[Y \mid \pi(X), T{=}t]\)</span> and <span class="math inline">\(\E[Y \mid X, T{=}t]\)</span> are equal pointwise — they are not. The theorem guarantees only that their marginal expectations agree: <span class="math inline">\(\E[\E[Y \mid \pi(X), T{=}t]] = \E[\E[Y \mid X, T{=}t]] = \E[Y(t)]\)</span>.</p>
+<p>Combining <span class="quarto-unresolved-ref">?thm-ps</span> with consistency and positivity yields an alternative identification formula. Define the arm-specific conditional mean functions <span class="math inline">\(m_t(p) = \E[Y \mid T{=}t,\, \pi(X) = p]\)</span>; then <span class="math inline">\(\E[Y(t)] = \E[m_t(\pi(X))]\)</span>.</p>
+<p>A common misconception is that this means the two conditional regressions <span class="math inline">\(\E[Y \mid \pi(X), T{=}t]\)</span> and <span class="math inline">\(\E[Y \mid X, T{=}t]\)</span> are equal. They are not: they are different functions and their pointwise values generally differ. The theorem guarantees only that their marginal expectations agree: <span class="math display">\[\E\bigl[\E[Y \mid \pi(X),\, T{=}t]\bigr] = \E\bigl[\E[Y \mid X,\, T{=}t]\bigr] = \E[Y(t)].\]</span> Note also that the formula licenses no particular parametric specification: identification through the propensity score requires that the arm-specific functions <span class="math inline">\(m_t\)</span> be estimated sufficiently well — nonparametrically or by a correctly specified model — and then standardized over the marginal distribution of <span class="math inline">\(\pi(X)\)</span>. An arbitrary parametric regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> and <span class="math inline">\(\pi(X)\)</span> need not identify the ATE.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -610,15 +616,130 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="quarto-unresolved-ref">?thm-ps</span> reduces the curse of dimensionality from a <span class="math inline">\(\dim(X)\)</span>-dimensional problem to a one-dimensional one: <span class="math display">\[\tau_{\mathrm{ATE}} = \E[\E[Y \mid T{=}1, \pi(X)] - \E[Y \mid T{=}0, \pi(X)]].\]</span></p>
+<p><span class="quarto-unresolved-ref">?thm-ps</span> says that instead of adjusting for the full high-dimensional vector <span class="math inline">\(X\)</span>, it is sufficient to adjust for the scalar <span class="math inline">\(\pi(X)\)</span>. This reduces the <em>curse of dimensionality</em> in covariate adjustment from a <span class="math inline">\(\dim(X)\)</span>-dimensional problem to a one-dimensional one. Together with consistency and positivity, identification of the ATE follows: <span class="math display">\[\tau_{\mathrm{ATE}} = \E\bigl[\E[Y \mid T{=}1, \pi(X)] - \E[Y \mid T{=}0, \pi(X)]\bigr].\]</span></p>
 </div>
 </div>
 </section>
 </section>
-<section id="sec-estimation" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="sec-estimation"><span class="header-section-number">6.3</span> Estimation of the Propensity Score</h2>
-<p><strong>Logistic regression.</strong> The classical approach models <span class="math inline">\(\mathrm{logit}(\pi(X)) = X^\top\beta\)</span> and estimates <span class="math inline">\(\beta\)</span> by maximum likelihood. The fitted values <span class="math inline">\(\hat\pi(X_i) = \sigma(X_i^\top\hat\beta)\)</span> are used in place of the true propensity score.</p>
-<p><strong>Machine learning estimators.</strong> When <span class="math inline">\(X\)</span> is high-dimensional or the true propensity score is nonlinear, machine learning methods — gradient boosted trees, random forests, regularized logistic regression — can estimate <span class="math inline">\(\pi(X)\)</span> more flexibly. A critical issue is <em>overfitting</em>: an estimator that perfectly separates treated and control units in-sample will produce estimated propensity scores near 0 or 1 everywhere, destroying overlap. Cross-fitting (Chapter 11) addresses this by estimating nuisance functions on held-out folds.</p>
+<section id="constructing-the-propensity-score" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="constructing-the-propensity-score"><span class="header-section-number">6.3</span> Constructing the Propensity Score</h2>
+<p>The true propensity score is <em>unknown</em> in observational studies and must be estimated from the data. Its practical construction, however, requires more than choosing a binary-response algorithm. Three logically distinct decisions must be kept separate. First, <em>causal reasoning</em> determines the pretreatment adjustment set <span class="math inline">\(X\)</span>: the set must be sufficient to support conditional exchangeability, for example by blocking every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> (Chapters 3 and 5). Second, <em>statistical modeling</em> determines how the treatment probability depends on the chosen covariates. Third, <em>design diagnostics</em> determine whether the fitted score actually produces adequate balance and overlap for the chosen estimand. A good predictive model for treatment does not automatically produce a good causal design, and no statistical treatment model can repair an invalid adjustment set chosen from an incorrect causal graph.</p>
+<section id="sec-w6-covariate-selection" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="sec-w6-covariate-selection"><span class="header-section-number">6.3.1</span> Covariate Selection: What Belongs in <span class="math inline">\(X\)</span>?</h3>
+<p>The propensity score inherits its causal validity from the adjustment set on which it is conditioned. The primary rule is therefore graphical and scientific rather than predictive: <span class="math inline">\(X\)</span> should be a pretreatment set sufficient to block all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. The causal assumption is <span class="math inline">\(Y(t) \indep T \mid X\)</span>; estimating <span class="math inline">\(\pi(X)\)</span> cannot make this assumption true if it was false for the chosen <span class="math inline">\(X\)</span>.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>What the Propensity Score Cannot Do
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The propensity score balances the covariates included in <span class="math inline">\(X\)</span>. It does not balance unmeasured confounders, repair adjustment for a collider, or justify conditioning on a post-treatment variable. The causal validity of <span class="math inline">\(X\)</span> must be established — from subject-matter knowledge and the causal graph — <em>before</em> the propensity score is estimated.</p>
+</div>
+</div>
+<p>Within a causally valid pretreatment set, candidate variables need not play identical roles. A useful first taxonomy classifies them by whether they predict treatment, outcome, both, or neither <span class="citation" data-cites="brookhart2006variable vanderweele2019principles">(<a href="#ref-brookhart2006variable" role="doc-biblioref">Brookhart et al. 2006</a>; <a href="#ref-vanderweele2019principles" role="doc-biblioref">VanderWeele 2019</a>)</span>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Variable type</strong></th>
+<th><strong>Predicts <span class="math inline">\(T\)</span>?</strong></th>
+<th><strong>Predicts <span class="math inline">\(Y\)</span>?</strong></th>
+<th><strong>Typical recommendation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Confounder</td>
+<td>yes</td>
+<td>yes</td>
+<td>include</td>
+</tr>
+<tr class="even">
+<td>Outcome predictor only</td>
+<td>no or weakly</td>
+<td>yes</td>
+<td>usually include</td>
+</tr>
+<tr class="odd">
+<td>Treatment predictor only</td>
+<td>yes</td>
+<td>no</td>
+<td>include only with caution</td>
+</tr>
+<tr class="even">
+<td>Predictor of neither</td>
+<td>no</td>
+<td>no</td>
+<td>usually unnecessary</td>
+</tr>
+</tbody>
+</table>
+<p>Variables related to both treatment and outcome are central confounders and should ordinarily be included: they are needed to block back-door paths. Pretreatment variables that strongly predict the outcome may be useful even when they predict treatment only weakly, because they can improve precision and make residual imbalance less consequential. Variables that strongly predict treatment but are unrelated to the potential outcomes require more caution: although they improve prediction of <span class="math inline">\(T\)</span>, they can push estimated scores toward zero or one, reduce overlap and effective sample size, and inflate the variance of weighted estimators without removing appreciable confounding bias; moreover, conditioning on such a near-instrument can <em>amplify</em> the bias arising from any residual unmeasured confounding. Pure noise variables mainly add estimation variability and may worsen finite-sample balance.</p>
+<p>These are tendencies rather than universal rules, and they do not justify automatic variable deletion. Whether a variable is truly unrelated to the potential outcomes is a scientific judgment subject to uncertainty, and plausible pretreatment confounders should generally be retained even when their treatment-model coefficients are small or statistically insignificant.</p>
+<p>Two exclusions, by contrast, are categorical when the target is a total effect. <em>Post-treatment variables</em> should not be conditioned on: doing so can block part of the causal effect, induce selection bias, and change the estimand. <em>Pretreatment colliders</em> can be equally damaging despite being measured before treatment: in the M-structure of panel (b) below, the variable <span class="math inline">\(C\)</span> is pretreatment, yet conditioning on it opens the noncausal path <span class="math inline">\(T \leftarrow U_1 \rightarrow C \leftarrow U_2 \rightarrow Y\)</span> that is blocked when <span class="math inline">\(C\)</span> is left alone (Chapter 3). “Include every available variable” is therefore not a safe default.</p>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 640 165" width="100%" style="max-width:640px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="w6a" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path></marker>
+    <marker id="w6r" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#C00"></path></marker>
+  </defs>
+  <circle cx="95" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="95" y="36" text-anchor="middle" fill="#2E74B6" font-weight="bold">X</text>
+  <circle cx="40" cy="95" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="40" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="150" cy="95" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="150" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <line x1="81" y1="43" x2="54" y2="82" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w6a)"></line>
+  <line x1="109" y1="43" x2="136" y2="82" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w6a)"></line>
+  <line x1="59" y1="95" x2="130" y2="95" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#w6a)"></line>
+  <text x="95" y="138" text-anchor="middle" fill="#1e3864" font-size="11" font-weight="bold">(a) confounder</text>
+  <text x="95" y="153" text-anchor="middle" fill="#555" font-size="10">include X</text>
+  <line x1="215" y1="12" x2="215" y2="158" stroke="#ddd" stroke-width="1"></line>
+  <circle cx="270" cy="22" r="17" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"></circle><text x="270" y="28" text-anchor="middle" fill="#C00" font-weight="bold">U₁</text>
+  <circle cx="390" cy="22" r="17" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"></circle><text x="390" y="28" text-anchor="middle" fill="#C00" font-weight="bold">U₂</text>
+  <circle cx="330" cy="62" r="17" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="330" y="68" text-anchor="middle" fill="#2E74B6" font-weight="bold">C</text>
+  <circle cx="270" cy="112" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="270" y="118" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="390" cy="112" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="390" y="118" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <line x1="284" y1="32" x2="316" y2="52" stroke="#C00" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#w6r)"></line>
+  <line x1="376" y1="32" x2="344" y2="52" stroke="#C00" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#w6r)"></line>
+  <line x1="270" y1="39" x2="270" y2="92" stroke="#C00" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#w6r)"></line>
+  <line x1="390" y1="39" x2="390" y2="92" stroke="#C00" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#w6r)"></line>
+  <line x1="288" y1="112" x2="370" y2="112" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#w6a)"></line>
+  <text x="330" y="138" text-anchor="middle" fill="#1e3864" font-size="11" font-weight="bold">(b) pretreatment collider</text>
+  <text x="330" y="153" text-anchor="middle" fill="#555" font-size="10">exclude C</text>
+  <line x1="450" y1="12" x2="450" y2="158" stroke="#ddd" stroke-width="1"></line>
+  <circle cx="495" cy="95" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="495" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="558" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="558" y="36" text-anchor="middle" fill="#2E74B6" font-weight="bold">M</text>
+  <circle cx="618" cy="95" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="618" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <line x1="508" y1="82" x2="544" y2="43" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w6a)"></line>
+  <line x1="572" y1="43" x2="606" y2="82" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w6a)"></line>
+  <line x1="514" y1="95" x2="598" y2="95" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#w6a)"></line>
+  <text x="558" y="138" text-anchor="middle" fill="#1e3864" font-size="11" font-weight="bold">(c) mediator</text>
+  <text x="558" y="153" text-anchor="middle" fill="#555" font-size="10">exclude M (total effect)</text>
+</svg>
+<figcaption>Three covariate roles for propensity-model selection. (a) A confounder opens a back-door path and must be included. (b) In the M-structure, $C$ is a pretreatment collider: conditioning on it opens the noncausal path that is otherwise blocked. (c) A mediator transmits part of the effect of $T$ on $Y$; conditioning on it blocks the indirect component and biases the total effect.</figcaption>
+</figure>
+</section>
+<section id="parametric-estimation-by-logistic-regression" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="parametric-estimation-by-logistic-regression"><span class="header-section-number">6.3.2</span> Parametric Estimation by Logistic Regression</h3>
+<p>The classical approach models <span class="math display">\[\log\frac{\pi(X)}{1 - \pi(X)} = \beta_0 + \sum_{j=1}^{p} \beta_j X_j + \sum_{j=1}^{p} \gamma_j\, h_j(X_j) + \sum_{j&lt;k} \delta_{jk}\, X_j X_k,\]</span> where the <span class="math inline">\(h_j\)</span> are optional nonlinear transformations (polynomials, splines) and the cross-product terms capture interactions among covariates, and estimates the coefficients by maximum likelihood. Linearity on the logit scale in the raw covariates is an assumption, not a default truth: nonlinear terms and covariate-by-covariate interactions are often needed to achieve balance. (Treatment-by-covariate interactions have no place in this model — treatment is the <em>response</em> here.) Terms should be added based on causal knowledge and the balance diagnostics of <a href="#sec-w6-balance-diagnostics" class="quarto-xref"><span>Section 6.3.5</span></a>, not predictive fit alone.</p>
+<p>Variable selection by treatment-model <span class="math inline">\(p\)</span>-values is generally inappropriate. A covariate may be an important confounder or outcome predictor even when its coefficient in the treatment model is small or statistically insignificant, and removing it can worsen causal balance without materially changing treatment-prediction accuracy. Backward selection driven by significance serves sparse prediction, which is not the objective of a propensity model.</p>
+</section>
+<section id="flexible-and-machine-learning-estimators" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="flexible-and-machine-learning-estimators"><span class="header-section-number">6.3.3</span> Flexible and Machine-Learning Estimators</h3>
+<p>When <span class="math inline">\(X\)</span> is high-dimensional or when the true propensity score is non-linear, machine learning methods — gradient boosted trees, random forests, regularized logistic regression — can estimate <span class="math inline">\(\pi(X)\)</span> more flexibly, reducing misspecification of the treatment model without fully prespecifying nonlinearities and interactions. Predictive accuracy alone, however, is not the relevant success criterion: hyperparameters tuned solely to classification loss (log loss, AUC) may improve prediction precisely by producing more extreme probability estimates, which destabilizes the resulting weights.</p>
+<p>A related issue is <em>overfitting</em>: an estimator that nearly perfectly separates treated and control units in-sample produces fitted scores near one for treated units and near zero for controls, mimicking an overlap violation that need not exist in the population. Cross-fitting (Chapter 12) removes the <em>same-sample</em> component of this problem by evaluating each unit’s score on a fold not used to fit it, but it does not create overlap and does not prevent extreme out-of-fold predictions: a genuinely near-deterministic treatment rule yields extreme scores on held-out data as well. Regularization, overlap diagnostics, and — when scientifically justified — trimming or re-targeting the estimand remain separate requirements. Whatever the learner, the fitted design must ultimately be evaluated through the balance and overlap it delivers; no machine-learning method eliminates the need for causal covariate selection or design diagnostics.</p>
+</section>
+<section id="the-goal-is-balance-not-treatment-prediction" class="level3" data-number="6.3.4">
+<h3 data-number="6.3.4" class="anchored" data-anchor-id="the-goal-is-balance-not-treatment-prediction"><span class="header-section-number">6.3.4</span> The Goal Is Balance, Not Treatment Prediction</h3>
+<p>In ordinary classification, a model is rewarded for separating the two classes. In propensity-score analysis, strong separation signals trouble: fitted scores near one for treated units and near zero for controls mean little common support, extreme inverse-probability weights, and an estimator whose value depends on a handful of observations. A high AUC may therefore indicate a difficult causal comparison rather than a successful design. Predictive criteria are useful for model fitting, but they are not sufficient criteria for choosing a propensity-score design.</p>
+<p>The estimated score, moreover, is a design device, not the final diagnostic object. Conditioning on the <em>true</em> score balances <span class="math inline">\(X\)</span> in distribution (<span class="quarto-unresolved-ref">?thm-balance</span>), but matching or weighting approximately on an <em>estimated</em> score does not guarantee adequate finite-sample balance. After matching or weighting, balance must therefore be assessed on the original covariates and, when scientifically relevant, on nonlinear functions and interactions of them; similar distributions of <span class="math inline">\(\hat\pi(X)\)</span> across arms do not by themselves establish that the underlying covariates are balanced.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -629,15 +750,144 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The propensity score is estimated to construct a good estimator of <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span>. Balancing tests diagnose whether the estimated score has achieved covariate balance, but they do <em>not</em> test whether unobserved confounders are balanced.</p>
+<p>The propensity score is estimated in order to construct a good estimator of <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span>. Balance diagnostics assess whether the estimated score has achieved covariate balance on the <em>observed</em> covariates, but they say nothing about whether unobserved confounders are balanced. Relatedly, high treatment-prediction accuracy is not the goal: the estimated score is judged by the balance and overlap it delivers for the causal target, not by its classification performance.</p>
 </div>
 </div>
 </section>
-<section id="sec-matching" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="sec-matching"><span class="header-section-number">6.4</span> Matching on the Propensity Score</h2>
-<p>The propensity score motivates <em>matching</em>: for each treated unit <span class="math inline">\(i\)</span>, find a control unit <span class="math inline">\(j\)</span> with <span class="math inline">\(\hat\pi(X_j) \approx \hat\pi(X_i)\)</span>, and use <span class="math inline">\(Y_j\)</span> as a local estimate of <span class="math inline">\(\E[Y(0) \mid \pi(X) = \pi(X_i)]\)</span> <span class="citation" data-cites="abadie2006large abadie2016matching">(<a href="#ref-abadie2006large" role="doc-biblioref">Abadie and Imbens 2006</a>, <a href="#ref-abadie2016matching" role="doc-biblioref">2016</a>)</span>. The matched control outcome is not a substitute for the individual counterfactual <span class="math inline">\(Y_i(0)\)</span>; it approximates the conditional mean: <span class="math display">\[\E[Y(0) \mid \pi(X) = \pi(X_i)] = \E[Y(0) \mid \pi(X) = \pi(X_i), T{=}0] = \E[Y \mid \pi(X) = \pi(X_i), T{=}0],\]</span> where the first equality uses <span class="quarto-unresolved-ref">?thm-ps</span> and the second uses consistency. Averaging across treated units recovers the ATT: <span id="eq-nnm"><span class="math display">\[\hat\tau_{\mathrm{ATT}} = \frac{1}{n_1}\sum_{i:\, T_i=1}[Y_i - Y_{\hat\jmath(i)}], \tag{6.1}\]</span></span> where <span class="math inline">\(\hat\jmath(i)\)</span> is the matched control index.</p>
-<p><strong>One-to-one nearest-neighbor matching.</strong> For each treated unit <span class="math inline">\(i\)</span>: <span class="math display">\[\hat\jmath(i) = \arg\min_{j:\, T_j=0}|\hat\pi(X_i) - \hat\pi(X_j)|.\]</span> Matching <em>with replacement</em> reduces bias but increases variance.</p>
-<p><strong>Caliper matching.</strong> Restricts matches to pairs within a maximum distance <span class="math inline">\(\delta\)</span>, discarding treated units with no close match. This restricts the estimand to a subpopulation with good overlap.</p>
+<section id="sec-w6-balance-diagnostics" class="level3" data-number="6.3.5">
+<h3 data-number="6.3.5" class="anchored" data-anchor-id="sec-w6-balance-diagnostics"><span class="header-section-number">6.3.5</span> Balance and Overlap Diagnostics</h3>
+<p>The standard scalar diagnostic for covariate balance is the <em>standardized mean difference</em> (SMD). For covariate <span class="math inline">\(X_j\)</span>, let <span class="math inline">\(\bar X_{1j}\)</span> and <span class="math inline">\(\bar X_{0j}\)</span> denote the treated and control sample means and <span class="math inline">\(s_{1j}^2\)</span>, <span class="math inline">\(s_{0j}^2\)</span> the corresponding sample variances. Then <span class="math display">\[\mathrm{SMD}(X_j) = \frac{\bar X_{1j} - \bar X_{0j}}{\sqrt{\bigl(s_{1j}^2 + s_{0j}^2\bigr)/2}};\]</span> for a binary covariate, the numerator is the difference in proportions, with the analogous pooled scale in the denominator. Dividing by the pooled scale makes the diagnostic free of the units of <span class="math inline">\(X_j\)</span> and — unlike a <span class="math inline">\(t\)</span>-statistic — insensitive to the sample size, so it measures the magnitude of imbalance rather than its statistical detectability. A common informal benchmark treats <span class="math inline">\(|\mathrm{SMD}| \le 0.1\)</span> as adequate balance; this is a heuristic, not a test, and whether residual imbalance is consequential depends on how strongly the covariate predicts the outcome, on the sample size, and on the estimand. For weighted or matched analyses, the arm means are replaced by their design-weighted counterparts (with reused control units counted with their matching multiplicities); the denominator, however, should be held fixed at the pre-adjustment pooled scale, so that before-and-after values are directly comparable.</p>
+<p>Balance of means alone can be inadequate when the outcome depends nonlinearly on the covariates. Useful supplements include variance ratios, quantile differences, empirical-distribution plots, and SMDs computed on squares, interactions, and other scientifically relevant transformations.</p>
+<p>Balance and overlap are distinct, and both must be checked: a design can show good mean balance after weighting while relying on a few extreme weights, and raw overlap can look reasonable while nonlinear imbalance remains. Overlap diagnostics start with plots of the estimated score distributions in the two arms on a common scale. Which comparison matters depends on the estimand: for the ATT, the question is whether the control scores cover the treated-score distribution; for the ATE, both arms must cover the full target population. Weight summaries — minimum, maximum, selected quantiles, and the coefficient of variation — expose instability directly. For matching, the bookkeeping of the design plays the same role: the number of unmatched treated units, the number of distinct controls used and how often each is reused, and the distribution of match distances.</p>
+<p>The cost of extreme weights can be summarized by the <em>effective sample size</em> of a weighted arm with weights <span class="math inline">\(\{w_i\}\)</span>, <span class="math display">\[n_{\mathrm{eff}} = \frac{\bigl(\sum_i w_i\bigr)^2}{\sum_i w_i^2},\]</span> which equals the actual sample size when the weights are constant and collapses toward <span class="math inline">\(1\)</span> when a single weight dominates. For two-arm estimators it is usually most informative arm by arm. A weighted arm with <span class="math inline">\(500\)</span> units but <span class="math inline">\(n_{\mathrm{eff}} = 40\)</span> delivers roughly the precision of <span class="math inline">\(40\)</span> equally weighted observations; reporting <span class="math inline">\(n_{\mathrm{eff}}\)</span> alongside the point estimate makes the price of near-overlap violations concrete.</p>
+</section>
+<section id="design-objectives-depend-on-the-estimand" class="level3" data-number="6.3.6">
+<h3 data-number="6.3.6" class="anchored" data-anchor-id="design-objectives-depend-on-the-estimand"><span class="header-section-number">6.3.6</span> Design Objectives Depend on the Estimand</h3>
+<p>The same propensity model need not serve every estimator equally, so the diagnostics above should be tailored to the target. For <em>matching</em>, the score must support close matches and covariate balance within the matched sample; the relevant diagnostics are match distances, residual SMDs among matched units, unmatched treated units, and control reuse. For <em>ATE weighting</em>, with weights <span class="math inline">\(1/\hat\pi(X_i)\)</span> for treated and <span class="math inline">\(1/\{1-\hat\pi(X_i)\}\)</span> for control units, both arms are re-weighted to the full target population, so weighted balance in both arms, weight tails, and arm-specific effective sample sizes are the primary concerns. For <em>ATT weighting</em>, with weights <span class="math display">\[w_i = T_i + (1 - T_i)\,\frac{\hat\pi(X_i)}{1 - \hat\pi(X_i)},\]</span> the treated arm is left unweighted and the central question is whether the controls can represent the treated units, so control coverage of the treated-score distribution is the key diagnostic.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Overlap Weights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <em>overlap weights</em> <span class="math inline">\(w_i = T_i\{1 - \hat\pi(X_i)\} + (1 - T_i)\,\hat\pi(X_i)\)</span> emphasize units with scores near <span class="math inline">\(1/2\)</span> and are bounded by construction, so trimming is not needed merely to control divergent inverse weights; covariate balance, finite-sample support in both arms, and the causal validity of <span class="math inline">\(X\)</span> must still be assessed. The price is a change of estimand: they target the average effect in the overlap population — an instance of the re-targeting idea of <a href="#sec-w6-retargeting" class="quarto-xref"><span>Section 6.6.4</span></a> — rather than the original ATE.</p>
+</div>
+</div>
+<p>The figure below displays the four weighting schemes as functions of the propensity score. The picture makes estimand targeting immediate: each scheme up-weights the units that must stand in for the population it targets, and instability appears exactly where a required weight diverges.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-weight-functions" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-weight-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="chapter_06_files/figure-html/fig-weight-functions-1.pdf" class="img-fluid" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-weight-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: Weights attached to treated units (left) and control units (right) as functions of the propensity score, for the ATE, ATT, ATC, and overlap schemes. Each scheme up-weights the units standing in for its target population: the ATE diverges in whichever arm is scarce, the ATT leaves treated units unweighted while up-weighting high-<span class="math inline">\(\pi\)</span> controls, the ATC is the mirror image, and the overlap weights are bounded. Curves truncated at weight 10.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The general principle: a propensity model cannot be evaluated independently of the estimand and the estimator that will use it.</p>
+</section>
+<section id="sec-w6-design-workflow" class="level3" data-number="6.3.7">
+<h3 data-number="6.3.7" class="anchored" data-anchor-id="sec-w6-design-workflow"><span class="header-section-number">6.3.7</span> A Design-Stage Workflow</h3>
+<p>Propensity-score design is typically <em>iterative</em>: specify a treatment model, construct the proposed matched or weighted sample, assess balance and overlap, revise the design when the diagnostics are inadequate, and repeat. Revisions may include nonlinear terms, interactions, an alternative link or learner, regularization, a modified matching ratio or caliper, a different weighting target, or trimming. The outcome data remain hidden throughout this cycle.</p>
+<p>Outcome blinding, in particular, does not mean that the specification is fixed after one fit. Three levels should be distinguished. <em>Outcome-blind design</em>: treatment-effect estimates are never inspected while the propensity model is being specified. <em>Balance-driven revision</em>: altering the model in response to observed imbalance is legitimate — indeed expected. <em>Design lock</em>: once balance and overlap are judged acceptable, the matching or weighting rule is fixed, and only then are outcomes analyzed. The benefit is not that subjectivity disappears; it is that design decisions cannot be selected because they produce a preferred causal estimate.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>A Propensity-Score Design Workflow
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Define the estimand.</strong> Decide whether the target is the ATE, ATT, ATC, or an overlap-population effect.</li>
+<li><strong>Specify the causal adjustment set.</strong> Use subject-matter knowledge and the causal graph to select pretreatment variables that block all back-door paths. Exclude post-treatment variables and colliders.</li>
+<li><strong>Specify an initial treatment model.</strong> Include plausible nonlinear terms and interactions among covariates when needed. Do not select variables by treatment-model significance.</li>
+<li><strong>Construct the design.</strong> Apply the intended matching or weighting procedure.</li>
+<li><strong>Assess covariate balance.</strong> Examine standardized mean differences, distributional diagnostics, and balance of scientifically relevant transformations and interactions.</li>
+<li><strong>Assess overlap and stability.</strong> Inspect score distributions, match distances, weight tails, effective sample sizes, and the number of unmatched or trimmed units.</li>
+<li><strong>Revise without using outcomes.</strong> Modify the model or design until balance and overlap are acceptable, or conclude that the original target population is not supportable.</li>
+<li><strong>Lock the design and analyze outcomes.</strong> After the design is fixed, estimate the causal effect and quantify uncertainty validly for the chosen procedure.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Example: Variable Selection — Higher AUC, Worse Design
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider five candidate variables: age <span class="math inline">\(A\)</span> and baseline severity <span class="math inline">\(S\)</span>, each affecting both treatment and outcome; hospital preference <span class="math inline">\(H\)</span>, strongly predictive of treatment but essentially unrelated to the potential outcomes; post-treatment adherence <span class="math inline">\(M\)</span>; and a pretreatment collider <span class="math inline">\(C\)</span> driven by two latent variables as in panel (b) of the figure above. Compare three propensity models: <span class="math display">\[\text{Model 1: } \pi(A, S), \qquad \text{Model 2: } \pi(A, S, H), \qquad \text{Model 3: } \pi(A, S, H, M, C).\]</span> Model 1 contains the essential adjustment set. Model 2 predicts treatment better but, if <span class="math inline">\(H\)</span> nearly determines treatment, pushes fitted scores toward the boundaries, inflating weights and shrinking the effective sample size without removing additional confounding. Model 3 is causally invalid regardless of its fit: it conditions on the mediator <span class="math inline">\(M\)</span> and the collider <span class="math inline">\(C\)</span>. Qualitatively:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Model</strong></th>
+<th><strong>AUC</strong></th>
+<th><strong>Max weight</strong></th>
+<th><span class="math inline">\(n_{\mathrm{eff}}\)</span></th>
+<th><strong>Causally valid?</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\pi(A,S)\)</span></td>
+<td>moderate</td>
+<td>moderate</td>
+<td>high</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\pi(A,S,H)\)</span></td>
+<td>high</td>
+<td>large</td>
+<td>low</td>
+<td>yes, but imprecise</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\pi(A,S,H,M,C)\)</span></td>
+<td>very high</td>
+<td>extreme</td>
+<td>poor</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>The model with the highest AUC is the worst causal design.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="matching-on-the-propensity-score" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="matching-on-the-propensity-score"><span class="header-section-number">6.4</span> Matching on the Propensity Score</h2>
+<p>The propensity score also motivates <em>matching</em>: for each treated unit <span class="math inline">\(i\)</span>, find a control unit <span class="math inline">\(j\)</span> with <span class="math inline">\(\hat\pi(X_j) \approx \hat\pi(X_i)\)</span>, and use <span class="math inline">\(Y_j\)</span> as a local estimate of <span class="math inline">\(\E[Y(0) \mid \pi(X) = \pi(X_i)]\)</span> <span class="citation" data-cites="abadie2006large abadie2016matching">(<a href="#ref-abadie2006large" role="doc-biblioref">Abadie and Imbens 2006</a>, <a href="#ref-abadie2016matching" role="doc-biblioref">2016</a>)</span>. It is important to be precise about what is being estimated: the matched control outcome <span class="math inline">\(Y_j\)</span> is not a substitute for the individual counterfactual <span class="math inline">\(Y_i(0)\)</span>, which is unobservable and contains an irreducible idiosyncratic component. Rather, <span class="math inline">\(Y_j\)</span> is a noisy local approximation to the <em>conditional mean</em> <span class="math inline">\(\E[Y(0) \mid \pi(X) = \pi(X_i)]\)</span>, which is identified from observed control outcomes via the chain <span class="math display">\[\E[Y(0) \mid \pi(X) = \pi(X_i)] = \E[Y(0) \mid \pi(X) = \pi(X_i),\, T = 0] = \E[Y \mid \pi(X) = \pi(X_i),\, T = 0],\]</span> where the first equality uses <span class="quarto-unresolved-ref">?thm-ps</span> and the second uses consistency. Averaging across treated units targets — and, under the regularity conditions discussed below, consistently estimates — the ATT: <span id="eq-nnm"><span class="math display">\[\hat\tau_{\mathrm{ATT}} = \frac{1}{n_1}\sum_{i:\, T_i=1} \bigl[Y_i - Y_{\hat\jmath(i)}\bigr], \tag{6.1}\]</span></span> where <span class="math inline">\(n_1\)</span> is the number of treated units and <span class="math inline">\(\hat\jmath(i)\)</span> is the index of the matched control unit.</p>
+<section id="one-to-one-nearest-neighbor-matching" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="one-to-one-nearest-neighbor-matching"><span class="header-section-number">6.4.1</span> One-to-One Nearest Neighbor Matching</h3>
+<p>The most common matching algorithm is <em>nearest-neighbor</em> (1:1) matching <span class="citation" data-cites="abadie2006large">(<a href="#ref-abadie2006large" role="doc-biblioref">Abadie and Imbens 2006</a>)</span>: for each treated unit <span class="math inline">\(i\)</span>, find <span class="math display">\[\hat\jmath(i) = \arg\min_{j:\, T_j=0} \bigl|\hat\pi(X_i) - \hat\pi(X_j)\bigr|.\]</span> When several controls are equally close, a convention is required — deterministic tie-breaking, averaging the outcomes of all equally close controls, or random selection; the choice affects the exact estimator and its variance, though not the identification logic. Matched control units may be selected with or without replacement. Matching with replacement typically reduces bias (each control unit is available to every treated unit, so match quality improves) but typically increases variance (a small number of control units may be used many times); neither direction is guaranteed without further conditions.</p>
+</section>
+<section id="caliper-matching" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="caliper-matching"><span class="header-section-number">6.4.2</span> Caliper Matching</h3>
+<p>Caliper matching restricts matches to pairs within a maximum distance <span class="math inline">\(\delta\)</span> (the “caliper”) on the propensity score scale. Treated units with no control match within the caliper are discarded. The caliper may be defined on the probability scale or — commonly in practice — on the logit scale <span class="math inline">\(\mathrm{logit}\,\hat\pi(X)\)</span>, which spaces units more evenly near the boundaries of <span class="math inline">\([0,1]\)</span>; the chosen scale must be reported, since numerical caliper values are not comparable across scales.</p>
+<p>Because matchable treated units are retained and the rest discarded, the procedure no longer targets the original ATT: it targets an ATT restricted to the retained treated subpopulation with adequate overlap. And because the retained set depends on <span class="math inline">\(\hat\pi\)</span>, this target is data-dependent in finite samples; it stabilizes to a fixed population estimand only as <span class="math inline">\(\hat\pi\)</span> converges.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -648,15 +898,42 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Propensity score matching implicitly fits a nonparametric regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(\pi(X)\)</span> separately within each treatment arm. By <span class="quarto-unresolved-ref">?thm-ps</span>, <span class="math inline">\(\E[Y(t) \mid \pi(X) = p]\)</span> is identified from observed data for each <span class="math inline">\(t\)</span>. Nearest-neighbor matching approximates this by averaging outcomes of close matches — local constant regression on the scalar propensity score. The dimension reduction from <span class="quarto-unresolved-ref">?thm-ps</span> is what makes nonparametric estimation feasible.</p>
+<p>The key idea behind propensity score matching is that it implicitly fits a <em>nonparametric regression</em> of <span class="math inline">\(Y\)</span> on <span class="math inline">\(\pi(X)\)</span> separately within each treatment arm. By <span class="quarto-unresolved-ref">?thm-ps</span>, <span class="math inline">\((Y(0), Y(1)) \indep T \mid \pi(X)\)</span>, so the conditional mean <span class="math inline">\(\E[Y(t) \mid \pi(X) = p]\)</span> is identified from observed data for each <span class="math inline">\(t\)</span>. Nearest-neighbor matching approximates this conditional mean at each observed <span class="math inline">\(\hat\pi(X_i)\)</span> by averaging the outcomes of close matches, effectively performing local constant regression on the propensity score. The dimension reduction from <span class="quarto-unresolved-ref">?thm-ps</span> is therefore what makes nonparametric estimation feasible: instead of smoothing over the full covariate vector <span class="math inline">\(X\)</span>, one smooths over the scalar <span class="math inline">\(\pi(X)\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: Design Transparency
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Propensity score matching provides <em>design transparency</em>: by inspecting matched pairs, the analyst can directly assess whether treated and control units are similar on observed covariates. Comparing <span class="math inline">\(\bar X_1\)</span> and <span class="math inline">\(\bar X_0\)</span> within matched pairs via standardized mean differences is a standard pre-analysis diagnostic that can be conducted without consulting the outcome <span class="math inline">\(Y\)</span>. In practice, the propensity specification should be revised until the matched sample shows satisfactory balance on the original covariates (<a href="#sec-w6-design-workflow" class="quarto-xref"><span>Section 6.3.7</span></a>), not merely small distances in the estimated score.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Inference after Matching Is Nonstandard
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Matching estimators with a fixed number of matches are not classical sample averages. The matching step induces dependence across units; when matching directly on a multidimensional <span class="math inline">\(X\)</span>, the estimator carries a bias term that can dominate the <span class="math inline">\(\sqrt{n}\)</span> rate <span class="citation" data-cites="abadie2006large">(<a href="#ref-abadie2006large" role="doc-biblioref">Abadie and Imbens 2006</a>)</span>; and the naive bootstrap fails to reproduce its sampling distribution <span class="citation" data-cites="abadie2008failure">(<a href="#ref-abadie2008failure" role="doc-biblioref">Abadie and Imbens 2008</a>)</span>. Valid standard errors require purpose-built variance estimators, and when the propensity score is estimated rather than known, the estimation error in <span class="math inline">\(\hat\pi\)</span> must additionally be accounted for <span class="citation" data-cites="abadie2016matching">(<a href="#ref-abadie2016matching" role="doc-biblioref">Abadie and Imbens 2016</a>)</span>. Consistency of the matching estimator itself also requires more than strong ignorability: sufficient accuracy (or balancing behavior) of the fitted score, smoothness of the relevant conditional mean functions, and match discrepancies that vanish asymptotically.</p>
 </div>
 </div>
 </section>
-<section id="sec-ipw" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="sec-ipw"><span class="header-section-number">6.5</span> Inverse Probability Weighting</h2>
+</section>
+<section id="sec-w6-ipw" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="sec-w6-ipw"><span class="header-section-number">6.5</span> Inverse Probability Weighting</h2>
 <section id="the-ipw-identification-formula" class="level3" data-number="6.5.1">
 <h3 data-number="6.5.1" class="anchored" data-anchor-id="the-ipw-identification-formula"><span class="header-section-number">6.5.1</span> The IPW Identification Formula</h3>
-<p>Under strong ignorability, the ATE has an <em>inverse probability weighting</em> (IPW) representation: <span class="math display">\[\tau_{\mathrm{ATE}} = \E\!\left[\frac{T \cdot Y}{\pi(X)}\right] - \E\!\left[\frac{(1-T)\cdot Y}{1-\pi(X)}\right].\]</span></p>
+<p>The ATE admits an alternative representation as an <em>inverse probability weighting</em> (IPW) formula, in which each observed outcome is weighted by the inverse probability of the treatment actually received.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -667,52 +944,54 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under strong ignorability (<span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span> and <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span>): <span class="math inline">\(\E\!\left[TY/\pi(X)\right] = \E[Y(1)]\)</span>.</p>
+<p>Fix <span class="math inline">\(t \in \{0, 1\}\)</span> and assume: (i) <em>consistency</em>: <span class="math inline">\(T = t\)</span> implies <span class="math inline">\(Y = Y(t)\)</span>; (ii) <em>weak conditional exchangeability</em>: <span class="math inline">\(Y(t) \indep T \mid X\)</span>; (iii) <em>positivity</em>: <span class="math inline">\(P(T{=}t \mid X) &gt; 0\)</span> almost surely; and (iv) <em>integrability</em>: <span class="math inline">\(\E|Y(t)| &lt; \infty\)</span>. Then <span class="math display">\[\E\!\left[\frac{T \cdot Y}{\pi(X)}\right] = \E[Y(1)], \qquad \E\!\left[\frac{(1-T) \cdot Y}{1 - \pi(X)}\right] = \E[Y(0)].\]</span> If the conditions hold for both treatment levels, <span id="eq-ipw-ate"><span class="math display">\[\tau_{\mathrm{ATE}} = \E\!\left[\frac{T \cdot Y}{\pi(X)} - \frac{(1-T) \cdot Y}{1 - \pi(X)}\right]. \tag{6.2}\]</span></span></p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Proof
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p><span class="math display">\[\E\!\left[\frac{TY}{\pi(X)}\right] = \E\!\left[\frac{TY(1)}{\pi(X)}\right] = \E\!\left[\E\!\left[\frac{TY(1)}{\pi(X)}\,\middle|\,X\right]\right] = \E\!\left[\frac{Y(1)}{\pi(X)}\,\E[T \mid X]\right] = \E\!\left[\frac{Y(1)}{\pi(X)}\cdot\pi(X)\right] = \E[Y(1)].\]</span> The first equality uses consistency (<span class="math inline">\(Y = Y(1)\)</span> when <span class="math inline">\(T{=}1\)</span>); the third uses ignorability (<span class="math inline">\(Y(1) \indep T \mid X\)</span>). <span class="math inline">\(\square\)</span></p>
-</div>
-</div>
-</div>
+<p><em>Proof.</em> <span class="math display">\[\E\!\left[\frac{T Y}{\pi(X)}\right] = \E\!\left[\frac{T\, Y(1)}{\pi(X)}\right] = \E\!\left[\frac{Y(1)}{\pi(X)}\, \E\bigl[T \mid X,\, Y(1)\bigr]\right] = \E\!\left[\frac{Y(1)}{\pi(X)}\, \pi(X)\right] = \E[Y(1)].\]</span> The first equality uses consistency (<span class="math inline">\(Y = Y(1)\)</span> when <span class="math inline">\(T{=}1\)</span>). The second is the law of iterated expectations conditioning on <span class="math inline">\((X, Y(1))\)</span>; the factor <span class="math inline">\(Y(1)/\pi(X)\)</span> is measurable with respect to the conditioning variables and pulls out of the inner expectation. The third uses ignorability: <span class="math inline">\(Y(1) \indep T \mid X\)</span> implies <span class="math inline">\(\E[T \mid X, Y(1)] = \pi(X)\)</span>. Integrability, with positivity, ensures each expectation is well defined. The case <span class="math inline">\(t = 0\)</span> is symmetric. <span class="math inline">\(\square\)</span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Scope of the Ignorability Assumption
+<span class="screen-reader-only">Note</span>Remark: Scope of the Ignorability Assumption Used
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The proof invokes only the marginal independence <span class="math inline">\(Y(1) \indep T \mid X\)</span>, not the full joint <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span>. An analogous proof for the control term uses only <span class="math inline">\(Y(0) \indep T \mid X\)</span>. The joint independence is used in this chapter for uniformity with Chapter 5 and because it is needed for estimands involving the joint distribution of potential outcomes.</p>
+<p><span class="quarto-unresolved-ref">?thm-ipw</span> is deliberately stated arm by arm under the <em>marginal</em> independence <span class="math inline">\(Y(t) \indep T \mid X\)</span>, not the full joint independence: each per-arm identity needs only the corresponding marginal condition together with arm-specific positivity. The joint independence is invoked throughout this chapter for stylistic uniformity with the back-door theorem of Chapter 5 and because joint-distribution targets such as <span class="math inline">\(\mathrm{Var}\{Y(1) - Y(0)\}\)</span> at least require it — although even joint ignorability identifies only the two marginal potential-outcome distributions, not the cross-world dependence between <span class="math inline">\(Y(0)\)</span> and <span class="math inline">\(Y(1)\)</span>, so such targets remain only partially identified without further assumptions (Chapter 4). The marginal version suffices for any estimand expressible as a contrast of marginal means.</p>
 </div>
 </div>
 </section>
-<section id="horvitzthompson-and-hájek-estimators" class="level3" data-number="6.5.2">
-<h3 data-number="6.5.2" class="anchored" data-anchor-id="horvitzthompson-and-hájek-estimators"><span class="header-section-number">6.5.2</span> Horvitz–Thompson and Hájek Estimators</h3>
-<p>The <strong>Horvitz–Thompson (HT)</strong> IPW estimator: <span id="eq-ht"><span class="math display">\[\hat\tau_{\mathrm{HT}} = \frac{1}{n}\sum_{i=1}^n\left[\frac{T_i Y_i}{\hat\pi(X_i)} - \frac{(1-T_i)Y_i}{1-\hat\pi(X_i)}\right]. \tag{6.2}\]</span></span></p>
-<p>The <strong>Hájek (self-normalized)</strong> estimator: <span id="eq-hajek"><span class="math display">\[\hat\tau_{\mathrm{HJ}} = \frac{\sum_i T_i Y_i/\hat\pi(X_i)}{\sum_i T_i/\hat\pi(X_i)} - \frac{\sum_i (1-T_i)Y_i/(1-\hat\pi(X_i))}{\sum_i (1-T_i)/(1-\hat\pi(X_i))}. \tag{6.3}\]</span></span></p>
-<p>The Hájek estimator caps each unit’s effective weight at its share of the total within its arm, suppressing the influence of extreme weights. The efficient doubly robust AIPW estimator of Chapter 10 combines the outcome model and the propensity score; under correct nuisance specification it achieves higher efficiency than either pure IPW or pure outcome regression.</p>
-<p><strong>ATT estimation.</strong> The ATT re-weights the <em>control arm</em> to look like the treated population: <span id="eq-ht-att"><span class="math display">\[\hat\tau_{\mathrm{HT,ATT}} = \frac{1}{n_1}\sum_{i:\,T_i=1}Y_i - \frac{1}{n_1}\sum_{i:\,T_i=0}\frac{\hat\pi(X_i)}{1-\hat\pi(X_i)}Y_i, \tag{6.4}\]</span></span> <span id="eq-hj-att"><span class="math display">\[\hat\tau_{\mathrm{HJ,ATT}} = \frac{1}{n_1}\sum_{i:\,T_i=1}Y_i - \frac{\sum_{i:\,T_i=0}\frac{\hat\pi(X_i)}{1-\hat\pi(X_i)}Y_i}{\sum_{i:\,T_i=0}\frac{\hat\pi(X_i)}{1-\hat\pi(X_i)}}. \tag{6.5}\]</span></span></p>
-<p>Each control unit receives weight proportional to its <em>odds of treatment</em> <span class="math inline">\(\hat\pi/(1-\hat\pi)\)</span>. For a control unit with <span class="math inline">\(\hat\pi(X_i) = 0.95\)</span> the weight is <span class="math inline">\(19\)</span>; combined with a large baseline outcome this produces extreme variance.</p>
+<section id="the-horvitzthompson-estimator" class="level3" data-number="6.5.2">
+<h3 data-number="6.5.2" class="anchored" data-anchor-id="the-horvitzthompson-estimator"><span class="header-section-number">6.5.2</span> The Horvitz–Thompson Estimator</h3>
+<p>The corresponding sample estimator is the <em>Horvitz–Thompson</em> (HT) IPW estimator: <span id="eq-ht"><span class="math display">\[\hat\tau_{\mathrm{IPW}} = \frac{1}{n}\sum_{i=1}^n \left[\frac{T_i Y_i}{\hat\pi(X_i)} - \frac{(1-T_i) Y_i}{1-\hat\pi(X_i)}\right]. \tag{6.3}\]</span></span> This estimator is consistent when <span class="math inline">\(\hat\pi(X)\)</span> converges to <span class="math inline">\(\pi(X)\)</span>, given positivity and mild moment conditions — with flexible nuisance estimators evaluated on the same sample, additional conditions such as sample splitting may be required (Chapter 12) — but it can be <em>inefficient</em> due to extreme weights. In practice, a fitted score used for weighting is evaluated through weighted covariate balance, the weight distribution, and effective sample sizes.</p>
+<p>The <em>normalized</em> (Hájek) estimator divides by the sum of weights within each group and is often more stable in practice: <span id="eq-hajek"><span class="math display">\[\hat\tau_{\mathrm{HJ}} = \frac{\sum_i T_i Y_i / \hat\pi(X_i)}{\sum_i T_i / \hat\pi(X_i)} - \frac{\sum_i (1-T_i) Y_i / (1-\hat\pi(X_i))}{\sum_i (1-T_i) / (1-\hat\pi(X_i))}. \tag{6.4}\]</span></span> The efficient doubly robust estimator (AIPW) of Chapter 11 combines the outcome model and the propensity score; under correct nuisance specification it can achieve higher efficiency than either pure IPW or pure outcome regression alone.</p>
+</section>
+<section id="why-the-weights-work-weighted-balance-identities" class="level3" data-number="6.5.3">
+<h3 data-number="6.5.3" class="anchored" data-anchor-id="why-the-weights-work-weighted-balance-identities"><span class="header-section-number">6.5.3</span> Why the Weights Work: Weighted-Balance Identities</h3>
+<p>The balancing theorem and the IPW formula are two faces of the same mechanism, and the connection can be made algebraic: inverse-probability weights re-create, inside each treatment arm, the covariate distribution of the target population.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Lemma: Weighted-Balance Identities
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(h(X)\)</span> be any integrable function of the covariates and suppose <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> almost surely. Then <span class="math display">\[\E\!\left[\frac{T\, h(X)}{\pi(X)}\right] = \E[h(X)] \qquad\text{and}\qquad \E\!\left[\frac{(1-T)\, h(X)}{1-\pi(X)}\right] = \E[h(X)].\]</span> Moreover, for the treated target population, <span class="math display">\[\frac{1}{P(T{=}1)}\,\E\!\left[(1-T)\,\frac{\pi(X)}{1-\pi(X)}\, h(X)\right] = \E\bigl[h(X) \mid T{=}1\bigr].\]</span></p>
+</div>
+</div>
+<p><em>Proof.</em> For the first identity, condition on <span class="math inline">\(X\)</span> and note that <span class="math inline">\(h(X)/\pi(X)\)</span> pulls out of the inner expectation: <span class="math inline">\(\E[T h(X)/\pi(X)] = \E[h(X)\,\E(T \mid X)/\pi(X)] = \E[h(X)]\)</span>. The second is symmetric. For the third, <span class="math display">\[\E\!\left[(1-T)\,\frac{\pi(X)}{1-\pi(X)}\, h(X)\right] = \E\!\left[\bigl\{1 - \pi(X)\bigr\}\,\frac{\pi(X)}{1-\pi(X)}\, h(X)\right] = \E\bigl[\pi(X)\, h(X)\bigr] = \E\bigl[T\, h(X)\bigr],\]</span> and <span class="math inline">\(\E[T\, h(X)] = P(T{=}1)\,\E[h(X) \mid T{=}1]\)</span>. <span class="math inline">\(\square\)</span></p>
+<p>Taking <span class="math inline">\(h \equiv 1\)</span> shows that the average inverse weights in each arm have expectation one — the weight-sum quantities that reappear in the lab. Taking <span class="math inline">\(h(X) = X_j\)</span> shows that the weighted treated and control samples reproduce the covariate means of the target population: the full population under the ATE weights, the treated subpopulation under the ATT odds weights applied to the control arm. This is why the weights take their particular forms. Note that no potential outcomes appear in the lemma: like the balancing theorem, it is a property of the assignment mechanism alone. Substituting the outcome <span class="math inline">\(Y\)</span> for <span class="math inline">\(h(X)\)</span> is what requires ignorability — that substitution is exactly the content of <span class="quarto-unresolved-ref">?thm-ipw</span>.</p>
 </section>
 </section>
-<section id="sec-overlap" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="sec-overlap"><span class="header-section-number">6.6</span> Overlap and Positivity</h2>
+<section id="overlap-and-positivity" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="overlap-and-positivity"><span class="header-section-number">6.6</span> Overlap and Positivity</h2>
 <section id="positivity-and-strong-overlap" class="level3" data-number="6.6.1">
 <h3 data-number="6.6.1" class="anchored" data-anchor-id="positivity-and-strong-overlap"><span class="header-section-number">6.6.1</span> Positivity and Strong Overlap</h3>
+<p>We must distinguish two conditions on the propensity score that play different roles in identification and inference.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -723,10 +1002,10 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <strong>positivity</strong> condition requires <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> almost surely. Every unit has a positive probability of receiving either treatment or control, regardless of its covariate values.</p>
+<p>The <strong>positivity</strong> condition — also called <em>weak overlap</em> — requires <span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> almost surely. Every unit has a positive probability of receiving either treatment or control — more precisely, this holds for <span class="math inline">\(P_X\)</span>-almost every covariate value.</p>
 </div>
 </div>
-<p>Together with unconfoundedness, positivity constitutes the strong ignorability of <span class="citation" data-cites="rosenbaum1983central">Rosenbaum and Rubin (<a href="#ref-rosenbaum1983central" role="doc-biblioref">1983</a>)</span>. Positivity is the condition needed for <em>identification</em>.</p>
+<p>Together with unconfoundedness, positivity constitutes the <em>strong ignorability</em> of <span class="citation" data-cites="rosenbaum1983central">Rosenbaum and Rubin (<a href="#ref-rosenbaum1983central" role="doc-biblioref">1983</a>)</span>. Positivity is the condition needed for <em>identification</em>: without it, certain strata have no counterfactual information and the ATE is not nonparametrically identified.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -737,13 +1016,15 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <strong>strong overlap</strong> condition requires <span class="math inline">\(c \le \pi(X) \le 1-c\)</span> a.s. for some <span class="math inline">\(c \in (0, 1/2)\)</span>.</p>
+<p>The <strong>strong overlap</strong> condition requires that there exists <span class="math inline">\(c \in (0, 1/2)\)</span> such that <span class="math inline">\(c \le \pi(X) \le 1 - c\)</span> almost surely.</p>
 </div>
 </div>
-<p>Strong overlap bounds the inverse weights uniformly away from infinity. It is the condition under which <span class="math inline">\(\sqrt{n}\)</span>-consistent, asymptotically normal inference for the ATE goes through (Chapter 11). Positivity alone permits identification but does not guarantee stable inference: when <span class="math inline">\(\pi(X)\)</span> approaches 0 or 1, IPW weights blow up even though the parameter is technically identified <span class="citation" data-cites="khan2010irregular">(<a href="#ref-khan2010irregular" role="doc-biblioref">Khan and Tamer 2010</a>)</span>.</p>
+<p>Strong overlap bounds the inverse weights uniformly away from infinity. It is a convenient <em>sufficient</em> condition for the standard <span class="math inline">\(\sqrt{n}\)</span>-consistent, asymptotically normal theory of later chapters (Chapter 12), because the uniform bound provides a transparent regularity condition — but it is not necessary in every model: root-<span class="math inline">\(n\)</span> inference can survive under weaker, estimator-specific tail and moment conditions, provided the relevant influence function retains finite variance. Positivity alone permits identification but does not guarantee stable inference: when <span class="math inline">\(\pi(X)\)</span> approaches <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span> in parts of the covariate space, IPW weights blow up and influence values become extreme, even though the parameter is technically identified <span class="citation" data-cites="khan2010irregular">(<a href="#ref-khan2010irregular" role="doc-biblioref">Khan and Tamer 2010</a>)</span>.</p>
+<p><strong>Why positivity is necessary.</strong> The identification formula requires that both <span class="math inline">\(\E[Y \mid T{=}1, X{=}x]\)</span> and <span class="math inline">\(\E[Y \mid T{=}0, X{=}x]\)</span> be defined for <span class="math inline">\(P_X\)</span>-almost all <span class="math inline">\(x\)</span> in the support of <span class="math inline">\(X\)</span>. If <span class="math inline">\(\pi(x) = 0\)</span> for some <span class="math inline">\(x\)</span>, then no treated units exist with <span class="math inline">\(X = x\)</span>, so <span class="math inline">\(\E[Y \mid T{=}1, X{=}x]\)</span> is not estimable from the data. Similarly if <span class="math inline">\(\pi(x) = 1\)</span>.</p>
 </section>
 <section id="practical-consequences-of-near-violations" class="level3" data-number="6.6.2">
 <h3 data-number="6.6.2" class="anchored" data-anchor-id="practical-consequences-of-near-violations"><span class="header-section-number">6.6.2</span> Practical Consequences of Near-Violations</h3>
+<p>Exact violations of overlap are rare in practice. More common are <em>near-violations</em>: some covariate strata have very few treated or control units, making the estimated propensity score close to 0 or 1.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -754,25 +1035,36 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>When <span class="math inline">\(\hat\pi(X_i)\)</span> is close to 0 or 1, the IPW weight is very large. A small number of units with extreme weights can dominate the estimator, increasing variance dramatically.</p>
+<p>When <span class="math inline">\(\hat\pi(X_i)\)</span> is close to 0 or 1, the IPW weight <span class="math inline">\(1/\hat\pi(X_i)\)</span> or <span class="math inline">\(1/(1 - \hat\pi(X_i))\)</span> is very large. A small number of units with extreme weights can dominate the estimator, increasing variance dramatically. This is the <em>practical positivity violation</em> problem, distinct from the theoretical violation.</p>
 </div>
 </div>
+<p>Near-violations arise when a covariate is a near-perfect predictor of treatment, when the covariate distributions of treated and control groups barely overlap, or when the propensity score model is over-flexible and fits the treatment variable nearly perfectly in-sample. Severe lack of overlap is therefore not necessarily a model-fitting failure: it may reflect a genuine absence of comparable treated and control units in the target population, in which case the honest responses are those of the next two subsections — trimming or re-targeting the estimand — rather than model revision.</p>
 </section>
 <section id="trimming-strategies" class="level3" data-number="6.6.3">
 <h3 data-number="6.6.3" class="anchored" data-anchor-id="trimming-strategies"><span class="header-section-number">6.6.3</span> Trimming Strategies</h3>
-<p><strong>Trimming by propensity score.</strong> Restrict to units with <span class="math inline">\(\eta \le \pi(X) \le 1-\eta\)</span> for small <span class="math inline">\(\eta &gt; 0\)</span>. The estimand changes to: <span class="math display">\[\tau_{\mathrm{trim}} = \E[Y(1) - Y(0) \mid \eta \le \pi(X) \le 1-\eta].\]</span></p>
-<p><strong>Crump et al.&nbsp;(2009) rule.</strong> <span class="citation" data-cites="crump2009dealing">Crump et al. (<a href="#ref-crump2009dealing" role="doc-biblioref">2009</a>)</span> derive the optimal trimming threshold minimizing the asymptotic variance of the trimmed ATE estimator. The rule <span class="math inline">\(\eta = 0.1\)</span> is a common default.</p>
+<p><strong>Trimming by propensity score.</strong> Restrict the analysis to units with estimated propensity scores in a prespecified interval <span class="math inline">\([\eta, 1-\eta]\)</span> for some small <span class="math inline">\(\eta &gt; 0\)</span>. The estimand changes to the ATE in the trimmed subpopulation: <span id="eq-trim"><span class="math display">\[\tau_{\mathrm{trim}} = \E\bigl[Y(1) - Y(0) \mid \eta \le \pi(X) \le 1-\eta\bigr]. \tag{6.5}\]</span></span> Note that the target population is defined by the <em>true</em> score <span class="math inline">\(\pi(X)\)</span>, while the practical rule is applied with the estimated score <span class="math inline">\(\hat\pi(X)\)</span>; the two coincide asymptotically when <span class="math inline">\(\hat\pi\)</span> is consistent. The choice of <span class="math inline">\(\eta\)</span> is a precision–target-population trade-off rather than a bias–variance trade-off in the usual sense: removing regions with extreme scores eliminates the largest weights, but it also discards observations and changes the estimand. The discrepancy between <span class="math inline">\(\tau_{\mathrm{trim}}\)</span> and the original ATE is a change of target, not a statistical bias relative to <span class="math inline">\(\tau_{\mathrm{trim}}\)</span>, and the net variance need not decrease monotonically in <span class="math inline">\(\eta\)</span>.</p>
+<p><strong>Crump et al.&nbsp;(2009) rule.</strong> <span class="citation" data-cites="crump2009dealing">Crump et al. (<a href="#ref-crump2009dealing" role="doc-biblioref">2009</a>)</span> derive an optimal symmetric trimming threshold — distribution-dependent, minimizing the asymptotic variance of the trimmed ATE estimator under their criterion. Cutoffs near <span class="math inline">\(0.1\)</span> often emerge from this calculation, so the fixed rule <span class="math inline">\(\eta = 0.1\)</span> is a common heuristic, though not a universal optimum.</p>
 </section>
-<section id="re-targeting-the-estimand" class="level3" data-number="6.6.4">
-<h3 data-number="6.6.4" class="anchored" data-anchor-id="re-targeting-the-estimand"><span class="header-section-number">6.6.4</span> Re-targeting the Estimand</h3>
-<p>When overlap fails, an alternative to trimming is to change the <em>estimand</em>. The ATT requires only <span class="math inline">\(P(T{=}0 \mid X{=}x) &gt; 0\)</span> for <span class="math inline">\(x\)</span> in the support of <span class="math inline">\(X \mid T{=}1\)</span>, i.e., <span class="math inline">\(\pi(X) &lt; 1\)</span> a.s. on the treated support. The ATT tolerates regions with <span class="math inline">\(\pi(x) = 0\)</span> (no treated units there) but not regions inside the treated support where <span class="math inline">\(\pi(x) = 1\)</span>. The ATC is symmetric. When overlap fails where <span class="math inline">\(\pi(X) \approx 0\)</span>, re-target to the ATT; when overlap fails where <span class="math inline">\(\pi(X) \approx 1\)</span>, re-target to the ATC.</p>
+<section id="sec-w6-retargeting" class="level3" data-number="6.6.4">
+<h3 data-number="6.6.4" class="anchored" data-anchor-id="sec-w6-retargeting"><span class="header-section-number">6.6.4</span> Re-targeting the Estimand to Avoid Overlap Failures</h3>
+<p>Trimming restricts the population in order to preserve the ATE within a region of good overlap. An alternative, complementary response is to leave the population alone but change the <em>estimand</em>: target the average treatment effect on a subset of the population for which the relevant side of positivity can be guaranteed.</p>
+<p><strong>ATT (target the treated population).</strong> The ATT averages <span class="math inline">\(Y(1) - Y(0)\)</span> over <span class="math inline">\(X \mid T{=}1\)</span> and therefore requires only that <span class="math inline">\(\E[Y(0) \mid X = x]\)</span> be identified where the treated population lives. The treated-covariate law is absolutely continuous with respect to <span class="math inline">\(P_X\)</span> with density proportional to the propensity score, <span class="math inline">\(dP_{X \mid T=1} = \{\pi(x)/P(T{=}1)\}\, dP_X\)</span>, so treated-population mass concentrates on <span class="math inline">\(\{x : \pi(x) &gt; 0\}\)</span>; there the requirement reduces to <span class="math inline">\(\pi(x) &lt; 1\)</span>. Hence, for nonparametric identification by adjustment: <span class="math display">\[\tau_{\mathrm{ATT}} \text{ is identified iff } \pi(X) &lt; 1 \text{ a.s. on the support of } X\mid T{=}1.\]</span> The ATT therefore tolerates regions with <span class="math inline">\(\pi(x) = 0\)</span> (no treated units are observed there in any case); it cannot tolerate regions inside the treated support where <span class="math inline">\(\pi(x) = 1\)</span> (no comparable controls).</p>
+<p><strong>ATC (target the control population).</strong> Symmetrically, the ATC averages over <span class="math inline">\(X \mid T{=}0\)</span> and is nonparametrically identified by adjustment iff <span class="math inline">\(\pi(X) &gt; 0\)</span> a.s. on the support of <span class="math inline">\(X \mid T{=}0\)</span>. These equivalences are statements about nonparametric identification by adjustment, under consistency and the relevant arm-specific ignorability condition; additional outcome-model restrictions could identify the same estimands under weaker support conditions.</p>
+<p><strong>Practical rule.</strong> When overlap fails at covariate values where <span class="math inline">\(\pi(X) \approx 0\)</span> — treated units are scarce or absent there — re-target to the ATT. When overlap fails where <span class="math inline">\(\pi(X) \approx 1\)</span> — controls are scarce or absent — re-target to the ATC. When overlap fails on both sides, restrict to the trimmed-population estimand.</p>
 </section>
 </section>
-<section id="sec-lab" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">6.7</span> Lab: Simulation Study of IPW and Matching Estimators</h2>
-<p>This lab compares five estimators on a five-covariate DGP with treatment-effect heterogeneity. With five continuous confounders, direct stratification is infeasible, making propensity-score methods the natural choice.</p>
-<section id="part-1-correctly-specified-propensity-score" class="level3" data-number="6.7.1">
-<h3 data-number="6.7.1" class="anchored" data-anchor-id="part-1-correctly-specified-propensity-score"><span class="header-section-number">6.7.1</span> Part 1: Correctly Specified Propensity Score</h3>
+<section id="sec-w6-lab" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="sec-w6-lab"><span class="header-section-number">6.7</span> Lab: Simulation Study of IPW and Matching Estimators</h2>
+<p>This lab compares five estimators on a five-covariate data-generating process with treatment-effect heterogeneity. With five continuous confounders, direct stratification is infeasible, making propensity-score methods the natural choice. The estimators span two estimands: the ATE (targeted by the HT and Hájek IPW estimators) and the ATT (targeted by the ATT-IPW variants and by matching). Five questions drive the comparison:</p>
+<ol type="1">
+<li>How much variance does weight normalization save (Hájek over HT) for ATE estimation, and why does the baseline outcome mean matter?</li>
+<li>Does the same variance problem afflict HT when targeting the ATT, and does Hájek normalization help as much?</li>
+<li>Among estimators targeting the ATT, do IPW and matching agree on the target, and which is more efficient?</li>
+<li>How large is the estimand gap between ATT and ATE, and which estimators reveal it?</li>
+<li>How does replacing the true propensity score with a logistic estimate change bias and variance?</li>
+</ol>
+<section id="sec-w6-lab-part1" class="level3" data-number="6.7.1">
+<h3 data-number="6.7.1" class="anchored" data-anchor-id="sec-w6-lab-part1"><span class="header-section-number">6.7.1</span> Part 1: Correctly Specified Propensity Score</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -783,12 +1075,19 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="math inline">\(X_j \overset{\mathrm{i.i.d.}}{\sim} N(0,1)\)</span> for <span class="math inline">\(j = 1,\ldots,5\)</span>. All five covariates are genuine confounders. True propensity score: <span id="eq-lab-ps"><span class="math display">\[\pi(X) = \mathrm{expit}(-0.5 + 0.8X_1 + 0.5X_2 - 0.3X_3 + 0.2X_4 + 0.1X_5), \tag{6.6}\]</span></span> giving <span class="math inline">\(P(T{=}1) \approx 0.40\)</span>. Potential outcomes: <span id="eq-lab-po"><span class="math display">\[Y(t) = (1 + 0.5X_1)\cdot t + 8 + 0.8X_1 + 0.5X_2 + 0.4X_3 + 0.3X_4 + 0.2X_5 + \varepsilon, \quad \varepsilon \sim N(0,1). \tag{6.7}\]</span></span> The CATE is <span class="math inline">\(\tau(X) = 1 + 0.5X_1\)</span>, so <span class="math inline">\(\tau_{\mathrm{ATE}} = 1.000\)</span> (exact). Because <span class="math inline">\(\pi(X)\)</span> is increasing in <span class="math inline">\(X_1\)</span>, treated units have <span class="math inline">\(\E[X_1 \mid T{=}1] &gt; 0\)</span>, giving <span class="math inline">\(\tau_{\mathrm{ATT}} \approx 1.199\)</span> (oracle, <span class="math inline">\(n = 10^7\)</span>). The gap <span class="math inline">\(\approx 0.199\)</span> reflects selection: units most likely to be treated also tend to benefit more.</p>
+<p>Let <span class="math inline">\(X_j \overset{\mathrm{i.i.d.}}{\sim} \mathrm{Normal}(0,1)\)</span> for <span class="math inline">\(j = 1, \ldots, 5\)</span>. All five covariates enter both the treatment mechanism and the outcome, so every <span class="math inline">\(X_j\)</span> is a genuine confounder. The true propensity score is <span id="eq-lab-ps"><span class="math display">\[\pi(X) = \expit(-0.5 + 0.8X_1 + 0.5X_2 - 0.3X_3 + 0.2X_4 + 0.1X_5), \tag{6.6}\]</span></span> giving marginal treatment probability <span class="math inline">\(P(T{=}1) \approx 0.40\)</span>. The potential outcomes are <span id="eq-lab-po"><span class="math display">\[Y(t) = (1 + 0.5X_1)\cdot t + 8 + 0.8X_1 + 0.5X_2 + 0.4X_3 + 0.3X_4 + 0.2X_5 + \varepsilon, \quad \varepsilon \sim \mathrm{N}(0,1). \tag{6.7}\]</span></span> The CATE is <span class="math inline">\(\tau(X) = 1 + 0.5X_1\)</span>. Because <span class="math inline">\(\E[X_1] = 0\)</span>, <span class="math display">\[\tau_{\mathrm{ATE}} = \E[1 + 0.5X_1] = 1.000 \quad (\text{exact}).\]</span> Because <span class="math inline">\(\pi(X)\)</span> is increasing in <span class="math inline">\(X_1\)</span>, treated units have higher <span class="math inline">\(X_1\)</span> on average, so <span class="math display">\[\tau_{\mathrm{ATT}} = \E[1 + 0.5X_1 \mid T{=}1] \approx 1.199 \quad (\text{verified by oracle run, } n = 10^7).\]</span> The gap <span class="math inline">\(\tau_{\mathrm{ATT}} - \tau_{\mathrm{ATE}} \approx 0.199\)</span> reflects a selection effect: units most likely to be treated also tend to have larger individual treatment effects. The intercept 8 in the outcome model represents a population baseline. Treatment is generated as <span class="math inline">\(T \mid X \sim \mathrm{Bernoulli}\{\pi(X)\}\)</span>, the error satisfies <span class="math inline">\(\varepsilon \indep (X, T)\)</span>, and units are sampled independently; strong ignorability therefore holds by construction.</p>
 </div>
 </div>
-<p><strong>Estimators.</strong> Five estimators are compared under both the true and estimated propensity score. The estimated score uses logistic regression of <span class="math inline">\(T\)</span> on <span class="math inline">\((X_1,\ldots,X_5)\)</span> — correctly specified since the true logit is linear. The five estimators are: HT-ATE <a href="#eq-ht" class="quarto-xref">Equation&nbsp;<span>6.2</span></a>, HJ-ATE <a href="#eq-hajek" class="quarto-xref">Equation&nbsp;<span>6.3</span></a> (both targeting ATE); HT-ATT <a href="#eq-ht-att" class="quarto-xref">Equation&nbsp;<span>6.4</span></a>, HJ-ATT <a href="#eq-hj-att" class="quarto-xref">Equation&nbsp;<span>6.5</span></a>, and NNM <a href="#eq-nnm" class="quarto-xref">Equation&nbsp;<span>6.1</span></a> (all targeting ATT). The large baseline mean <span class="math inline">\(\E[Y(0)] = 8\)</span> amplifies the consequences of extreme IPW weights, making Hájek normalization strongly recommended.</p>
-<p><strong>Results</strong> (<span class="math inline">\(n = 1{,}000\)</span>, <span class="math inline">\(B = 2{,}000\)</span> replications, seed 42). Bias relative to each estimator’s own target.</p>
+<p>With five confounders, direct cell-by-cell stratification is infeasible. The propensity score reduces this five-dimensional adjustment to a scalar. The large baseline mean (<span class="math inline">\(\E[Y(0)] = 8\)</span>) plays a distinct role: it amplifies the consequences of extreme IPW weights, making Hájek normalization strongly recommended in this setting rather than merely helpful.</p>
+<p><strong>Estimators.</strong> Five estimators are compared, each applied under both the true and estimated propensity score. The estimated score is obtained by logistic regression of <span class="math inline">\(T\)</span> on <span class="math inline">\((X_1, \ldots, X_5)\)</span>, which is correctly specified since the true logit is linear in all five covariates.</p>
+<p><em>Horvitz–Thompson ATE (HT-ATE)</em>, <a href="#eq-ht" class="quarto-xref">Equation&nbsp;<span>6.3</span></a>. Targets the ATE. Raw inverse weights can be extreme when <span class="math inline">\(\hat\pi(X_i)\)</span> is near <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, and with <span class="math inline">\(\E[Y(0)]=8\)</span> the variance consequences are severe.</p>
+<p><em>Hájek ATE (HJ-ATE)</em>, <a href="#eq-hajek" class="quarto-xref">Equation&nbsp;<span>6.4</span></a>. Targets the ATE. Normalizing by the empirical weight sum within each arm caps the effective influence of any single unit.</p>
+<p><em>Horvitz–Thompson ATT (HT-ATT).</em> The ATT identification formula re-weights the <em>control</em> arm to look like the treated population while leaving the treated arm unchanged: <span class="math display">\[\hat\tau_{\mathrm{HT,ATT}} = \frac{1}{n_1}\sum_{i:\,T_i=1} Y_i \;-\; \frac{1}{n_1}\sum_{i:\,T_i=0} \frac{\hat\pi(X_i)}{1-\hat\pi(X_i)}\,Y_i.\]</span> Each control unit receives weight proportional to its <em>odds of treatment</em>: units whose covariates resemble the treated population receive large weight. For a control unit with <span class="math inline">\(\hat\pi(X_i) = 0.95\)</span> the weight is <span class="math inline">\(19\)</span>; combined with a baseline outcome near <span class="math inline">\(8\)</span>, this produces extreme variance.</p>
+<p><em>Hájek ATT (HJ-ATT).</em> The normalized counterpart replaces the raw-weight sum over the control arm with a self-normalized version: <span class="math display">\[\hat\tau_{\mathrm{HJ,ATT}} = \frac{1}{n_1}\sum_{i:\,T_i=1} Y_i \;-\; \frac{\sum_{i:\,T_i=0} \{\hat\pi(X_i)/(1-\hat\pi(X_i))\}\,Y_i}{\sum_{i:\,T_i=0} \hat\pi(X_i)/(1-\hat\pi(X_i))}.\]</span> The treated arm is already a simple mean and requires no normalization. This is the recommended default estimator for the ATT in practice.</p>
+<p><em>One-to-one nearest-neighbor matching with replacement (NNM)</em>, <a href="#eq-nnm" class="quarto-xref">Equation&nbsp;<span>6.1</span></a>. Targets the ATT. Matching with replacement ensures every treated unit finds its globally closest control, preventing the finite-sample “running out of good matches” problem that arises without replacement when the propensity score distribution is wide <span class="citation" data-cites="abadie2006large">(<a href="#ref-abadie2006large" role="doc-biblioref">Abadie and Imbens 2006</a>)</span>.</p>
+<p><strong>Results</strong> (<span class="math inline">\(n = 1{,}000\)</span>, <span class="math inline">\(B = 2{,}000\)</span> replications, seed 42). Bias is computed relative to each estimator’s own target: ATE <span class="math inline">\(= 1.000\)</span> for HT-ATE and HJ-ATE; ATT <span class="math inline">\(\approx 1.199\)</span> for HT-ATT, HJ-ATT, and NNM. Monte Carlo standard errors of the reported means equal <span class="math inline">\(\mathrm{SD}/\sqrt{B} \approx \mathrm{SD}/45\)</span>.</p>
 <table class="caption-top table">
+<caption>Monte Carlo performance of five propensity-score estimators under known and estimated propensity scores. True ATE <span class="math inline">\(= 1.000\)</span> (exact); true ATT <span class="math inline">\(\approx 1.199\)</span> (oracle, <span class="math inline">\(n = 10^7\)</span>).</caption>
 <colgroup>
 <col style="width: 14%">
 <col style="width: 14%">
@@ -902,11 +1201,13 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p><strong>Lesson 1: Hájek normalization is strongly recommended when outcomes are non-centered.</strong> With the known PS, HT-ATE achieves SD <span class="math inline">\(= 0.626\)</span>, while HJ-ATE achieves SD <span class="math inline">\(= 0.145\)</span> — a <strong>4.3-fold reduction</strong>. A unit with <span class="math inline">\(\pi(X_i) = 0.05\)</span> receives raw weight <span class="math inline">\(20\)</span>; multiplied by an outcome near <span class="math inline">\(\E[Y(0)] = 8\)</span>, its contribution is of order <span class="math inline">\(160\)</span>.</p>
-<p><strong>Lesson 2: HT-ATT is even more unstable; Hájek normalization is equally beneficial.</strong> HT-ATT SD <span class="math inline">\(= 0.725\)</span>. A control unit with <span class="math inline">\(\hat\pi(X_i) = 0.95\)</span> receives odds-ratio weight <span class="math inline">\(19\)</span>. HJ-ATT reduces SD to <span class="math inline">\(0.131\)</span> — a <strong>5.5-fold reduction</strong>.</p>
-<p><strong>Lesson 3: HJ-ATT and NNM converge to the same target with nearly identical efficiency.</strong> Under the known PS, HJ-ATT (SD <span class="math inline">\(= 0.131\)</span>) and NNM (SD <span class="math inline">\(= 0.130\)</span>) are virtually indistinguishable — a clear “two routes, one estimand” demonstration.</p>
-<p><strong>Lesson 4: The estimand gap between ATE and ATT is large and clearly revealed.</strong> The ATE estimators converge to <span class="math inline">\(1.000\)</span>; the ATT estimators converge to <span class="math inline">\(\approx 1.199\)</span>. The <span class="math inline">\(0.199\)</span> gap is not bias. A researcher who applies NNM and reports against the ATE benchmark would conclude the estimator has 20% bias; it is actually unbiased for the correct target.</p>
-<p><strong>Lesson 5: Estimated PS collapses HT variance.</strong> HT-ATE SD falls from <span class="math inline">\(0.626\)</span> to <span class="math inline">\(0.194\)</span> (69% reduction); shrinkage of fitted logistic probabilities toward the sample mean trims extreme weights automatically. HJ-ATT with estimated PS achieves SD <span class="math inline">\(= 0.101\)</span> — beating NNM (SD <span class="math inline">\(= 0.121\)</span>).</p>
+<p><strong>1. Hájek normalization is strongly recommended for ATE estimation when outcomes are non-centered.</strong> With the known propensity score, HT-ATE achieves SD <span class="math inline">\(= 0.626\)</span>, while HJ-ATE achieves SD <span class="math inline">\(= 0.145\)</span> — a <strong>4.3-fold reduction</strong> from simply normalizing the weights. The mechanism is transparent: a unit with <span class="math inline">\(\pi(X_i) = 0.05\)</span> receives raw weight <span class="math inline">\(20\)</span>; multiplied by an outcome near <span class="math inline">\(\E[Y(0)] = 8\)</span>, its contribution to the HT sum is of order <span class="math inline">\(160\)</span>. Variability in which units are extreme across samples inflates the HT standard deviation to more than half the true effect size.</p>
+<p>The role of the baseline can be isolated exactly. Define the average inverse weights in each arm, <span class="math display">\[w_T = \frac{1}{n}\sum_{i=1}^n \frac{T_i}{\hat\pi(X_i)}, \qquad w_C = \frac{1}{n}\sum_{i=1}^n \frac{1 - T_i}{1 - \hat\pi(X_i)},\]</span> each of which has expectation one under the true score (<span class="quarto-unresolved-ref">?lem-weighted-balance</span> with <span class="math inline">\(h \equiv 1\)</span>) but fluctuates in finite samples. Shifting every outcome by a constant <span class="math inline">\(c\)</span> changes the HT estimator by <span class="math display">\[\hat\tau_{\mathrm{HT}}(Y + c) = \hat\tau_{\mathrm{HT}}(Y) + c\,(w_T - w_C),\]</span> whereas the Hájek difference is exactly invariant to the shift, since each arm’s self-normalized mean moves by <span class="math inline">\(c\)</span> and the shifts cancel. With a baseline near <span class="math inline">\(c = 8\)</span>, finite-sample fluctuation in <span class="math inline">\(w_T - w_C\)</span> is amplified eightfold — this, not variability in the treatment effect itself, is the dominant source of the HT variance here.</p>
+<p><strong>2. HT-ATT is even more unstable; Hájek normalization is equally beneficial for ATT estimation.</strong> With the known PS, HT-ATT achieves SD <span class="math inline">\(= 0.725\)</span>, slightly <em>worse</em> than HT-ATE. The reason is structural: the ATT re-weights the control arm by the treatment odds <span class="math inline">\(\pi(X)/(1-\pi(X))\)</span>. A control unit with <span class="math inline">\(\pi(X) = 0.95\)</span> receives an odds-ratio weight of <span class="math inline">\(19\)</span>; combined with the large baseline outcome this is as explosive as the ATE inverse-probability weight. The apparent bias of <span class="math inline">\(-0.016\)</span> for HT-ATT is within one Monte Carlo standard error of <span class="math inline">\(0.725/\sqrt{2000} \approx 0.016\)</span> and should be attributed to simulation noise rather than systematic inconsistency. HJ-ATT reduces SD to <span class="math inline">\(0.131\)</span> — a <strong>5.5-fold reduction</strong> — confirming that Hájek normalization is not an ATE-specific fix but a general principle applicable whenever inverse-probability-style weights are used.</p>
+<p><strong>3. HJ-ATT and NNM converge to the same target with nearly identical efficiency.</strong> Under the known PS, both target the ATT <span class="math inline">\(\approx 1.199\)</span> and achieve essentially the same standard deviation (0.131 vs.&nbsp;0.130). This is the sharpest demonstration of the “two routes, one estimand” principle: IPW re-weights the full sample using the propensity score; matching discards some control units and retains only those nearest each treated unit on the propensity scale. Both are consistent for the ATT under strong ignorability, and at <span class="math inline">\(n = 1{,}000\)</span> they are virtually indistinguishable in efficiency. The practical implication is that the choice between IPW-ATT and matching can be made on secondary grounds — interpretability, balance diagnostics, or computational cost — rather than efficiency when the PS is known.</p>
+<p><strong>4. The estimand gap between ATE and ATT is large and clearly revealed by the table.</strong> The ATE estimators converge to <span class="math inline">\(1.000\)</span>; the ATT estimators converge to <span class="math inline">\(\approx 1.199\)</span>. The <span class="math inline">\(0.199\)</span> gap is not a bias — it is a real difference in the estimands. High-<span class="math inline">\(X_1\)</span> units are more likely to be treated (<a href="#eq-lab-ps" class="quarto-xref">Equation&nbsp;<span>6.6</span></a>) and have larger treatment effects (<a href="#eq-lab-po" class="quarto-xref">Equation&nbsp;<span>6.7</span></a>); the treated subpopulation therefore benefits more than the full population average. A researcher who applies NNM and reports its output against the ATE benchmark of <span class="math inline">\(1.000\)</span> would conclude the estimator has <span class="math inline">\(20\%\)</span> bias; in fact it is unbiased for the correct target. Declaring the estimand before looking at any results is a non-negotiable discipline.</p>
+<p><strong>5. Estimated PS collapses HT variance and makes HJ-ATT the most efficient ATT estimator.</strong> Under the estimated PS, HT-ATE SD falls from <span class="math inline">\(0.626\)</span> to <span class="math inline">\(0.194\)</span> (69% reduction); HT-ATT SD falls from <span class="math inline">\(0.725\)</span> to <span class="math inline">\(0.251\)</span> (65% reduction). This counterintuitive gain — the <em>estimated</em> score outperforming the <em>true</em> one — is a known phenomenon, but it is not a consequence of consistency alone: the classical result requires a correctly specified propensity model estimated by maximum likelihood (here, the logistic model is exactly correct). The likelihood score equations of the logistic fit, <span class="math inline">\(\sum_i (T_i - \hat\pi(X_i))X_i = 0\)</span>, act as control variates: they remove the component of the IPW sampling error correlated with the score functions. IPW with the ML estimate of a correctly specified score is therefore asymptotically no less efficient than IPW with the known score, and an analogous conclusion holds for suitable nonparametric score estimators <span class="citation" data-cites="hirano2003efficient">(<a href="#ref-hirano2003efficient" role="doc-biblioref">Hirano et al. 2003</a>)</span>.</p>
+<p>More strikingly, HJ-ATT with estimated PS achieves SD <span class="math inline">\(= 0.101\)</span> — beating both NNM (SD <span class="math inline">\(= 0.121\)</span>) and HT-ATT (SD <span class="math inline">\(= 0.251\)</span>) by a wide margin and matching HJ-ATE (SD <span class="math inline">\(= 0.102\)</span>) almost exactly. This is the finite-sample analog of the efficiency result of <span class="citation" data-cites="hirano2003efficient">Hirano et al. (<a href="#ref-hirano2003efficient" role="doc-biblioref">2003</a>)</span>: a properly normalized IPW estimator for the ATT is consistent — though, as a ratio estimator, not exactly unbiased in finite samples — and can be more efficient than matching when the propensity score model is well estimated.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -917,15 +1218,31 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In this DGP, <span class="math inline">\(\tau_{\mathrm{ATE}} = 1.000\)</span> and <span class="math inline">\(\tau_{\mathrm{ATT}} \approx 1.199\)</span>. The gap arises because treatment selection is correlated with the individual treatment effect: high-<span class="math inline">\(X_1\)</span> units are simultaneously more likely to be treated and more likely to benefit <span class="citation" data-cites="imbens2015causal">(<a href="#ref-imbens2015causal" role="doc-biblioref">Imbens and Rubin 2015</a>)</span>. Choosing among estimators should be driven by the policy question (ATE or ATT?), not by which produces the preferred point estimate.</p>
+<p>In this DGP, <span class="math inline">\(\tau_{\mathrm{ATE}} = 1.000\)</span> and <span class="math inline">\(\tau_{\mathrm{ATT}} \approx 1.199\)</span>. The gap arises because treatment status is correlated with the individual treatment effect: high-<span class="math inline">\(X_1\)</span> units are simultaneously more likely to be treated and more likely to benefit. This situation — treatment-effect heterogeneity correlated with propensity for treatment <span class="citation" data-cites="imbens2015causal">(<a href="#ref-imbens2015causal" role="doc-biblioref">Imbens and Rubin 2015</a>)</span> — is common in practice: individuals often select into treatment partly because they anticipate larger benefits.</p>
+<p>IPW-ATE and HJ-ATE re-weight the full sample to represent the population; IPW-ATT and HJ-ATT re-weight only the control arm to represent the treated population; NNM directly pairs each treated unit with a similar control. All three ATT estimators target the same quantity via different mechanisms. Choosing among them should be driven by the policy question (is the ATE or ATT the right estimand?) and by practical concerns about balance and model specification, not by which produces the larger or smaller point estimate.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: What Part 1 Does Not Show
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Part 1 uses a correctly specified logistic propensity model, which is the best-case scenario for IPW. In practice the true PS may be nonlinear, making correct logistic specification impossible with the predictors at hand. Part 2 addresses exactly this setting. The doubly robust AIPW estimator of Chapter 11 provides a complementary fix: it is consistent if <em>either</em> the PS model or the outcome model is correctly specified, offering robustness that neither pure IPW nor pure matching can achieve alone.</p>
 </div>
 </div>
 </section>
-<section id="part-2-robustness-to-ps-model-misspecification" class="level3" data-number="6.7.2">
-<h3 data-number="6.7.2" class="anchored" data-anchor-id="part-2-robustness-to-ps-model-misspecification"><span class="header-section-number">6.7.2</span> Part 2: Robustness to PS Model Misspecification</h3>
-<p><strong>Modified DGP.</strong> Outcome model unchanged. True PS now contains a quadratic term: <span id="eq-lab-ps2"><span class="math display">\[\pi^*(X) = \mathrm{expit}(-0.5 + 0.8X_1 + 0.5X_1^2 + 0.2X_4 + 0.1X_5), \tag{6.8}\]</span></span> giving a U-shaped propensity surface. <span class="math inline">\(\tau_{\mathrm{ATE}} = 1.000\)</span> (unchanged); <span class="math inline">\(\tau_{\mathrm{ATT}}^* \approx 1.152\)</span> (oracle). The <em>estimated</em> PS is still a linear logistic regression on <span class="math inline">\((X_1,\ldots,X_5)\)</span> — misspecified by omitting <span class="math inline">\(X_1^2\)</span>.</p>
-<p><strong>Results</strong> (<span class="math inline">\(n = 1{,}000\)</span>, <span class="math inline">\(B = 2{,}000\)</span>, seed 42):</p>
+<section id="sec-w6-lab-part2" class="level3" data-number="6.7.2">
+<h3 data-number="6.7.2" class="anchored" data-anchor-id="sec-w6-lab-part2"><span class="header-section-number">6.7.2</span> Part 2: Robustness to PS Model Misspecification</h3>
+<p>Part 1 established that under a correctly specified PS model, IPW and NNM are both consistent for their respective estimands, with HJ-ATT and NNM delivering similar efficiency. Part 2 breaks that assumption by introducing a <em>nonlinear</em> true propensity score that the standard logistic regression cannot capture.</p>
+<p><strong>Modified DGP.</strong> The outcome model is unchanged from <a href="#eq-lab-po" class="quarto-xref">Equation&nbsp;<span>6.7</span></a>. The true propensity score now contains a quadratic term in <span class="math inline">\(X_1\)</span>, and <span class="math inline">\(X_2\)</span> and <span class="math inline">\(X_3\)</span> do not affect treatment: <span id="eq-lab-ps2"><span class="math display">\[\pi^*(X) = \expit\!\bigl(-0.5 + 0.8X_1 + 0.5X_1^2 + 0.2X_4 + 0.1X_5\bigr). \tag{6.8}\]</span></span> The quadratic <span class="math inline">\(0.5X_1^2\)</span> means that both large positive <em>and</em> large negative values of <span class="math inline">\(X_1\)</span> increase the probability of treatment, creating a U-shaped propensity surface. Because <span class="math inline">\(\E[X_1] = 0\)</span> and the CATE is still <span class="math inline">\(\tau(X) = 1 + 0.5X_1\)</span>, the ATE is unchanged at <span class="math inline">\(1.000\)</span> exactly. The ATT changes because the new PS shifts which units are treated: <span class="math inline">\(\tau_{\mathrm{ATT}}^* \approx 1.152\)</span> (oracle run, <span class="math inline">\(n = 10^7\)</span>).</p>
+<p>The <em>estimated</em> PS is still obtained by fitting a linear logistic regression of <span class="math inline">\(T\)</span> on <span class="math inline">\((X_1, \ldots, X_5)\)</span>. This model is <strong>misspecified</strong>: it omits the <span class="math inline">\(X_1^2\)</span> term and includes <span class="math inline">\(X_2\)</span> and <span class="math inline">\(X_3\)</span>, which do not appear in the true logit.</p>
 <table class="caption-top table">
+<caption>Part 2: Monte Carlo performance under a nonlinear true PS and a misspecified linear logistic estimate. True ATE <span class="math inline">\(= 1.000\)</span> (exact); true ATT <span class="math inline">\(\approx 1.152\)</span> (oracle, <span class="math inline">\(n = 10^7\)</span>, new DGP).</caption>
 <colgroup>
 <col style="width: 14%">
 <col style="width: 14%">
@@ -1039,10 +1356,13 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p><strong>Lesson 6: PS misspecification makes all IPW estimators inconsistent; Hájek cannot fix this.</strong> HT-ATE bias is <span class="math inline">\(+0.478\)</span> and HJ-ATE bias is <span class="math inline">\(-0.139\)</span> — <em>opposite signs</em>. Hájek removes the <em>level error</em> (weight sums drifting from 1) but not the <em>shape error</em> (misweighting of the population). With Monte Carlo means <span class="math inline">\(w_T \approx 1.045\)</span> and <span class="math inline">\(w_C \approx 0.972\)</span>, the extra HT bias is approximately <span class="math inline">\((w_T - 1)\E[Y(1)] - (w_C - 1)\E[Y(0)] \approx 0.045 \times 9 + 0.028 \times 8 \approx +0.62\)</span>, accounting for the entire gap <span class="math inline">\(+0.478 - (-0.139) = +0.617\)</span>.</p>
-<p><strong>Lesson 7: In this simulation, matching is less sensitive to PS misspecification.</strong> NNM bias barely changes: <span class="math inline">\(+0.026\)</span> under the true PS versus <span class="math inline">\(+0.020\)</span> under misspecification. NNM does not require the PS model to be correct — it only requires that the estimated score roughly <em>orders</em> units so matched pairs are approximately balanced on true confounders. The linear logistic model, though wrong, still captures the dominant linear effects. See <span class="citation" data-cites="yang2016multilevel">Yang et al. (<a href="#ref-yang2016multilevel" role="doc-biblioref">2016</a>)</span> and <span class="citation" data-cites="yang2023multiply">Yang and Zhang (<a href="#ref-yang2023multiply" role="doc-biblioref">2023</a>)</span> for theoretical analyses.</p>
-<p><strong>Lesson 8: The relative advantage of matching over IPW reverses with model misspecification.</strong></p>
+<p><strong>6. PS misspecification removes the consistency guarantee for IPW; here every IPW estimator is materially biased, and the Hájek correction cannot fix this.</strong> Under the misspecified PS, HT-ATE bias is <span class="math inline">\(+0.478\)</span>, nearly half the true effect; HJ-ATE bias is <span class="math inline">\(-0.139\)</span>. For the ATT estimators the problem is worse: HT-ATT bias is <span class="math inline">\(+0.628\)</span>; HJ-ATT bias is <span class="math inline">\(+0.154\)</span>. Comparing these to the near-zero biases in the “True PS” rows makes clear that the Hájek normalization is a <em>variance</em> correction — it cannot compensate for a misspecified model that produces systematically wrong weights. IPW consistency is tied to consistency of the PS estimator; a structurally wrong model generally produces structurally wrong weights, and no normalization of wrong weights produces correct estimates. (Special calibration identities can leave particular weighted estimators consistent under particular misspecifications, but no such protection is generic, and none operates here.)</p>
+<p>Notice also that HJ-ATE and HT-ATE have biases in <em>opposite directions</em> (<span class="math inline">\(-0.139\)</span> vs.&nbsp;<span class="math inline">\(+0.478\)</span>). The mechanism is a multiplicative <em>level error</em> that HT inherits from misspecification but Hájek removes. Recall the average inverse weights <span class="math inline">\(w_T\)</span> and <span class="math inline">\(w_C\)</span>, each of which converges to <span class="math inline">\(1\)</span> under a correctly specified PS. Under misspecification both can drift; in this DGP the Monte Carlo means are <span class="math inline">\(w_T \approx 1.045\)</span> and <span class="math inline">\(w_C \approx 0.972\)</span>. Algebraically, <span class="math inline">\(\hat\tau_{\mathrm{HT}} = w_T\,\hat\mu_1^{\mathrm{HJ}} - w_C\,\hat\mu_0^{\mathrm{HJ}}\)</span>, so the HT bias inherits an extra contribution <span class="math display">\[(w_T - 1)\,\E[Y(1)] \;-\; (w_C - 1)\,\E[Y(0)] \;\approx\; 0.045 \times 9 \;+\; 0.028 \times 8 \;\approx\; +0.63,\]</span> which accounts for essentially the entire gap between the two biases (<span class="math inline">\(+0.478 - (-0.139) = +0.617\)</span>). With <span class="math inline">\(\E[Y(0)] = 8\)</span>, even sub-five-percent weight-sum errors translate into bias contributions of order <span class="math inline">\(0.3\)</span>. What remains in HJ-ATE is a smaller <em>shape</em> error: the residual misweighting of the population that survives self-normalization. The level and shape errors are determined by different aspects of the misspecification — the first by how far the average inverse weights drift from one, the second by how the misspecified weights re-weight the population — so there is no reason for their signs to align.</p>
+<p><strong>7. In this simulation, matching is less sensitive to the particular PS misspecification.</strong> The NNM bias barely changes: <span class="math inline">\(+0.026\)</span> under the true PS versus <span class="math inline">\(+0.020\)</span> under the misspecified PS. Its RMSE actually <em>improves</em> slightly (<span class="math inline">\(0.177 \to 0.139\)</span>) because the misspecified logistic scores, being shrunk toward the mean of <span class="math inline">\(T\)</span>, produce somewhat less variable matches than the true nonlinear scores do. The reason is that NNM does not require the PS model to be correct in order to produce good matches — it only requires that the estimated score roughly <em>orders</em> units so that matched pairs are approximately balanced on the true confounders. The linear logistic model, though wrong, still captures the dominant linear effects of <span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_4\)</span>, and <span class="math inline">\(X_5\)</span> on treatment; the quadratic component is missed, but the ranking of units is not drastically distorted.</p>
+<p>This insensitivity is conditional on the estimated score preserving covariate balance. Propensity-score matching can also fail badly under misspecification — if, for example, the misspecification distorts the ranking of units enough that matched pairs are imbalanced on outcome-relevant covariates. The lesson is therefore not that matching is unconditionally robust, but that its bias depends on covariate balance after matching rather than on the parametric correctness of the score itself; balance must be checked, not assumed. Theoretical analyses of when this conditional robustness holds appear in <span class="citation" data-cites="yang2016multilevel">Yang et al. (<a href="#ref-yang2016multilevel" role="doc-biblioref">2016</a>)</span> and <span class="citation" data-cites="yang2023multiply">Yang and Zhang (<a href="#ref-yang2023multiply" role="doc-biblioref">2023</a>)</span>.</p>
+<p><strong>8. In this simulation, the relative advantage of matching over IPW reverses with model misspecification.</strong> In Part 1, HJ-ATT was more efficient than NNM under the estimated PS (SD <span class="math inline">\(= 0.101\)</span> vs.&nbsp;<span class="math inline">\(0.121\)</span>). In Part 2, NNM dominates on both bias <em>and</em> RMSE relative to HJ-ATT. The practical implication is that the efficiency advantage of IPW is contingent on the PS model being approximately correct. When there is reason to doubt the functional form of the propensity model — for instance, when treatment is driven by a continuous covariate in a nonlinear way — matching can be a more robust alternative, because it relies on local covariate similarity rather than a globally correct weighting function; whether this conditional advantage materializes depends on whether the estimated score still produces close matches on the outcome-relevant covariates.</p>
 <table class="caption-top table">
+<caption>Head-to-head comparison of HJ-ATT and NNM under correct vs.&nbsp;misspecified PS estimation (estimated-PS column from each part).</caption>
 <colgroup>
 <col style="width: 20%">
 <col style="width: 20%">
@@ -1053,33 +1373,26 @@ window.Quarto = {
 <thead>
 <tr class="header">
 <th></th>
-<th><strong>Part 1: Correct PS model</strong></th>
-<th></th>
-<th><strong>Part 2: Misspecified PS model</strong></th>
-<th></th>
+<th><strong>Part 1: correct PS model, bias</strong></th>
+<th><strong>RMSE</strong></th>
+<th><strong>Part 2: misspecified PS model, bias</strong></th>
+<th><strong>RMSE</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Estimator</strong></td>
-<td>Bias</td>
-<td>RMSE</td>
-<td>Bias</td>
-<td>RMSE</td>
+<td>HJ-ATT</td>
+<td><span class="math inline">\(+0.002\)</span></td>
+<td><span class="math inline">\(0.101\)</span></td>
+<td><span class="math inline">\(+0.154\)</span></td>
+<td><span class="math inline">\(0.174\)</span></td>
 </tr>
 <tr class="even">
-<td>HJ-ATT</td>
-<td>+0.002</td>
-<td>0.101</td>
-<td>+0.154</td>
-<td>0.174</td>
-</tr>
-<tr class="odd">
 <td>NNM</td>
-<td>+0.006</td>
-<td>0.121</td>
-<td>+0.020</td>
-<td>0.139</td>
+<td><span class="math inline">\(+0.006\)</span></td>
+<td><span class="math inline">\(0.121\)</span></td>
+<td><span class="math inline">\(+0.020\)</span></td>
+<td><span class="math inline">\(0.139\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -1093,16 +1406,19 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>IPW is a <em>model-dependent</em> estimator: its consistency relies on the PS model being correctly specified. Matching is a <em>design-dependent</em> estimator: its consistency relies on matched pairs being approximately balanced on the true confounders. This condition can hold even when the PS model is wrong, provided the estimated score still separates units well enough. Neither dominates unconditionally. The recommendation is to assess PS model plausibility via balance diagnostics, or to use both as a sensitivity check <span class="citation" data-cites="yang2016multilevel yang2023multiply">(<a href="#ref-yang2016multilevel" role="doc-biblioref">Yang et al. 2016</a>; <a href="#ref-yang2023multiply" role="doc-biblioref">Yang and Zhang 2023</a>)</span>.</p>
+<p>The two lessons of this lab can be compressed into a single contrast. IPW is a <em>model-dependent</em> estimator: its consistency relies on the PS model being correctly specified. Get the model right and IPW (especially the Hájek form) is highly efficient; get it wrong and the bias from incorrect weights can be large and systematic, as the <span class="math inline">\(+0.154\)</span> HJ-ATT bias in Part 2 demonstrates.</p>
+<p>Matching is a <em>design-dependent</em> estimator: its consistency relies on matched pairs being approximately balanced on the true confounders. This condition can hold even when the PS model is wrong, provided the estimated score still separates units well enough that close matches on the score imply closeness on the full covariate vector. But a misspecified score is not itself a balancing score, so this favorable case must be demonstrated by balance diagnostics on the matched sample — including, where relevant, nonlinear transformations and interactions — not assumed. The cost is efficiency: when the PS model is correct, matching leaves variance on the table relative to IPW.</p>
+<p>Neither dominates unconditionally. The practical recommendation is to assess the plausibility of the PS model before choosing between IPW and matching as the primary estimator — or to use both as a sensitivity check <span class="citation" data-cites="yang2016multilevel yang2023multiply">(<a href="#ref-yang2016multilevel" role="doc-biblioref">Yang et al. 2016</a>; <a href="#ref-yang2023multiply" role="doc-biblioref">Yang and Zhang 2023</a>)</span>.</p>
 </div>
 </div>
 </section>
 </section>
-<section id="sec-limits" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="sec-limits"><span class="header-section-number">6.8</span> The Limits of Propensity Score Methods</h2>
+<section id="the-limits-of-propensity-score-methods" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="the-limits-of-propensity-score-methods"><span class="header-section-number">6.8</span> The Limits of Propensity Score Methods</h2>
 <section id="the-untestable-assumption" class="level3" data-number="6.8.1">
 <h3 data-number="6.8.1" class="anchored" data-anchor-id="the-untestable-assumption"><span class="header-section-number">6.8.1</span> The Untestable Assumption</h3>
-<p>Every result in this chapter rests on unconfoundedness <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span>: all confounders of the <span class="math inline">\(T\)</span>–<span class="math inline">\(Y\)</span> relationship are observed and included in <span class="math inline">\(X\)</span>. In graphical terms: <span class="math inline">\(X\)</span> blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</p>
+<p>The balancing property (<span class="quarto-unresolved-ref">?thm-balance</span>), the coarsest-balancing-score lemma, and the weighted-balance identities (<span class="quarto-unresolved-ref">?lem-weighted-balance</span>) are properties of the observed treatment-assignment mechanism: they hold for any binary treatment and require no causal assumptions. The <em>causal</em> results of this chapter — the Propensity Score Theorem, the IPW identification formula, the causal interpretation of matching — additionally rest on the unconfoundedness assumption <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span>, together with consistency and the relevant positivity condition.</p>
+<p>Unconfoundedness requires that the observed pretreatment set <span class="math inline">\(X\)</span> be <em>sufficient for adjustment</em>. In graphical terms: <span class="math inline">\(X\)</span> blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>. This does not require that every latent common cause itself be observed: an observed variable lying on a confounding path can block that path even when the common cause behind it is latent (Chapter 3). What is required is that every noncausal path be intercepted by the observed set — and this can never be verified from the data alone.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1113,13 +1429,14 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Randomization <em>guarantees</em> ignorability: by construction, no back-door paths exist. Propensity scores <em>assume</em> ignorability: the analyst hopes all confounders have been measured and included in <span class="math inline">\(X\)</span>, but this can never be verified from data alone. This distinction — between identification secured by the study design and identification secured by a modeling assumption — is one of the most important dividing lines in causal inference.</p>
+<p>Randomization <em>guarantees</em> ignorability: by construction, no back-door paths exist, so the interventional and observational distributions coincide. Propensity scores <em>assume</em> ignorability: the analyst hopes that all confounders have been measured and included in <span class="math inline">\(X\)</span>, but this can never be verified from the data alone. This distinction — between identification secured by the study design and identification secured by a modeling assumption — is one of the most important dividing lines in causal inference.</p>
 </div>
 </div>
-<p><strong>Two complementary responses.</strong> <em>Sensitivity analysis</em> (Chapter 9) keeps the back-door framework but quantifies how strong an unmeasured confounder would have to be to overturn the conclusion. The <em>instrumental variable</em> approach (Chapter 7) abandons the unconfoundedness assumption entirely by exploiting an external source of variation in treatment independent of the unobserved confounders.</p>
+<p><strong>Two complementary responses.</strong> When unconfoundedness is in doubt, two distinct strategies are available and they answer different questions. <em>Sensitivity analysis</em> (Chapter 9) keeps the back-door framework but quantifies how strong an unmeasured confounder would have to be to overturn the conclusion: if the answer is “implausibly strong” the analysis is robust, whereas if the answer is “modest” the conclusion is fragile. The <em>instrumental variable</em> approach (Chapter 7) replaces the unconfoundedness assumption with a different set of identifying assumptions, exploiting an external source of variation in treatment that is independent of the unobserved treatment–outcome confounders. The hidden-confounding concern is thereby relocated, not eliminated: the instrument itself must be valid — unconfounded with the outcome and excluded from affecting it directly.</p>
 </section>
 <section id="the-road-to-instrumental-variables" class="level3" data-number="6.8.2">
 <h3 data-number="6.8.2" class="anchored" data-anchor-id="the-road-to-instrumental-variables"><span class="header-section-number">6.8.2</span> The Road to Instrumental Variables</h3>
+<p>The limitation of back-door adjustment motivates the search for alternative identification strategies when unobserved confounders are present. One canonical alternative — the one taken up next — is the instrumental variable (IV), studied in Chapter 7. It is not the only one: front-door identification (Chapter 3) and sensitivity analysis with partial identification (Chapter 9) are others.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1135,63 +1452,65 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Back-door adjustment (PS)</td>
-<td>All confounders are observed</td>
-<td>Condition on <span class="math inline">\(X\)</span> to block <span class="math inline">\(T \leftarrow U \to Y\)</span></td>
+<td>Back-door adjustment (propensity score)</td>
+<td>Observed pretreatment set blocks all back-door paths</td>
+<td>Condition on <span class="math inline">\(X\)</span> to block <span class="math inline">\(T \leftarrow U \rightarrow Y\)</span></td>
 </tr>
 <tr class="even">
 <td>Instrumental variables</td>
 <td>Some confounders may be unobserved</td>
-<td>Exploit exogenous variation <span class="math inline">\(Z \to T\)</span></td>
+<td>Exploit exogenous variation <span class="math inline">\(Z \rightarrow T\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>Under IV assumptions, the ratio of the <span class="math inline">\(Z\)</span>-induced change in <span class="math inline">\(Y\)</span> to the <span class="math inline">\(Z\)</span>-induced change in <span class="math inline">\(T\)</span> — the Wald estimator — identifies a causal parameter, typically the LATE among compliers. This is derived formally in Chapter 7.</p>
+<p>Back-door adjustment removes confounding by conditioning on observed variables. Instrumental variables take a different approach: instead of blocking the confounding path <span class="math inline">\(T \leftarrow U \rightarrow Y\)</span>, they isolate variation in <span class="math inline">\(T\)</span> induced by an external source <span class="math inline">\(Z\)</span> that is independent of <span class="math inline">\(U\)</span>. Under additional IV assumptions, the ratio of the <span class="math inline">\(Z\)</span>-induced change in <span class="math inline">\(Y\)</span> to the <span class="math inline">\(Z\)</span>-induced change in <span class="math inline">\(T\)</span> — the Wald estimator — identifies a causal parameter. In the binary instrument and treatment setting, under the additional <em>monotonicity</em> (no-defiers) assumption, that parameter is the local average treatment effect (LATE) among compliers. This is derived formally in Chapter 7.</p>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 520 210" width="100%" style="max-width:520px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="w6ia" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path></marker>
+    <marker id="w6ir" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#C00"></path></marker>
+  </defs>
+  <rect x="15" y="80" width="115" height="34" rx="4" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></rect>
+  <text x="72" y="102" text-anchor="middle" fill="#2E74B6">Instrument Z</text>
+  <rect x="200" y="80" width="115" height="34" rx="4" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></rect>
+  <text x="257" y="102" text-anchor="middle" fill="#2E74B6">Treatment T</text>
+  <rect x="385" y="80" width="115" height="34" rx="4" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></rect>
+  <text x="442" y="102" text-anchor="middle" fill="#2E74B6">Outcome Y</text>
+  <rect x="292" y="14" width="130" height="42" rx="4" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"></rect>
+  <text x="357" y="32" text-anchor="middle" fill="#C00" font-size="11">Unobserved</text>
+  <text x="357" y="47" text-anchor="middle" fill="#C00" font-size="11">Confounder U</text>
+  <line x1="130" y1="97" x2="192" y2="97" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#w6ia)"></line>
+  <text x="161" y="115" text-anchor="middle" fill="#1e3864" font-size="10" font-style="italic">Relevance</text>
+  <line x1="315" y1="97" x2="377" y2="97" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#w6ia)"></line>
+  <line x1="320" y1="52" x2="272" y2="76" stroke="#C00" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#w6ir)"></line>
+  <line x1="392" y1="52" x2="432" y2="76" stroke="#C00" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#w6ir)"></line>
+  <text x="72" y="140" text-anchor="middle" fill="#1e3864" font-size="10" font-style="italic">Exogenous: Z ⫫ U</text>
+  <text x="72" y="156" text-anchor="middle" fill="#1e3864" font-size="10" font-style="italic">Exclusion: Z affects Y</text>
+  <text x="72" y="171" text-anchor="middle" fill="#1e3864" font-size="10" font-style="italic">only through T</text>
+</svg>
+<figcaption>The instrumental variable design. $Z$ shifts treatment (relevance) but is independent of the unobserved confounder (exogeneity) and affects the outcome only through $T$ (exclusion).</figcaption>
+</figure>
 </section>
 </section>
-<section id="chapter-summary" class="level2" data-number="6.9">
-<h2 data-number="6.9" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">6.9</span> Chapter Summary</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th><strong>Symbol</strong></th>
-<th><strong>Meaning</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><span class="math inline">\(\pi(X)\)</span></td>
-<td>Propensity score <span class="math inline">\(P(T{=}1 \mid X)\)</span></td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(b(X)\)</span></td>
-<td>Generic balancing score; <span class="math inline">\(\pi(X)\)</span> is the coarsest</td>
-</tr>
-<tr class="odd">
-<td><span class="math inline">\(\hat\tau_{\mathrm{HT}}\)</span></td>
-<td>Horvitz–Thompson IPW estimator <a href="#eq-ht" class="quarto-xref">Equation&nbsp;<span>6.2</span></a></td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(\hat\tau_{\mathrm{HJ}}\)</span></td>
-<td>Hájek (self-normalized) IPW estimator <a href="#eq-hajek" class="quarto-xref">Equation&nbsp;<span>6.3</span></a></td>
-</tr>
-<tr class="odd">
-<td>NNM</td>
-<td>Nearest-neighbor matching estimator</td>
-</tr>
-</tbody>
-</table>
+<section id="summary" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="summary"><span class="header-section-number">6.9</span> Summary</h2>
 <ol type="1">
-<li><strong>The propensity score reduces dimension.</strong> Under unconfoundedness, <span class="math inline">\(\pi(X)\)</span> is a balancing score (<span class="math inline">\(T \indep X \mid \pi(X)\)</span>). By <span class="quarto-unresolved-ref">?thm-ps</span>, <span class="math inline">\((Y(0),Y(1)) \indep T \mid \pi(X)\)</span>, so identification requires adjustment for the scalar <span class="math inline">\(\pi(X)\)</span> alone.</li>
-<li><strong>IPW identification.</strong> The ATE is identified as <span class="math inline">\(\E[TY/\pi(X)] - \E[(1-T)Y/(1-\pi(X))]\)</span> under strong ignorability. The HT estimator is consistent but sensitive to extreme weights; the Hájek variant is recommended in practice.</li>
-<li><strong>Matching targets the ATT.</strong> Nearest-neighbor matching finds control units with similar propensity scores to each treated unit. It provides transparent covariate balance diagnostics but differs from IPW in estimand and methodology.</li>
-<li><strong>Positivity is necessary; strong overlap is needed for stable estimation.</strong> Positivity (<span class="math inline">\(0 &lt; \pi(X) &lt; 1\)</span> a.s.) is necessary for ATE identification. Strong overlap (<span class="math inline">\(c \le \pi(X) \le 1-c\)</span>) ensures stable <span class="math inline">\(\sqrt{n}\)</span>-inference. Trimming or re-targeting addresses near-violations.</li>
-<li><strong>The fundamental limitation.</strong> Unconfoundedness is untestable. When unobserved confounders are present, either sensitivity analysis or an instrumental variable is needed.</li>
+<li><p><strong>The propensity score reduces dimension.</strong> The propensity score <span class="math inline">\(\pi(X) = P(T{=}1 \mid X)\)</span> is a <em>balancing score</em> — <span class="math inline">\(T \indep X \mid \pi(X)\)</span> — for any treatment-assignment mechanism, with no causal assumption required. Under unconfoundedness and positivity, the balancing property upgrades to <span class="math inline">\((Y(0),Y(1)) \indep T \mid \pi(X)\)</span> (<span class="quarto-unresolved-ref">?thm-ps</span>), so identification requires adjustment for the scalar <span class="math inline">\(\pi(X)\)</span> alone, not the full vector <span class="math inline">\(X\)</span>.</p></li>
+<li><p><strong>IPW identification.</strong> Under consistency, weak conditional exchangeability for both treatment levels, positivity, and integrability, the ATE is identified by <a href="#eq-ipw-ate" class="quarto-xref">Equation&nbsp;<span>6.2</span></a> (<span class="quarto-unresolved-ref">?thm-ipw</span>); joint strong ignorability supplies the exchangeability and positivity components but is stronger than necessary, and consistency remains a separate assumption. The Horvitz–Thompson IPW estimator is consistent but can be sensitive to extreme weights; the Hájek variant is often more stable in finite samples. Augmented IPW (AIPW) can achieve higher efficiency under correct nuisance specification, as established formally in Chapter 11.</p></li>
+<li><p><strong>The matching procedure in this chapter targets the ATT.</strong> The nearest-neighbor matching estimator presented here finds control units with similar propensity scores to each treated unit. It is designed to target the ATT and provides transparent covariate balance diagnostics, but differs fundamentally from IPW weighting in estimand and methodology. More generally, matching procedures can be designed to target the ATT, ATC, or an ATE-like estimand depending on the matching design and weighting scheme.</p></li>
+<li><p><strong>Positivity is necessary; strong overlap is a standard sufficient condition for stable estimation.</strong> Positivity is necessary for identification of the ATE. Strong overlap is a stronger, convenient sufficient condition under which the standard <span class="math inline">\(\sqrt{n}\)</span>-consistent, asymptotically normal theory goes through. Near-violations of strong overlap create extreme IPW weights and large variance; trimming strategies address this at the cost of changing the estimand.</p></li>
+<li><p><strong>The fundamental limitation.</strong> Unconfoundedness is a strong, untestable assumption. When unobserved confounders are present, propensity score adjustment fails. An instrumental variable is one important alternative identification strategy (Chapter 7); others include front-door identification (Chapter 3) and sensitivity analysis with partial identification (Chapter 9).</p></li>
 </ol>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Comparison of Identification Strategies
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1213,48 +1532,56 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>Propensity-score adjustment</td>
-<td><span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span></td>
-<td>ATE or ATT</td>
+<td><span class="math inline">\((Y(0),Y(1)) \indep T \mid X\)</span> (sufficient adjustment set), positivity</td>
+<td>ATE, ATT, or ATC</td>
 </tr>
 <tr class="odd">
 <td>Instrumental variables</td>
-<td>Relevance, exogeneity, exclusion</td>
+<td>Relevance, exogeneity, exclusion; monotonicity for LATE</td>
 <td>LATE (compliers)</td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
 </section>
 <section id="problems" class="level2" data-number="6.10">
 <h2 data-number="6.10" class="anchored" data-anchor-id="problems"><span class="header-section-number">6.10</span> Problems</h2>
-<p><strong>1. Propensity score and balancing.</strong> Suppose <span class="math inline">\(X = (X_1, X_2)\)</span> with <span class="math inline">\(\mathrm{logit}(\pi(X)) = \beta_0 + \beta_1 X_1 + \beta_2 X_2\)</span>.</p>
+<p><strong>1. Propensity score and balancing.</strong> Suppose <span class="math inline">\(X = (X_1, X_2)\)</span>, where <span class="math inline">\(X_1\)</span> is binary and <span class="math inline">\(X_2\)</span> is continuous. The propensity score model is correctly specified as <span class="math inline">\(\mathrm{logit}(\pi(X)) = \beta_0 + \beta_1 X_1 + \beta_2 X_2\)</span>.</p>
 <ol type="a">
 <li>State and prove the Balancing Property <span class="math inline">\(T \indep X \mid \pi(X)\)</span>.</li>
-<li>Two units <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> have <span class="math inline">\(X_i = (1, 2.3)\)</span> and <span class="math inline">\(X_j = (0, 3.5)\)</span> but <span class="math inline">\(\hat\pi(X_i) = \hat\pi(X_j) = 0.4\)</span>. If <span class="math inline">\(i\)</span> is treated and <span class="math inline">\(j\)</span> is control, explain why comparing <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(Y_j\)</span> is a valid approximation to the counterfactual comparison, and what assumption is required.</li>
+<li>Two units <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> have <span class="math inline">\(X_i = (1, 2.3)\)</span> and <span class="math inline">\(X_j = (0, 3.5)\)</span> but <span class="math inline">\(\pi(X_i) = \pi(X_j) = 0.4\)</span> under the <em>true</em> propensity score. Explain what equality of the true propensity score implies about the conditional distribution of <span class="math inline">\(X\)</span> across treatment arms at this score value, and why this is a population-level balancing statement rather than an exact individual counterfactual equality: if <span class="math inline">\(i\)</span> is treated and <span class="math inline">\(j\)</span> is control, <span class="math inline">\(Y_j\)</span> is a noisy estimate of a conditional mean, not of <span class="math inline">\(Y_i(0)\)</span>. State the additional assumptions needed for propensity-score matching to consistently estimate the ATT.</li>
 <li>Explain why matching on <span class="math inline">\(\hat\pi(X)\)</span> is <em>not</em> the same as matching on <span class="math inline">\(X\)</span> directly. Under what conditions do they give the same answer?</li>
 </ol>
-<p><strong>2. ATE, ATT, and propensity score weighting.</strong> A dataset has <span class="math inline">\(n = 1000\)</span> observations with <span class="math inline">\(n_1 = 400\)</span> treated units.</p>
+<p><strong>2. ATE, ATT, and propensity score weighting.</strong> A dataset has <span class="math inline">\(n = 1000\)</span> observations with estimated propensity scores <span class="math inline">\(\hat\pi(X_i)\)</span> and <span class="math inline">\(n_1 = 400\)</span> treated units.</p>
 <ol type="a">
-<li>Write the Horvitz–Thompson IPW estimator of the ATE as a weighted sum of observed outcomes <span class="math inline">\(Y_i\)</span>. What weights do treated units receive? What weights do control units receive?</li>
-<li>Derive an analogous IPW estimator for the ATT. (<em>Hint</em>: the ATT averages over the treated distribution; the weight for control units should reflect the treatment odds.)</li>
-<li>Show that when <span class="math inline">\(\pi(X) = p\)</span> for all units, the IPW estimator of the ATE reduces to the difference-in-means estimator. Under what experimental design does <span class="math inline">\(\pi(X) = 0.5\)</span> exactly?</li>
+<li>Write the Horvitz–Thompson IPW estimator of the ATE as a weighted sum of observed outcomes. What weights do treated units receive? What weights do control units receive?</li>
+<li>Derive an analogous IPW estimator for the ATT. (<em>Hint</em>: the ATT averages over the treated distribution; the denominator of the weight for control units should reflect this.)</li>
+<li>Suppose the propensity score is constant: <span class="math inline">\(\pi(X) = p\)</span> for all units. Show that the Horvitz–Thompson IPW estimator of the ATE equals <span class="math display">\[\frac{n_1}{np}\,\bar Y_1 - \frac{n_0}{n(1-p)}\,\bar Y_0,\]</span> and conclude that it reduces to the difference in means only when the realized count satisfies <span class="math inline">\(n_1 = np\)</span> exactly — as under complete randomization with fixed arm sizes — whereas under Bernoulli assignment <span class="math inline">\(n_1\)</span> is random and the equality fails. Show that the Hájek estimator reduces to <span class="math inline">\(\bar Y_1 - \bar Y_0\)</span> <em>exactly</em> whenever the score is constant. Under which experimental designs does <span class="math inline">\(\pi(X) = 0.5\)</span> hold for each unit: Bernoulli randomization with <span class="math inline">\(P(T_i{=}1) = 0.5\)</span>, complete randomization with exactly <span class="math inline">\(n/2\)</span> treated, or both?</li>
 </ol>
-<p><strong>3. Overlap.</strong> Let <span class="math inline">\(\pi(X)\)</span> be the true propensity score and suppose <span class="math inline">\(\pi(x_0) = 1\)</span> for some <span class="math inline">\(x_0\)</span>.</p>
+<p><strong>3. Overlap.</strong> Let <span class="math inline">\(\pi(X)\)</span> be the true propensity score and suppose overlap fails on a set <span class="math inline">\(\mathcal{S}_1\)</span> of covariate values with <span class="math inline">\(P(X \in \mathcal{S}_1) &gt; 0\)</span>: <span class="math inline">\(\pi(x) = 1\)</span> for all <span class="math inline">\(x \in \mathcal{S}_1\)</span>. (For a continuous covariate, a violation at a single <span class="math inline">\(P_X\)</span>-null point would be harmless; positivity is a statement about non-null sets.)</p>
 <ol type="a">
-<li>For each of <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> and <span class="math inline">\(\tau_{\mathrm{ATT}}\)</span>, identify the formula that fails to be identified when <span class="math inline">\(\pi(x_0) = 1\)</span>, and explain why.</li>
-<li>Suppose overlap fails only on a set <span class="math inline">\(\mathcal{S}\)</span> with <span class="math inline">\(P(X \in \mathcal{S}) = 0.15\)</span>. Define the trimmed ATE estimand. How does it differ from the ATE?</li>
-<li>A researcher applies the <span class="citation" data-cites="crump2009dealing">Crump et al. (<a href="#ref-crump2009dealing" role="doc-biblioref">2009</a>)</span> rule with <span class="math inline">\(\eta = 0.1\)</span>, removing 8% of the sample. List two reasons the trimmed estimator may have lower variance, and state the cost in terms of external validity.</li>
+<li>For each of <span class="math inline">\(\tau_{\mathrm{ATE}}\)</span> and <span class="math inline">\(\tau_{\mathrm{ATT}}\)</span>, identify the exact formula that fails to be identified, and explain why. (<em>Hint</em>: consider whether <span class="math inline">\(\mathcal{S}_1\)</span> intersects the support of <span class="math inline">\(X \mid T{=}1\)</span>.)</li>
+<li>Suppose overlap fails only on a set <span class="math inline">\(\mathcal{S}\)</span> with <span class="math inline">\(P(X \in \mathcal{S}) = 0.15\)</span>. Define the <em>trimmed ATE</em> estimand. How does it differ from the ATE?</li>
+<li>A researcher applies the Crump et al.&nbsp;(2009) rule with <span class="math inline">\(\eta = 0.1\)</span>, removing 8% of the sample. (i) List two reasons the trimmed estimator may have lower variance than the untrimmed IPW estimator. (ii) What is the cost in terms of external validity?</li>
 </ol>
-<p><strong>4. Hidden confounding (preview of Chapter 9).</strong> Suppose you estimate <span class="math inline">\(\hat\tau_{\mathrm{ATE}} = 3.2\)</span> using propensity-score methods, and a referee questions whether unconfoundedness holds.</p>
+<p><strong>4. Covariate selection for the propensity model.</strong> A researcher has pretreatment covariates <span class="math inline">\(C\)</span>, <span class="math inline">\(P\)</span>, and <span class="math inline">\(Z\)</span>, and a post-treatment variable <span class="math inline">\(M\)</span>. In the assumed causal graph, <span class="math inline">\(C\)</span> is a confounder of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span>; <span class="math inline">\(P\)</span> predicts the outcome but not treatment; <span class="math inline">\(Z\)</span> strongly predicts treatment but has no causal relation to the potential outcomes; and <span class="math inline">\(M\)</span> is a mediator on the path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</p>
+<ol type="a">
+<li>Which variables belong in the propensity model when the target is the total effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span>? Justify each inclusion or exclusion using the taxonomy of <a href="#sec-w6-covariate-selection" class="quarto-xref"><span>Section 6.3.1</span></a>.</li>
+<li>Explain how including <span class="math inline">\(Z\)</span> may affect overlap, the distribution of the inverse-probability weights, and the effective sample size, even though it does not invalidate the adjustment set.</li>
+<li>Suppose the researcher discovers that <span class="math inline">\(C\)</span> was in fact measured <em>after</em> treatment for a subset of units. What concerns does this raise for the propensity design?</li>
+</ol>
+<p><strong>5. Hidden confounding (conceptual preview of Chapter 9).</strong> Suppose you estimate <span class="math inline">\(\hat\tau_{\mathrm{ATE}} = 3.2\)</span> using propensity-score methods, and a referee questions whether unconfoundedness holds.</p>
 <ol type="a">
 <li>Define what it means for <span class="math inline">\(U\)</span> to be a “hidden confounder” in the context of the DAG, and explain why its presence invalidates the IPW identification formula.</li>
-<li>Explain in words what it means for an estimated effect to be “robust to hidden confounding,” and why such an assessment depends on a quantitative yardstick. (Chapter 9 develops three formal yardsticks: Rosenbaum’s <span class="math inline">\(\Gamma\)</span>, the E-value, and the marginal sensitivity model.)</li>
-<li>Why does the IV strategy of Chapter 7 avoid the hidden-confounding problem entirely, and what assumption replaces unconfoundedness?</li>
+<li>Explain in words what it means for an estimated effect to be “robust to hidden confounding,” and why such an assessment is necessarily comparative: it depends on a quantitative yardstick for how strong an unmeasured confounder would have to be to overturn the conclusion. Without doing formal calculations, sketch the narrative a researcher might construct to argue that <span class="math inline">\(\hat\tau_{\mathrm{ATE}} = 3.2\)</span> would survive any plausible hidden confounder. (Chapter 9 develops three formal yardsticks: Rosenbaum’s <span class="math inline">\(\Gamma\)</span>, the E-value, and the marginal sensitivity model.)</li>
+<li>How can a valid instrumental variable identify a causal parameter despite unmeasured confounding between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> (Chapter 7)? State the assumptions that replace treatment–outcome unconfoundedness, and explain why unmeasured confounding between the <em>instrument</em> and the outcome would still invalidate the IV design.</li>
 </ol>
-<p><strong>5. Matching vs.&nbsp;IPW.</strong> You have <span class="math inline">\(n = 500\)</span> observations comparing Hájek IPW targeting the ATE (estimator A) and 1:1 nearest-neighbor matching targeting the ATT (estimator B).</p>
+<p><strong>6. Matching vs.&nbsp;IPW.</strong> You have <span class="math inline">\(n = 500\)</span> observations with a binary treatment and a scalar propensity score. You compare (A) the Hájek IPW estimator targeting the ATE and (B) 1:1 nearest-neighbor matching designed to target the ATT.</p>
 <ol type="a">
-<li>Explain in one sentence why estimators A and B target different estimands even though both use <span class="math inline">\(\hat\pi(X)\)</span>.</li>
-<li>After matching, the SMD for covariate <span class="math inline">\(X_1\)</span> is 0.05 (vs.&nbsp;0.45 before matching). What does this tell you about the success of matching, and what assumption does balance on observed covariates not verify?</li>
-<li>Under what condition on treatment effect heterogeneity are the ATE and ATT equal?</li>
+<li>Explain in one sentence why estimator (A) and estimator (B) target different estimands even though both use <span class="math inline">\(\hat\pi(X)\)</span>.</li>
+<li>In your matched sample, the standardized mean difference for covariate <span class="math inline">\(X_1\)</span> is 0.05 after matching and 0.45 before matching. What does this tell you about the success of matching, and what assumption does balance on observed covariates not verify?</li>
+<li>Under what condition on the treatment effect heterogeneity are the ATE and ATT equal?</li>
 </ol>
 
 
@@ -1262,11 +1589,20 @@ window.Quarto = {
 <div id="ref-abadie2006large" class="csl-entry" role="listitem">
 Abadie, Alberto, and Guido W. Imbens. 2006. <span>“Large Sample Properties of Matching Estimators for Average Treatment Effects.”</span> <em>Econometrica</em> 74 (1): 235–67.
 </div>
+<div id="ref-abadie2008failure" class="csl-entry" role="listitem">
+Abadie, Alberto, and Guido W. Imbens. 2008. <span>“On the Failure of the Bootstrap for Matching Estimators.”</span> <em>Econometrica</em> 76 (6): 1537–57. <a href="https://doi.org/10.3982/ECTA6474">https://doi.org/10.3982/ECTA6474</a>.
+</div>
 <div id="ref-abadie2016matching" class="csl-entry" role="listitem">
 Abadie, Alberto, and Guido W. Imbens. 2016. <span>“Matching on the Estimated Propensity Score.”</span> <em>Econometrica</em> 84 (2): 781–807. <a href="https://doi.org/10.3982/ECTA11293">https://doi.org/10.3982/ECTA11293</a>.
 </div>
+<div id="ref-brookhart2006variable" class="csl-entry" role="listitem">
+Brookhart, M. Alan, Sebastian Schneeweiss, Kenneth J. Rothman, Robert J. Glynn, Jerry Avorn, and Til Stürmer. 2006. <span>“Variable Selection for Propensity Score Models.”</span> <em>American Journal of Epidemiology</em> 163 (12): 1149–56. <a href="https://doi.org/10.1093/aje/kwj149">https://doi.org/10.1093/aje/kwj149</a>.
+</div>
 <div id="ref-crump2009dealing" class="csl-entry" role="listitem">
 Crump, Richard K., V. Joseph Hotz, Guido W. Imbens, and Oscar A. Mitnik. 2009. <span>“Dealing with Limited Overlap in Estimation of Average Treatment Effects.”</span> <em>Biometrika</em> 96 (1): 187–99. <a href="https://doi.org/10.1093/biomet/asn055">https://doi.org/10.1093/biomet/asn055</a>.
+</div>
+<div id="ref-hirano2003efficient" class="csl-entry" role="listitem">
+Hirano, Keisuke, Guido W. Imbens, and Geert Ridder. 2003. <span>“Efficient Estimation of Average Treatment Effects Using the Estimated Propensity Score.”</span> <em>Econometrica</em> 71 (4): 1161–89. <a href="https://doi.org/10.1111/1468-0262.00442">https://doi.org/10.1111/1468-0262.00442</a>.
 </div>
 <div id="ref-imbens2015causal" class="csl-entry" role="listitem">
 Imbens, Guido W., and Donald B. Rubin. 2015. <em>Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction</em>. Cambridge University Press.
@@ -1276,6 +1612,9 @@ Khan, Shakeeb, and Elie Tamer. 2010. <span>“Irregular Identification, Support 
 </div>
 <div id="ref-rosenbaum1983central" class="csl-entry" role="listitem">
 Rosenbaum, Paul R., and Donald B. Rubin. 1983. <span>“The Central Role of the Propensity Score in Observational Studies for Causal Effects.”</span> <em>Biometrika</em> 70 (1): 41–55.
+</div>
+<div id="ref-vanderweele2019principles" class="csl-entry" role="listitem">
+VanderWeele, Tyler J. 2019. <span>“Principles of Confounder Selection.”</span> <em>European Journal of Epidemiology</em> 34 (3): 211–19. <a href="https://doi.org/10.1007/s10654-019-00494-6">https://doi.org/10.1007/s10654-019-00494-6</a>.
 </div>
 <div id="ref-yang2016multilevel" class="csl-entry" role="listitem">
 Yang, Shu, Guido W. Imbens, Zhanglin Cui, Douglas E. Faries, and Zbigniew Kadziola. 2016. <span>“Propensity Score Matching and Stratification in Observational Studies with Multi-Level Treatments.”</span> <em>Biometrics</em> 72: 1055–65.
