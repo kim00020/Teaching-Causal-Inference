@@ -177,7 +177,7 @@ Throughout the identification theorems of this chapter, let $\mathcal{M}$ be a s
 If $\mathbf{S}$ satisfies the back-door criterion for the effect of $T$ on $Y$ in $\Gcal$ and, for discrete $T$, the positivity condition
 $$P(T{=}t \mid \mathbf{S}{=}\mathbf{s}) \;>\; 0 \quad \text{for } P_{\mathbf{S}}\text{-almost every } \mathbf{s}$$ {#eq-positivity}
 holds (for continuous $T$, replace @eq-positivity by the corresponding conditional-support requirement --- $t$ must lie in the support of $T \mid \mathbf{S}{=}\mathbf{s}$ for $P_{\mathbf{S}}$-almost every $\mathbf{s}$ --- together with the regularity conditions needed to define the conditional law at $t$; see Chapter 4), then:
-$$P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int P(y \mid T{=}t,\;\mathbf{S}{=}\mathbf{s})\,dP(\mathbf{s}).$$ {#eq-backdoor}
+$$P\!\left(y \mid \doop(T{=}t)\right) \;=\; \int P(y \mid T{=}t,\;\mathbf{S}{=}\mathbf{s})\,dP(\mathbf{s}).$$ {#eq-w3-backdoor}
 Equivalently, for any measurable function $h$ for which the displayed expectations are well-defined and finite,
 $$\E\!\left[h(Y) \mid \doop(T{=}t)\right] \;=\; \E_{\mathbf{S}}\!\Bigl[\E\bigl[h(Y) \mid T{=}t,\;\mathbf{S}\bigr]\Bigr].$$ {#eq-backdoor-exp}
 When $\mathbf{S}$ is discrete, the integral reduces to $\sum_{\mathbf{s}} P(y \mid t, \mathbf{s})\,P(\mathbf{s})$.
@@ -191,7 +191,7 @@ Condition @eq-positivity is the *positivity* (or *overlap*) assumption: the trea
 
 The derivation uses Rules 2 and 3 of the do-calculus; the complete three-step proof is given in @sec-w3-proofs.
 
-Equation @eq-backdoor is also known as the *standardization formula* or, in the epidemiological literature, the *g-formula* [@robins1986new]. Standardization is the point-treatment (single-time-point) special case of Robins's g-formula, which was developed for general time-varying treatments and covariates; the multi-period version underlies the theory of dynamic treatment regimes.
+Equation @eq-w3-backdoor is also known as the *standardization formula* or, in the epidemiological literature, the *g-formula* [@robins1986new]. Standardization is the point-treatment (single-time-point) special case of Robins's g-formula, which was developed for general time-varying treatments and covariates; the multi-period version underlies the theory of dynamic treatment regimes.
 
 The interpretation of the formula is important. Within each stratum $\mathbf{s}$, all back-door paths are blocked, so the conditional and interventional distributions coincide: $P(y \mid \doop(t), \mathbf{s}) = P(y \mid t, \mathbf{s})$ (proved as Step 3 in @sec-w3-proofs). The outer integration then weights the strata by the *population marginal* distribution $P(\mathbf{S})$, rather than the treatment-conditional distribution $P(\mathbf{S} \mid T{=}t)$ that a naive comparison implicitly uses --- this re-weighting, made explicit by the iterated-expectation form @eq-backdoor-exp, is what removes the confounding.
 

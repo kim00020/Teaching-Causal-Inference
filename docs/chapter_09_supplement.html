@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./chapter_10.html" rel="next">
+<link href="./chapter_09.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_04.html">Identification</a></li><li class="breadcrumb-item"><a href="./chapter_09_supplement.html">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Graphical Identification and the Do-Calculus</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Identification</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09_supplement.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Estimation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation and Semiparametric Efficiency</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Flexible Nuisance Estimation, Orthogonal Scores, and Cross-Fitting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation under Instrumental Variables</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-w9s-bias-proof" id="toc-sec-w9s-bias-proof" class="nav-link active" data-scroll-target="#sec-w9s-bias-proof">S.1 Proof of the Bias Decomposition</a></li>
+  <li><a href="#sec-w9s-rosenbaum" id="toc-sec-w9s-rosenbaum" class="nav-link" data-scroll-target="#sec-w9s-rosenbaum">S.2 Rosenbaum Reference Distributions</a></li>
+  <li><a href="#sec-w9s-evalue-proof" id="toc-sec-w9s-evalue-proof" class="nav-link" data-scroll-target="#sec-w9s-evalue-proof">S.3 A Binary-Confounder Derivation of the VanderWeele–Ding Bound</a></li>
+  <li><a href="#sec-w9s-msm" id="toc-sec-w9s-msm" class="nav-link" data-scroll-target="#sec-w9s-msm">S.4 MSM Computation: Perturbation Envelope and Linear-Fractional Optimization</a></li>
+  <li><a href="#sec-w9s-dag" id="toc-sec-w9s-dag" class="nav-link" data-scroll-target="#sec-w9s-dag">S.5 The Basic Unmeasured-Confounding DAG</a></li>
+  <li><a href="#sec-w9s-reporting" id="toc-sec-w9s-reporting" class="nav-link" data-scroll-target="#sec-w9s-reporting">S.6 A Worked Benchmarked-Reporting Example</a></li>
+  <li><a href="#sec-w9s-dr-vs-no" id="toc-sec-w9s-dr-vs-no" class="nav-link" data-scroll-target="#sec-w9s-dr-vs-no">S.7 Double Robustness and Neyman Orthogonality</a></li>
+  <li><a href="#sec-w9s-lab-se" id="toc-sec-w9s-lab-se" class="nav-link" data-scroll-target="#sec-w9s-lab-se">S.8 Lab: Monte Carlo SD versus Single-Replicate Standard Error</a></li>
+  <li><a href="#sec-w9s-lab-grid" id="toc-sec-w9s-lab-grid" class="nav-link" data-scroll-target="#sec-w9s-lab-grid">S.9 Lab: Extended Sensitivity Grid, Tipping Table, and Oracle Benchmarking</a></li>
+  <li><a href="#sec-w9s-problems" id="toc-sec-w9s-problems" class="nav-link" data-scroll-target="#sec-w9s-problems">S.10 Optional Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_04.html">Identification</a></li><li class="breadcrumb-item"><a href="./chapter_09_supplement.html">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-w9s" class="quarto-section-identifier">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This supplement collects material referenced as <em>optional</em> in Chapter 9: full proofs, the special-case E-value derivation, computational details for the marginal sensitivity model, the extended lab, a worked reporting example, and additional problems. References of the form <span class="quarto-unresolved-ref">?thm-bias-decomp</span> or <a href="chapter_09.html#eq-evalue" class="quarto-xref">Equation&nbsp;<span>9.20</span></a> point back into the main chapter.</p>
+<section id="sec-w9s-bias-proof" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-bias-proof">S.1 Proof of the Bias Decomposition</h2>
+<p><em>Proof of <span class="quarto-unresolved-ref">?thm-bias-decomp</span>.</em> Under conditional exchangeability given <span class="math inline">\((X, U)\)</span> and consistency, <span class="math display">\[\E[Y(t) \mid X=x] = \int \E(Y \mid T=t, X=x, U=u)\, f(u \mid X=x)\, du = \int m_t(x, u)\, f(u \mid X=x)\, du.\]</span> Iterating expectation over <span class="math inline">\(X\)</span>, <span class="math display">\[\E\{Y(t)\} = \E\!\left\{\int m_t(X, u)\, f(u \mid X)\, du\right\}, \qquad t \in \{0, 1\}.\]</span> In contrast, the conditional mean given <span class="math inline">\((T, X)\)</span> marginalizes <span class="math inline">\(U\)</span> over its distribution <em>conditional on</em> <span class="math inline">\(T\)</span>: <span class="math display">\[\E(Y \mid T=t, X) = \int m_t(X, u)\, f(u \mid T=t, X)\, du.\]</span> Taking expectations over <span class="math inline">\(X\)</span> and subtracting, <span class="math display">\[\begin{aligned}
+\Delta_{\mathrm{obs}} - \tau &amp;= \E\!\left\{\int m_1(X, u)\,[f(u \mid T=1, X) - f(u \mid X)]\, du\right\} \\
+&amp;\quad - \E\!\left\{\int m_0(X, u)\,[f(u \mid T=0, X) - f(u \mid X)]\, du\right\} = B. \qquad\square
+\end{aligned}\]</span></p>
+</section>
+<section id="sec-w9s-rosenbaum" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-rosenbaum">S.2 Rosenbaum Reference Distributions</h2>
+<p>Throughout, test Fisher’s sharp null of no treatment effect, <span class="math inline">\(Y_i(1) = Y_i(0)\)</span> for every unit <span class="math inline">\(i\)</span> (or, equivalently, outcomes adjusted by subtracting a specified constant additive effect); condition on the matched outcomes and covariates; and assume treatment assignments are independent across matched pairs, with exactly one treated unit per pair.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem S.1: <span class="math inline">\(\Gamma\)</span>-Bounds on the Rank Statistic
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a matched-pair design, the worst-case null distribution of a signed-score statistic under the <span class="math inline">\(\Gamma\)</span>-model is obtained by letting each pair-specific treatment probability range over the interval <span class="math inline">\([1/(1+\Gamma),\, \Gamma/(1+\Gamma)]\)</span> permitted by <a href="chapter_09.html#eq-gamma-bound" class="quarto-xref">Equation&nbsp;<span>9.15</span></a>. For the <em>sign test</em> the resulting bounding distributions are binomial with success probabilities <span class="math inline">\(\Gamma/(1+\Gamma)\)</span> and <span class="math inline">\(1/(1+\Gamma)\)</span>. For <em>Wilcoxon’s signed-rank statistic</em> they are not binomial: the bounds are distributions of weighted sums <span class="math inline">\(\sum_k c_k B_k\)</span> of independent Bernoulli variables <span class="math inline">\(B_k\)</span>, where the <span class="math inline">\(c_k\)</span> are the rank scores and each success probability is set to the corresponding endpoint.</p>
+</div>
+</div>
+<p><em>Proof sketch.</em> Under matching on <span class="math inline">\(X\)</span>, the two units in a pair have identical observed covariates, so which member of the pair receives treatment depends only on <span class="math inline">\(U\)</span>, through <a href="chapter_09.html#eq-gamma-bound" class="quarto-xref">Equation&nbsp;<span>9.15</span></a>. That constraint confines each pair-specific treatment probability to <span class="math inline">\([1/(1+\Gamma),\, \Gamma/(1+\Gamma)]\)</span>. Because a signed-score statistic is a sum of independent pair contributions that is stochastically monotone in those probabilities, setting every probability to a common endpoint yields stochastic bounds on its null distribution. A full development is in <span class="citation" data-cites="rosenbaum2002observational">Rosenbaum (<a href="#ref-rosenbaum2002observational" role="doc-biblioref">2002</a>)</span>. <span class="math inline">\(\square\)</span></p>
+</section>
+<section id="sec-w9s-evalue-proof" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-evalue-proof">S.3 A Binary-Confounder Derivation of the VanderWeele–Ding Bound</h2>
+<p><em>Proof of <a href="chapter_09.html#eq-vd-bound" class="quarto-xref">Equation&nbsp;<span>9.19</span></a>, binary-<span class="math inline">\(U\)</span> no-interaction case.</em> The restrictions imposed in this derivation — <span class="math inline">\(U\)</span> binary, and a <span class="math inline">\(U\)</span>–<span class="math inline">\(Y\)</span> risk ratio <span class="math inline">\(r(x)\)</span> common to both treatment arms — are <em>not</em> required by the theorem. They are imposed only to make the optimization solvable in closed form.</p>
+<p>Fix <span class="math inline">\(x\)</span>, write <span class="math inline">\(q_x = P(T{=}1 \mid X{=}x)\)</span>, <span class="math inline">\(p_t = P(U{=}1 \mid T{=}t, X{=}x)\)</span>, and note that <span class="math inline">\(p = P(U{=}1 \mid X{=}x) = q_x p_1 + (1-q_x) p_0\)</span> necessarily lies between <span class="math inline">\(p_0\)</span> and <span class="math inline">\(p_1\)</span>. Let <span class="math inline">\(r\)</span> denote the common <span class="math inline">\(U\)</span>–<span class="math inline">\(Y\)</span> risk ratio. Then <span class="math inline">\(p_1/p_0 \le \mathrm{RR}_{TU}\)</span> and <span class="math inline">\(r \le \mathrm{RR}_{UY}\)</span>. By the law of total probability applied to the <span class="math inline">\(U\)</span>-marginal within each arm, <span class="math display">\[\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x) = \frac{P(Y=1 \mid T=1, X=x, U=0)\,[1 + p_1(r - 1)]}{P(Y=1 \mid T=0, X=x, U=0)\,[1 + p_0(r - 1)]}.\]</span> The causal risk ratio at <span class="math inline">\(x\)</span> is <span class="math inline">\(\E[Y(1) \mid X=x] / \E[Y(0) \mid X=x]\)</span>, which, under conditional exchangeability given <span class="math inline">\((X, U)\)</span>, marginalizes <span class="math inline">\(U\)</span> over the <em>same</em> distribution <span class="math inline">\(P(U \mid X=x)\)</span> in both arms: <span class="math display">\[\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x) = \frac{P(Y=1 \mid T=1, X=x, U=0)\,[1 + p(r - 1)]}{P(Y=1 \mid T=0, X=x, U=0)\,[1 + p(r - 1)]}.\]</span> Because <span class="math inline">\(r\)</span> is common across arms, the factors <span class="math inline">\([1 + p(r-1)]\)</span> cancel, and taking the ratio of the observed to the causal risk ratio gives <span id="eq-vd-ratio"><span class="math display">\[\frac{\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x)}{\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x)} = \frac{1 + p_1(r - 1)}{1 + p_0(r - 1)}. \tag{1}\]</span></span></p>
+<p>It remains to maximize <a href="#eq-vd-ratio" class="quarto-xref">Equation&nbsp;<span>1</span></a> over <span class="math inline">\((p_0, p_1, r)\)</span> subject to <span class="math inline">\(p_1 \le 1\)</span>, <span class="math inline">\(p_1/p_0 \le \mathrm{RR}_{TU}\)</span>, and <span class="math inline">\(1 \le r \le \mathrm{RR}_{UY}\)</span>. Write <span class="math inline">\(s = r - 1 \ge 0\)</span>. The ratio <span class="math inline">\((1 + p_1 s)/(1 + p_0 s)\)</span> is nondecreasing in <span class="math inline">\(p_1\)</span> and nonincreasing in <span class="math inline">\(p_0\)</span>, so the maximum is attained at <span class="math inline">\(p_1 = 1\)</span> and at the smallest <span class="math inline">\(p_0\)</span> the constraint permits, namely <span class="math inline">\(p_0 = 1/\mathrm{RR}_{TU}\)</span>. Substituting, <span class="math display">\[\frac{1 + s}{1 + s/\mathrm{RR}_{TU}} = \frac{\mathrm{RR}_{TU}\,r}{\mathrm{RR}_{TU} + r - 1},\]</span> whose derivative in <span class="math inline">\(r\)</span> has the sign of <span class="math inline">\(\mathrm{RR}_{TU} - 1 \ge 0\)</span>, so it is maximized at <span class="math inline">\(r = \mathrm{RR}_{UY}\)</span>. This yields the closed-form bound <span class="math inline">\(B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})\)</span>.</p>
+<p>Under strict treatment positivity, the boundary value <span class="math inline">\(p_1 = 1\)</span> is not admissible: with <span class="math inline">\(p_0 &lt; 1\)</span> it would force <span class="math inline">\(P(T{=}1 \mid X, U{=}0) = 0\)</span>. The displayed bound is nevertheless sharp as a <em>supremum</em>: it is approached arbitrarily closely by taking <span class="math inline">\(p_1 \uparrow 1\)</span>, <span class="math inline">\(p_0 = p_1/\mathrm{RR}_{TU}\)</span>, and <span class="math inline">\(r \uparrow \mathrm{RR}_{UY}\)</span>, and equality is attained at <span class="math inline">\((p_1, p_0, r) = (1,\, 1/\mathrm{RR}_{TU},\, \mathrm{RR}_{UY})\)</span> if boundary treatment probabilities are allowed. This proves <a href="chapter_09.html#eq-vd-bound" class="quarto-xref">Equation&nbsp;<span>9.19</span></a>.</p>
+<p>For the E-value, set <span class="math inline">\(\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = e\)</span> and ask for the smallest <span class="math inline">\(e\)</span> such that the bound on the causal risk ratio reaches <span class="math inline">\(1\)</span>. This requires <span class="math inline">\(B(e, e) = R\)</span>, i.e.&nbsp;<span class="math inline">\(e^2/(2e - 1) = R\)</span>, so <span class="math inline">\(e^2 - 2Re + R = 0\)</span> and <span class="math inline">\(e = R + \sqrt{R(R-1)}\)</span>, which is <a href="chapter_09.html#eq-evalue" class="quarto-xref">Equation&nbsp;<span>9.20</span></a>.</p>
+<p>For <a href="chapter_09.html#eq-evalue-minmax" class="quarto-xref">Equation&nbsp;<span>9.21</span></a>, note that <span class="math inline">\(B\)</span> is nondecreasing in each argument, so <span class="math inline">\(B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) \leq B(m, m)\)</span> for <span class="math inline">\(m = \max(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})\)</span>. Hence <span class="math inline">\(B \geq R\)</span> forces <span class="math inline">\(B(m,m) \geq R = B(\mathrm{EV}, \mathrm{EV})\)</span>, and since <span class="math inline">\(e \mapsto B(e,e)\)</span> is strictly increasing this gives <span class="math inline">\(m \geq \mathrm{EV}\)</span>. The symmetric pair attains the minimum. For the first half of <a href="chapter_09.html#eq-cornfield-pair" class="quarto-xref">Equation&nbsp;<span>9.22</span></a>, note that <span class="math inline">\(B(a, b)\)</span> is increasing in <span class="math inline">\(b\)</span> with <span class="math inline">\(\lim_{b \to \infty} B(a,b) = a\)</span>, so <span class="math inline">\(B(a,b) &lt; a\)</span> for every finite <span class="math inline">\(b\)</span>; hence <span class="math inline">\(B \geq R\)</span> forces <span class="math inline">\(a \geq R\)</span>, and symmetrically <span class="math inline">\(b \geq R\)</span>. This is the classical Cornfield inequality. <span class="math inline">\(\square\)</span></p>
+</section>
+<section id="sec-w9s-msm" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-msm">S.4 MSM Computation: Perturbation Envelope and Linear-Fractional Optimization</h2>
+<p><em>Computational sketch (estimating the interval).</em> The population statement follows from the assumptions: under consistency, latent exchangeability, and true-propensity positivity, weighting by <span class="math inline">\(\pi^{\mathrm{true}}\)</span> identifies <span class="math inline">\(\tau\)</span>, and the MSM confines the true weights to an envelope around the nominal ones; optimizing the weighting estimand over this valid outer envelope yields <span class="math inline">\([\tau_L, \tau_U]\)</span>, which therefore contains <span class="math inline">\(\tau\)</span>.</p>
+<p>What follows describes the empirical version of this optimization. Under the MSM the weights used in weighting estimators can be written as <span class="math inline">\(w_i^{\mathrm{true}} = w_i \cdot \phi_i\)</span>, where <span class="math inline">\(w_i = T_i/\pi(X_i) + (1-T_i)/\{1-\pi(X_i)\}\)</span> is the nominal weight and <span class="math inline">\(\phi_i\)</span> is a perturbation factor. Solving <a href="chapter_09.html#eq-msm-bound" class="quarto-xref">Equation&nbsp;<span>9.23</span></a> for the treated arm gives <span class="math display">\[\phi_i = \frac{\pi(X_i)}{\pi^{\mathrm{true}}(X_i, U_i)} \;\in\; \big[\,\pi(X_i) + \{1 - \pi(X_i)\}/\Lambda,\;\; \pi(X_i) + \Lambda\,\{1 - \pi(X_i)\}\,\big],\]</span> and symmetrically for the control arm.</p>
+<p>Two features of this interval matter. First, it depends on <span class="math inline">\(\pi(X_i)\)</span> and is strictly contained in <span class="math inline">\([\Lambda^{-1}, \Lambda]\)</span>; treating each <span class="math inline">\(\phi_i\)</span> as freely selectable in <span class="math inline">\([\Lambda^{-1}, \Lambda]\)</span> therefore over-relaxes the constraint. Second, the perturbations across units are further linked by the normalization built into the estimator. The estimator in use is the self-normalized (Hájek) form, whose numerator and denominator are both linear in <span class="math inline">\(\phi\)</span>, so optimizing it is a <em>linear-fractional</em> program rather than a linear one. Such a program attains its extrema on the boundary, and the optimal assignment of units to endpoints is a threshold rule in the ordered outcome values, which is why the solution takes a percentile form. <span class="citation" data-cites="zhao2019sensitivity">Zhao et al. (<a href="#ref-zhao2019sensitivity" role="doc-biblioref">2019</a>)</span> derive the resulting percentile expressions and a percentile-bootstrap procedure for inference. <span class="math inline">\(\square\)</span></p>
+</section>
+<section id="sec-w9s-dag" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-dag">S.5 The Basic Unmeasured-Confounding DAG</h2>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 400 170" width="100%" style="max-width:400px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="w9sa" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path></marker>
+    <marker id="w9sg" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1A7A3A"></path></marker>
+  </defs>
+  <circle cx="40" cy="35" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="40" y="41" text-anchor="middle" fill="#2E74B6" font-weight="bold">X</text>
+  <circle cx="255" cy="35" r="20" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"></circle><text x="255" y="41" text-anchor="middle" fill="#C00" font-weight="bold">U</text>
+  <circle cx="130" cy="125" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="130" y="131" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="345" cy="125" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="345" y="131" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <line x1="55" y1="50" x2="116" y2="109" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9sa)"></line>
+  <path d="M 58 26 Q 200 -8 340 103" fill="none" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9sa)"></path>
+  <line x1="240" y1="50" x2="146" y2="109" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#w9sa)"></line>
+  <line x1="270" y1="50" x2="331" y2="109" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#w9sa)"></line>
+  <line x1="150" y1="125" x2="323" y2="125" stroke="#1A7A3A" stroke-width="2.4" marker-end="url(#w9sg)"></line>
+</svg>
+<figcaption>The unmeasured-confounding DAG. The observed covariate $X$ is adjusted for; $U$ is an unobserved common cause of $T$ and $Y$ (dashed). Back-door adjustment for $X$ alone closes the $X$ path but leaves the $T \leftarrow U \to Y$ path open. The causal effect $T \to Y$ (green) is the target.</figcaption>
+</figure>
+</section>
+<section id="sec-w9s-reporting" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-reporting">S.6 A Worked Benchmarked-Reporting Example</h2>
+<p>A well-benchmarked sensitivity analysis reads in the form:</p>
+<blockquote class="blockquote">
+<p>The estimated effect of the job-training program on employment at twelve months is a risk ratio of <span class="math inline">\(1.60\)</span> with 95% CI <span class="math inline">\([1.20, 2.10]\)</span>. The E-value is <span class="math inline">\(2.58\)</span> for the point estimate and <span class="math inline">\(1.69\)</span> for the lower confidence limit. Among the observed covariates, the largest bias factor is that of prior-year earnings, <span class="math inline">\(B = 1.35\)</span>, whose equivalent E-value is <span class="math inline">\(e = 1.35 + \sqrt{1.35 \times 0.35} = 2.04\)</span>; baseline education has <span class="math inline">\(B = 1.15\)</span> and <span class="math inline">\(e = 1.57\)</span>. Because <span class="math inline">\(2.58 &gt; 2.04\)</span>, the point estimate is robust to an unmeasured confounder as strong as any single observed covariate: explaining it away would require a confounder roughly 27% stronger than prior-year earnings on this scale. The lower confidence limit is not robust in the same sense, since <span class="math inline">\(1.69 &lt; 2.04\)</span>.</p>
+</blockquote>
+<p>The last two sentences are the output of benchmarking: they anchor the E-value to the observed data in a way that a substantive reader can interpret. Note also that the comparison is made on a single scale throughout — equivalent E-values against E-values — as <a href="chapter_09.html#eq-equivalent-evalue" class="quarto-xref">Equation&nbsp;<span>9.24</span></a> requires.</p>
+</section>
+<section id="sec-w9s-dr-vs-no" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-dr-vs-no">S.7 Double Robustness and Neyman Orthogonality</h2>
+<p>The AIPW score has two <em>distinct</em> robustness properties, and it is worth separating them, since they are often conflated.</p>
+<p><em>Double robustness</em> is a global property of the score: its population estimating equation remains unbiased if either the outcome model <span class="math inline">\(\mu_t(x)\)</span> or the propensity model <span class="math inline">\(\pi(x)\)</span> is correctly specified, even if the other is not.</p>
+<p><em>Neyman orthogonality</em> is a local property: the population score or moment map has zero Gateaux derivative with respect to the nuisance argument, evaluated at the truth. It says that first-order nuisance-estimation error does not propagate into the target.</p>
+<p>The two properties are distinct but related, and the relationship is asymmetric. Under the differentiability conditions of Chapters 11–12, a doubly robust population moment is automatically Neyman orthogonal at the intersection model: double robustness makes its expectation identically zero along either nuisance axis, so both axis derivatives vanish, and by linearity of the Gateaux derivative the joint nuisance derivative vanishes as well. The converse fails — local orthogonality at the truth does not deliver global unbiasedness when one nuisance component is misspecified. The AIPW score has both properties.</p>
+<p>Only orthogonality directly supplies the local product-rate argument used for root-<span class="math inline">\(n\)</span> inference with flexible nuisance estimators. Together with cross-fitting, it means the requirement on the nuisance estimators is a <em>product</em>-rate condition, <span class="math display">\[\|\hat\mu - \mu_0\|_{L_2(P)}\;\|\hat\pi - \pi_0\|_{L_2(P)} = o_p(n^{-1/2}),\]</span> together with overlap, moment, consistency, and score-regularity conditions. The familiar symmetric sufficient condition is that each nuisance error be <span class="math inline">\(o_p(n^{-1/4})\)</span> — note <span class="math inline">\(o_p\)</span>, not <span class="math inline">\(O_p\)</span> — which is what delivers <span class="math inline">\(\sqrt{n}\)</span>-asymptotics and a normal limit. Both properties address estimation under correctly maintained identifying assumptions.</p>
+</section>
+<section id="sec-w9s-lab-se" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-lab-se">S.8 Lab: Monte Carlo SD versus Single-Replicate Standard Error</h2>
+<p>The Monte Carlo standard deviation describes the repeated-sampling spread of the estimator across simulation runs. It is not itself the standard error an analyst would compute from a single realized data set; that requires a replicate-specific variance estimator, here the usual OLS standard error for the coefficient on <span class="math inline">\(T\)</span>, which in this design tracks the Monte Carlo standard deviation closely. Using that estimator, a typical single-replicate 95% interval is approximately <span class="math inline">\([2.98,\, 3.37]\)</span>. The naive estimator is badly biased, and the interval is narrow and does not contain the truth.</p>
+</section>
+<section id="sec-w9s-lab-grid" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-lab-grid">S.9 Lab: Extended Sensitivity Grid, Tipping Table, and Oracle Benchmarking</h2>
+<p><strong>Oracle parameter-scale comparison — not observed-covariate benchmarking.</strong> The following comparison is indexed by the structural coefficients of the simulated DGP. It is an oracle comparison, not an estimator-matched observed-covariate benchmark: matching <span class="math inline">\(X\)</span>’s structural treatment and outcome coefficients gives <span class="math inline">\((\alpha_U, \delta) = (0.6,\, 0.8)\)</span>, but these quantities are not available to the analyst and do not equal the benchmark pair required for the OLS estimator. The analyst-facing benchmark remains <span class="math inline">\((d_X^{\mathrm{OLS}}, \hat\gamma_X) \approx (0.472,\, 0.605)\)</span>, as derived in the main chapter’s lab.</p>
+<p>The table below reports the sensitivity-adjusted estimate <span class="math inline">\(\hat\tau_{\mathrm{sens}} = \hat\tau_X - B\)</span> over a grid of <span class="math inline">\((\alpha_U, \delta)\)</span> values. The coefficient <span class="math inline">\(\theta_U\)</span> is computed from a large oracle run under each posited <span class="math inline">\(\alpha_U\)</span> — that is, using the simulated <span class="math inline">\(U\)</span>, which a real analyst would not have — and is displayed in the header row.</p>
+<table class="caption-top table">
+<caption>Sensitivity-adjusted ATE estimate for Lab 9, at <span class="math inline">\(\hat\tau_X = 3.172\)</span>. Each cell is <span class="math inline">\(\hat\tau_{\mathrm{sens}} = \hat\tau_X - \delta \cdot \theta_U(\alpha_U)\)</span>. The true configuration is <span class="math inline">\((\alpha_U = 1.00,\, \delta = 2.0)\)</span>, with sensitivity-adjusted value <span class="math inline">\(1.508 \approx \tau = 1.5\)</span> (checkmark).</caption>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Posited <span class="math inline">\(\delta\)</span></th>
+<th><span class="math inline">\(\alpha_U = 0.25\)</span> (<span class="math inline">\(\theta_U = 0.247\)</span>)</th>
+<th><span class="math inline">\(0.50\)</span> (<span class="math inline">\(0.473\)</span>)</th>
+<th><span class="math inline">\(0.75\)</span> (<span class="math inline">\(0.670\)</span>)</th>
+<th><span class="math inline">\(1.00\)</span> (<span class="math inline">\(0.832\)</span>)</th>
+<th><span class="math inline">\(1.50\)</span> (<span class="math inline">\(1.068\)</span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(0.5\)</span></td>
+<td><span class="math inline">\(3.049\)</span></td>
+<td><span class="math inline">\(2.936\)</span></td>
+<td><span class="math inline">\(2.837\)</span></td>
+<td><span class="math inline">\(2.756\)</span></td>
+<td><span class="math inline">\(2.638\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(1.0\)</span></td>
+<td><span class="math inline">\(2.925\)</span></td>
+<td><span class="math inline">\(2.699\)</span></td>
+<td><span class="math inline">\(2.502\)</span></td>
+<td><span class="math inline">\(2.340\)</span></td>
+<td><span class="math inline">\(2.104\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(1.5\)</span></td>
+<td><span class="math inline">\(2.802\)</span></td>
+<td><span class="math inline">\(2.463\)</span></td>
+<td><span class="math inline">\(2.167\)</span></td>
+<td><span class="math inline">\(1.924\)</span></td>
+<td><span class="math inline">\(1.570\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(2.0\)</span></td>
+<td><span class="math inline">\(2.678\)</span></td>
+<td><span class="math inline">\(2.226\)</span></td>
+<td><span class="math inline">\(1.832\)</span></td>
+<td><strong>1.508</strong> ✓</td>
+<td><span class="math inline">\(1.036\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(3.0\)</span></td>
+<td><span class="math inline">\(2.431\)</span></td>
+<td><span class="math inline">\(1.753\)</span></td>
+<td><span class="math inline">\(1.162\)</span></td>
+<td><span class="math inline">\(0.676\)</span></td>
+<td><span class="math inline">\(-0.032\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tipping points and benchmarking.</strong> The tipping point along each column is the value of <span class="math inline">\(\delta\)</span> at which the sensitivity-adjusted estimate reaches zero. Analytically, <span class="math inline">\(\delta^\star(\alpha_U) = \hat\tau_X / \theta_U(\alpha_U)\)</span>. Computed values:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\alpha_U\)</span></th>
+<th><span class="math inline">\(\theta_U\)</span></th>
+<th><span class="math inline">\(\delta^\star\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(0.25\)</span></td>
+<td><span class="math inline">\(0.247\)</span></td>
+<td><span class="math inline">\(12.84\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(0.50\)</span></td>
+<td><span class="math inline">\(0.473\)</span></td>
+<td><span class="math inline">\(6.71\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(0.75\)</span></td>
+<td><span class="math inline">\(0.670\)</span></td>
+<td><span class="math inline">\(4.73\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(1.00\)</span></td>
+<td><span class="math inline">\(0.832\)</span></td>
+<td><span class="math inline">\(3.81\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(1.50\)</span></td>
+<td><span class="math inline">\(1.068\)</span></td>
+<td><span class="math inline">\(2.97\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>On the structural-coefficient scale, <span class="math inline">\(X\)</span> enters the treatment model with coefficient <span class="math inline">\(0.6\)</span> and the outcome model with coefficient <span class="math inline">\(0.8\)</span>; the corresponding oracle auxiliary coefficient is <span class="math inline">\(\theta_U(0.6) = 0.556\)</span>. All comparisons below are on this oracle scale.</p>
+<ul>
+<li>At <span class="math inline">\(\alpha_U = 1.00\)</span>, <span class="math inline">\(\delta^\star = 3.81\)</span>: at that imbalance an unmeasured confounder would need an outcome association (oracle structural-coefficient scale) about <span class="math inline">\(3.81/0.8 \approx 4.8\)</span> times <span class="math inline">\(X\)</span>’s structural coefficient to zero out the estimate. This holds the imbalance fixed at a value larger than <span class="math inline">\(X\)</span>’s and compares outcome coefficients only.</li>
+<li>A confounder matching <span class="math inline">\(X\)</span>’s <em>structural</em> coefficients on both margins (<span class="math inline">\(\alpha_U = 0.6\)</span>, <span class="math inline">\(\delta = 0.8\)</span>) adjusts the estimate to <span class="math inline">\(\hat\tau_X - 0.8 \cdot 0.556 \approx 2.73\)</span> — still positive and far from zero. At that imbalance the tipping value is <span class="math inline">\(\delta^\star = 3.172/0.556 \approx 5.71\)</span>, roughly <span class="math inline">\(7\)</span> times <span class="math inline">\(X\)</span>’s structural outcome coefficient.</li>
+<li>The true <span class="math inline">\(\delta\)</span> in the DGP is <span class="math inline">\(2.0 = 2.5\gamma_X\)</span> at <span class="math inline">\(\alpha_U = 1.0\)</span>; the sensitivity adjustment at this configuration recovers <span class="math inline">\(1.508 \approx \tau\)</span>, confirming <a href="chapter_09.html#eq-lab-bias" class="quarto-xref">Equation&nbsp;<span>9.37</span></a>.</li>
+</ul>
+</section>
+<section id="sec-w9s-problems" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w9s-problems">S.10 Optional Problems</h2>
+<p><strong>S1. Sampling vs.&nbsp;identification uncertainty.</strong> Explain in your own words the difference between a narrow sampling confidence interval and a robust causal conclusion. Construct an example data-generating process, with numerical parameters and a stated sample size <span class="math inline">\(n\)</span> (choose one and report it; <span class="math inline">\(n = 5000\)</span> is a convenient default), in which the confidence interval for a back-door-adjusted ATE is very narrow — take the estimator’s standard error below <span class="math inline">\(0.05\)</span> — yet the true ATE lies outside it. Specify the treatment and outcome models, the omitted confounder, and which estimator you are using. In reporting, distinguish carefully between the Monte Carlo standard deviation of the estimator across simulation replicates and the standard error estimated from a single realized data set; state which one your <span class="math inline">\(0.05\)</span> refers to. Finally, identify the identifying assumption that is violated and the magnitude of the violation.</p>
+<p><strong>S2. IV sensitivity curve.</strong> In a scalar-IV model with <span class="math inline">\(\mathrm{Cov}(Y, Z) = 3\)</span>, <span class="math inline">\(\mathrm{Cov}(T, Z) = 1.5\)</span>, <span class="math inline">\(\mathrm{Var}(Z) = 1\)</span>:</p>
+<ol type="a">
+<li>Use <a href="chapter_09.html#eq-beta-delta" class="quarto-xref">Equation&nbsp;<span>9.33</span></a> to compute <span class="math inline">\(\hat\beta(\delta)\)</span> for <span class="math inline">\(\delta \in \{0, 0.5, 1.0, 1.5, 2.0\}\)</span>.</li>
+<li>Find the tipping point <span class="math inline">\(\delta^\star\)</span>.</li>
+<li>Repeat part (a) for the weaker-instrument case <span class="math inline">\(\mathrm{Cov}(T, Z) = 0.5\)</span> (keeping the other quantities fixed). Explain why the same <span class="math inline">\(\delta\)</span> produces a larger bias.</li>
+</ol>
+<p><strong>S3. Positivity sensitivity.</strong> Explain why the trimmed estimand <span class="math inline">\(\tau_\alpha\)</span> of <a href="chapter_09.html#eq-trimmed-ate" class="quarto-xref">Equation&nbsp;<span>9.29</span></a> is generally not equal to the untrimmed ATE <span class="math inline">\(\tau\)</span>. In a data set with <span class="math inline">\(\pi(X)\)</span> distributed uniformly on <span class="math inline">\([0, 1]\)</span>, what fraction of the population is retained at trimming levels <span class="math inline">\(\alpha \in \{0.01, 0.05, 0.10, 0.20\}\)</span>? Under what scientific questions is <span class="math inline">\(\tau_\alpha\)</span> preferable to <span class="math inline">\(\tau\)</span> as a target?</p>
+<p><strong>S4. Mediation sensitivity.</strong> In a mediation study of a behavioral intervention (<span class="math inline">\(T\)</span>) on depression (<span class="math inline">\(Y\)</span>) through sleep quality (<span class="math inline">\(M\)</span>), explain why randomization of <span class="math inline">\(T\)</span> alone does not eliminate the need for a sensitivity analysis for the indirect effect. Then represent a nonzero residual correlation <span class="math inline">\(\rho\)</span> in <a href="chapter_09.html#eq-rho-def" class="quarto-xref">Equation&nbsp;<span>9.36</span></a> graphically, in two equivalent ways: as an unobserved common cause of <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span>, and as a bidirected edge between the two disturbances. Explain why no single <em>directed</em> arrow in the DAG is equivalent to a residual correlation. Using the two-panel figure in <a href="chapter_09.html#sec-w9-mediation" class="quarto-xref"><span>Sensitivity in Mediation Analysis</span></a>, state which panel your graph corresponds to and what would change if the unobserved common cause were itself affected by <span class="math inline">\(T\)</span>. Finally, give a plausible scientific story in which the residual correlation could be large.</p>
+<p><strong>S5. Comparing the <span class="math inline">\(\Gamma\)</span> and MSM models.</strong> Both models bound an odds ratio at a level (<span class="math inline">\(\Gamma\)</span> or <span class="math inline">\(\Lambda\)</span>). State precisely which conditional odds ratio each model bounds and which design each attaches to. Explain why equal numerical levels <span class="math inline">\(\Gamma = \Lambda\)</span> need not represent the same amount of unmeasured confounding, and identify which model’s one-number summary is a statement about a <span class="math inline">\(p\)</span>-value and which is an interval for the ATE.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-rosenbaum2002observational" class="csl-entry" role="listitem">
+Rosenbaum, Paul R. 2002. <em>Observational Studies</em>. 2nd ed. Springer. <a href="https://doi.org/10.1007/978-1-4757-3692-2">https://doi.org/10.1007/978-1-4757-3692-2</a>.
+</div>
+<div id="ref-zhao2019sensitivity" class="csl-entry" role="listitem">
+Zhao, Qingyuan, Dylan S. Small, and Bhaswar B. Bhattacharya. 2019. <span>“Sensitivity Analysis for Inverse Probability Weighting Estimators via the Percentile Bootstrap.”</span> <em>Journal of the Royal Statistical Society, Series B</em> 81 (4): 735–61. <a href="https://doi.org/10.1111/rssb.12327">https://doi.org/10.1111/rssb.12327</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_09.html" class="pagination-link" aria-label="Sensitivity Analysis and Partial Identification">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./chapter_10.html" class="pagination-link" aria-label="Estimating Equations and Influence Functions">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -407,14 +407,14 @@ The expected first-stage $F$-statistic is approximately $n\pi^2 = 500\pi^2$. The
 The structural DGP has an exact translation into the potential outcomes language of Chapter 4, which makes explicit *why* OLS fails and *why* IV succeeds.
 
 **Potential outcomes.** The latent background factor $\varepsilon_i$ is fixed for each unit across all counterfactual worlds. The potential outcome under treatment value $t$ is therefore
-$$Y_i(t) \;=\; \beta t + \varepsilon_i.$$ {#eq-lab-po}
+$$Y_i(t) \;=\; \beta t + \varepsilon_i.$$ {#eq-w7-lab-po}
 The observed outcome satisfies $Y_i = Y_i(T_i)$, which is consistency. Because $\varepsilon_i$ does not depend on $t$, the individual treatment effect is constant: $Y_i(t) - Y_i(t') = \beta(t - t')$ for all $i$. This is exactly Framework 1: $\beta$ is simultaneously the ATE, the ATT, and the LATE.
 
 **The unobserved confounder.** The shared factor $U_i$ enters both the treatment assignment and the background outcome. Because $\varepsilon_i$ depends on $U_i$ and $\eta_i = U_i$, units with large $T_i$ (driven by large $U_i$) also tend to have large $\varepsilon_i$, and hence large $Y_i$, *even if $\beta = 0$*. Formally,
 $$\mathrm{Cov}\!\bigl(Y_i(t),\, T_i\bigr) = \mathrm{Cov}(\varepsilon_i,\, \eta_i) = \rho \;\neq\; 0,$$
 so unconfoundedness fails. The parameter $\rho$ is precisely the *degree of violation*.
 
-**Why IV restores identification.** The instrument $Z_i$ is drawn independently of $U_i$ and $\xi_i$, so $Z_i \indep U_i$ implies $Z_i \indep \varepsilon_i$ --- exogeneity, satisfied by construction. The instrument does not appear in $Y_i(t)$ (@eq-lab-po), which is the exclusion restriction: $Y_i(t, z) = Y_i(t)$ for all $z$. And $Z_i$ moves $T_i$ through $\pi$, which is relevance. All three IV assumptions hold exactly by construction.
+**Why IV restores identification.** The instrument $Z_i$ is drawn independently of $U_i$ and $\xi_i$, so $Z_i \indep U_i$ implies $Z_i \indep \varepsilon_i$ --- exogeneity, satisfied by construction. The instrument does not appear in $Y_i(t)$ (@eq-w7-lab-po), which is the exclusion restriction: $Y_i(t, z) = Y_i(t)$ for all $z$. And $Z_i$ moves $T_i$ through $\pi$, which is relevance. All three IV assumptions hold exactly by construction.
 
 **What varies across the grid.** The potential outcomes $Y_i(t)$ are *the same* for every value of $\pi$ --- the parameter $\pi$ governs only how strongly the instrument shifts treatment. All that changes for OLS as $\pi$ grows is that more of $T_i$'s variance comes from the clean source $Z_i$ rather than from the confounded source $U_i$, which partially dilutes the endogeneity bias. But because the potential outcomes themselves are unchanged, $\beta = 1$ remains the target at every row of the table.
 :::

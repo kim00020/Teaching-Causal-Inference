@@ -1,0 +1,163 @@
+---
+engine: knitr
+---
+
+# Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab {#sec-w9s .unnumbered}
+
+This supplement collects material referenced as *optional* in Chapter 9: full proofs, the special-case E-value derivation, computational details for the marginal sensitivity model, the extended lab, a worked reporting example, and additional problems. References of the form @thm-bias-decomp or @eq-evalue point back into the main chapter.
+
+## S.1 Proof of the Bias Decomposition {#sec-w9s-bias-proof}
+
+*Proof of @thm-bias-decomp.* Under conditional exchangeability given $(X, U)$ and consistency,
+$$\E[Y(t) \mid X=x] = \int \E(Y \mid T=t, X=x, U=u)\, f(u \mid X=x)\, du = \int m_t(x, u)\, f(u \mid X=x)\, du.$$
+Iterating expectation over $X$,
+$$\E\{Y(t)\} = \E\!\left\{\int m_t(X, u)\, f(u \mid X)\, du\right\}, \qquad t \in \{0, 1\}.$$
+In contrast, the conditional mean given $(T, X)$ marginalizes $U$ over its distribution *conditional on* $T$:
+$$\E(Y \mid T=t, X) = \int m_t(X, u)\, f(u \mid T=t, X)\, du.$$
+Taking expectations over $X$ and subtracting,
+$$\begin{aligned}
+\Delta_{\mathrm{obs}} - \tau &= \E\!\left\{\int m_1(X, u)\,[f(u \mid T=1, X) - f(u \mid X)]\, du\right\} \\
+&\quad - \E\!\left\{\int m_0(X, u)\,[f(u \mid T=0, X) - f(u \mid X)]\, du\right\} = B. \qquad\square
+\end{aligned}$$
+
+## S.2 Rosenbaum Reference Distributions {#sec-w9s-rosenbaum}
+
+Throughout, test Fisher's sharp null of no treatment effect, $Y_i(1) = Y_i(0)$ for every unit $i$ (or, equivalently, outcomes adjusted by subtracting a specified constant additive effect); condition on the matched outcomes and covariates; and assume treatment assignments are independent across matched pairs, with exactly one treated unit per pair.
+
+::: {.callout-tip icon=false}
+## Theorem S.1: $\Gamma$-Bounds on the Rank Statistic {#thm-gamma-bounds}
+
+For a matched-pair design, the worst-case null distribution of a signed-score statistic under the $\Gamma$-model is obtained by letting each pair-specific treatment probability range over the interval $[1/(1+\Gamma),\, \Gamma/(1+\Gamma)]$ permitted by @eq-gamma-bound. For the *sign test* the resulting bounding distributions are binomial with success probabilities $\Gamma/(1+\Gamma)$ and $1/(1+\Gamma)$. For *Wilcoxon's signed-rank statistic* they are not binomial: the bounds are distributions of weighted sums $\sum_k c_k B_k$ of independent Bernoulli variables $B_k$, where the $c_k$ are the rank scores and each success probability is set to the corresponding endpoint.
+:::
+
+*Proof sketch.* Under matching on $X$, the two units in a pair have identical observed covariates, so which member of the pair receives treatment depends only on $U$, through @eq-gamma-bound. That constraint confines each pair-specific treatment probability to $[1/(1+\Gamma),\, \Gamma/(1+\Gamma)]$. Because a signed-score statistic is a sum of independent pair contributions that is stochastically monotone in those probabilities, setting every probability to a common endpoint yields stochastic bounds on its null distribution. A full development is in @rosenbaum2002observational. $\square$
+
+## S.3 A Binary-Confounder Derivation of the VanderWeele--Ding Bound {#sec-w9s-evalue-proof}
+
+*Proof of @eq-vd-bound, binary-$U$ no-interaction case.* The restrictions imposed in this derivation --- $U$ binary, and a $U$--$Y$ risk ratio $r(x)$ common to both treatment arms --- are *not* required by the theorem. They are imposed only to make the optimization solvable in closed form.
+
+Fix $x$, write $q_x = P(T{=}1 \mid X{=}x)$, $p_t = P(U{=}1 \mid T{=}t, X{=}x)$, and note that $p = P(U{=}1 \mid X{=}x) = q_x p_1 + (1-q_x) p_0$ necessarily lies between $p_0$ and $p_1$. Let $r$ denote the common $U$--$Y$ risk ratio. Then $p_1/p_0 \le \mathrm{RR}_{TU}$ and $r \le \mathrm{RR}_{UY}$. By the law of total probability applied to the $U$-marginal within each arm,
+$$\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x) = \frac{P(Y=1 \mid T=1, X=x, U=0)\,[1 + p_1(r - 1)]}{P(Y=1 \mid T=0, X=x, U=0)\,[1 + p_0(r - 1)]}.$$
+The causal risk ratio at $x$ is $\E[Y(1) \mid X=x] / \E[Y(0) \mid X=x]$, which, under conditional exchangeability given $(X, U)$, marginalizes $U$ over the *same* distribution $P(U \mid X=x)$ in both arms:
+$$\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x) = \frac{P(Y=1 \mid T=1, X=x, U=0)\,[1 + p(r - 1)]}{P(Y=1 \mid T=0, X=x, U=0)\,[1 + p(r - 1)]}.$$
+Because $r$ is common across arms, the factors $[1 + p(r-1)]$ cancel, and taking the ratio of the observed to the causal risk ratio gives
+$$\frac{\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x)}{\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x)} = \frac{1 + p_1(r - 1)}{1 + p_0(r - 1)}.$$ {#eq-vd-ratio}
+
+It remains to maximize @eq-vd-ratio over $(p_0, p_1, r)$ subject to $p_1 \le 1$, $p_1/p_0 \le \mathrm{RR}_{TU}$, and $1 \le r \le \mathrm{RR}_{UY}$. Write $s = r - 1 \ge 0$. The ratio $(1 + p_1 s)/(1 + p_0 s)$ is nondecreasing in $p_1$ and nonincreasing in $p_0$, so the maximum is attained at $p_1 = 1$ and at the smallest $p_0$ the constraint permits, namely $p_0 = 1/\mathrm{RR}_{TU}$. Substituting,
+$$\frac{1 + s}{1 + s/\mathrm{RR}_{TU}} = \frac{\mathrm{RR}_{TU}\,r}{\mathrm{RR}_{TU} + r - 1},$$
+whose derivative in $r$ has the sign of $\mathrm{RR}_{TU} - 1 \ge 0$, so it is maximized at $r = \mathrm{RR}_{UY}$. This yields the closed-form bound $B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})$.
+
+Under strict treatment positivity, the boundary value $p_1 = 1$ is not admissible: with $p_0 < 1$ it would force $P(T{=}1 \mid X, U{=}0) = 0$. The displayed bound is nevertheless sharp as a *supremum*: it is approached arbitrarily closely by taking $p_1 \uparrow 1$, $p_0 = p_1/\mathrm{RR}_{TU}$, and $r \uparrow \mathrm{RR}_{UY}$, and equality is attained at $(p_1, p_0, r) = (1,\, 1/\mathrm{RR}_{TU},\, \mathrm{RR}_{UY})$ if boundary treatment probabilities are allowed. This proves @eq-vd-bound.
+
+For the E-value, set $\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = e$ and ask for the smallest $e$ such that the bound on the causal risk ratio reaches $1$. This requires $B(e, e) = R$, i.e. $e^2/(2e - 1) = R$, so $e^2 - 2Re + R = 0$ and $e = R + \sqrt{R(R-1)}$, which is @eq-evalue.
+
+For @eq-evalue-minmax, note that $B$ is nondecreasing in each argument, so $B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) \leq B(m, m)$ for $m = \max(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})$. Hence $B \geq R$ forces $B(m,m) \geq R = B(\mathrm{EV}, \mathrm{EV})$, and since $e \mapsto B(e,e)$ is strictly increasing this gives $m \geq \mathrm{EV}$. The symmetric pair attains the minimum. For the first half of @eq-cornfield-pair, note that $B(a, b)$ is increasing in $b$ with $\lim_{b \to \infty} B(a,b) = a$, so $B(a,b) < a$ for every finite $b$; hence $B \geq R$ forces $a \geq R$, and symmetrically $b \geq R$. This is the classical Cornfield inequality. $\square$
+
+## S.4 MSM Computation: Perturbation Envelope and Linear-Fractional Optimization {#sec-w9s-msm}
+
+*Computational sketch (estimating the interval).* The population statement follows from the assumptions: under consistency, latent exchangeability, and true-propensity positivity, weighting by $\pi^{\mathrm{true}}$ identifies $\tau$, and the MSM confines the true weights to an envelope around the nominal ones; optimizing the weighting estimand over this valid outer envelope yields $[\tau_L, \tau_U]$, which therefore contains $\tau$.
+
+What follows describes the empirical version of this optimization. Under the MSM the weights used in weighting estimators can be written as $w_i^{\mathrm{true}} = w_i \cdot \phi_i$, where $w_i = T_i/\pi(X_i) + (1-T_i)/\{1-\pi(X_i)\}$ is the nominal weight and $\phi_i$ is a perturbation factor. Solving @eq-msm-bound for the treated arm gives
+$$\phi_i = \frac{\pi(X_i)}{\pi^{\mathrm{true}}(X_i, U_i)} \;\in\; \big[\,\pi(X_i) + \{1 - \pi(X_i)\}/\Lambda,\;\; \pi(X_i) + \Lambda\,\{1 - \pi(X_i)\}\,\big],$$
+and symmetrically for the control arm.
+
+Two features of this interval matter. First, it depends on $\pi(X_i)$ and is strictly contained in $[\Lambda^{-1}, \Lambda]$; treating each $\phi_i$ as freely selectable in $[\Lambda^{-1}, \Lambda]$ therefore over-relaxes the constraint. Second, the perturbations across units are further linked by the normalization built into the estimator. The estimator in use is the self-normalized (Hájek) form, whose numerator and denominator are both linear in $\phi$, so optimizing it is a *linear-fractional* program rather than a linear one. Such a program attains its extrema on the boundary, and the optimal assignment of units to endpoints is a threshold rule in the ordered outcome values, which is why the solution takes a percentile form. @zhao2019sensitivity derive the resulting percentile expressions and a percentile-bootstrap procedure for inference. $\square$
+
+## S.5 The Basic Unmeasured-Confounding DAG {#sec-w9s-dag}
+
+::: {.content-visible when-format="html"}
+```{=html}
+<figure style="text-align:center;margin:1.5em auto;">
+<svg viewBox="0 0 400 170" width="100%" style="max-width:400px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="w9sa" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"/></marker>
+    <marker id="w9sg" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1A7A3A"/></marker>
+  </defs>
+  <circle cx="40" cy="35" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="40" y="41" text-anchor="middle" fill="#2E74B6" font-weight="bold">X</text>
+  <circle cx="255" cy="35" r="20" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"/><text x="255" y="41" text-anchor="middle" fill="#C00" font-weight="bold">U</text>
+  <circle cx="130" cy="125" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="130" y="131" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="345" cy="125" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="345" y="131" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <line x1="55" y1="50" x2="116" y2="109" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9sa)"/>
+  <path d="M 58 26 Q 200 -8 340 103" fill="none" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9sa)"/>
+  <line x1="240" y1="50" x2="146" y2="109" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#w9sa)"/>
+  <line x1="270" y1="50" x2="331" y2="109" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#w9sa)"/>
+  <line x1="150" y1="125" x2="323" y2="125" stroke="#1A7A3A" stroke-width="2.4" marker-end="url(#w9sg)"/>
+</svg>
+<figcaption>The unmeasured-confounding DAG. The observed covariate $X$ is adjusted for; $U$ is an unobserved common cause of $T$ and $Y$ (dashed). Back-door adjustment for $X$ alone closes the $X$ path but leaves the $T \leftarrow U \to Y$ path open. The causal effect $T \to Y$ (green) is the target.</figcaption>
+</figure>
+```
+:::
+
+## S.6 A Worked Benchmarked-Reporting Example {#sec-w9s-reporting}
+
+A well-benchmarked sensitivity analysis reads in the form:
+
+> The estimated effect of the job-training program on employment at twelve months is a risk ratio of $1.60$ with 95% CI $[1.20, 2.10]$. The E-value is $2.58$ for the point estimate and $1.69$ for the lower confidence limit. Among the observed covariates, the largest bias factor is that of prior-year earnings, $B = 1.35$, whose equivalent E-value is $e = 1.35 + \sqrt{1.35 \times 0.35} = 2.04$; baseline education has $B = 1.15$ and $e = 1.57$. Because $2.58 > 2.04$, the point estimate is robust to an unmeasured confounder as strong as any single observed covariate: explaining it away would require a confounder roughly 27% stronger than prior-year earnings on this scale. The lower confidence limit is not robust in the same sense, since $1.69 < 2.04$.
+
+The last two sentences are the output of benchmarking: they anchor the E-value to the observed data in a way that a substantive reader can interpret. Note also that the comparison is made on a single scale throughout --- equivalent E-values against E-values --- as @eq-equivalent-evalue requires.
+
+## S.7 Double Robustness and Neyman Orthogonality {#sec-w9s-dr-vs-no}
+
+The AIPW score has two *distinct* robustness properties, and it is worth separating them, since they are often conflated.
+
+*Double robustness* is a global property of the score: its population estimating equation remains unbiased if either the outcome model $\mu_t(x)$ or the propensity model $\pi(x)$ is correctly specified, even if the other is not.
+
+*Neyman orthogonality* is a local property: the population score or moment map has zero Gateaux derivative with respect to the nuisance argument, evaluated at the truth. It says that first-order nuisance-estimation error does not propagate into the target.
+
+The two properties are distinct but related, and the relationship is asymmetric. Under the differentiability conditions of Chapters 11--12, a doubly robust population moment is automatically Neyman orthogonal at the intersection model: double robustness makes its expectation identically zero along either nuisance axis, so both axis derivatives vanish, and by linearity of the Gateaux derivative the joint nuisance derivative vanishes as well. The converse fails --- local orthogonality at the truth does not deliver global unbiasedness when one nuisance component is misspecified. The AIPW score has both properties.
+
+Only orthogonality directly supplies the local product-rate argument used for root-$n$ inference with flexible nuisance estimators. Together with cross-fitting, it means the requirement on the nuisance estimators is a *product*-rate condition,
+$$\|\hat\mu - \mu_0\|_{L_2(P)}\;\|\hat\pi - \pi_0\|_{L_2(P)} = o_p(n^{-1/2}),$$
+together with overlap, moment, consistency, and score-regularity conditions. The familiar symmetric sufficient condition is that each nuisance error be $o_p(n^{-1/4})$ --- note $o_p$, not $O_p$ --- which is what delivers $\sqrt{n}$-asymptotics and a normal limit. Both properties address estimation under correctly maintained identifying assumptions.
+
+## S.8 Lab: Monte Carlo SD versus Single-Replicate Standard Error {#sec-w9s-lab-se}
+
+The Monte Carlo standard deviation describes the repeated-sampling spread of the estimator across simulation runs. It is not itself the standard error an analyst would compute from a single realized data set; that requires a replicate-specific variance estimator, here the usual OLS standard error for the coefficient on $T$, which in this design tracks the Monte Carlo standard deviation closely. Using that estimator, a typical single-replicate 95% interval is approximately $[2.98,\, 3.37]$. The naive estimator is badly biased, and the interval is narrow and does not contain the truth.
+
+## S.9 Lab: Extended Sensitivity Grid, Tipping Table, and Oracle Benchmarking {#sec-w9s-lab-grid}
+
+**Oracle parameter-scale comparison --- not observed-covariate benchmarking.** The following comparison is indexed by the structural coefficients of the simulated DGP. It is an oracle comparison, not an estimator-matched observed-covariate benchmark: matching $X$'s structural treatment and outcome coefficients gives $(\alpha_U, \delta) = (0.6,\, 0.8)$, but these quantities are not available to the analyst and do not equal the benchmark pair required for the OLS estimator. The analyst-facing benchmark remains $(d_X^{\mathrm{OLS}}, \hat\gamma_X) \approx (0.472,\, 0.605)$, as derived in the main chapter's lab.
+
+The table below reports the sensitivity-adjusted estimate $\hat\tau_{\mathrm{sens}} = \hat\tau_X - B$ over a grid of $(\alpha_U, \delta)$ values. The coefficient $\theta_U$ is computed from a large oracle run under each posited $\alpha_U$ --- that is, using the simulated $U$, which a real analyst would not have --- and is displayed in the header row.
+
+| Posited $\delta$ | $\alpha_U = 0.25$ ($\theta_U = 0.247$) | $0.50$ ($0.473$) | $0.75$ ($0.670$) | $1.00$ ($0.832$) | $1.50$ ($1.068$) |
+|---|---|---|---|---|---|
+| $0.5$ | $3.049$ | $2.936$ | $2.837$ | $2.756$ | $2.638$ |
+| $1.0$ | $2.925$ | $2.699$ | $2.502$ | $2.340$ | $2.104$ |
+| $1.5$ | $2.802$ | $2.463$ | $2.167$ | $1.924$ | $1.570$ |
+| $2.0$ | $2.678$ | $2.226$ | $1.832$ | **1.508** ✓ | $1.036$ |
+| $3.0$ | $2.431$ | $1.753$ | $1.162$ | $0.676$ | $-0.032$ |
+
+: Sensitivity-adjusted ATE estimate for Lab 9, at $\hat\tau_X = 3.172$. Each cell is $\hat\tau_{\mathrm{sens}} = \hat\tau_X - \delta \cdot \theta_U(\alpha_U)$. The true configuration is $(\alpha_U = 1.00,\, \delta = 2.0)$, with sensitivity-adjusted value $1.508 \approx \tau = 1.5$ (checkmark).
+
+**Tipping points and benchmarking.** The tipping point along each column is the value of $\delta$ at which the sensitivity-adjusted estimate reaches zero. Analytically, $\delta^\star(\alpha_U) = \hat\tau_X / \theta_U(\alpha_U)$. Computed values:
+
+| $\alpha_U$ | $\theta_U$ | $\delta^\star$ |
+|---|---|---|
+| $0.25$ | $0.247$ | $12.84$ |
+| $0.50$ | $0.473$ | $6.71$ |
+| $0.75$ | $0.670$ | $4.73$ |
+| $1.00$ | $0.832$ | $3.81$ |
+| $1.50$ | $1.068$ | $2.97$ |
+
+On the structural-coefficient scale, $X$ enters the treatment model with coefficient $0.6$ and the outcome model with coefficient $0.8$; the corresponding oracle auxiliary coefficient is $\theta_U(0.6) = 0.556$. All comparisons below are on this oracle scale.
+
+- At $\alpha_U = 1.00$, $\delta^\star = 3.81$: at that imbalance an unmeasured confounder would need an outcome association (oracle structural-coefficient scale) about $3.81/0.8 \approx 4.8$ times $X$'s structural coefficient to zero out the estimate. This holds the imbalance fixed at a value larger than $X$'s and compares outcome coefficients only.
+- A confounder matching $X$'s *structural* coefficients on both margins ($\alpha_U = 0.6$, $\delta = 0.8$) adjusts the estimate to $\hat\tau_X - 0.8 \cdot 0.556 \approx 2.73$ --- still positive and far from zero. At that imbalance the tipping value is $\delta^\star = 3.172/0.556 \approx 5.71$, roughly $7$ times $X$'s structural outcome coefficient.
+- The true $\delta$ in the DGP is $2.0 = 2.5\gamma_X$ at $\alpha_U = 1.0$; the sensitivity adjustment at this configuration recovers $1.508 \approx \tau$, confirming @eq-lab-bias.
+
+## S.10 Optional Problems {#sec-w9s-problems}
+
+**S1. Sampling vs. identification uncertainty.** Explain in your own words the difference between a narrow sampling confidence interval and a robust causal conclusion. Construct an example data-generating process, with numerical parameters and a stated sample size $n$ (choose one and report it; $n = 5000$ is a convenient default), in which the confidence interval for a back-door-adjusted ATE is very narrow --- take the estimator's standard error below $0.05$ --- yet the true ATE lies outside it. Specify the treatment and outcome models, the omitted confounder, and which estimator you are using. In reporting, distinguish carefully between the Monte Carlo standard deviation of the estimator across simulation replicates and the standard error estimated from a single realized data set; state which one your $0.05$ refers to. Finally, identify the identifying assumption that is violated and the magnitude of the violation.
+
+**S2. IV sensitivity curve.** In a scalar-IV model with $\mathrm{Cov}(Y, Z) = 3$, $\mathrm{Cov}(T, Z) = 1.5$, $\mathrm{Var}(Z) = 1$:
+
+(a) Use @eq-beta-delta to compute $\hat\beta(\delta)$ for $\delta \in \{0, 0.5, 1.0, 1.5, 2.0\}$.
+(b) Find the tipping point $\delta^\star$.
+(c) Repeat part (a) for the weaker-instrument case $\mathrm{Cov}(T, Z) = 0.5$ (keeping the other quantities fixed). Explain why the same $\delta$ produces a larger bias.
+
+**S3. Positivity sensitivity.** Explain why the trimmed estimand $\tau_\alpha$ of @eq-trimmed-ate is generally not equal to the untrimmed ATE $\tau$. In a data set with $\pi(X)$ distributed uniformly on $[0, 1]$, what fraction of the population is retained at trimming levels $\alpha \in \{0.01, 0.05, 0.10, 0.20\}$? Under what scientific questions is $\tau_\alpha$ preferable to $\tau$ as a target?
+
+**S4. Mediation sensitivity.** In a mediation study of a behavioral intervention ($T$) on depression ($Y$) through sleep quality ($M$), explain why randomization of $T$ alone does not eliminate the need for a sensitivity analysis for the indirect effect. Then represent a nonzero residual correlation $\rho$ in @eq-rho-def graphically, in two equivalent ways: as an unobserved common cause of $M$ and $Y$, and as a bidirected edge between the two disturbances. Explain why no single *directed* arrow in the DAG is equivalent to a residual correlation. Using the two-panel figure in @sec-w9-mediation, state which panel your graph corresponds to and what would change if the unobserved common cause were itself affected by $T$. Finally, give a plausible scientific story in which the residual correlation could be large.
+
+**S5. Comparing the $\Gamma$ and MSM models.** Both models bound an odds ratio at a level ($\Gamma$ or $\Lambda$). State precisely which conditional odds ratio each model bounds and which design each attaches to. Explain why equal numerical levels $\Gamma = \Lambda$ need not represent the same amount of unmeasured confounding, and identify which model's one-number summary is a statement about a $p$-value and which is an interval for the ATE.

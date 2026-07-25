@@ -2,26 +2,26 @@
 engine: knitr
 ---
 
-# Sensitivity Analysis and Partial Identification
+# Sensitivity Analysis and Partial Identification {#sec-w9}
 
 ::: {.callout-note icon=false}
 ## Learning Objectives
 
 By the end of this chapter, students should be able to:
 
-1. Distinguish sampling uncertainty, model misspecification, and identification uncertainty, and explain why confidence intervals do not measure the credibility of identifying assumptions.
-2. Formulate a sensitivity analysis by introducing a sensitivity parameter $\lambda$ and reporting the sensitivity curve, bounds, or tipping point associated with it.
-3. Carry out a sensitivity analysis for unmeasured confounding under back-door adjustment, including the linear bias decomposition and the binary-confounder formula.
-4. State and use the three canonical sensitivity models: the Rosenbaum $\Gamma$-sensitivity model, the E-value of @vanderweele2017sensitivity, and the marginal sensitivity model of @tan2006distributional and @zhao2019sensitivity.
-5. Interpret sensitivity parameters through benchmarking with observed covariates.
-6. State and prove Manski's no-assumption bound on the average treatment effect, and contrast point identification with partial identification.
-7. Recognize positivity and overlap violations as a form of identification failure, and interpret trimming as a change of estimand.
-8. Explain why weak-instrument diagnostics do not address exogeneity or exclusion violations, and apply the IV bias formula for a scalar instrument.
-9. Describe how sensitivity analysis applies to mediation assumptions through a residual-correlation parameter.
-10. Recognize sensitivity analysis as complementary to the modern estimation methods of Chapters 10--13: orthogonality and cross-fitting protect against nuisance-estimation error, not against violations of causal identification assumptions.
+1. Distinguish sampling, model, and identification uncertainty, and explain why ordinary confidence intervals do not assess identifying assumptions.
+2. Formulate and interpret a sensitivity curve, a sensitivity interval, and a tipping point.
+3. Use a bias decomposition to analyze sensitivity to unmeasured confounding, and benchmark the sensitivity parameters against observed covariates on an estimator-matched, common scale.
+4. Explain the assumptions and interpretations of the Rosenbaum $\Gamma$, E-value, and marginal sensitivity models.
+5. Distinguish point from partial identification, derive Manski's bounded-outcome ATE bounds, and explain how positivity failures motivate retargeting.
+6. Explain how sensitivity analysis applies to IV and mediation designs, and why robust estimation does not repair failed identification.
 :::
 
-## Why Sensitivity Analysis? {#sec-motivation}
+Proofs, derivations, extended lab material, and additional problems marked here as optional are collected in the separate chapter supplement; nothing needed for a first reading depends on it.
+
+**How to read this chapter.** The core first reading comprises all of @sec-w9-why (uncertainty and the general framework), the bias decomposition of @sec-w9-bias, the E-value (@sec-w9-evalue), benchmarking and reporting (@sec-w9-benchmarking), partial identification and overlap (@sec-w9-partial), and the boundary with modern estimation (@sec-w9-modern). The Rosenbaum $\Gamma$-model (@sec-w9-rosenbaum) and the marginal sensitivity model (@sec-w9-msm) are specialized method capsules; the IV and mediation material (@sec-w9-iv) gives design-specific applications; and the lab (@sec-w9-lab) is optional computational material.
+
+## Why Sensitivity Analysis? {#sec-w9-why}
 
 Chapters 5--8 developed a sequence of identification strategies: back-door adjustment, propensity-score re-weighting, instrumental variables, and front-door and mediation analysis. Each strategy identifies a causal parameter as a functional of the observed-data distribution under a corresponding set of assumptions. Each set of assumptions is, however, stated in terms of unobserved quantities --- potential outcomes, hypothetical interventions, or unmeasured variables --- and cannot be verified from the data alone.
 
@@ -31,569 +31,875 @@ The chapter ahead (Chapter 10) opens by noting that *identification does not by 
 
 A confidence interval reports sampling variation *conditional on* a maintained identification assumption. It is silent about whether that assumption is correct. A causal analysis is credible only if both components --- identification and estimation --- are credible. Sensitivity analysis is the tool for reporting how much the conclusion depends on the first.
 
-### Sampling Uncertainty vs. Identification Uncertainty {#sec-sampling-vs-id}
+### Sampling Uncertainty vs. Identification Uncertainty {#sec-w9-sampling-vs-id}
 
-Consider an analyst who reports $\hat\tau = 2.0$, 95% CI $= [1.2,\; 2.8]$. This interval answers one question and only one:
+Consider an analyst who reports $\hat\tau = 2.0$ with 95% CI $[1.2,\ 2.8]$. This interval answers one question and only one:
 
 > *If the identifying assumptions are correct, what range of values of $\tau$ is consistent with the observed sampling variation?*
 
-As $n \to \infty$ the interval will shrink around $\tau$, provided the identifying assumptions hold. If the assumptions do not hold, the interval will instead shrink around a biased target. More data drawn from the same observational regime do not remove this bias.
+As $n \to \infty$ the interval will shrink around $\tau$, provided the identifying assumptions hold. If the assumptions do not hold, the interval will instead shrink around a biased target. More data drawn from the same observational regime do not remove this bias: the identification gap can only be closed by adding new assumptions, new design information, or new measurements relevant to the source of nonidentification --- validation data, randomized encouragement, negative controls, instrumental variables, repeated measurements, or richer confounder measurements. A real-data illustration of the negative-control idea appears in the college-selectivity case study of Chapter 5: the average SAT score of the colleges that *rejected* a student --- a variable with no causal path to the student's earnings --- strongly predicts earnings, directly exposing the confounding in the unadjusted comparison [@dale2002payoff].
 
-Formally, there are three distinct sources of error:
+Formally, we may distinguish:
 
-- **Sampling uncertainty:** $\hat P_n \neq P$. The empirical distribution differs from the population. Vanishes as $n \to \infty$.
-- **Model misspecification:** the working parametric or semiparametric model for a nuisance function is incorrect. Partly addressable by flexible modeling, doubly robust construction, and cross-fitting (Chapters 10--12).
-- **Identification uncertainty:** the causal parameter $\psi$ is not in fact identified by the functional $\Psi(P)$ assumed by the analysis. Does not vanish merely by increasing the sample size from the same observational regime; can be reduced only by adding new assumptions, new design information, or new measurements.
+- **Sampling uncertainty:** $\hat P_n \neq P$. The empirical distribution differs from the population. This uncertainty vanishes as $n \to \infty$.
+- **Model misspecification:** the working parametric or semiparametric model for a nuisance function (say the outcome regression $\mu_t(x)$ or the propensity score $\pi(x)$) is not correct. This uncertainty is partly addressable by flexible modeling, doubly robust construction, and cross-fitting (Chapters 10--12).
+- **Identification uncertainty:** the causal parameter $\psi$ is not in fact identified by the functional $\Psi(P)$ assumed by the analysis. This uncertainty does not vanish merely by increasing the sample size from the same observational regime.
 
-The usual confidence interval addresses only the first; the estimation chapters to come address primarily the second; this chapter addresses the third.
+The three sources of error compose. The usual confidence interval addresses only the first; the estimation chapters to come address primarily the second; this chapter addresses the third.
 
 ::: {.callout-warning icon=false}
-## Statistical Significance and Causal Credibility
+## Warning: Statistical Significance and Causal Credibility
 
-A narrow, highly significant confidence interval is not evidence that the identifying assumptions are correct. It is evidence that, *if they are correct*, $\psi$ is close to the estimate. A sensitivity analysis is required to assess the second "if."
+A narrow, highly significant confidence interval is not evidence that the identifying assumptions are correct. It is evidence of a conditional claim: *if* the assumptions are correct, *then* $\psi$ is close to the estimate. Nothing in the interval speaks to whether the identifying assumption is true. A sensitivity analysis cannot verify that antecedent; it reports how strongly the conclusion depends on scientifically plausible violations of it.
 :::
 
-### The Role of Sensitivity Analysis {#sec-role}
+### The Role of Sensitivity Analysis
 
-Sensitivity analysis is a structured way to vary the strength of violations of identifying assumptions and to report how the causal conclusion responds. It is not a test of the assumptions --- they involve unobserved quantities and are therefore not testable. It is a statement of *conditional robustness*: how far can the assumptions be violated before the substantive conclusion changes?
+Sensitivity analysis is a structured way to vary the strength of violations of identifying assumptions and to report how the causal conclusion responds. It is not a test of the assumptions. Identifying assumptions are generally not *fully verifiable* from the observed outcome data, although some of their observed-data implications can be assessed --- a proposed DAG may imply testable conditional independences, overidentified models imply moment restrictions, negative controls can falsify aspects of a design, known randomization protocols supply design information, and positivity can be partly diagnosed empirically. It is a statement of *conditional robustness*: how far can the assumptions be violated before the substantive conclusion changes?
 
-Three reporting objects:
+Three interpretations of the same analysis are useful, and this chapter develops each:
 
-- *Sensitivity curve.* A plot of the estimand against a single sensitivity parameter $\lambda$, with $\lambda=0$ recovering the baseline identifying assumption.
-- *Sensitivity bounds.* The range of estimand values consistent with any $\lambda$ in a specified plausibility set $\Lambda$.
+- *Sensitivity curve.* A plot of the estimand against a scalar sensitivity parameter $\lambda$, with the neutral value $\lambda = \lambda_0$ recovering the baseline identifying assumption.
+- *Sensitivity bounds.* The range of estimand values consistent with any $\lambda$ in a specified plausibility set $\mathcal{L}$.
 - *Tipping point.* The smallest violation magnitude sufficient to change the sign, magnitude, or statistical significance of the conclusion.
 
-## A General Framework for Sensitivity Analysis {#sec-framework}
-
-The three views of sensitivity analysis --- curves, bounds, tipping points --- all arise from a single construction. Let $\psi$ be the causal estimand and $A_0$ the baseline identifying assumption with $\psi = \Psi(P)$. A **sensitivity model** is a one-parameter relaxation $\{A_\lambda : \lambda \in \Lambda\}$ of $A_0$, with $A_0$ recovered at $\lambda = 0$. Under $A_\lambda$:
-$$\psi(\lambda) = \Psi(P;\, \lambda), \qquad \Psi(P;\, 0) = \Psi(P).$$ {#eq-sens-functional}
-
-The key reporting object is the set $\{\psi(\lambda) : \lambda \in \Lambda\}$.
-
 ::: {.callout-note icon=false}
-## Definition: Sensitivity Model
+## Remark: Sensitivity Analysis Disciplines the Discussion
 
-A *sensitivity model* for the causal estimand $\psi$ and baseline identifying assumption $A_0$ is a pair $(\{A_\lambda\}_{\lambda \in \Lambda},\, \Psi(\cdot;\cdot))$ such that (i) $A_0$ is recovered at $\lambda = 0$; (ii) under $A_\lambda$ and the observable restrictions, $\psi = \Psi(P;\lambda)$; and (iii) $\Psi(\cdot;\lambda)$ is a continuous function of $\lambda$.
+Sensitivity analysis also has a second role, beyond robustness reporting: it disciplines the scientific discussion. Forcing the analyst to write down a specific sensitivity parameter and a plausibility set $\mathcal{L}$ forces explicit statements about what unmeasured confounders, instrument-validity violations, or cross-world dependencies could plausibly be present. A sensitivity analysis without a defensible $\mathcal{L}$ is a calculation, not an argument.
 :::
 
-**Sensitivity parameters used in this chapter:**
+### The General Framework {#sec-w9-framework}
 
-- $\lambda$ = strength of unmeasured confounding (odds-ratio bound, E-value, or likelihood-ratio bound).
-- $\delta$ = magnitude of a structural outcome-effect coefficient treated as zero under the baseline assumption (used both for $U$-outcome effect and for IV exclusion violations).
-- $\alpha$ = propensity-score trimming threshold.
-- $\rho$ = residual correlation between mediator and outcome disturbances.
+The three views of sensitivity analysis --- curves, bounds, tipping points --- all arise from a single construction. Let $\psi$ be the causal estimand of interest, and let $A_0$ be a baseline identifying assumption such that, under $A_0$, $\psi = \Psi(P)$ for a known functional $\Psi$. A *sensitivity model* is an indexed relaxation $\{A_\lambda : \lambda \in \mathcal{L}\}$ of $A_0$, with $A_0$ recovered at a neutral value $\lambda_0 \in \mathcal{L}$. In the simplest, point-valued case, the estimand under $A_\lambda$ is a function of both the observed-data distribution and the sensitivity parameter:
+$$\psi(\lambda) = \Psi(P;\, \lambda), \qquad \Psi(P;\, \lambda_0) = \Psi(P);$$ {#eq-sens-functional}
+the general case, in which a fixed $\lambda$ pins $\psi$ down only to a set, is developed in @sec-w9-partial. The key reporting object is therefore not a single number but the attainable set
+$$\{\psi(\lambda) : \lambda \in \mathcal{L}\}.$$ {#eq-sens-set}
 
-**Sensitivity curve:** $\lambda \mapsto \hat\psi(\lambda)$. Useful when the reader wants to see the effect deform as the assumption is relaxed.
+Across this chapter we will encounter several sensitivity parameters, each quantifying the magnitude of a specific violation:
 
-**Sensitivity bounds:** $\psi_L = \inf_\Lambda \psi(\lambda)$, $\psi_U = \sup_\Lambda \psi(\lambda)$.
+- $\lambda$ = strength of unmeasured confounding, parameterized either as an odds-ratio bound, as a pair of association strengths in the VanderWeele--Ding E-value framework, or as an odds-ratio bound in the marginal sensitivity model.
+- $\delta$ = magnitude of a structural outcome-effect coefficient that the baseline identifying assumption treats as inert. Used in two contexts: the $U$-outcome effect in the linear and binary-confounder sensitivity models (@sec-w9-linear-sens--@sec-w9-binary-U); and the direct effect of an instrument on the outcome violating the IV exclusion restriction (@sec-w9-iv), where $\delta = 0$ is the baseline assumption. The two roles never appear together.
+- $\alpha$ = propensity-score trimming threshold, addressing near-violations of positivity (@sec-w9-positivity).
+- $\rho$ = residual correlation between mediator and outcome disturbances, violating sequential ignorability (@sec-w9-mediation).
 
-**Tipping point:** $\lambda^\star = \inf\{\lambda \in \Lambda : \psi(\lambda) = 0\}$, or $\lambda^\star_{\mathrm{CI}} = \inf\{\lambda : 0 \in \widehat{\mathrm{CI}}(\lambda)\}$.
+In each case the neutral value returns the baseline identifying assumption --- $\Gamma = 1$ and $\Lambda = 1$ for the odds-ratio confounding bounds, and $\delta = 0$, $\alpha = 0$, $\rho = 0$ for the remaining parameters --- and the distance from the neutral value quantifies the strength of the violation.
+
+One entry in this list is of a different kind. The trimming threshold $\alpha$ does not relax an identifying assumption while holding the causal estimand fixed; it indexes the *retargeted* estimands $\tau_\alpha = \E\{Y(1) - Y(0) \mid \alpha \leq \pi(X) \leq 1-\alpha\}$. We therefore treat trimming as *target sensitivity* --- sensitivity of the conclusion to the choice of population --- rather than as an instance of the fixed-estimand sensitivity model.
+
+A related notational point concerns the two capital lambdas. We write $\mathcal{L}$ for the *plausibility set* in which the sensitivity parameter is assumed to lie, and reserve the upright $\Lambda$ for the scalar *level* of the marginal sensitivity model (@sec-w9-msm), where it is standard in the literature [@tan2006distributional; @zhao2019sensitivity]. The two are different objects: $\mathcal{L}$ is a set of admissible parameter values, while $\Lambda$ is one particular sensitivity parameter, whose own plausibility set is an interval $[1, \Lambda_{\max}] \subseteq \mathcal{L}$.
+
+The symbol $\alpha$ appears elsewhere in this chapter in two unrelated roles: as a regression intercept in the linear outcome and IV models, and, in the lab, as the subscripted parameter $\alpha_U$ denoting the strength of $U$ in the treatment mechanism. Similarly, in @sec-w9-iv-late the symbols $\pi_c$ and $\pi_d$ denote complier and defier population shares; they are unrelated to the propensity score $\pi(x)$.
 
 ::: {.callout-note icon=false}
-## Example: Tipping-Point Reading
+## Definition: Sensitivity Model {#def-sens-model}
 
-Suppose $\hat\psi(0) = 1.8$ with 95% CI $[1.1, 2.5]$, and the sensitivity model produces $\hat\psi(\lambda) = 1.8 - 2.0\lambda$. Then: the sensitivity curve is linear in $\lambda$; the tipping point for the sign is $\lambda^\star = 0.9$; and the tipping point for significance is $\lambda^\star_{\mathrm{CI}} = 0.55$ (the value at which the lower CI endpoint $1.1 - 2.0\lambda$ hits zero). The significance tipping point is always at least as strict as the sign tipping point.
+A *sensitivity model* for the causal estimand $\psi$ and baseline identifying assumption $A_0$ is a triple $(\{A_\lambda\}_{\lambda \in \mathcal{L}},\, \lambda_0,\, \Psi(\cdot;\cdot))$ such that (i) $\lambda_0 \in \mathcal{L}$ is a *neutral value* at which $A_{\lambda_0} = A_0$, recovering the original identifying assumption; and (ii) under $A_\lambda$ and the observable restrictions imposed by the data, $\psi = \Psi(P;\lambda)$. The parameter $\lambda$ may be scalar- or vector-valued.
 :::
 
-## Sensitivity to Unmeasured Confounding {#sec-unmeasured}
+Several of the models in this chapter pin $\psi$ down only to a *set* at each $\lambda$ --- the MSM at fixed $\Lambda$ delivers an interval for the estimand, a Rosenbaum analysis at fixed $\Gamma$ bounds a randomization $p$-value, and the bias factor of @sec-w9-evalue is two-dimensional before its scalar summary. The set-valued extension of this framework is developed in @sec-w9-partial, where it merges naturally with partial identification.
 
-The most common application is to unmeasured confounding under the back-door framework. The baseline assumption is conditional exchangeability $Y(t) \indep T \mid X$ together with consistency and positivity. Sensitivity analysis contemplates a world with an unobserved $U$ such that $Y(t) \indep T \mid X, U$ but $Y(t) \nindep T \mid X$.
+Two further comments on the definition. First, the neutral value is not always zero. It is $\lambda_0 = 0$ for the additive parameters used in this chapter ($\delta$, $\rho$, $\alpha_U$) but $\lambda_0 = 1$ for the multiplicative ones ($\Gamma$, $\Lambda$), since those are odds-ratio bounds for which no violation means a ratio of one. Writing $\lambda_0$ rather than $0$ keeps the framework honest about this.
 
-::: {.content-visible when-format="html"}
-```{=html}
-<figure style="text-align:center;margin:1em auto;">
-<svg viewBox="0 0 380 160" width="100%" style="max-width:380px;font-family:sans-serif;font-size:12px;">
-  <defs>
-    <marker id="ba9" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"/>
-    </marker>
-    <marker id="ra9" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L7,3 z" fill="#888"/>
-    </marker>
-    <marker id="ga9" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L7,3 z" fill="#1A7A3A"/>
-    </marker>
-  </defs>
-  <!-- X -->
-  <circle cx="60" cy="38" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
-  <text x="60" y="43" text-anchor="middle" fill="#2E74B6" font-weight="bold">X</text>
-  <!-- U -->
-  <circle cx="240" cy="38" r="22" fill="#FFF0F0" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="240" y="43" text-anchor="middle" fill="#888">U</text>
-  <!-- T -->
-  <circle cx="120" cy="120" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
-  <text x="120" y="125" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
-  <!-- Y -->
-  <circle cx="300" cy="120" r="22" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"/>
-  <text x="300" y="125" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
-  <!-- X→T -->
-  <line x1="69" y1="57" x2="109" y2="101" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba9)"/>
-  <!-- X→Y -->
-  <path d="M 79 47 Q 180 10 281 108" fill="none" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#ba9)"/>
-  <!-- U→T -->
-  <line x1="224" y1="55" x2="135" y2="103" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ra9)"/>
-  <!-- U→Y -->
-  <line x1="253" y1="57" x2="287" y2="99" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ra9)"/>
-  <!-- T→Y (causal) -->
-  <line x1="142" y1="120" x2="276" y2="120" stroke="#1A7A3A" stroke-width="2" marker-end="url(#ga9)"/>
-</svg>
-<figcaption>The unmeasured-confounding DAG. Observed covariate $X$ is adjusted for; $U$ is an unobserved common cause (dashed). Back-door adjustment for $X$ alone closes the $X$ path but leaves $T \leftarrow U \to Y$ open. The causal effect $T \to Y$ (green) is the target.</figcaption>
-</figure>
+Second, continuity of $\Psi(\cdot;\lambda)$ in $\lambda$ is deliberately *not* part of the definition. It is a convenient regularity condition --- it makes sensitivity curves drawable and tipping points well defined --- and it holds for most models in this chapter. But bound endpoints obtained from an optimization can be nonsmooth, and a sensitivity region can change discretely as constraints become active, so continuity should be imposed where it is needed rather than assumed throughout.
+
+#### Sensitivity Curves
+
+When $\mathcal{L} \subseteq \mathbb{R}$ is one-dimensional, the natural reporting object is the *sensitivity curve* $\lambda \mapsto \hat\psi(\lambda)$, where $\hat\psi(\lambda)$ is a consistent estimator of $\psi(\lambda)$ under $A_\lambda$. A sensitivity curve is useful when the reader wishes to see the effect smoothly deform as the assumption is relaxed. Many sensitivity curves are monotone --- the bias moves in one direction as $\lambda$ increases --- though this is not guaranteed.
+
+#### Sensitivity Bounds
+
+When multiple parameters index the violation, or when the sensitivity parameter is high-dimensional, reporting a full curve is infeasible. The natural alternative is to report the extremes over $\mathcal{L}$. One caveat should be recorded first: because continuity is not part of @def-sens-model, the image $\{\psi(\lambda) : \lambda \in \mathcal{L}\}$ need not be an interval. The bounds below are therefore an *enclosure* of that set; intermediate values inside $[\psi_L, \psi_U]$ need not be attainable by any admissible $\lambda$. With that caveat recorded, define
+$$\psi_L = \inf_{\lambda \in \mathcal{L}} \psi(\lambda), \qquad \psi_U = \sup_{\lambda \in \mathcal{L}} \psi(\lambda).$$ {#eq-sens-bounds}
+The interval $[\psi_L,\psi_U]$ is the *sensitivity interval*. In practice, one estimates the lower and upper bounds and reports them with sampling-based uncertainty intervals; we caution that inference for the endpoints of a partially identified set is more delicate than inference for an ordinary scalar parameter, and the appropriate construction depends on whether the target is the identified set or the parameter itself.
+
+#### Tipping-Point Analysis
+
+A third summary is the smallest $\lambda$ at which the substantive conclusion changes. If the conclusion of interest is "the effect is positive," the natural tipping point is
+$$\lambda^\star = \inf\{\lambda \in \mathcal{L} : \psi(\lambda) \leq 0\},$$ {#eq-tipping-point}
+or, if inference is at issue rather than the point estimate,
+$$\lambda^\star_{\mathrm{CI}} = \inf\{\lambda \in \mathcal{L} : 0 \in \hat{\mathrm{CI}}(\lambda)\},$$ {#eq-tipping-ci}
+where $\hat{\mathrm{CI}}(\lambda)$ is the confidence interval for $\psi(\lambda)$. Note that $\psi(\lambda)$ in @eq-tipping-point is the pointwise value at $\lambda$, distinct from the global bound $\psi_L$ of @eq-sens-bounds.
+
+Three cautions attach to @eq-tipping-point. First, the definition is deliberately *directional*: it is stated for the conclusion "the effect is positive," and the mirror image applies for a negative one. Second, writing $\psi(\lambda) \leq 0$ rather than $\psi(\lambda) = 0$ avoids requiring an exact crossing, which need not exist once continuity is not assumed. Third, and most important, the infimum presupposes an *ordered, nested* scalar scale: $\lambda' > \lambda$ must mean that $A_{\lambda'}$ is a strictly weaker assumption, so that larger $\lambda$ is unambiguously "more violation." For a vector-valued $\lambda$, or a scalar one whose sensitivity sets are not nested, there is no unique smallest violation until one fixes a norm, a path through the parameter space, or a partial order --- and that choice is a substantive modeling decision, not a technicality. If $\psi$ is not monotone, $\lambda^\star$ is only the *first* crossing and should be reported as such.
+
+```{r}
+#| label: fig-sens-curve
+#| fig-cap: "A sensitivity curve and its two tipping points, for the linear model of the example below: $\\hat\\psi(\\lambda) = 1.8 - 2.0\\lambda$ with a 95% band of half-width 0.7. The lower confidence limit reaches zero first, at $\\lambda^\\star_{\\mathrm{CI}} = 0.55$; the point estimate reaches zero at $\\lambda^\\star = 0.90$, so the significance tipping point is the stricter of the two --- as it must be for any interval procedure that contains its point estimate at each $\\lambda$."
+#| echo: false
+#| fig-width: 6.5
+#| fig-height: 4
+lam <- seq(0, 1.3, length.out = 200)
+psi <- 1.8 - 2 * lam
+par(mar = c(4.2, 4.2, 1, 1))
+plot(lam, psi, type = "n", ylim = c(-1.6, 2.6), xlim = c(0, 1.35),
+     xlab = expression(lambda), ylab = expression(hat(psi)(lambda)), bty = "n")
+polygon(c(lam, rev(lam)), c(psi + 0.7, rev(psi - 0.7)),
+        col = "#2E74B61F", border = NA)
+lines(lam, psi + 0.7, col = "#2E74B680"); lines(lam, psi - 0.7, col = "#2E74B680")
+abline(h = 0, lty = 2, col = "grey50")
+lines(lam, psi, col = "#2E74B6", lwd = 2.6)
+segments(0.55, 0, 0.55, -1.15, lty = 3, col = "#C00000", lwd = 1.6)
+segments(0.90, 0, 0.90, -1.45, lty = 3, col = "#7B4FA8", lwd = 1.6)
+points(c(0.55, 0.90), c(0, 0), pch = 19, col = c("#C00000", "#7B4FA8"), cex = 1.1)
+text(0.53, -1.28, expression(lambda[CI]^"*" == 0.55), col = "#C00000", pos = 2, cex = 0.85)
+text(0.94, -1.55, expression(lambda^"*" == 0.90), col = "#7B4FA8", pos = 4, cex = 0.85)
+text(1.05, 0.25, expression(hat(psi)(lambda)), col = "#2E74B6", cex = 0.85)
+text(0.62, 1.9, "95% band", col = "#2E74B6", cex = 0.85)
 ```
-:::
 
-### The Bias Decomposition {#sec-bias-decomp}
+::: {.callout-note icon=false}
+## Example: Tipping-Point Reading {#exm-tipping-reading}
 
-Let $\Delta_{\mathrm{obs}} = \E\{\E(Y \mid T=1, X) - \E(Y \mid T=0, X)\}$ denote the observed adjusted contrast. Under ignorability given $X$ alone, $\Delta_{\mathrm{obs}} = \tau$. Under the relaxed condition, the contrast departs from $\tau$ by a bias $B$.
+Suppose $\hat\psi(0) = 1.8$ with 95% CI $[1.1, 2.5]$, and the sensitivity model produces $\hat\psi(\lambda) = 1.8 - 2.0\lambda$. Then:
 
-::: {.callout-tip icon=false}
-## Theorem: Bias Decomposition under Unmeasured Confounding
+- The sensitivity curve is linear in $\lambda$.
+- The tipping point for the sign is $\lambda^\star = 0.9$.
+- The tipping point for significance is $\lambda^\star_{\mathrm{CI}}$, the value at which the lower endpoint of the CI --- which in this simple linear model equals $1.1 - 2.0\lambda$ --- hits zero, so $\lambda^\star_{\mathrm{CI}} = 0.55$.
 
-Suppose $Y(t) \indep T \mid X, U$ holds along with consistency and positivity. Define $m_t(x,u) = \E(Y \mid T=t, X=x, U=u)$ and $g_t(x,u) = P(u \mid T=t, X=x) - P(u \mid X=x)$. Then:
-$$\Delta_{\mathrm{obs}} = \tau + B,$$ {#eq-delta-tau-B}
-where the *confounding bias* is:
-$$B = \E\!\left\{\sum_t (-1)^{1-t} \int m_t(X, u)\, g_t(X, u)\, du\right\}.$$ {#eq-B-general}
-:::
-
-::: {.callout-note collapse=true icon=false}
-## Proof
-
-Under conditional exchangeability given $(X, U)$ and consistency:
-$$\E[Y(t)] = \E\!\left\{\int m_t(X, u)\, P(u \mid X)\, du\right\}.$$
-The conditional mean given $(T, X)$ marginalizes $U$ over its distribution *conditional on* $T$:
-$$\E(Y \mid T=t, X) = \int m_t(X, u)\, P(u \mid T=t, X)\, du.$$
-Taking expectations over $X$ and subtracting:
-$$\Delta_{\mathrm{obs}} - \tau = \E\!\left\{\int m_1(X, u)\,[P(u \mid T=1, X) - P(u \mid X)]\, du\right\} - \E\!\left\{\int m_0(X, u)\,[P(u \mid T=0, X) - P(u \mid X)]\, du\right\} = B. \quad\square$$
+The significance tipping point is always at least as strict as the sign tipping point. An analysis is robust "at level $\lambda^\star$" for a conclusion that holds throughout $[0, \lambda^\star)$.
 :::
 
 ::: {.callout-note icon=false}
-## Remark: Bias in Words
+## Remark: One Parameter Is a Design Choice, Not a Constraint
 
-The observed adjusted contrast is the true effect plus a term controlled by (*the $U$-outcome association*) $\times$ (*the $U$-treatment imbalance*). Every sensitivity model in @sec-three-models is a formal version of this slogan.
+Most sensitivity models in this chapter have $\mathcal{L} \subseteq \mathbb{R}$ for the deliberate reason that a one-dimensional summary is reportable and interpretable. A multi-parameter model can be summarized along a chosen one-dimensional path through $\mathcal{L}$. This is a *conditional* sensitivity analysis, not a worst-case analysis over the full parameter region: because the path is only a subset of $\mathcal{L}$, its most adverse value is generally *less* extreme than the worst case over the entire region. The path therefore encodes a substantive tradeoff among the sensitivity components and must be reported explicitly. When a path summary does deliver the full-region worst case --- as with the symmetric diagonal underlying the E-value --- the worst-case reading is earned by additional structure, there the monotonicity of the bias factor in each argument, and not by the choice of path itself. The Ding--VanderWeele bias factor is genuinely a *two*-parameter model, and the E-value is a one-number summary of it, not the model itself.
 :::
 
-### A Simple Linear Sensitivity Model {#sec-linear-sens}
+## Sensitivity to Unmeasured Confounding {#sec-w9-bias}
 
-In the fully linear model $Y = \alpha + \tau T + \gamma^\top X + \delta U + \varepsilon$ with $T = h(X, U, \eta)$:
+The most common application of sensitivity analysis is to unmeasured confounding under the back-door framework of Chapter 5. The baseline identifying assumption is conditional exchangeability, $Y(t) \indep T \mid X$, together with consistency and positivity. Under these,
+$$\tau = \E\{\mu_1(X) - \mu_0(X)\}, \qquad \mu_t(x) = \E(Y \mid T=t, X=x).$$ {#eq-w9-ate-id}
+Sensitivity analysis here contemplates a world in which there exists an unobserved $U$ such that
+$$Y(t) \indep T \mid X, U, \qquad\text{but}\qquad Y(t) \nindep T \mid X.$$ {#eq-ignor-given-U}
+In words: ignorability would hold if $U$ were observed, but $U$ is not observed, so the working identification formula @eq-w9-ate-id is biased. The structure is the familiar back-door path $T \leftarrow U \rightarrow Y$ that adjustment for $X$ alone cannot block.
+
+### The Bias Decomposition {#sec-w9-bias-decomp}
+
+Let
+$$\Delta_{\mathrm{obs}} = \E\{\E(Y \mid T=1, X) - \E(Y \mid T=0, X)\}$$ {#eq-delta-obs}
+denote the *observed adjusted contrast* --- the quantity that a back-door analysis actually computes when only $X$ is adjusted for. Under ignorability conditional on $X$ alone, $\Delta_{\mathrm{obs}} = \tau$. Under the relaxed condition @eq-ignor-given-U, the observed adjusted contrast departs from $\tau$ by a quantity that depends on how $U$ is distributed conditional on $(T, X)$.
 
 ::: {.callout-tip icon=false}
-## Lemma: Linear Sensitivity Bias
+## Theorem: Bias Decomposition under Unmeasured Confounding {#thm-bias-decomp}
 
-Under the linear outcome model and conditional exchangeability given $(X, U)$:
+Suppose @eq-ignor-given-U holds along with consistency and positivity *given $(X, U)$*, that is $P(T=t \mid X, U) > 0$ almost surely for $t \in \{0,1\}$ --- the stronger requirement needed for $m_t$ below to be well defined, and not implied by positivity given $X$ alone. Let $f(u \mid \cdot)$ denote the conditional density (or mass function) of $U$, define
+$$m_t(x, u) = \E(Y \mid T=t, X=x, U=u),$$
+and the distributional difference
+$$g_t(x, u) = f(u \mid T=t, X=x) - f(u \mid X=x).$$
+Then $\Delta_{\mathrm{obs}} = \tau + B$, where the *confounding bias* is
+$$B = \E\!\left\{\sum_t (-1)^{1-t} \int m_t(X, u)\, g_t(X, u)\, du\right\},$$ {#eq-B-general}
+with the integral replaced by a sum if $U$ is discrete.
+:::
+
+*Proof sketch.* Condition on $(X, U)$; conditional exchangeability given $(X, U)$ identifies $m_t(X, u)$ from the corresponding treatment arm, and the observed contrast differs from the causal one exactly through the distributional differences $g_t$, which yields @eq-B-general upon rearranging. The full derivation is in the optional supplement. $\square$
+
+Equation @eq-B-general is the master formula underlying most sensitivity models for unmeasured confounding. Each model amounts to a parameterization of the two quantities $m_t(x, u)$ and $g_t(x, u)$: the effect of $U$ on $Y$, and the imbalance of $U$ across treatment arms given $X$.
+
+::: {.callout-note icon=false}
+## Remark: Bias Decomposition in Words
+
+The observed adjusted contrast is the true effect plus a term controlled by *the $U$-outcome association* $\times$ *the $U$-treatment imbalance*. Every sensitivity model in @sec-w9-three-models is a formal version of this slogan.
+:::
+
+### A Simple Linear Sensitivity Model {#sec-w9-linear-sens}
+
+A closed-form version of @eq-B-general is available in a fully linear model, which is the form most often encountered in econometrics and the one easiest to benchmark. Suppose the outcome follows
+$$Y = \alpha + \tau T + \gamma^\top X + \delta U + \varepsilon, \qquad \E(\varepsilon \mid T, X, U) = 0,$$ {#eq-linear-y}
+and the treatment assignment depends on $(X, U)$ through $T = h(X, U, \eta)$ with $\eta \indep (U, \varepsilon)$.
+
+::: {.callout-tip icon=false}
+## Lemma: Linear Sensitivity Bias {#lem-linear-bias}
+
+Under the model above and conditional exchangeability given $(X, U)$,
 $$B = \delta \cdot \E\!\left\{\E(U \mid T=1, X) - \E(U \mid T=0, X)\right\}.$$ {#eq-linear-B}
 :::
 
-*Proof.* In the linear model, $m_t(x, u) = \alpha + \tau t + \gamma^\top x + \delta u$. The components of $m_t$ not depending on $u$ multiply integrals of $g_t(X, u)$, which integrate to zero. The $\delta u$ term gives @eq-linear-B. $\square$
+*Proof.* Specializing @eq-B-general to the linear outcome model, $m_t(x, u) = \alpha + \tau t + \gamma^\top x + \delta u$, so the inner integrals reduce to $\delta \int u\, g_t(X, u)\, du$, because the components of $m_t$ that do not depend on $u$ multiply integrals of $g_t(X, u)$, which is $0$ by construction. Combining,
+$$B = \delta\,\E\!\left\{\int u\, [g_1(X, u) - g_0(X, u)]\, du\right\} = \delta\,\E\{\E(U \mid T=1, X) - \E(U \mid T=0, X)\}. \qquad\square$$
 
-This gives the canonical teaching decomposition:
-$$\text{bias} \approx \underbrace{\delta}_{U\text{-outcome effect}} \;\times\; \underbrace{\E\{\E(U \mid T=1, X) - \E(U \mid T=0, X)\}}_{U\text{-treatment imbalance}}.$$ {#eq-canonical-bias}
+Formula @eq-linear-B is the canonical teaching decomposition. Under the linear outcome model @eq-linear-y it is an exact identity, not an approximation; approximate language is appropriate only when @eq-linear-y is being used as a local working approximation to a nonlinear outcome model:
+$$\text{bias} \;=\; \underbrace{\delta}_{U\text{-outcome effect}} \;\times\; \underbrace{\E\{\E(U \mid T=1, X) - \E(U \mid T=0, X)\}}_{U\text{-treatment imbalance}}.$$ {#eq-canonical-bias}
+Both factors are sensitivity parameters because neither is identified: $U$ is unobserved, so its effect on $Y$ and its imbalance across treatment arms can only be posited, not estimated.
 
-Both factors are sensitivity parameters because $U$ is unobserved.
+### Binary Unmeasured Confounder {#sec-w9-binary-U}
 
-### Binary Unmeasured Confounder {#sec-binary-U}
-
-When $U \in \{0,1\}$, define $p_t(x) = P(U=1 \mid T=t, X=x)$.
+A useful concrete case arises when $U \in \{0, 1\}$. Define $p_1(x) = P(U=1 \mid T=1, X=x)$, $p_0(x) = P(U=1 \mid T=0, X=x)$, and $\delta(t, x) = m_t(x, 1) - m_t(x, 0)$, the $U$-outcome contrast within the cell defined by $(T, X)$.
 
 ::: {.callout-tip icon=false}
-## Lemma: Binary-Confounder Bias
+## Lemma: Binary-Confounder Bias {#lem-binary-bias}
 
-If $U \in \{0,1\}$ and the $U$-outcome contrast is constant across $(t, x)$ at value $\delta$, then:
+If $U \in \{0,1\}$ and the $U$-outcome contrast is constant across $(t, x)$ at value $\delta$, then
 $$B = \delta \cdot \E\{p_1(X) - p_0(X)\}.$$ {#eq-binary-B}
 :::
 
-*Proof.* With $U \in \{0,1\}$, $m_t(x,u) = m_t(x,0) + u\,\delta$. Substituting into @eq-B-general: $B = \delta\,\E\{P(U{=}1 \mid T{=}1, X) - P(U{=}1 \mid T{=}0, X)\}$. $\square$
+*Proof.* With $U \in \{0,1\}$, $m_t(x, u) = m_t(x, 0) + u\,\delta(t, x)$. The constant-contrast assumption gives $\delta(t,x) = \delta$. Applying @eq-B-general and using that $g_t(x, u)$ integrates to $0$ in $u$,
+$$\int m_t(X, u)\, g_t(X, u)\, du = \delta\,[P(U{=}1 \mid T{=}t, X) - P(U{=}1 \mid X)],$$
+so $B = \delta\,\E\{p_1(X) - p_0(X)\}$. $\square$
 
-Formula @eq-binary-B is the workhorse of applied sensitivity analysis. A sensitivity analysis consists of computing $\hat\tau_{\mathrm{sens}} = \hat\Delta_{\mathrm{obs}} - \hat B$ over a grid of $(\delta,\, \E\{p_1-p_0\})$ values.
+Formula @eq-binary-B is the workhorse of applied sensitivity analysis under the back-door design. It has two sensitivity parameters --- the $U$-outcome effect $\delta$ and the mean $U$-treatment imbalance --- each of which has a concrete interpretation. A sensitivity analysis then consists of computing $\hat\tau_{\mathrm{sens}} = \hat\Delta_{\mathrm{obs}} - \hat B$ over a grid of values and reporting the resulting surface, contours, tipping points, or bounds.
 
-### A Sensitivity Table {#sec-sens-table}
+### A Sensitivity Table
 
-For reporting, a table tabulates the adjusted effect over a grid. Here for observed adjusted effect $\hat\Delta_{\mathrm{obs}} = 2.0$ (cells show $\hat\tau_{\mathrm{sens}} = \hat\Delta_{\mathrm{obs}} - \delta(p_1-p_0)$):
+For reporting, a simple table tabulates the adjusted effect over a grid of sensitivity parameters, in the style of @rosenbaum2002observational and @vanderweele2017sensitivity, for an observed adjusted effect $\hat\Delta_{\mathrm{obs}} = 2.0$.
 
-| $U$-outcome effect $\delta$ | $p_1 - p_0 = 0.10$ | $p_1 - p_0 = 0.30$ | $p_1 - p_0 = 0.50$ |
+| $U$-outcome effect $\delta$ | $p_1 - p_0 = 0.10$ | $0.30$ | $0.50$ |
 |---|---|---|---|
-| weak ($\delta = 2$) | 1.80 | 1.40 | 1.00 |
-| moderate ($\delta = 4$) | 1.60 | 0.80 | 0.00 |
-| strong ($\delta = 8$) | 1.20 | −0.40 | −2.00 |
+| $\delta = 2$ | 1.80 | 1.40 | 1.00 |
+| $\delta = 4$ | 1.60 | 0.80 | 0.00 |
+| $\delta = 8$ | 1.20 | $-0.40$ | $-2.00$ |
 
-The tipping point for the sign is the diagonal cell $(\delta=4,\, p_1-p_0=0.5)$.
+: Sensitivity table for a binary unmeasured confounder. Observed adjusted effect $\hat\Delta_{\mathrm{obs}} = 2.0$; cells show $\hat\tau_{\mathrm{sens}} = \hat\Delta_{\mathrm{obs}} - \delta \cdot (p_1 - p_0)$.
 
-## Three Canonical Sensitivity Models {#sec-three-models}
+The table reads straightforwardly: the effect remains clearly positive when the posited $U$-outcome effect is small relative to the outcome scale, is substantially attenuated once $\delta$ and the imbalance are both moderate on that scale, and reverses when both are large. (Verbal labels such as "weak" or "strong" have no meaning without specifying the scale of $Y$, which is why the rows are indexed by $\delta$ itself.) The tipping point for the sign is not a single cell but the contour $\delta \cdot (p_1 - p_0) = 2.0$, a hyperbola in the $(\delta,\, p_1-p_0)$ plane. The grid lands exactly on that contour at $(\delta = 4,\, p_1 - p_0 = 0.5)$; the cell $(\delta = 8,\, p_1 - p_0 = 0.3)$ lies just beyond it. The analyst then asks whether an unmeasured $U$ anywhere near this strong is scientifically plausible --- a question addressed through benchmarking in @sec-w9-benchmarking.
 
-The bias decomposition @eq-B-general is a general identity. Three canonical *models* specialize it by imposing a structural restriction on either $g_t$ or on the induced observed-data relationships. They are presented in order of increasing generality of the estimator they support.
+## Three Canonical Sensitivity Models {#sec-w9-three-models}
 
-### Rosenbaum's $\Gamma$-Sensitivity Model {#sec-rosenbaum}
+The bias decomposition of @sec-w9-bias-decomp is a general identity. Three canonical *models* specialize it by imposing a structural restriction on either $g_t$ (the $U$-treatment mechanism) or on the induced observed-data relationships. Each model is a named instance of the framework of @sec-w9-framework with a specific choice of sensitivity parameter.
+
+We present the three models in the sequence of matched-design sensitivity analysis, risk-ratio-scale sensitivity summaries, and weighting-based sensitivity intervals. This is a sequence of settings, not an ordering by generality --- the E-value is not tied to an estimator in the way the other two are.
+
+### Rosenbaum's $\Gamma$-Sensitivity Model {#sec-w9-rosenbaum}
+
+@rosenbaum2002observational formulated sensitivity analysis for matched observational studies in terms of an odds-ratio bound on the conditional treatment probabilities. Define the conditional treatment odds given $(X, U)$ and the *sensitivity parameter*
+$$\Gamma = \sup_{x, u, u'} \frac{\mathrm{odds}(T=1 \mid X=x, U=u)}{\mathrm{odds}(T=1 \mid X=x, U=u')}.$$ {#eq-gamma-def}
+In words, $\Gamma$ bounds the factor by which any two units with the same observed covariates can differ in their odds of treatment because of unobserved $U$.
 
 ::: {.callout-note icon=false}
-## Definition: $\Gamma$-Sensitivity Model [@rosenbaum2002observational]
+## Definition: $\Gamma$-Sensitivity Model
 
-The $\Gamma$-sensitivity model at level $\Gamma \geq 1$ is the set of distributions $P(U \mid T, X)$ satisfying:
-$$\frac{1}{\Gamma} \leq \frac{P(T=1 \mid X, U=u)/P(T=0 \mid X, U=u)}{P(T=1 \mid X, U=u')/P(T=0 \mid X, U=u')} \leq \Gamma.$$ {#eq-gamma-bound}
-
-$\Gamma = 1$ recovers conditional exchangeability given $X$ alone. $\Gamma = 2$ states units with the same $X$ may differ by up to a factor of 2 in treatment odds due to unmeasured $U$.
+The $\Gamma$-sensitivity model at level $\Gamma \geq 1$ is the set of treatment-assignment mechanisms $P(T \mid X, U)$ that satisfy
+$$\frac{1}{\Gamma} \;\le\; \frac{P(T=1 \mid X, U=u)/P(T=0 \mid X, U=u)}{P(T=1 \mid X, U=u')/P(T=0 \mid X, U=u')} \;\le\; \Gamma$$ {#eq-gamma-bound}
+for all $x$ and all $u, u'$. $\Gamma = 1$ says that the treatment odds do not vary with the represented $U$ within levels of $X$. That is equivalent to conditional exchangeability given $X$ only when $U$ stands for *all* hidden assignment variation relevant to the potential outcomes and the matched-design assignment model is correctly specified; read literally, it is the weaker statement about odds.
 :::
 
-::: {.callout-tip icon=false}
-## Theorem: $\Gamma$-Bounds on the Rank Statistic [@rosenbaum2002observational]
+The parameter $\Gamma$ is the sensitivity parameter in the sense of @def-sens-model, with $\lambda = \Gamma$, plausibility set $\mathcal{L} = [1, \infty)$, and neutral value $\lambda_0 = 1$. A value $\Gamma = 2$ states that units with the same $X$ may differ by up to a factor of 2 in their treatment odds because of unmeasured $U$.
 
-For a matched-pair design, the null distribution of the sign-rank statistic under the $\Gamma$-model is bounded by Binomial reference distributions with treatment probabilities $\Gamma/(1+\Gamma)$ and $1/(1+\Gamma)$.
+Under the $\Gamma$-model --- testing Fisher's sharp null of no effect (or a specified constant additive effect), with assignments independent across matched pairs --- worst-case null distributions for matched-pair test statistics are obtained by pushing every pair-specific treatment probability to the endpoints $1/(1+\Gamma)$ and $\Gamma/(1+\Gamma)$ permitted by @eq-gamma-bound. For the sign test the resulting bounds are binomial; for Wilcoxon's signed-rank and other signed-score statistics they are distributions of rank-weighted sums of independent Bernoulli variables. The formal statement and its proof are in the optional supplement.
+
+The practical outcome of a $\Gamma$-analysis is a tipping $\Gamma^\star$: the smallest $\Gamma$ at which the test of no effect fails to reject. This value is not a property of the data alone. It is defined only relative to a stated test statistic, a stated worst-case direction, a one- or two-sided alternative, and a significance level; changing any of these changes $\Gamma^\star$, and all four should be reported alongside it. Small $\Gamma^\star$ (near 1) indicates a fragile conclusion; large $\Gamma^\star$ indicates a robust one.
+
+::: {.callout-note icon=false}
+## Remark: Connection to Matched-Pair and Weighted Estimators
+
+The $\Gamma$-model is most natural for matched-pair designs (Chapter 6) because the pair structure absorbs the $X$-conditioning exactly. Extensions to propensity-score stratification and IPW exist but involve additional bookkeeping; the marginal sensitivity model below is the cleanest framework for IPW and AIPW.
 :::
 
-The practical outcome is a tipping $\Gamma^\star$: the smallest $\Gamma$ at which the test fails to reject. Small $\Gamma^\star$ (near 1) indicates a fragile conclusion; large $\Gamma^\star$ indicates a robust one.
+### The E-Value and the VanderWeele--Ding Bound {#sec-w9-evalue}
 
-### The E-Value and the VanderWeele--Ding Bound {#sec-evalue}
+@ding2016sensitivity and @vanderweele2017sensitivity proposed a sensitivity summary that requires no matched design, takes the form of a single closed-form number, and can be read off a reported risk ratio, subject to the scope restrictions recorded at the end of this subsection. It has become the most widely reported sensitivity summary in the applied literature.
 
-@ding2016sensitivity and @vanderweele2017sensitivity proposed a sensitivity summary that requires no matched design and takes the form of a single closed-form number. It has become the most widely reported sensitivity summary in the applied literature.
+The setup uses two risk ratios as sensitivity parameters. Within a covariate stratum $x$, define
+$$\mathrm{RR}_{TU}(x) = \sup_u \frac{dP(u \mid T=1, X=x)}{dP(u \mid T=0, X=x)},$$ {#eq-rrtu-gen}
+$$\mathrm{RR}_{UY}(x) = \max_{t \in \{0,1\}} \frac{\sup_u P(Y=1 \mid T=t, X=x, U=u)}{\inf_u P(Y=1 \mid T=t, X=x, U=u)}.$$ {#eq-rruy-gen}
+Write $\mathrm{RR}_{TU}$ and $\mathrm{RR}_{UY}$ for the maxima of these over $x$. These are, respectively, the maximum relative-risk association of $U$ with $T$ and the maximum relative-risk association of $U$ with $Y$ given $(T, X)$; both are at least $1$.
 
-Define two risk-ratio sensitivity parameters: $\mathrm{RR}_{TU} = \max_x P(U=1 \mid T=1, X=x)/P(U=1 \mid T=0, X=x)$ (maximum RR of $U$ with $T$), and $\mathrm{RR}_{UY} = \max_{t,x} P(Y=1 \mid T=t, X=x, U=1)/P(Y=1 \mid T=t, X=x, U=0)$ (maximum RR of $U$ with $Y$). The *bias factor* is:
+The force of the Ding--VanderWeele result is that with the parameters defined this generally, the bias-factor bound below requires *no* further structure: $U$ need not be binary, need not be a single variable, and may interact with $T$ in its effect on $Y$. That generality is why the E-value is usable in practice, where nothing is known about $U$. A transparent special-case derivation (binary $U$, no $T \times U$ interaction) appears in the optional supplement.
+
+Let $\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x)$ denote the observed risk ratio within stratum $X = x$, and $\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x)$ the corresponding causal risk ratio. Define the *bias factor*
 $$B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) = \frac{\mathrm{RR}_{TU}\, \mathrm{RR}_{UY}}{\mathrm{RR}_{TU} + \mathrm{RR}_{UY} - 1}.$$ {#eq-bias-factor}
 
 ::: {.callout-tip icon=false}
-## Theorem: VanderWeele--Ding Bound
+## Theorem: VanderWeele--Ding Bound {#thm-vd-bound}
 
-$\mathrm{RR}_{TY \mid X}^{\mathrm{true}} \geq \mathrm{RR}_{TY \mid X}^{\mathrm{obs}} / B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})$.
-
-The observed risk ratio can be explained away only if both $\mathrm{RR}_{TU}$ and $\mathrm{RR}_{UY}$ are at least as large as the **E-value**:
-$$\mathrm{EV} = \mathrm{RR}_{TY \mid X}^{\mathrm{obs}} + \sqrt{\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}\,(\mathrm{RR}_{TY \mid X}^{\mathrm{obs}} - 1)}.$$ {#eq-evalue}
+Assume consistency; conditional exchangeability given the full confounder set, $\{Y(0), Y(1)\} \indep T \mid X, U$; positivity of $P(T=t \mid X, U)$; and the binary-outcome risk-ratio setup above, with $P(U \mid T{=}1, X{=}x)$ absolutely continuous with respect to $P(U \mid T{=}0, X{=}x)$ so that @eq-rrtu-gen is finite. Then for every $x$,
+$$\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x) \;\geq\; \frac{\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x)}{B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})}.$$ {#eq-vd-bound}
+Write $R = \mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x) \geq 1$ and define the *E-value*
+$$\mathrm{EV} = R + \sqrt{R\,(R - 1)}.$$ {#eq-evalue}
+Then $\mathrm{EV}$ is the smallest common value $e$ such that the symmetric configuration $\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = e$ drives the bound @eq-vd-bound to the null. Equivalently,
+$$\mathrm{EV} = \min\big\{\max(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) : B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) \geq R\big\}.$$ {#eq-evalue-minmax}
+Consequently, for the observed risk ratio to be explained away completely, *both* associations must be at least $R$ and *at least one* must be at least $\mathrm{EV}$:
+$$\min(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) \geq R, \qquad \max(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) \geq \mathrm{EV}.$$ {#eq-cornfield-pair}
 :::
 
-::: {.callout-note collapse=true icon=false}
-## Proof
+A transparent closed-form derivation of @eq-vd-bound, the E-value formula, the min--max characterization, and the Cornfield pair --- for the special case of a binary $U$ with no $T \times U$ interaction --- is given in the optional supplement.
 
-Fix $x$ and write $p_t = P(U{=}1 \mid T{=}t, X{=}x)$ and $r_t$ for the outcome risk ratio of $U$ at arm $t$. The ratio of observed to causal risk ratio is $[1 + p_1(r_1 - 1)][1 + p(r_0 - 1)] / \{[1 + p(r_1 - 1)][1 + p_0(r_0 - 1)]\}$. Maximizing over admissible $(p_0, p_1, p, r_0, r_1)$ subject to $\max p_1/p_0 \le \mathrm{RR}_{TU}$ and $\max r_t \le \mathrm{RR}_{UY}$, the maximum is attained at $p_0 = 0$, $r_0 = 1$, giving the bound @eq-bias-factor.
+::: {.callout-warning icon=false}
+## The E-Value Bounds the Larger Association
 
-For @eq-evalue: set $\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = e$ and ask for the smallest $e$ such that $B(e,e) = R$ (where $R = \mathrm{RR}_{TY|X}^{\mathrm{obs}}$). This gives $e^2/(2e-1) = R$, so $e = R + \sqrt{R(R-1)}$. $\square$
+It is a common and consequential misreading to say that an association can be explained away only if *both* $\mathrm{RR}_{TU}$ and $\mathrm{RR}_{UY}$ exceed the E-value. That condition is *sufficient* --- if both exceed $\mathrm{EV}$ then $B \geq R$ --- but it is not *necessary*. The correct pair of necessary conditions is @eq-cornfield-pair: both associations must be at least the observed risk ratio $R$, and at least one must be at least $\mathrm{EV}$. Asymmetric pairs with one component well below the E-value can suffice: at $R = 2.5$, where $\mathrm{EV} = 4.44$, the pair $(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) = (3.00,\, 10.00)$ gives $B = 2.5$ and explains the effect away even though $3.00 < \mathrm{EV}$. Note that $3.00$ still exceeds $R = 2.5$, as @eq-cornfield-pair requires.
 :::
 
 ::: {.callout-note icon=false}
-## Example: An E-Value Calculation
+## Remark: Standardizing over $X$
 
-An observational study reports $\mathrm{RR}_{TY|X}^{\mathrm{obs}} = 2.5$ with 95% CI $[1.7, 3.7]$.
+@thm-vd-bound is a *stratum-specific* statement: it bounds the ratio of observed to causal risk ratios within each level of $X$. It does not follow that the same bound applies to the standardized (marginal) risk ratios obtained by averaging $\E\{Y(t) \mid X\}$ over the distribution of $X$. A ratio of $X$-averaged risks is not obtained by simply averaging the $X$-specific risk ratios, and the relevant weights can differ between the observed and causal quantities, so a separate argument is required; numerical counterexamples satisfying the stratum-wise bound at every $x$ while violating the standardized version are easy to construct. In applications the E-value is therefore most defensible when read at the level at which the risk ratio was estimated --- typically a covariate-adjusted model-based risk ratio taken as approximately constant in $X$.
+:::
 
-$\mathrm{EV} = 2.5 + \sqrt{2.5 \times 1.5} \approx 4.44$. To reduce the point estimate to the null, an unmeasured confounder must have both a RR association with treatment *and* an outcome-conditional RR association of at least 4.4.
+::: {.callout-note icon=false}
+## Example: An E-Value Calculation {#exm-evalue}
 
-$\mathrm{EV}_{\mathrm{CL}} = 1.7 + \sqrt{1.7 \times 0.7} \approx 2.79$. To reduce the lower CI to the null, the associations must each be at least 2.8.
+An observational study reports an adjusted risk ratio of $2.5$ with 95% CI $[1.7, 3.7]$. The E-value for the point estimate is
+$$\mathrm{EV} = 2.5 + \sqrt{2.5 \cdot 1.5} = 2.5 + \sqrt{3.75} \approx 4.44.$$
+The E-value for the lower confidence limit is $1.7 + \sqrt{1.7 \cdot 0.7} \approx 2.79$.
+
+Interpretation: to reduce the point estimate to the null, an unmeasured confounder must have *both* risk-ratio associations --- with treatment, and with the outcome given treatment --- at least $2.5$, and at least one of them at least $4.44$. The symmetric configuration $\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = 4.44$ is sufficient but not necessary: the asymmetric pair $(3.00,\, 10.00)$ also explains the point estimate away. For the lower confidence limit the corresponding thresholds are $1.7$ and $2.79$.
 :::
 
 ::: {.callout-note icon=false}
 ## Remark: Why a Single Number
 
-The E-value collapses the two parameters to one by asking about the symmetric diagonal $\mathrm{RR}_{TU} = \mathrm{RR}_{UY} = e$. This is conservative: asymmetric configurations can also explain away the effect. The E-value is reported because it is a single interpretable scalar, not because it is the tightest possible summary.
+@thm-vd-bound bounds the bias factor over the *product space* of $(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})$. The E-value collapses the two parameters to one by asking about the symmetric diagonal, and by @eq-evalue-minmax the resulting number is the smallest achievable value of the larger of the two associations. It is a genuine necessary threshold for that larger association. It does not, however, say nothing about the smaller one: by @eq-cornfield-pair the smaller association must still be at least the observed risk ratio $R$. Asymmetric configurations with one parameter large and the other near $R$ can also explain away the effect, and the full bivariate bound is more informative than either threshold alone. The E-value is reported because it is a single interpretable scalar, not because it is the tightest possible summary.
 :::
 
-### The Marginal Sensitivity Model {#sec-msm}
+```{r}
+#| label: fig-evalue-contour
+#| fig-cap: "The two-parameter bias-factor region for an observed risk ratio $R = 2.5$, for which $\\mathrm{EV} = 4.44$. The shaded set is the collection of pairs able to explain the association away; its boundary is the hyperbola $\\mathrm{RR}_{UY} = R(\\mathrm{RR}_{TU}-1)/(\\mathrm{RR}_{TU}-R)$. The dashed lines are the Cornfield thresholds. The E-value is where the region meets the symmetric diagonal (dotted), and is the smallest attainable value of the larger association. The point $(3.00, 10.00)$ lies inside the region with first coordinate well below $\\mathrm{EV}$ --- which is why 'both associations must reach the E-value' is false, while 'both must reach $R$' is true."
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5.2
+R <- 2.5; EV <- R + sqrt(R * (R - 1))
+xs <- seq(R + 0.45, 10.8, length.out = 400)
+ys <- R * (xs - 1) / (xs - R)
+par(mar = c(4.2, 4.2, 1, 1))
+plot(0, 0, type = "n", xlim = c(2, 11), ylim = c(2, 11), bty = "n",
+     xlab = expression(RR[TU]), ylab = expression(RR[UY]))
+polygon(c(xs, rev(xs)), c(pmin(ys, 10.8), rep(10.8, length(xs))),
+        col = "#C000001F", border = NA)
+lines(xs, ys, col = "#C00000", lwd = 2.6)
+abline(v = R, lty = 2, col = "#1A7A3A", lwd = 1.8)
+abline(h = R, lty = 2, col = "#1A7A3A", lwd = 1.8)
+segments(2, 2, 10.8, 10.8, lty = 3, col = "grey45", lwd = 1.6)
+points(EV, EV, pch = 19, col = "#2E74B6", cex = 1.3)
+points(3.0, 10.0, pch = 19, col = "#7B4FA8", cex = 1.3)
+text(EV + 0.35, EV - 0.35, "(EV, EV)", col = "#2E74B6", pos = 4, cex = 0.8)
+text(3.25, 10.0, "(3.00, 10.00)", col = "#7B4FA8", pos = 4, cex = 0.8)
+text(2.65, 8.8, expression(RR[TU] == R), col = "#1A7A3A", pos = 4, cex = 0.78)
+text(7.4, 2.85, expression(RR[UY] == R), col = "#1A7A3A", pos = 4, cex = 0.78)
+text(6.6, 7.6, expression(B >= R), col = "#C00000", pos = 4, cex = 0.82)
+text(6.6, 7.0, "(explained away)", col = "#C00000", pos = 4, cex = 0.78)
+```
+
+**Scope of the E-value formula.** Equation @eq-evalue is stated for a risk ratio $R \geq 1$. For a protective effect, $R < 1$, the E-value is computed from $1/R$ and interpreted on that scale. For odds ratios and hazard ratios the formula is not automatically exact: an odds ratio approximates the corresponding risk ratio only under a rare-outcome condition, and a hazard ratio carries additional causal interpretive difficulties (selection over time among survivors) that the bias factor of @thm-vd-bound does not address. Applying the E-value to these measures requires the conversions and caveats given by @vanderweele2017sensitivity, not a direct substitution into @eq-evalue.
+
+### The Marginal Sensitivity Model {#sec-w9-msm}
+
+The $\Gamma$-model is formulated in terms of the unobservable conditional distribution $P(T \mid X, U)$; the E-value collapses the $U$-treatment and $U$-outcome associations to a symmetric scalar. @tan2006distributional proposed an alternative formulation --- the *marginal sensitivity model* (MSM) --- that bounds the violation directly by an odds ratio comparing the nominal propensity $P(T=1 \mid X)$ with the latent propensity $P(T=1 \mid X, U)$, making it natural to combine with weighting estimators in Chapters 10--11.
+
+Define the *nominal* and *true* propensity scores $\pi(x) = P(T=1 \mid X=x)$ and $\pi^{\mathrm{true}}(x, u) = P(T=1 \mid X=x, U=u)$.
 
 ::: {.callout-note icon=false}
-## Definition: Marginal Sensitivity Model [@tan2006distributional]
+## Definition: Marginal Sensitivity Model
 
-The *marginal sensitivity model* at level $\Lambda \geq 1$ bounds the odds ratio between the nominal propensity $\pi(x) = P(T=1 \mid X=x)$ and the true propensity $\pi^{\mathrm{true}}(x,u) = P(T=1 \mid X=x, U=u)$:
-$$\frac{1}{\Lambda} \leq \frac{\{1-\pi^{\mathrm{true}}(X,U)\}\,\pi(X)}{\pi^{\mathrm{true}}(X,U)\,\{1-\pi(X)\}} \leq \Lambda \quad\text{a.s.}$$ {#eq-msm-bound}
-
-$\Lambda = 1$ recovers no unmeasured confounding.
+The *marginal sensitivity model* at level $\Lambda \geq 1$ is the set of distributions $P(T \mid X, U)$ satisfying
+$$\frac{1}{\Lambda} \;\leq\; \frac{\{1 - \pi^{\mathrm{true}}(X, U)\}\,\pi(X)}{\pi^{\mathrm{true}}(X, U)\,\{1 - \pi(X)\}} \;\leq\; \Lambda \qquad\text{almost surely.}$$ {#eq-msm-bound}
+The constraint is symmetric: because both endpoints of the bound are imposed, the same constraint also bounds the inverse ratio by the same factor $\Lambda$.
 :::
+
+The parameter $\Lambda$ bounds, on the odds scale, how far the covariate-conditional propensity can depart from the true propensity once $U$ is marginalized. Read literally, $\Lambda = 1$ says only that the represented $U$ does not alter the treatment odds within levels of $X$; under the maintained latent exchangeability of @thm-msm-bounds below, this eliminates the additional treatment-selection dependence on $U$ and thereby recovers conditional exchangeability given $X$ alone.
 
 ::: {.callout-tip icon=false}
-## Theorem: MSM Bounds on the ATE [@zhao2019sensitivity]
+## Theorem: MSM Sensitivity Interval for the ATE {#thm-msm-bounds}
 
-Under the marginal sensitivity model at level $\Lambda$, the ATE satisfies $\tau_L(\Lambda) \leq \tau \leq \tau_U(\Lambda)$, where the sharp bounds are obtained by solving linear programs over the admissible weight perturbations induced by @eq-msm-bound.
+Assume consistency; latent conditional exchangeability $\{Y(0), Y(1)\} \indep T \mid X, U$; positivity of the true propensity; suitable integrability conditions; and the marginal sensitivity model @eq-msm-bound at level $\Lambda$. Then the average treatment effect satisfies $\tau_L(\Lambda) \leq \tau \leq \tau_U(\Lambda)$, where $(\tau_L, \tau_U)$ are functionals of the observed-data distribution obtained by optimizing the weighting estimand over a valid outer envelope of weight perturbations implied by @eq-msm-bound. The interval is *valid* in the sense of @def-sharp-conservative: it contains $\tau$ whenever the model holds. It is not claimed to be sharp.
 :::
 
-*Proof sketch.* The true IPW weights equal the nominal weights multiplied by a perturbation factor $\phi_i \in [\Lambda^{-1}, \Lambda]$. Because the target is linear in $\phi$, the extrema are attained at $\phi_i \in \{\Lambda^{-1}, \Lambda\}$. @zhao2019sensitivity give closed-form percentile expressions. $\square$
+The interval is computed empirically by optimizing the self-normalized (Hájek) weighting estimator over a valid outer envelope of weight perturbations --- a linear-fractional program whose solution is a threshold rule in the ordered outcomes, which is why it takes a percentile form --- with percentile-bootstrap inference [@zhao2019sensitivity]. The derivation of the perturbation envelope and the optimization details are in the optional supplement.
 
 ::: {.callout-note icon=false}
-## Remark: MSM as the Estimation-Oriented Sensitivity Model
+## Remark: MSM in Practice --- Estimation-Oriented, Valid but Not Sharp
 
-The MSM is the natural model to pair with IPW, AIPW, TMLE, and DML (Chapters 10--12), because it bounds the violation on the *weight* scale rather than on the unobservable $P(T \mid X, U)$. The sensitivity analysis reduces to a perturbation of the nominal weights by a factor in $[\Lambda^{-1}, \Lambda]$.
+The MSM pairs naturally with weighting estimators (Chapters 10--12): it bounds the violation on the *weight* scale, so the analysis is a perturbation of the nominal weights that preserves the estimation architecture. @zhao2019sensitivity develop this for inverse-probability weighting with percentile-bootstrap inference; augmented and doubly robust extensions are separate developments. The resulting interval is *valid* but should not be called sharp: the constraint the MSM actually places on the perturbations is tighter and more structured than the envelope over which the optimization runs, so the interval is conservative in the sense of @def-sharp-conservative, and later work characterizing the sharp identified set under the same odds-ratio restriction --- the quantile-balancing analysis of @dorn2023sharp --- shows that the earlier intervals can be strictly wider.
 :::
 
-### Comparing the Three Models {#sec-comparing-three}
+### Comparing the Three Models
+
+The three models share the general logic of indexed assumption relaxation. The MSM and the E-value bias-factor model fit the causal identified-set formulation directly; Rosenbaum's usual $p$-value analysis is its inferential analogue and fits the estimand-set formulation after test inversion (@sec-w9-partial). They differ in (i) what object the sensitivity parameter bounds, (ii) what estimator they naturally pair with, and (iii) how the sensitivity parameter is benchmarked.
 
 | | **Rosenbaum $\Gamma$** | **E-value** | **MSM ($\Lambda$)** |
 |---|---|---|---|
-| Parameter bounds | odds ratio of treatment given $X, U$ | pair of risk-ratio associations $\mathrm{RR}_{TU}, \mathrm{RR}_{UY}$ | odds ratio of nominal to true propensity |
-| Natural estimator | matched-pair and weighted rank tests | any relative-effect summary | IPW, AIPW |
-| One-number summary | tipping $\Gamma^\star$ | $\mathrm{EV}$ (symmetric diagonal) | bounds $[\tau_L, \tau_U]$ or tipping $\Lambda^\star$ |
+| Parameter bounds | Odds ratio of treatment given $X, U$ | Pair of risk-ratio associations $\mathrm{RR}_{TU}, \mathrm{RR}_{UY}$ | Odds ratio of nominal to true propensity |
+| Natural design or estimator setting | Matched-pair and signed-score analyses | Estimator-agnostic risk-ratio-scale effect estimate | IPW (augmented extensions cited separately) |
+| Typical sensitivity output | Tipping $\Gamma^\star$ | $\mathrm{EV}$ (symmetric diagonal) | Sensitivity interval $[\tau_L, \tau_U]$ or tipping $\Lambda^\star$ |
 | Primary reference | @rosenbaum2002observational | @vanderweele2017sensitivity | @tan2006distributional; @zhao2019sensitivity |
+
+: The three canonical sensitivity models for unmeasured confounding.
 
 ::: {.callout-note icon=false}
 ## Remark: Which Model to Report
 
-Reporting more than one summary is common and useful. The E-value is almost always included because it is a single number that is widely understood; the $\Gamma$-value is reported in matched or rank-based analyses; and the MSM bounds are reported when the primary estimator is IPW or AIPW. The three are not substitutes: each bounds a different object.
+In practice, reporting more than one summary is common and useful. The E-value is commonly included when the effect is naturally reported, or defensibly converted, to a risk-ratio scale, because it is a single number that is widely understood; the $\Gamma$-value is reported alongside it in matched or rank-based analyses; and the MSM bounds are reported alongside the others when the primary estimator is IPW or AIPW. The three are not substitutes: each bounds a different object --- a treatment-odds ratio, a pair of risk-ratio associations, and an odds ratio of nominal to true propensity --- and so each answers a distinct question. A rigorous applied analysis quotes at least one bound or tipping point together with benchmarking against observed covariates.
 :::
 
-## Benchmarking Sensitivity Parameters {#sec-benchmarking}
+## Benchmarking and Reporting {#sec-w9-benchmarking}
 
-Every sensitivity model has parameters that are not identified by the data. A sensitivity curve of the form "at $\lambda = 0.2$ the effect is halved" is mathematically precise but scientifically empty until $\lambda = 0.2$ has been anchored to something concrete. *Benchmarking* gives sensitivity parameters an empirical referent by comparing them to the analogous quantities computed for the *observed* covariates [@cinelli2020making].
+Every sensitivity model in the previous section has one or more parameters that are not identified by the data. A sensitivity curve of the form "at $\lambda = 0.2$ the effect is halved" is mathematically precise but scientifically empty until $\lambda = 0.2$ has been anchored to something concrete. *Benchmarking* is the discipline of giving sensitivity parameters an empirical referent by comparing them to the analogous quantities computed for the *observed* covariates [@cinelli2020making].
 
-### Benchmarking Against Observed Covariates
+### Why Sensitivity Parameters Need Interpretation
 
-For the binary-confounder setup, compute for each observed covariate $X_j$: the coefficient on $X_j$ in a regression of $Y$ on $(T, X_1, \ldots)$ (the role of $\delta$), and the difference in conditional means of $X_j$ across treatment arms (the role of the imbalance). Plot these against the tipping contour.
+Consider a statement that would otherwise close a sensitivity analysis: "the conclusion is robust up to $\Gamma = 1.8$." To evaluate this statement scientifically, one must know whether an unmeasured confounder inducing a treatment-odds ratio of $1.8$ is a plausible hypothesis in the particular study, or an implausible one. The same $\Gamma$-value can be a comfortable margin in one application and an alarming fragility in another.
 
-For the E-value, for each $X_j$ compute the bias factor:
-$$B_j = \frac{\mathrm{RR}_{TX_j}\,\mathrm{RR}_{X_jY}}{\mathrm{RR}_{TX_j} + \mathrm{RR}_{X_jY} - 1}.$$
-If $B_j < \mathrm{EV}$ for every observed covariate, an unmeasured confounder inducing the observed effect would have to be at least as strong as some observed covariate. @cinelli2020making develop partial-$R^2$ benchmarks for the linear regression setting.
+Similarly, "the E-value equals 3.5" means that, to explain the effect away, an unmeasured confounder must have risk-ratio associations with $T$ and with $Y$ that are *both* at least the observed risk ratio $R$, with at least *one* of them at least $3.5$. Whether a confounder of this magnitude is plausible depends on the context, and the benchmark must name its scale: in a study where the strongest observed covariate has an equivalent E-value of $2.0$, an $\mathrm{EV} = 3.5$ is reassuring; in a study where measured covariates routinely have equivalent E-values of $4$ or more, it is not. Quoting a covariate's raw bias factor, or one of its two associations alone, in place of its equivalent E-value would compare different objects.
+
+### Benchmarking Against Observed Covariates {#sec-w9-benchmark-observed}
+
+The core idea of benchmarking is to compute the sensitivity-parameter values implied by the observed covariates and to compare them to the proposed range for an unmeasured confounder.
+
+For the binary-confounder setup, the sensitivity parameters are the $U$-outcome effect $\delta$ and the $U$-treatment imbalance $p_1(X) - p_0(X)$. For each observed covariate $X_j$, one can compute the analogous quantities. The treatment-side benchmark must match the estimator. If the primary estimator is OLS adjustment, the exact analogue is the Frisch--Waugh--Lovell auxiliary coefficient
+$$d_j^{\mathrm{OLS}} = \text{coefficient on } T \text{ in the regression of } X_j \text{ on } (1, T, X_{-j}),$$
+so the covariate's implied bias is $\hat\gamma_j\,d_j^{\mathrm{OLS}}$. If the primary estimator is a standardized conditional-mean contrast, the matching benchmark is instead $\E_{X_{-j}}\{\E(X_j \mid T{=}1, X_{-j}) - \E(X_j \mid T{=}0, X_{-j})\}$. The two need not coincide --- the lab in @sec-w9-lab makes exactly this distinction for the unmeasured confounder itself, and the observed-covariate benchmark must respect it for the same reason.
+
+For the E-value, benchmarking is particularly clean. For each observed covariate $X_j$, compute its risk-ratio association with $T$ (call it $\mathrm{RR}_{TX_j}$) and with $Y$ (adjusted for $T$ and the other covariates, call it $\mathrm{RR}_{X_j Y}$). The corresponding bias factor is
+$$B_j = \frac{\mathrm{RR}_{TX_j}\,\mathrm{RR}_{X_j Y}}{\mathrm{RR}_{TX_j} + \mathrm{RR}_{X_j Y} - 1}.$$
+By @thm-vd-bound, a confounder with these associations can explain the observed effect away only if $B_j \geq \mathrm{RR}_{TY \mid X}^{\mathrm{obs}}$. Hence if $B_j < \mathrm{RR}_{TY \mid X}^{\mathrm{obs}}$ for every observed covariate, no unmeasured confounder as strong as *any* observed covariate can account for the effect. One precision matters here: the comparison is one *joint pair* at a time. "As strong as covariate $X_j$" means having the same pair as that single covariate. It does not rule out a hypothetical confounder combining the strongest treatment association seen for one covariate with the strongest outcome association seen for another: because $B(\cdot,\cdot)$ is increasing in each argument, such mixed maxima can yield a larger bias factor than any individual observed covariate exhibits.
+
+Two scales are in play here, and mixing them is a common error. The bias factor $B_j$ lives on the scale of the observed risk ratio, so the comparison just made is $B_j$ against $\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}$ --- not $B_j$ against $\mathrm{EV}$, which is on the scale of an individual association. To compare on the E-value scale instead, convert each covariate to the symmetric pair of associations that would produce the same bias factor:
+$$e_j = B_j + \sqrt{B_j\,(B_j - 1)},$$ {#eq-equivalent-evalue}
+which solves $B(e_j, e_j) = B_j$ by the same algebra that produced @eq-evalue. Call $e_j$ the *equivalent E-value* of covariate $X_j$. Because $B$ is increasing in each argument, $e_j$ and $\mathrm{EV}$ are directly comparable, and the conclusion survives a confounder as strong as $X_j$ precisely when $\mathrm{EV} > e_j$.
+
+@cinelli2020making develop the idea systematically for the linear regression setting, introducing partial-$R^2$ benchmarks that quantify how much of the variation in $T$ and $Y$ an unmeasured confounder would need to explain --- expressed as multiples of the partial-$R^2$ of the strongest observed covariate.
+
+E-values are defined for ratio measures. When the outcome is continuous, an E-value can still be reported, but only after the effect has been placed on a ratio scale; the usual device is to convert a standardized mean difference $d$ to an approximate risk ratio $\exp(0.91\,d)$ and compute the E-value from that [@vanderweele2017sensitivity]. Quoting an E-value directly for a raw difference --- a dollar amount, a test-score gap --- is a category error, because the bias factor of @thm-vd-bound multiplies a ratio and has no interpretation as an additive displacement.
 
 ::: {.callout-note icon=false}
-## Example: Benchmarked Reporting Language
+## Remark: When Benchmarking Is Informative
 
-The estimated effect of the job-training program on annual earnings is \$1,800 with 95% CI $[\$900, \$2,700]$. The E-value for the lower confidence limit is 2.3. Among the observed covariates, the largest bias factor is that of prior-year earnings, at $B = 2.0$; baseline education has $B = 1.5$. The conclusion is robust to an unmeasured confounder as strong as any observed covariate, but could be overturned by a confounder approximately 15% stronger than the strongest observed one.
+Benchmarking is most informative when the observed covariate used as a benchmark is scientifically comparable to the hypothesized unmeasured confounder and is measured on a relevant scale. An unmeasured confounder that operates through a different causal pathway from any observed covariate --- for example, a behavioral factor in a study whose adjustment set consists only of demographic controls --- need not satisfy the same association bounds as the strongest observed covariate. In such settings a statement of the form "the unmeasured confounder would have to be 15% stronger than the strongest observed covariate" is a scale comparison, not a substantive ruling-out.
 :::
 
+### Reporting a Benchmarking Analysis
+
+A minimal benchmarked sensitivity report contains three components: a point estimate with sampling-based confidence interval; a sensitivity summary (a tipping point, a bound, or the E-value); and a benchmarking comparison to observed covariates. The third component is essential. Without it, the sensitivity summary is a mathematical object without a scientific referent, and the report risks conveying a false precision about the robustness of the conclusion.
+
 ::: {.callout-warning icon=false}
-## Sensitivity without Benchmarking
+## Warning: Sensitivity without Benchmarking
 
 Reporting "the effect is robust up to $\Gamma = 2$" without a statement of whether $\Gamma = 2$ is plausible in the study at hand is the sensitivity-analysis analog of reporting a confidence interval without stating the confidence level: technically complete, but uninformative.
 :::
 
-## Partial Identification and Bounds {#sec-partial}
+### Reporting Guidelines
 
-The sensitivity models of @sec-three-models each restrict the magnitude of a violation by a single parameter. A more radical approach imposes no parametric restriction at all --- asking what the observed data can say about the causal parameter without any untestable identifying assumption. The answer is a set of values: the theory of *partial identification* [@manski1990nonparametric; @manski2003partial].
+At minimum, an applied report should include the point estimate $\hat\psi$ and its sampling 95% confidence interval; a sensitivity summary --- one of (a) a sensitivity curve, (b) a sensitivity bound over a specified $\mathcal{L}$, or (c) an E-value or tipping point; a benchmarking statement; and a plain-language interpretation.
+
+::: {.callout-warning icon=false}
+## Warning: Misleading Phrases
+
+- "The result is causal because the estimate is statistically significant." Statistical significance addresses sampling uncertainty, not identification credibility.
+- "The result is robust because we used machine learning." Flexible nuisance estimation improves the estimator; it does not validate the identifying assumptions.
+- "Sensitivity analysis showed the result is not biased." Sensitivity analysis does not test for bias. It quantifies how much bias the identifying assumptions *could* produce if violated.
+- "The E-value is $X$, therefore the effect is robust." An E-value is robust or not depending on whether $X$ is plausible as an unmeasured-confounder strength. A large E-value without benchmarking is an unanchored statistic.
+:::
+
+#### Recommended Template {#sec-w9-template}
+
+A sample report paragraph, in the style recommended throughout this chapter:
+
+> Under the back-door adjustment for $X$, the estimated risk ratio is $1.85$ with 95% CI $[1.25, 2.70]$. The E-value is $3.10$ for the point estimate and $1.81$ for the lower confidence limit. Among observed covariates, the bias factors $B_j$ range from $1.15$ (age) to $1.60$ (baseline health status); converting each to its equivalent E-value by @eq-equivalent-evalue gives $1.57$ and $2.58$ respectively. Comparing on that common scale, $3.10 > 2.58$: the point estimate is robust to an unmeasured confounder as strong as any single observed covariate, with roughly 20% to spare. The lower confidence limit is not, since $1.81 < 2.58$. Explaining away the point estimate would therefore require unmeasured confounding stronger, on the equivalent-E-value scale, than any single measured covariate. Whether confounding of that strength is scientifically implausible depends on whether baseline health is a credible comparator for the important pathways that may remain unmeasured; the numbers alone do not settle that question.
+
+Two features of this template are deliberate. The effect is reported as a risk ratio rather than as an additive ATE, because the E-value formula is defined on the ratio scale; attaching an E-value to a mean difference would report two incompatible objects. And the comparison is $e_j$ against $\mathrm{EV}$ throughout, never $B_j$ against $\mathrm{EV}$, which would mix scales.
+
+## Partial Identification and Overlap {#sec-w9-partial}
+
+### From Sensitivity Models to Identified Sets
+
+@def-sens-model is stated for a *point-valued* relaxation, in which each $\lambda$ pins $\psi$ down to a single number. Several of the models in this chapter are not of that kind. The general object is therefore set-valued:
+$$\mathcal{I}_\lambda(P) = \{\psi(Q) : Q \text{ compatible with } P \text{ and } A_\lambda\},$$ {#eq-sens-set-valued}
+the collection of estimand values consistent with the observed-data distribution $P$ once the assumption has been relaxed to $A_\lambda$. The neutral value is characterized by $\mathcal{I}_{\lambda_0}(P) = \{\Psi(P)\}$. Write $\underline\psi(\lambda) = \inf \mathcal{I}_\lambda(P)$ and $\overline\psi(\lambda) = \sup \mathcal{I}_\lambda(P)$ for the *pointwise* lower and upper endpoints at a given $\lambda$. When $\mathcal{I}_\lambda(P)$ is a singleton these coincide and we recover the point-valued case; a sensitivity curve is the appropriate report exactly then. Otherwise the report is a band between $\underline\psi$ and $\overline\psi$.
+
+One distinction within this formulation deserves emphasis. The MSM and the E-value bias-factor model fit the estimand-valued object directly: each restricts the possible values of, or discrepancy affecting, the causal estimand itself. Rosenbaum's $\Gamma$-analysis is ordinarily an *inferential* sensitivity analysis: at fixed $\Gamma$ it bounds a randomization $p$-value under a sharp null, not the causal estimand. It enters the estimand-set framework only after *test inversion* --- for example, by inverting tests over a constant additive treatment effect to obtain a $\Gamma$-sensitivity interval. The $\Gamma$-model thus shares the indexed-relaxation logic of @def-sens-model, but its usual $p$-value output is not literally an element of $\mathcal{I}_\Gamma(P)$ for $\psi$ --- a distinction worth marking in a chapter whose central theme is the separation of identification from inference.
+
+For set-valued models, the tipping-point definition @eq-tipping-point applies with $\psi$ replaced by the pointwise lower endpoint $\underline\psi$.
+
+The sensitivity models above each restrict the magnitude of a violation through a finite-dimensional sensitivity parameter or plausibility region. A more radical approach is to impose no parametric restriction on the violation at all --- or, equivalently, to ask what the observed data can say about the causal parameter without any untestable identifying assumption. The answer is a set of values rather than a single point. This is the theory of *partial identification* [@manski1990nonparametric; @manski2003partial].
 
 ### Point Identification vs. Partial Identification
 
-Under *point identification*, $\psi = \Psi(P)$. Under *partial identification*, the assumptions pin down a set:
-$$\psi \in \Psi_A(P) = \{\text{values of }\psi\text{ consistent with assumption set }A\text{ and distribution }P\}.$$ {#eq-partial-id}
+We have so far worked under *point identification*: given the baseline assumption $A_0$, the estimand equals a specific functional of the observed-data distribution, $\psi = \Psi(P)$. Under *partial identification*, the assumptions pin down not a single value of $\psi$ but a set. The *identified set* $\Psi_A(P)$ is the sharp answer to the question "given the assumption set $A$ and the population distribution $P$, what values of $\psi$ are possible?" Point identification is the limiting case $\Psi_A(P) = \{\psi\}$. Sensitivity bounds as defined in @eq-sens-bounds are a parametric restriction of the partial-identification idea.
 
 ::: {.callout-note icon=false}
-## Definition: Sharp and Conservative Bounds
+## Definition: Identified Set
 
-A bound $[\psi_L, \psi_U]$ is *sharp* under assumption set $A$ if it equals $[\inf \Psi_A(P),\, \sup \Psi_A(P)]$. It is *conservative* (valid) if it contains the identified set but may be wider. Sharp bounds cannot be improved without adding assumptions; conservative bounds can sometimes be tightened by a more careful derivation.
+Given an assumption set $A$ (a statement restricting the joint distribution of observed and unobserved quantities), the *identified set* for $\psi$ at distribution $P$ is
+$$\Psi_A(P) = \{\psi(Q) : Q \in \mathcal{Q}_A,\ Q \text{ induces } P \text{ on the observables}\},$$
+where $\mathcal{Q}_A$ is the collection of joint distributions consistent with $A$.
 :::
 
-### Manski's No-Assumption Bound {#sec-manski}
+The identified set is sharp in the sense that every value in it is consistent with some admissible $Q$, and every value outside is not. Refining $A$ (adding assumptions) shrinks $\Psi_A(P)$; weakening $A$ expands it.
+
+::: {.callout-note icon=false}
+## Definition: Sharp Endpoint Bounds and Conservative Bounds {#def-sharp-conservative}
+
+The bounds $(\psi_L, \psi_U)$ are *sharp endpoint bounds* under assumption set $A$ if $\psi_L = \inf \Psi_A(P)$ and $\psi_U = \sup \Psi_A(P)$. If $\Psi_A(P)$ is an interval, then $\Psi_A(P) = [\psi_L, \psi_U]$ and this interval is the *sharp identified set*; if $\Psi_A(P)$ is nonconvex, $[\psi_L, \psi_U]$ is only its convex hull, which contains values attainable under no admissible $Q$, and full sharpness requires reporting $\Psi_A(P)$ itself. A bound is *conservative* (or merely *valid*) if $\psi_L \leq \inf \Psi_A(P)$ and $\psi_U \geq \sup \Psi_A(P)$: it contains the identified set but may be wider than $A$ and $P$ require.
+:::
+
+Sharp endpoint bounds cannot be improved without adding assumptions; conservative bounds can sometimes be tightened by a more careful derivation under the same assumptions. Whenever bounds are reported, one should state which kind they are, because a sharpness claim has real content: it asserts that no further information can be extracted from $(A, P)$. For the average treatment effect and the related scalar estimands of this chapter, $\Psi_A(P)$ is typically an interval, and sharp endpoint bounds coincide with the sharp identified set.
+
+### Manski's No-Assumption Bound
+
+The widest identified set is obtained by imposing no identifying assumption at all beyond what the observed data mechanically reveal. The label "no-assumption" is conventional shorthand and slightly overstates the case: the result below still requires consistency, a binary treatment, and known bounds on the support of *both potential outcomes* --- not merely of the observed outcome, since the proof bounds the unobserved counterfactual means. What it dispenses with is any assumption about the treatment-assignment mechanism.
 
 ::: {.callout-tip icon=false}
-## Theorem: Manski's No-Assumption Bound [@manski1990nonparametric]
+## Theorem: Manski's No-Assumption Bound on the ATE {#thm-manski}
 
-Suppose $Y \in [y_L, y_U]$ a.s. and $p = P(T=1)$. Then $\tau \in [\tau_L, \tau_U]$ with:
-$$\tau_L = [\E(Y \mid T=1)\,p + y_L\,(1-p)] - [\E(Y \mid T=0)\,(1-p) + y_U\,p],$$ {#eq-manski-lower}
-$$\tau_U = [\E(Y \mid T=1)\,p + y_U\,(1-p)] - [\E(Y \mid T=0)\,(1-p) + y_L\,p].$$ {#eq-manski-upper}
-
-These bounds are **sharp**, and the width of the identified set is:
+Assume consistency, $Y = T\,Y(1) + (1-T)\,Y(0)$, and suppose both potential outcomes are bounded: $Y(t) \in [y_L, y_U]$ almost surely for $t \in \{0, 1\}$. Let $p = P(T=1)$. Then $\tau = \E\{Y(1) - Y(0)\}$ satisfies $\tau \in [\tau_L, \tau_U]$ with
+$$\tau_L = \big[\E(Y \mid T=1)\,p + y_L\,(1 - p)\big] - \big[\E(Y \mid T=0)\,(1 - p) + y_U\,p\big],$$ {#eq-manski-lower}
+$$\tau_U = \big[\E(Y \mid T=1)\,p + y_U\,(1 - p)\big] - \big[\E(Y \mid T=0)\,(1 - p) + y_L\,p\big].$$ {#eq-manski-upper}
+These bounds are sharp, and the width of the identified set is
 $$\tau_U - \tau_L = y_U - y_L.$$ {#eq-manski-width}
 :::
 
-::: {.callout-note collapse=true icon=false}
-## Proof
+*Proof.* By the law of total probability,
+$$\E\{Y(1)\} = \E\{Y(1) \mid T=1\}\, p + \E\{Y(1) \mid T=0\}\,(1 - p),$$
+and symmetrically for $\E\{Y(0)\}$. Consistency identifies two of the four terms from the data: $\E\{Y(1) \mid T=1\} = \E(Y \mid T=1)$ and $\E\{Y(0) \mid T=0\} = \E(Y \mid T=0)$. The other two are unobserved counterfactual means, restricted only by the bounded-outcome condition to lie in $[y_L, y_U]$. The extremes of $\E\{Y(1)\}$ are therefore attained at $\E\{Y(1) \mid T=0\} \in \{y_L, y_U\}$, giving
+$$\E\{Y(1)\} \in \big[\E(Y \mid T=1)\,p + y_L\,(1 - p),\ \E(Y \mid T=1)\,p + y_U\,(1 - p)\big],$$
+and similarly for $\E\{Y(0)\}$. The identified set for $\tau$ is the Minkowski difference of the two intervals, giving @eq-manski-lower--@eq-manski-upper. The width is $[y_U - y_L](1-p) + [y_U - y_L]p = y_U - y_L$. Sharpness follows from the existence of potential-outcome distributions attaining each extreme, constructed explicitly as degenerate distributions concentrated at $y_L$ or $y_U$ in the unobserved arm. $\square$
 
-By the law of total probability: $\E\{Y(1)\} = \E\{Y(1) \mid T=1\}\,p + \E\{Y(1) \mid T=0\}\,(1-p)$ and $\E\{Y(0)\} = \E\{Y(0) \mid T=1\}\,p + \E\{Y(0) \mid T=0\}\,(1-p)$. Consistency identifies $\E\{Y(1) \mid T=1\} = \E(Y \mid T=1)$ and $\E\{Y(0) \mid T=0\} = \E(Y \mid T=0)$. The unobserved counterfactual means $\E\{Y(1) \mid T=0\}$ and $\E\{Y(0) \mid T=1\}$ are restricted only to $[y_L, y_U]$. Taking the Minkowski difference of the resulting intervals for $\E\{Y(1)\}$ and $\E\{Y(0)\}$ gives @eq-manski-lower--@eq-manski-upper. Sharpness follows from the existence of degenerate potential-outcome distributions attaining each extreme. Width: $\tau_U - \tau_L = [y_U - y_L](1-p) + [y_U-y_L]p = y_U - y_L$. $\square$
-:::
-
-::: {.callout-note icon=false}
-## Example: Manski Bound in a Binary Outcome
-
-Suppose $Y \in \{0,1\}$, $P(T=1) = 0.4$, $\E(Y \mid T=1) = 0.6$, $\E(Y \mid T=0) = 0.3$. Then: $\tau_L = (0.6)(0.4) + (0)(0.6) - [(0.3)(0.6) + (1)(0.4)] = 0.24 - 0.58 = -0.34$; $\tau_U = (0.6)(0.4) + (1)(0.6) - [(0.3)(0.6) + (0)(0.4)] = 0.84 - 0.18 = 0.66$. The identified set $\tau \in [-0.34, 0.66]$ includes zero: the observed positive association of 0.3 is consistent with a causal effect anywhere from a meaningful harm to a substantial benefit.
-:::
-
-The no-assumption bound is as wide as the support of the outcome --- typically too wide to be informative. Productive partial identification therefore proceeds by adding *shape restrictions* that narrow the set.
-
-**Monotone treatment response** ($Y(1) \geq Y(0)$ a.s.) tightens the bounds. **Monotone treatment selection** ($\E\{Y(t) \mid T=1\} \geq \E\{Y(t) \mid T=0\}$) is another common restriction. Combining these produces informative bounds even when neither alone suffices [@manski2003partial].
+The width $y_U - y_L$ is the immediate and striking consequence: the no-assumption bound is as wide as the support of the outcome. If $Y$ is a $[0,1]$-valued indicator, the width is $1$; if $Y$ is a continuous health score on $[0, 100]$, the width is $100$. In either case the bound is typically too wide to resolve the sign of $\tau$.
 
 ::: {.callout-note icon=false}
-## Bounds as Sensitivity Analysis
+## Example: Manski Bound in a Binary Outcome {#exm-manski-binary}
 
-Partial identification and sensitivity analysis are two views of the same underlying object. A sensitivity model with bounds $[\psi_L(\Lambda), \psi_U(\Lambda)]$ is a parametric partial-identification analysis; Manski's no-assumption bound is the limit when $\Lambda$ permits arbitrary violations. Intermediate models (the $\Gamma$-model, the MSM) lie between these extremes, trading informativeness for robustness.
+Suppose $Y \in \{0,1\}$, $P(T=1) = 0.4$, $\E(Y \mid T=1) = 0.6$, and $\E(Y \mid T=0) = 0.3$. The observed association is $0.3$. Applying @thm-manski with $y_L = 0$, $y_U = 1$:
+$$\tau_L = (0.6)(0.4) + (0)(0.6) - [(0.3)(0.6) + (1)(0.4)] = 0.24 - 0.58 = -0.34,$$
+$$\tau_U = (0.6)(0.4) + (1)(0.6) - [(0.3)(0.6) + (0)(0.4)] = 0.84 - 0.18 = 0.66.$$
+The identified set is $\tau \in [-0.34, 0.66]$, which includes zero. With only the bounded-outcome restriction, the observed positive association of $0.3$ is consistent with a causal effect anywhere from a meaningful harm to a substantial benefit.
 :::
 
-## Sensitivity to Positivity and Overlap Violations {#sec-positivity}
+This example illustrates both the discipline and the limitation of pure partial identification. The discipline: the width of the set transparently conveys how much the conclusion depends on untestable assumptions. The limitation: without assumptions, the set is usually too wide to be informative. Productive use of partial identification therefore typically proceeds by adding *shape restrictions* that are weaker than point identification but strong enough to narrow the set.
 
-Chapter 6 introduced positivity as a structural requirement for the identification formulas underlying propensity-score methods. When $\pi(x_0) = 0$, the counterfactual mean $\E\{Y(1) \mid X=x_0\}$ is not identified, and the ATE may not be point-identified over the full covariate support. When positivity holds but weakly, IPW weights $1/\pi(X)$ generate extreme values that destabilize estimates.
+### Shape Restrictions
 
-### Trimming as a Sensitivity Analysis {#sec-trimming}
+**Monotone treatment response.** The assumption $Y(1) \geq Y(0)$ almost surely restricts the counterfactual outcomes to a half-plane: no unit is harmed by treatment. Under monotone treatment response, $\E\{Y(1) \mid T=0\} \geq \E(Y \mid T=0)$ and $\E\{Y(0) \mid T=1\} \leq \E(Y \mid T=1)$. Inserting these restrictions into the derivation of @thm-manski tightens the bounds.
+
+**Monotone treatment selection.** The assumption $\E\{Y(t) \mid T=1\} \geq \E\{Y(t) \mid T=0\}$ for each $t$ states that treated units, on average, would have had better outcomes than untreated units *regardless of treatment level*. This is plausible in many observational studies where selection into treatment is favorable.
+
+Combining monotone treatment response with monotone treatment selection can produce informative bounds even when neither assumption alone suffices. @manski2003partial develops these and other shape-restriction hierarchies.
 
 ::: {.callout-note icon=false}
-## Definition: Trimmed ATE
+## Remark: Sharpness of Shape-Restricted Bounds
 
-$$\tau_\alpha = \E\{Y(1) - Y(0) \mid \alpha \leq \pi(X) \leq 1-\alpha\},$$ {#eq-trimmed-ate}
-for $\alpha \in [0, 0.5)$. The choice $\alpha = 0$ recovers the full-population ATE.
+The bounds produced by inserting a single restriction into the proof of @thm-manski are valid (the true $\tau$ lies in the reported set) but are not automatically sharp in the sense of @def-sharp-conservative. Sharp bounds under a combination of restrictions require optimizing jointly over all joint distributions of $(Y(1), Y(0), T, X)$ consistent with both the observed-data distribution and the imposed restrictions, which can require linear or convex programming. When reporting bounds under shape restrictions, the analyst should state whether the bounds are sharp or merely conservative.
 :::
+
+### Bounds as Sensitivity Analysis
+
+Partial identification and sensitivity analysis are two views of the same underlying object. A sensitivity model together with its bounds is a parametric partial-identification analysis; Manski's no-assumption bound is the limit when $\mathcal{L}$ is taken to permit arbitrary violations. Intermediate models --- the $\Gamma$-model, the MSM --- lie between these extremes, trading informativeness for robustness.
+
+::: {.callout-note icon=false}
+## Remark: When to Quote Bounds instead of a Sensitivity Curve
+
+A sensitivity curve reports a function; a bound reports an interval. Bounds are the appropriate summary when (i) the sensitivity parameter is high-dimensional so that no one-dimensional curve is natural; (ii) the analyst cannot defensibly bound $\lambda$ by a specific plausibility set $\mathcal{L}$, and prefers to report what the data alone reveal under shape restrictions; or (iii) the identified set needs to be reported as a set, for example in regulatory contexts requiring robust lower bounds. Sensitivity curves are the appropriate summary when the analyst can defensibly order $\lambda$-values by plausibility.
+:::
+
+### Positivity, Overlap, and Retargeting {#sec-w9-positivity}
+
+Chapter 6 introduced positivity --- $0 < \pi(X) < 1$ almost surely --- as a structural requirement for the identification formulas underlying propensity-score methods. When positivity fails, some counterfactual comparisons are not supported by the observed data, and the identification argument breaks down locally. When positivity holds formally but weakly, the estimators behave poorly even though the identification formula remains technically valid. Sensitivity analysis with respect to positivity addresses both failure modes.
+
+#### Positivity as an Identification Assumption
+
+The back-door identification formula involves the counterfactual outcome at both treatment levels for every value of $X$. If positivity fails on a set $S_0$ of positive $P_X$-probability --- that is, $\pi(x) = 0$ throughout $S_0$ --- there are no treated units with $X \in S_0$ to inform $\mu_1$ there, and the counterfactual mean $\E\{Y(1) \mid X \in S_0\}$ is not identified by the data. The qualification matters: an isolated zero at a $P_X$-null point does not obstruct identification of the population ATE. On such a region, $\mu_1(x_0)$ is not uniquely determined by the observed data, and any numerical value assigned to the missing arm-specific regression is supplied by a model-based extrapolation assumption rather than by observed support.
+
+The statistical consequence is that the ATE itself may not be point-identified over the full covariate support even though it is identified over the subset where positivity holds. This motivates redefining the estimand to match the support where the data are informative.
+
+#### Practical Positivity Violations
+
+Even when $0 < \pi(x) < 1$ in a strict sense, estimation becomes unstable when $\pi(x)$ is near $0$ or $1$ over regions with non-negligible covariate mass. IPW weights are of order $1/\pi(X)$, so near-violations generate extreme weights that inflate variance and destabilize estimates. The instability is compounded by the fact that errors in $\hat\pi$ near the boundary translate into much larger errors in $1/\hat\pi$, so that low-overlap regions are also the regions where propensity misspecification is most damaging. @crump2009dealing address this directly by asking which subpopulation yields the most precisely estimable treatment effect; they characterize the variance-optimal overlap subsample and show that it takes the form of a threshold rule on $\pi(x)$, which in practice motivates discarding units with $\pi(x)$ outside roughly $[0.1, 0.9]$. That interval is a widely used rule of thumb motivated by the Crump criterion, not a variance-optimal threshold for every design and estimand.
+
+#### Trimming as a Sensitivity Analysis
+
+Define the *trimmed average treatment effect*
+$$\tau_\alpha = \E\{Y(1) - Y(0) \mid \alpha \leq \pi(X) \leq 1 - \alpha\}$$ {#eq-trimmed-ate}
+for $\alpha \in [0, 0.5)$. The choice $\alpha = 0$ recovers the full-population ATE; $\alpha > 0$ restricts attention to a *subpopulation with adequate overlap*.
 
 ::: {.callout-tip icon=false}
-## Lemma: Trimmed Estimand Identity
+## Lemma: Trimmed Estimand Identity {#lem-trimmed}
 
-Let $S_\alpha = \{X : \alpha \leq \pi(X) \leq 1-\alpha\}$ and $q_\alpha = P(X \in S_\alpha) > 0$. Under ignorability:
-$$\tau_\alpha = \frac{1}{q_\alpha}\,\E\!\left\{[\mu_1(X) - \mu_0(X)]\,\mathbf{1}\{X \in S_\alpha\}\right\}.$$ {#eq-trimmed-id}
-On the trimmed population, the IPW weights are bounded: $w(T,X) \leq 1/\alpha$ on $S_\alpha$.
+Let $\alpha \in (0, 1/2)$, let $S_\alpha = \{X : \alpha \leq \pi(X) \leq 1 - \alpha\}$, and suppose $q_\alpha = P(X \in S_\alpha) > 0$. Under consistency and conditional exchangeability,
+$$\tau_\alpha = \frac{1}{q_\alpha}\,\E\!\left\{\big[\mu_1(X) - \mu_0(X)\big]\,\mathbf{1}\{X \in S_\alpha\}\right\}.$$ {#eq-trimmed-id}
+Moreover, the IPW weights are bounded on the trimmed population: $w(T, X) \leq 1/\alpha$ on $S_\alpha$.
 :::
 
-*Proof.* Conditional on $X \in S_\alpha$, positivity holds with slack $\alpha$, so the back-door formula applies pointwise. Integrating and normalizing gives @eq-trimmed-id. The weight bound follows directly from $\pi(X) \geq \alpha$ on $S_\alpha$. $\square$
+The restriction to $\alpha \in (0, 1/2)$ is essential and not merely technical. At $\alpha = 0$ the set $S_0$ is the entire support, which in the setting motivating this section contains points with $\pi(x) \in \{0, 1\}$; at such points $\mu_1(x)$ or $\mu_0(x)$ is not nonparametrically identified, so @eq-trimmed-id does not hold as an observed-data identity. It holds at $\alpha = 0$ only if full-population positivity is separately assumed --- which is precisely the assumption in question here. The causal estimand $\tau_0$ still exists without positivity; what fails is its nonparametric identification by the displayed functional.
 
-$\tau_\alpha$ and $\tau_0$ are *different estimands*: trimming is a retargeting strategy, not a variance-reduction trick. A trimmed analysis answers "what is the causal effect on the subpopulation for which the treatment decision is not already essentially forced by covariates?"
+*Proof.* Conditional on $X \in S_\alpha$, exchangeability and positivity continue to hold, the latter with slack $\alpha > 0$, so the back-door formula applies pointwise. Integrating over the conditional distribution of $X$ given $X \in S_\alpha$ gives @eq-trimmed-id. The IPW weight bound follows directly from $\alpha \leq \pi(X) \leq 1 - \alpha$. $\square$
+
+The key conceptual point is that $\tau_\alpha$ and $\tau_0$ are *different estimands*: trimming is not a variance-reduction trick that leaves the target unchanged, but a restatement of the scientific question. A trimmed analysis answers "what is the causal effect on the subpopulation for which the treatment decision is not already essentially forced by covariates?" For some scientific questions this is the better target; for others, it is not.
+
+Trimming should therefore be interpreted as changing the estimand to a region of covariate overlap. It is a robustness-and-retargeting strategy, not a sensitivity correction for the original population ATE: the bias produced by a positivity violation in the full population is not removed by reporting a trimmed estimand, it is sidestepped by redefining what is being estimated.
+
+A further distinction: the estimand @eq-trimmed-ate is defined through the *true* propensity $\pi$, but analysts trim on the *estimated* $\hat\pi$, which makes the retained population data-adaptive. A careful report separates the conceptual overlap population, the empirical rule, and the additional uncertainty introduced by estimating which units are retained.
 
 ::: {.callout-warning icon=false}
-## Trimming Changes the Estimand
+## Warning: Trimming Changes the Estimand
 
-Reporting $\hat\tau_\alpha$ as a stabilized estimate of $\tau$ without acknowledging that the target population has changed is a common mistake. Whenever $\alpha > 0$, the estimand is @eq-trimmed-ate, not the full-population ATE. A proper sensitivity analysis reports $\hat\tau_\alpha$ and $q_\alpha$ together for a grid of $\alpha \in \{0, 0.01, 0.05, 0.10\}$.
+Reporting $\hat\tau_\alpha$ as a stabilized estimate of $\tau$ without acknowledging that the target population has changed is a common mistake. Whenever $\alpha > 0$, the estimand is @eq-trimmed-ate, not the full-population ATE. A proper sensitivity analysis reports $\hat\tau_\alpha$ and $q_\alpha$ together for a grid of positive thresholds $\alpha \in \{0.01, 0.05, 0.10\}$ --- including $\alpha = 0$ only when full-population positivity is maintained as a separate assumption --- and states explicitly how the target population shifts.
 :::
 
-## Sensitivity to Invalid Instruments {#sec-iv}
+## Sensitivity for Instrumental Variables and Mediation {#sec-w9-iv}
 
-Of the three IV assumptions, relevance is the most empirically diagnosable. Exogeneity and exclusion involve unobserved relationships and are not testable. A sensitivity analysis for IV concentrates on these two untestable assumptions.
+Chapter 7 identified three assumptions that underwrite instrumental variables: relevance, exogeneity, and exclusion. Of the three, relevance is the most empirically diagnosable --- weak-instrument $F$-tests and related diagnostics evaluate it directly from the first-stage regression. Exogeneity and exclusion, by contrast, involve unobserved relationships between the instrument and the outcome, and are not testable without additional structure. A sensitivity analysis for IV therefore concentrates on these two untestable assumptions.
 
-Relevance is a statement about $(Z, T)$ given $X$ --- observable. Exogeneity and exclusion are statements about $(Z, Y)$ given $X$ and the unobserved $U$ --- not observable. A complete robustness argument has two parts: (a) evaluation of first-stage strength and (b) sensitivity analysis for exogeneity and exclusion.
+### What Weak-Instrument Diagnostics Do Not Address
 
-### Direct-Effect Violation of Exclusion {#sec-direct-effect}
+A useful starting point is to be precise about what first-stage strength does and does not deliver. A strong first stage is not sufficient for instrument validity: it says nothing about exogeneity or exclusion, and a strong instrument may still directly affect the outcome. Conversely, an instrument may satisfy exogeneity and exclusion while having a weak first stage, in which case it is valid but provides practically uninformative --- and possibly nonregular --- inference. A *nonzero* first stage is of course necessary for identification by the Wald ratio; the point concerns strength, not relevance. The two concerns are otherwise orthogonal:
 
-Consider the scalar-IV model with a direct effect $\delta$ of $Z$ on $Y$:
-$$Y = \alpha + \beta T + \delta Z + \varepsilon, \qquad \E(\varepsilon \mid Z) = 0.$$ {#eq-iv-direct}
+- *Relevance* is a statement about $(Z, T)$ given $X$. It is observable: the first-stage coefficient is an identifiable functional of the observed distribution.
+- *Exogeneity* restricts the relationship between $Z$ and the latent determinants of treatment and outcome. *Exclusion* restricts the causal pathways from $Z$ to $Y$. Neither condition is generally verifiable from the observed distribution alone.
+
+A complete robustness argument therefore has two parts: (a) an evaluation of first-stage strength (Chapter 7) and (b) a sensitivity analysis for exogeneity and exclusion (this section). The two parts are complementary, not substitutes.
+
+### Direct-Effect Violation of Exclusion
+
+Consider the canonical scalar-IV model of Chapter 7 with a direct effect $\delta$ of $Z$ on $Y$:
+$$Y = \alpha + \beta\, T + \delta\, Z + \varepsilon, \qquad \E(\varepsilon \mid Z) = 0.$$ {#eq-iv-direct}
+The condition $\E(\varepsilon \mid Z) = 0$ *maintains* instrument exogeneity; the sensitivity parameter $\delta$ relaxes only the exclusion restriction, which is the condition $\delta = 0$. What follows is therefore an exclusion-only sensitivity analysis conditional on maintained exogeneity. A two-parameter analysis covering both assumptions would add a second term $\mathrm{Cov}(Z, \varepsilon)/\mathrm{Cov}(T, Z)$ to the bias formula; we do not pursue it here.
 
 ::: {.callout-tip icon=false}
-## Theorem: IV Bias under Exclusion Violation
+## Theorem: IV Bias under Exclusion Violation {#thm-iv-bias}
 
-Under @eq-iv-direct and standard IV regularity conditions:
-$$\frac{\mathrm{Cov}(Y,Z)}{\mathrm{Cov}(T,Z)} = \beta + \delta\,\frac{\mathrm{Var}(Z)}{\mathrm{Cov}(T,Z)}.$$ {#eq-iv-bias}
-
-Equivalently, the Wald estimand at posited $\delta$ is:
-$$\beta(\delta) = \frac{\mathrm{Cov}(Y,Z) - \delta\,\mathrm{Var}(Z)}{\mathrm{Cov}(T,Z)}.$$ {#eq-beta-delta}
+Under @eq-iv-direct and the standard IV regularity conditions (relevance $\mathrm{Cov}(T, Z) \neq 0$ and orthogonality of $Z$ and $\varepsilon$),
+$$\frac{\mathrm{Cov}(Y, Z)}{\mathrm{Cov}(T, Z)} = \beta + \delta\,\frac{\mathrm{Var}(Z)}{\mathrm{Cov}(T, Z)}.$$ {#eq-iv-bias}
+Equivalently, the Wald estimand at posited $\delta$ is
+$$\beta(\delta) = \frac{\mathrm{Cov}(Y, Z) - \delta\,\mathrm{Var}(Z)}{\mathrm{Cov}(T, Z)}.$$ {#eq-beta-delta}
 :::
 
-*Proof.* Take covariance of @eq-iv-direct with $Z$: $\mathrm{Cov}(Y,Z) = \beta\,\mathrm{Cov}(T,Z) + \delta\,\mathrm{Var}(Z) + \mathrm{Cov}(\varepsilon,Z)$. By orthogonality, $\mathrm{Cov}(\varepsilon,Z)=0$. Dividing and rearranging gives @eq-iv-bias and @eq-beta-delta. $\square$
+*Proof.* Take the covariance of @eq-iv-direct with $Z$:
+$$\mathrm{Cov}(Y, Z) = \beta\,\mathrm{Cov}(T, Z) + \delta\,\mathrm{Var}(Z) + \mathrm{Cov}(\varepsilon, Z),$$
+and $\mathrm{Cov}(\varepsilon, Z) = 0$ by orthogonality. Dividing by $\mathrm{Cov}(T, Z)$ gives @eq-iv-bias. $\square$
 
-**Key pedagogical consequence:** the bias is proportional to $\mathrm{Var}(Z)/\mathrm{Cov}(T,Z)$, the inverse of the first-stage slope. A *weak* first stage *amplifies* the bias from any exclusion violation.
+Formula @eq-iv-bias has a striking pedagogical consequence: the bias term is proportional to $\mathrm{Var}(Z)/\mathrm{Cov}(T, Z)$, which is the inverse of the first-stage slope. A *weak* first stage therefore *amplifies* the bias from any exclusion violation: the same $\delta$ causes more damage in a weak-IV analysis than in a strong-IV analysis. This is the opposite of the intuition that weak instruments can at least be "rescued" by being exogenous.
 
 ::: {.callout-note icon=false}
-## Example: IV Sensitivity Curve
+## Example: IV Sensitivity Curve {#exm-iv-curve}
 
-$\mathrm{Cov}(Y,Z) = 3$, $\mathrm{Cov}(T,Z) = 1.5$, $\mathrm{Var}(Z) = 1$. Wald estimate: $\hat\beta(0) = 2.0$. Applying @eq-beta-delta: $\hat\beta(\delta) = (3-\delta)/1.5$. Values: $\hat\beta(0.5) = 1.67$, $\hat\beta(1.0) = 1.33$, $\hat\beta(2.0) = 0.67$, $\hat\beta(3.0) = 0$. The tipping point is $\delta^\star = 3$.
+A study has $\mathrm{Cov}(Y, Z) = 3$, $\mathrm{Cov}(T, Z) = 1.5$, and $\mathrm{Var}(Z) = 1$. The Wald point estimate is $\hat\beta(0) = 3/1.5 = 2.0$. Applying @eq-beta-delta,
+$$\hat\beta(\delta) = \frac{3 - \delta}{1.5}, \qquad \hat\beta(0.5) = 1.67,\ \hat\beta(1.0) = 1.33,\ \hat\beta(2.0) = 0.67,\ \hat\beta(3.0) = 0.$$
+The tipping point for the sign is $\delta^\star = \mathrm{Cov}(Y,Z)/\mathrm{Var}(Z) = 3$. It coincides numerically with $\mathrm{Cov}(Y, Z)$ here only because $\mathrm{Var}(Z) = 1$; in general the two differ. In a weaker-instrument setting with $\mathrm{Cov}(T, Z) = 0.5$ but the same numerator, the tipping point would still be $\delta^\star = 3$ but the *rate* of bias accumulation would be tripled --- each unit of $\delta$ moves the estimate by $2$ rather than by $2/3$.
 :::
 
-### Connection to LATE and Monotonicity {#sec-iv-late}
+### Connection to LATE and Monotonicity {#sec-w9-iv-late}
 
-Under heterogeneous treatment effects, sensitivity analysis can also address monotonicity violations, with the sensitivity parameter becoming the proportion of defiers [@angrist1996identification]. The same conceptual framework --- parameterize the violation, report a curve or bound --- applies.
+Under heterogeneous treatment effects, the Wald estimand identifies a local average treatment effect (LATE, Chapter 7) rather than an ATE, and the identification relies on a monotonicity assumption in addition to the three core IV assumptions. Sensitivity analysis can also address monotonicity violations, at the cost of additional modeling. @angrist1996identification discuss a bound that includes "defiers" as an unobserved compliance type, and a natural first sensitivity parameter is the prevalence of defiers. Prevalence alone will not do, however. Writing $\pi_c, \pi_d$ for the complier and defier proportions and $\tau_c, \tau_d$ for their average treatment effects, the Wald estimand becomes
+$$\frac{\Delta_Y}{\Delta_T} = \frac{\pi_c \tau_c - \pi_d \tau_d}{\pi_c - \pi_d},$$
+so the distortion depends jointly on how many defiers there are, on how their average effect compares with the compliers', and on the net first stage $\pi_c - \pi_d$ in the denominator, which amplifies both. A sensitivity analysis must therefore posit at least two components, not one.
 
-## Sensitivity in Mediation Analysis {#sec-mediation}
+### Sensitivity in Mediation Analysis {#sec-w9-mediation}
 
-Sensitivity analysis is especially important in mediation analysis because the identifying assumptions are strictly stronger than those for total effects. Even in a randomized trial, Assumptions 3 and 4 of sequential ignorability cannot be guaranteed.
+Sensitivity analysis is especially important in mediation analysis because the identifying assumptions are strictly stronger than those required for total effects. Chapter 8 derived the mediation formula under sequential ignorability [@imai2010identification]: no unmeasured $T$--$M$ confounding, no unmeasured $M$--$Y$ confounding given $T$, and a cross-world independence condition. Even in a randomized trial, where randomization of $T$ eliminates the first, the second and third cannot generally be guaranteed.
 
-### Residual-Correlation Sensitivity Parameter {#sec-rho}
+#### Why Mediation Needs Sensitivity Analysis
 
-Consider the linear mediation system $M = a_0 + aT + a_X^\top X + \varepsilon_M$, $Y = b_0 + \tau' T + bM + b_X^\top X + \varepsilon_Y$, with sensitivity parameter:
-$$\rho = \mathrm{Corr}(\varepsilon_M, \varepsilon_Y \mid T, X).$$ {#eq-rho-def}
+The controlled direct effect (CDE) is the effect of setting $T$ and $M$ jointly to specified values; the back-door formula for the joint intervention identifies it under the stated conditions, which require that all relevant $M$--$Y$ confounders be observed and appropriately adjusted for. Natural direct and indirect effects (NDE, NIE) additionally require the relevant cross-world independence condition; the standard graphical sufficient condition is that no $M$--$Y$ confounder --- *observed or unobserved* --- be affected by treatment. This is a strictly stronger condition, and observing such a confounder does not repair it: adjusting for the realized value of a treatment-induced confounder does not in general identify the natural effects.
 
-If sequential ignorability holds, $\rho = 0$: disturbances are orthogonal because any shared source of variation has been conditioned out. A nonzero $\rho$ represents unobserved $M$--$Y$ confounding. @imai2010identification derive the bias in the estimated NIE as a smooth function of $\rho$, giving a sensitivity curve $\rho \mapsto \widehat{\mathrm{NIE}}(\rho)$ with tipping point $\rho^\star$.
+::: {.content-visible when-format="html"}
+```{=html}
+<figure style="text-align:center;margin:1.5em auto;">
+<svg viewBox="0 0 620 195" width="100%" style="max-width:620px;font-family:sans-serif;font-size:12px;">
+  <defs>
+    <marker id="w9a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"/></marker>
+    <marker id="w9g" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1A7A3A"/></marker>
+    <marker id="w9r" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#C00"/></marker>
+  </defs>
+  <circle cx="35" cy="95" r="19" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="35" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="140" cy="95" r="19" fill="#EAF6EC" stroke="#1A7A3A" stroke-width="1.6"/><text x="140" y="101" text-anchor="middle" fill="#1A7A3A" font-weight="bold">M</text>
+  <circle cx="245" cy="95" r="19" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="245" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <circle cx="192" cy="28" r="18" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"/><text x="192" y="34" text-anchor="middle" fill="#C00" font-weight="bold">U</text>
+  <line x1="54" y1="95" x2="119" y2="95" stroke="#1A7A3A" stroke-width="2.2" marker-end="url(#w9g)"/>
+  <line x1="159" y1="95" x2="224" y2="95" stroke="#1A7A3A" stroke-width="2.2" marker-end="url(#w9g)"/>
+  <path d="M 42 112 Q 140 165 238 112" fill="none" stroke="#2E74B6" stroke-width="1.6" marker-end="url(#w9a)"/>
+  <line x1="180" y1="43" x2="151" y2="79" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9a)"/>
+  <line x1="205" y1="43" x2="236" y2="79" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9a)"/>
+  <text x="140" y="185" text-anchor="middle" fill="#1e3864" font-size="11">(a) U not affected by T</text>
+  <line x1="310" y1="12" x2="310" y2="188" stroke="#ddd" stroke-width="1"/>
+  <circle cx="365" cy="95" r="19" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="365" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">T</text>
+  <circle cx="470" cy="95" r="19" fill="#EAF6EC" stroke="#1A7A3A" stroke-width="1.6"/><text x="470" y="101" text-anchor="middle" fill="#1A7A3A" font-weight="bold">M</text>
+  <circle cx="575" cy="95" r="19" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"/><text x="575" y="101" text-anchor="middle" fill="#2E74B6" font-weight="bold">Y</text>
+  <circle cx="522" cy="28" r="18" fill="#FFF0F0" stroke="#C00" stroke-width="1.5" stroke-dasharray="5,3"/><text x="522" y="34" text-anchor="middle" fill="#C00" font-weight="bold">U</text>
+  <line x1="384" y1="95" x2="449" y2="95" stroke="#1A7A3A" stroke-width="2.2" marker-end="url(#w9g)"/>
+  <line x1="489" y1="95" x2="554" y2="95" stroke="#1A7A3A" stroke-width="2.2" marker-end="url(#w9g)"/>
+  <path d="M 372 112 Q 470 165 568 112" fill="none" stroke="#2E74B6" stroke-width="1.6" marker-end="url(#w9a)"/>
+  <line x1="510" y1="43" x2="481" y2="79" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9a)"/>
+  <line x1="535" y1="43" x2="566" y2="79" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#w9a)"/>
+  <path d="M 372 78 Q 430 12 503 24" fill="none" stroke="#C00" stroke-width="2.4" marker-end="url(#w9r)"/>
+  <text x="470" y="185" text-anchor="middle" fill="#1e3864" font-size="11">(b) U affected by T</text>
+</svg>
+<figcaption>Two distinct mediator--outcome confounding structures. In both panels $M$ transmits part of the effect of $T$ on $Y$ (green path) and an unobserved $U$ affects both $M$ and $Y$, violating the $M$--$Y$ ignorability condition required for NDE/NIE identification. Panel (a) is ordinary unmeasured mediator--outcome confounding. Panel (b) adds the arrow $T \to U$ (red): $U$ is a <em>treatment-induced</em> confounder, which additionally defeats the cross-world independence condition and cannot be repaired by randomizing $T$ or by adjusting for $U$ even if it were observed.</figcaption>
+</figure>
+```
+:::
 
-A well-reported mediation sensitivity analysis states: the point estimate of the indirect effect (with sampling CI), the tipping value $\rho^\star$, and a benchmark for what magnitude of $\rho$ is plausible.
+Panel (a) already defeats $M$--$Y$ ignorability. In panel (b), $U$ is in addition affected by $T$; the cross-world independence condition then fails as well, and the NDE/NIE identification formula is biased even in a randomized trial. Strictly, the formal requirement for the natural effects is the cross-world independence; "no treatment-induced mediator--outcome confounder" is the standard *graphical sufficient condition* for it, which is why panel (b) is fatal. The residual-correlation parameter introduced below is aimed primarily at panel (a); panel (b) is the harder case, in which no scalar residual correlation fully captures the violation.
 
-## Sensitivity Analysis and Modern Estimators {#sec-modern}
+#### Residual-Correlation Sensitivity Parameter
 
-Chapters 10--13 develop doubly robust estimation, orthogonal scores, cross-fitting, and semiparametrically efficient IV estimation. These tools make estimators more robust --- but robust to a specific class of perturbations: *nuisance-model misspecification*. They are silent about identification.
+A clean parameterization, following @imai2010identification, uses the correlation between the structural disturbances of the mediator and outcome equations. Consider the linear mediation system of Chapter 8:
+$$M = a_0 + a\,T + a_X^\top X + \varepsilon_M,$$ {#eq-mediation-M}
+$$Y = b_0 + \tau'\,T + b\,M + b_X^\top X + \varepsilon_Y,$$ {#eq-mediation-lin}
+and define the sensitivity parameter as the correlation between the structural disturbances:
+$$\rho = \mathrm{Corr}(\varepsilon_M, \varepsilon_Y),$$ {#eq-rho-def}
+where $(\varepsilon_M, \varepsilon_Y)$ are assumed independent of $(T, X)$ with a constant correlation. Within this maintained linear model, sequential ignorability implies $\rho = 0$: the disturbances are orthogonal because any shared source of variation has been conditioned out, and a nonzero $\rho$ represents exactly the unobserved $M$--$Y$ confounding that the assumption rules out. The converse direction is model-bound, and the equivalence should not be read as a general nonparametric statement: the entire @imai2010identification sensitivity calculation is explicitly model-based. Under misspecification of the joint mediator--outcome system, $\rho = 0$ and sequential ignorability are not the same condition.
 
-**What robust estimation does.** Neyman orthogonality makes AIPW consistent if either the outcome model or propensity model is correctly specified (double robustness). With cross-fitting, nuisance estimators need only converge at rate $n^{-1/4}$ to yield $\sqrt{n}$-asymptotics. Both consequences address estimation under correctly maintained identifying assumptions.
+Under this parameterization, @imai2010identification derive the bias in the estimated indirect effect as a smooth function of $\rho$ and of the observed residual variances, giving a sensitivity curve $\rho \mapsto \hat{\mathrm{NIE}}(\rho)$. The tipping point $\rho^\star$ at which the indirect effect reaches zero is the reportable summary.
 
-**What robust estimation does not do:** Orthogonality and cross-fitting do not solve unmeasured confounding, positivity failure, IV invalidity, or mediation assumption failure.
+#### Reporting Mediation Sensitivity
+
+A well-reported mediation sensitivity analysis states three things: the point estimate of the indirect effect (with its sampling CI), the tipping value $\rho^\star$, and a benchmark for what magnitude of $\rho$ is plausible in the given scientific setting. An example:
+
+> Under sequential ignorability ($\rho = 0$), the estimated indirect effect of the behavioral intervention on depression through sleep quality is $0.38$ with 95% CI $[0.18, 0.58]$. The sensitivity curve crosses zero at $\rho^\star = 0.31$, and the lower confidence limit crosses zero at $\rho^\star_{\mathrm{CI}} = 0.15$. A residual correlation of $\rho = 0.3$ corresponds to a squared residual correlation of $0.09$.
+
+It is tempting to describe $\rho^2 = 0.09$ as "9% of the joint variation explained," and this is often done. It should be resisted. A squared correlation between two disturbances acquires a variance-explained reading only under an additional latent-factor model specifying how a common cause loads on $M$ and on $Y$; without that model, $\rho^2$ is simply a squared correlation.
+
+## Sensitivity Analysis and Modern Estimators {#sec-w9-modern}
+
+Chapters 10--13 develop estimating-equation theory, doubly robust estimation, orthogonal scores, cross-fitting, and semiparametrically efficient IV estimation. These tools make estimators more robust --- but robust to a specific class of perturbations, namely nuisance-model misspecification. They are silent about identification.
+
+::: {.callout-warning icon=false}
+## What Robust Estimation Does and Does Not Do
+
+For the ATE procedures developed in Chapters 11--12, the AIPW/TMLE estimating equation is doubly robust, and its DML implementation uses Neyman orthogonality and cross-fitting. Under the product-rate, overlap, moment, consistency, and score-regularity conditions stated in those chapters, these properties protect the *identified observed-data functional* against first-order nuisance-estimation error and permit root-$n$ inference with flexible learners. None of this establishes that the functional *equals the causal estimand*. Orthogonality is estimation robustness *conditional on* identification, not robustness of identification itself.
+:::
+
+### What Robust Estimation Does Not Do
+
+Orthogonality and cross-fitting do not solve any of the following:
+
+- *Unmeasured confounding.* The target functional $\E\{\mu_1(X) - \mu_0(X)\}$ does not equal $\tau$ if $Y(t) \nindep T \mid X$. No amount of accurate nuisance estimation corrects this; the nuisances are conditional on $X$, and $X$ is the wrong conditioning set.
+- *Positivity failure.* If $\pi(x) = 0$ on a region with positive covariate mass, the full-population target is not nonparametrically identified there and the influence-function theory underlying AIPW and DML breaks down. Note that an outcome-regression-based estimator may still return a finite number, because a fitted $\hat\mu_1(x)$ extrapolates into the region where no treated units were observed. Numerical finiteness is not identification: the reported value is then a property of the extrapolating model, not of the data.
+- *IV invalidity.* If the exclusion restriction fails, 2SLS, efficient GMM (Chapter 13), and any other IV estimator converge to a biased target. The bias formula @eq-iv-bias applies to any estimator that is consistent for the scalar Wald ratio in model @eq-iv-direct. Other IV estimands --- overidentified GMM, nonlinear models, and heterogeneous-effect targets such as the LATE --- require their own sensitivity derivations.
+- *Mediation assumption failure.* The NIE and NDE are well-defined causal estimands whatever the data can support --- they are fixed by the causal model, not by an assumption. What sequential ignorability governs is whether the mediation formula *identifies* them. When it fails, the estimand still exists, but the mediation functional no longer identifies it from the same observed data without additional assumptions.
+
+A compact summary:
 
 > *Neyman orthogonality and cross-fitting protect the estimator against nuisance-estimation error. They do not protect against violations of causal identification assumptions.*
 
-This is the reason sensitivity analysis belongs in Part II (identification) rather than Part III (estimation). Every method in Chapters 10--13 assumes identification and refines the estimation.
+This is the reason sensitivity analysis belongs in Part II (identification) rather than Part III (estimation). Every method in Chapters 10--13 assumes identification and refines the estimation. This chapter sits at the boundary: it refines the *assessment* of how much the identification can bend before the conclusion breaks.
 
 ::: {.callout-note icon=false}
 ## Applied Workflow (Recommended)
 
-1. State the estimand (potential-outcome or do-notation).
-2. State the identifying assumptions (back-door, IV, front-door, mediation, etc.).
-3. Estimate the causal parameter (outcome regression, IPW, AIPW, DML, 2SLS, etc.).
-4. Quantify sampling uncertainty (standard errors, confidence intervals).
-5. Conduct sensitivity analysis for the least credible assumption (sensitivity curve, tipping point, or bounds, with benchmarking).
+1. State the estimand: the specific causal parameter of interest, in potential-outcome or do-notation.
+2. State the identifying assumptions: which combination of back-door, IV, front-door, mediation, or other strategy is used.
+3. Estimate the causal parameter using an appropriate method (outcome regression, IPW, AIPW, DML, 2SLS, etc.).
+4. Quantify sampling uncertainty: standard errors, confidence intervals, or bootstrap distributions, under the maintained identifying assumptions.
+5. Conduct sensitivity analysis for the least credible assumption: sensitivity curve, tipping point, or bounds, with benchmarking against observed covariates.
 6. Report both the point estimate with sampling CI and the sensitivity summary, with plain-language interpretation of robustness.
 :::
 
-## Lab: A Tipping-Point Analysis for an Observational ATE {#sec-lab}
+Steps 1--4 are the customary content of a causal analysis. Step 5 is the contribution of this chapter, and step 6 brings the two outputs together. For observational analyses --- or any analysis resting on substantively contestable, nonverifiable assumptions --- omitting step 5 generally leaves the robustness argument incomplete.
 
-**DGP.** Let $X, U \overset{\mathrm{i.i.d.}}{\sim} N(0,1)$ independently. Treatment: $P(T=1 \mid X, U) = \mathrm{expit}(-0.3 + 0.6X + 1.0U)$. Outcome: $Y(t) = 1.5t + 0.8X + 2.0U + \varepsilon$, $\varepsilon \sim N(0,1)$. The analyst observes $(Y, T, X)$ but not $U$. True ATE: $\tau = 1.5$.
+## Lab (Optional): A Tipping-Point Analysis for an Observational ATE {#sec-w9-lab}
 
-**Naive adjusted estimator.** OLS coefficient on $T$ in the regression of $Y$ on $(1, T, X)$. Running 500 Monte Carlo replicates ($n = 2000$): mean of $\hat\tau_X$ is 3.172, SD is 0.099. Implied 95% CI $\approx [2.98, 3.37]$. The naive estimator is badly biased, but the CI is narrow and does not contain the truth. This is the identification-uncertainty failure mode in concrete form.
+This lab implements a minimal sensitivity analysis end-to-end: a deliberately confounded observational ATE, a naive back-door adjustment that ignores the unmeasured confounder, and a tipping-point analysis that locates the strength of unmeasured confounding required to reverse the conclusion.
 
-**Sensitivity adjustment.** Using the binary-$U$ decomposition, bias is $B(\alpha_U, \delta) = \delta \cdot \mathrm{imbalance}(\alpha_U)$. Sensitivity-adjusted estimate $\hat\tau_{\mathrm{sens}} = \hat\tau_X - B$ over a grid ($\hat\tau_X = 3.172$; the true configuration is $\alpha_U = 1.00, \delta = 2.0$):
+::: {.callout-note icon=false}
+## DGP for Lab 9
 
-| Posited $\delta$ | $\alpha_U=0.25$ (imb=0.232) | $\alpha_U=0.50$ (imb=0.440) | $\alpha_U=1.00$ (imb=0.787) | $\alpha_U=1.50$ (imb=1.025) |
-|---|---|---|---|---|
-| 0.5 | 3.056 | 2.952 | 2.779 | 2.660 |
-| 1.0 | 2.940 | 2.732 | 2.385 | 2.147 |
-| 2.0 | 2.708 | 2.292 | **1.598 ✓** | 1.123 |
-| 3.0 | 2.477 | 1.851 | 0.811 | 0.098 |
-
-The true configuration $(\alpha_U=1.00, \delta=2.0)$ gives the sensitivity-adjusted value $1.598 \approx \tau = 1.5$ (checkmark).
-
-**Tipping points.** $\delta^\star(\alpha_U) = \hat\tau_X / \mathrm{imbalance}(\alpha_U)$. At $\alpha_U = 1.00$: $\delta^\star = 3.172/0.787 \approx 4.03$.
-
-**Benchmarking against observed $X$** (outcome coefficient $\gamma_X = 0.8$): at $\alpha_U = 1.00$, the unmeasured confounder would need an outcome association about $4.03/0.8 \approx 5$ times stronger than $X$ to zero out the estimate. A confounder as strong as $X$ ($\delta = 0.8$, $\alpha_U = 1.0$) would adjust the estimate to $\approx 2.54$ --- still clearly positive.
-
-**Four lessons:** (1) The naive CI $[2.98, 3.37]$ is narrow but misses the true ATE $\tau = 1.5$. Sampling uncertainty $\neq$ identification uncertainty. (2) Sensitivity adjustment at the correct configuration recovers the truth to within Monte Carlo error. (3) The tipping point depends jointly on both sensitivity parameters. (4) Benchmarking against observed $X$ anchors the analysis: the conclusion "the effect is positive" is robust to unmeasured confounders up to about $5\gamma_X$ in outcome association.
-
-## Practical Reporting Guidelines {#sec-reporting}
-
-**At minimum, a report should include:** the point estimate $\hat\psi$ and its 95% CI; a sensitivity summary (curve, bound, E-value, or tipping point); a benchmarking statement; and a plain-language interpretation.
-
-::: {.callout-warning icon=false}
-## Misleading Phrases to Avoid
-
-- "The result is causal because the estimate is statistically significant." Statistical significance addresses sampling uncertainty, not identification credibility.
-- "The result is robust because we used machine learning." Flexible nuisance estimation improves the estimator; it does not validate the identifying assumptions.
-- "Sensitivity analysis showed the result is not biased." Sensitivity analysis quantifies how much bias the identifying assumptions *could* produce if violated --- it does not test for bias.
-- "The E-value is $X$, therefore the effect is robust." An E-value is robust or not depending on whether $X$ is plausible as an unmeasured-confounder strength. A large E-value without benchmarking is an unanchored statistic.
+Let $X, U \overset{\mathrm{i.i.d.}}{\sim} \mathrm{Normal}(0, 1)$ independently. The treatment is generated by
+$$P(T = 1 \mid X, U) = \expit(-0.3 + 0.6\,X + 1.0\,U),$$
+and the outcome by
+$$Y(t) = 1.5\,t + 0.8\,X + 2.0\,U + \varepsilon, \qquad \varepsilon \sim \mathrm{Normal}(0, 1).$$
+The observed outcome is $Y = Y(T)$. The analyst observes $(Y, T, X)$ but not $U$.
 :::
 
-## Chapter Summary
+By construction, the true average treatment effect is $\tau = 1.5$. Ignorability given $(X, U)$ holds, but ignorability given $X$ alone is violated by the $U$ arrows. The observed $X$ enters the structural outcome equation with coefficient $0.8$ --- an oracle DGP coefficient, not the analyst-facing outcome-side benchmark, which is derived below as $\hat\gamma_X \approx 0.605$ from the analyst's observed regression.
 
-| **Symbol** | **Meaning** |
-|---|---|
-| $\Delta_{\mathrm{obs}}$ | Observed adjusted contrast |
-| $B$ | Confounding bias @eq-B-general |
-| $\Gamma$ | Rosenbaum odds-ratio bound |
-| $\mathrm{EV}$ | E-value: $R + \sqrt{R(R-1)}$ @eq-evalue |
-| $\Lambda$ | MSM odds-ratio bound |
-| $\tau_\alpha$ | Trimmed ATE @eq-trimmed-ate |
-| $\rho$ | Residual correlation for mediation @eq-rho-def |
-| $\lambda^\star$ | Tipping point for sign |
-| $\lambda^\star_{\mathrm{CI}}$ | Tipping point for statistical significance |
+### Naive Adjusted Estimator
 
-1. Sampling uncertainty, model misspecification, and identification uncertainty are distinct sources of error. A confidence interval addresses only the first, and identification uncertainty does not vanish merely by collecting more data from the same observational regime.
-2. A sensitivity analysis introduces a parameter $\lambda$ that quantifies the strength of a violation, with $\lambda = 0$ recovering the baseline assumption. The three reporting objects are the sensitivity curve, sensitivity bounds, and the tipping point.
-3. The master bias decomposition $\Delta_{\mathrm{obs}} = \tau + B$ underwrites sensitivity analysis for unmeasured confounding, specializing cleanly in the linear and binary-$U$ cases.
-4. Three canonical sensitivity models differ by what the sensitivity parameter bounds: Rosenbaum's $\Gamma$ bounds a treatment-odds ratio; the E-value $\mathrm{EV} = R + \sqrt{R(R-1)}$ gives a closed-form symmetric threshold; and the MSM bounds an odds ratio of nominal to true propensity.
-5. Sensitivity parameters need benchmarking against observed covariates to be interpretable.
-6. Partial identification reports an identified set rather than a single value. Manski's no-assumption bound is as wide as the support of the outcome; shape restrictions narrow it.
-7. Positivity violations are an identification failure, not a variance problem. Trimming changes the estimand to a region of covariate overlap; it is a retargeting strategy, not a correction for the original population ATE.
-8. Invalid instruments produce bias $\delta \cdot \mathrm{Var}(Z)/\mathrm{Cov}(T,Z)$ amplified by weak first stages. Weak-instrument diagnostics do not address exclusion violations.
-9. Mediation sensitivity analysis proceeds by a residual-correlation parameter $\rho$ that captures unmeasured $M$--$Y$ confounding.
-10. Modern estimation methods (AIPW, TMLE, DML, efficient GMM) address nuisance estimation, not identification. Neyman orthogonality protects the estimator; it does not protect the causal claim.
+The analyst's first estimator adjusts only for $X$: $\hat\tau_X$ is the OLS coefficient on $T$ in the regression of $Y$ on $(1, T, X)$. Running $500$ Monte Carlo replicates of sample size $n = 2{,}000$: the mean of $\hat\tau_X$ across replicates is $3.172$; the Monte Carlo standard deviation is $0.099$; the true ATE is $1.500$.
+
+The Monte Carlo standard deviation describes spread across simulation runs; the standard error an analyst computes from one realized data set is a different object, though here the usual OLS standard error tracks it closely, giving a typical single-replicate 95% interval of about $[2.98,\, 3.37]$ --- narrow, and not containing the truth. A consumer of this single report, relying on the CI for uncertainty, would conclude that the ATE is approximately $3.2$ and confidently positive. This is the identification-uncertainty failure mode of @sec-w9-sampling-vs-id in concrete form.
+
+### Sensitivity Adjustment
+
+Because $U$ is Gaussian rather than binary, the relevant sensitivity model here is the *continuous-$U$ linear* model of @sec-w9-linear-sens, not the binary-confounder formula. The bias quantity must also be matched to the estimator actually in use. Since $\hat\tau_X$ is the OLS coefficient on $T$ in a regression of $Y$ on $(1, T, X)$, the Frisch--Waugh--Lovell theorem gives the *exact* omitted-variable-bias identity
+$$\operatorname{plim} \hat\tau_X = \tau + \delta\,\theta_U(\alpha_U), \qquad \theta_U(\alpha_U) = \frac{\E(\tilde T U)}{\E(\tilde T^2)},$$ {#eq-lab-bias}
+where $\delta$ is the outcome coefficient on $U$ and $\theta_U$ is the coefficient on $T$ in the population regression of $U$ on $(1, T, X)$, with $\tilde T$ the residual from projecting $T$ on $(1, X)$.
+
+Three quantities are easily confused here, and only the last is correct for this estimator: the marginal difference $\E(U \mid T{=}1) - \E(U \mid T{=}0)$, the standardized conditional contrast $\E\{\E(U \mid T{=}1, X) - \E(U \mid T{=}0, X)\}$, and the regression coefficient $\theta_U$. In this particular numerical design the last two happen to agree to three decimals; that is a coincidence of the coefficients used here, not a general identity, and it is *not* implied by the independence or normality of $X$ and $U$. Under other coefficient values the two differ appreciably --- by more than 15% in some settings --- because OLS weights strata by the conditional variance of $T$ rather than by covariate mass. The marginal difference is smaller than either, because it ignores confounding by $X$. Note also that $\theta_U$ is built from conditional *means* of a standard normal variate, not from probabilities.
+
+The analyst-facing analysis posits the pair $(\theta_U, \delta)$ *directly*. This is the estimator-matched parameterization: by @eq-lab-bias these two numbers are exactly what determine the bias of $\hat\tau_X$, and positing $\theta_U$ itself avoids routing the analysis through a treatment-model coefficient $\alpha_U$ that the analyst can neither observe nor estimate.
+
+| Posited $\delta$ | $\theta_U = 0.25$ | $0.50$ | $0.75$ | $1.00$ |
+|---|---|---|---|---|
+| $1.0$ | $2.922$ | $2.672$ | $2.422$ | $2.172$ |
+| $2.0$ | $2.672$ | $2.172$ | $1.672$ | $1.172$ |
+| $3.0$ | $2.422$ | $1.672$ | $0.922$ | $0.172$ |
+
+: Analyst-facing sensitivity surface for Lab 9, at $\hat\tau_X = 3.172$. Each cell is $\hat\tau_{\mathrm{sens}} = \hat\tau_X - \delta\,\theta_U$ for posited $(\theta_U, \delta)$.
+
+### Tipping Contour and Benchmarking
+
+The zero contour of the surface is the hyperbola
+$$\delta \cdot \theta_U = \hat\tau_X = 3.172:$$ {#eq-lab-contour}
+any posited pair whose product reaches $3.172$ explains the entire adjusted estimate away, and no pair below the contour does.
+
+The benchmark for the observed covariate must be estimator-matched, and *both* of its components must come from the analyst's observed regressions. The treatment-side component is the auxiliary coefficient $d_X^{\mathrm{OLS}} = \mathrm{coef}_T\{X \sim 1 + T\} = 0.472$. The outcome-side component is the coefficient on $X$ in the regression the analyst actually ran:
+$$\hat\gamma_X = \mathrm{coef}_X\{Y \sim 1 + T + X\} \approx 0.605,$$
+*not* the structural coefficient $0.8$ of the data-generating process. The two differ because omitting $U$ biases the coefficient on $X$ as well: conditioning on the collider $T$ induces a negative partial association between $X$ and $U$ ($\mathrm{coef}_X\{U \sim 1 + T + X\} \approx -0.097$), and $0.8 + 2 \times (-0.097) \approx 0.605$. The observed covariate's implied bias is therefore
+$$\hat\gamma_X \, d_X^{\mathrm{OLS}} \approx 0.605 \times 0.472 \approx 0.286,$$
+an order of magnitude below the contour value $3.172$: no unmeasured confounder with the same joint pair of associations as $X$ comes close to explaining the estimate away.
+
+Oracle verification: the true configuration $(\alpha_U = 1.0,\, \delta = 2.0)$ induces $\theta_U = 0.832$, and $3.172 - 2.0 \times 0.832 = 1.508 \approx \tau = 1.5$, confirming @eq-lab-bias.
+
+### Interpretation
+
+The lab reinforces four points:
+
+1. The naive single-replicate CI $[2.98, 3.37]$ is narrow but does not contain the true ATE $\tau = 1.5$. Sampling uncertainty is not identification uncertainty.
+2. Sensitivity adjustment at the correct unmeasured-confounding magnitude recovers the truth to within Monte Carlo error. The method works when the sensitivity parameters are correctly posited.
+3. The tipping point depends jointly on both sensitivity parameters, and two slices through the contour must not be conflated. At the *observed* imbalance of $X$, $d_X^{\mathrm{OLS}} = 0.472$, the tipping value is $\delta^\star = 3.172/0.472 \approx 6.72$, about $11$ times the observed partial outcome coefficient $\hat\gamma_X \approx 0.605$ --- this is the observed-covariate benchmark. Along the oracle slice $\theta_U = 0.832$, $\delta^\star = 3.172/0.832 \approx 3.81$ --- a hypothetical slice through the surface, not a "confounder-as-strong-as-$X$" comparison.
+4. Benchmarking against the observed $X$ anchors the analysis: $X$'s implied bias $\approx 0.286$ sits an order of magnitude below the tipping contour $3.172$.
+
+::: {.callout-note icon=false}
+## Remark: What the Lab Is and Is Not
+
+The lab is a *demonstration* that sensitivity adjustment can recover the truth when the sensitivity parameters are correctly posited, and that the tipping-point framework gives a coherent way to report the dependence on those parameters. The lab is *not* a test of the assumptions: the analyst never learns $\alpha_U$ or $\delta$ from the data, because these quantities involve the unobserved $U$. The oracle computation of $\theta_U(\alpha_U)$ verifies that the bias formula @eq-lab-bias is correct; it is not an implementable sensitivity analysis, because it uses the simulated $U$. What the analyst can actually do is posit a grid of $(\theta_U, \delta)$ directly, compute the corresponding surface of sensitivity-adjusted estimates, locate its zero contour, and benchmark that contour against the pairs implied by observed covariates.
+:::
+
+## Chapter Summary {#sec-w9-summary}
+
+This chapter closed Part II by addressing the complement of what Chapters 5--8 provided. Those chapters gave conditions under which a causal parameter is identified as a functional of the observed-data distribution; this chapter provided tools for reporting how much the identification can be violated before the causal conclusion changes.
+
+- Sampling uncertainty, model misspecification, and identification uncertainty are distinct sources of error. A confidence interval addresses only the first, and identification uncertainty does not vanish merely by collecting more data from the same observational regime.
+- A sensitivity analysis introduces a parameter $\lambda$ that quantifies the strength of a violation, with a neutral value $\lambda_0$ recovering the baseline assumption --- zero for the additive parameters, one for the odds-ratio bounds $\Gamma$ and $\Lambda$. The three reporting objects are the sensitivity curve, the sensitivity bounds, and the tipping point.
+- The master bias decomposition $\Delta_{\mathrm{obs}} = \tau + B$ underwrites sensitivity analysis for unmeasured confounding, and specializes cleanly in the linear and binary-$U$ cases.
+- Three canonical sensitivity models differ by the object that the sensitivity parameter bounds. Rosenbaum's $\Gamma$ bounds a treatment-odds ratio. The VanderWeele--Ding E-value $\mathrm{EV} = R + \sqrt{R(R-1)}$ is the smallest achievable value of the larger of $\mathrm{RR}_{TU}$ and $\mathrm{RR}_{UY}$ among confounders able to explain the effect away, so at least one of the two associations must reach it, while asymmetric pairs with one component below it can still suffice --- though by the Cornfield inequality the smaller association must in every case be at least the observed risk ratio $R$. The marginal sensitivity model bounds an odds ratio of nominal to true propensity, yielding valid --- not sharp --- sensitivity intervals for weighting estimators.
+- Sensitivity parameters need benchmarking against observed covariates to be interpretable, and the benchmark is informative only when the comparator is scientifically comparable to the hypothesized unmeasured confounder.
+- Partial identification reports an identified set rather than a single value. Manski's no-assumption ATE bound has width $y_U - y_L$, the maintained common support range of the two potential outcomes; shape restrictions narrow it, and a careful report distinguishes sharp endpoint bounds from conservative ones.
+- Exact positivity failure on a positive-mass region is an identification failure; near-positivity violations are primarily a source of estimation and inferential instability. Trimming changes the estimand to a region of covariate overlap; it is a retargeting strategy, not a correction for the original population ATE.
+- An exclusion violation of size $\delta$ shifts the scalar Wald estimand by $\delta \cdot \mathrm{Var}(Z)/\mathrm{Cov}(T, Z)$ --- an exclusion-only analysis under maintained exogeneity --- and the bias is amplified by weak first stages. Weak-instrument diagnostics do not address exclusion or exogeneity violations.
+- Mediation sensitivity analysis proceeds, within a maintained linear mediation model, by a residual-correlation parameter $\rho$ that captures ordinary unmeasured $M$--$Y$ confounding. A treatment-induced mediator--outcome confounder is the harder failure mode and is not captured by a scalar $\rho$.
+- Modern estimation methods (AIPW, TMLE, DML, efficient GMM) address nuisance estimation, not identification. Neyman orthogonality protects the estimator; it does not protect the causal claim.
 
 ## Problems
 
-**1. Sampling vs. identification uncertainty.** Explain in your own words the difference between a narrow sampling confidence interval and a robust causal conclusion. Construct an example data-generating process, with numerical parameters, in which the CI for a back-door-adjusted ATE is very narrow (SD below 0.05) yet the true ATE lies outside it. Identify the identifying assumption that is violated and the magnitude of the violation.
+**1. Sampling vs. identification uncertainty.** In at most half a page, explain why identification uncertainty does not shrink as the sample size grows. Sketch on paper (no simulation required) a data-generating process with one observed covariate $X$ and one unmeasured confounder $U$ in which a back-door-adjusted estimator converges to a value different from the true ATE; state which identifying assumption is violated and give the limiting bias in terms of the model coefficients. (A full simulation version of this exercise is in the optional supplement.)
 
-**2. Binary unmeasured confounder.** Suppose $\hat\Delta_{\mathrm{obs}} = 2.0$. Assume a binary unmeasured confounder $U$ with constant outcome contrast $\delta = 4$ and imbalance $p_1 - p_0 = 0.3$.
+**2. Binary unmeasured confounder.** Suppose the observed adjusted effect is $\hat\Delta_{\mathrm{obs}} = 2.0$. Assume a binary unmeasured confounder $U$ with constant outcome contrast $\delta = 4$, and suppose the $U$-treatment imbalance is uniform across $X$ with value $p_1 - p_0 = 0.3$.
 
-(a) Use the Binary-Confounder Bias Lemma to compute $B$ and the sensitivity-adjusted estimate $\hat\tau_{\mathrm{sens}}$.
-(b) What outcome contrast $\delta$ would zero out the estimate at the same imbalance level?
-(c) What imbalance $p_1 - p_0$ would zero out the estimate at $\delta = 4$?
+(a) Use @lem-binary-bias to compute the confounding bias $B$ and the sensitivity-adjusted estimate $\hat\tau_{\mathrm{sens}}$.
+(b) What outcome contrast $\delta$ would be required to zero out the estimate at the same imbalance level?
+(c) What imbalance $p_1 - p_0$ would be required to zero out the estimate at $\delta = 4$?
 
-**3. Tipping point in a linear bias model.** For $\hat\Delta_{\mathrm{obs}} = 1.5$ and bias model $B(\lambda) = 0.4\lambda$:
+**3. Tipping point in a linear bias model.** For $\hat\Delta_{\mathrm{obs}} = 1.5$ and bias model $B(\lambda) = 0.4\,\lambda$:
 
 (a) Find the tipping point $\lambda^\star$ for the sign of the adjusted estimate.
-(b) Suppose the sampling standard error is 0.3, independent of $\lambda$. Find the tipping point $\lambda^\star_{\mathrm{CI}}$ for the lower confidence limit to reach zero (95% level). Compare to $\lambda^\star$.
+(b) Suppose the sampling standard error of the observed estimate is $0.3$, independent of $\lambda$. Find the tipping point $\lambda^\star_{\mathrm{CI}}$ for the lower confidence limit to reach zero (95% level). Compare to $\lambda^\star$.
 
-**4. Benchmarking.** A researcher reports a sensitivity analysis in which the tipping point for the $U$-outcome effect is $\delta^\star = 3.0$. Observed covariate outcome coefficients are $(\hat\gamma_{\mathrm{age}}, \hat\gamma_{\mathrm{income}}, \hat\gamma_{\mathrm{education}}) = (0.3, 1.8, 2.4)$. Identify the strongest benchmark. Is the result robust to an unmeasured confounder as strong as the strongest observed covariate? Write two sentences of interpretation suitable for an applied report.
+**4. Benchmarking.** A researcher reports a sensitivity analysis with $\hat\tau_X = 2.4$ under the linear model @eq-linear-y, in which the tipping point for the $U$-outcome effect is $\delta^\star = 3.0$ *at a posited treatment imbalance of $d = 0.8$*. The observed covariates have estimated outcome coefficients and treatment imbalances:
 
-**5. E-value calculation.** An observational study reports an adjusted risk ratio of $\mathrm{RR}_{TY \mid X}^{\mathrm{obs}} = 1.9$ with 95% CI $[1.3, 2.8]$.
+| Covariate | $\hat\gamma_j$ | $\hat d_j$ |
+|---|---|---|
+| age | 0.3 | 0.20 |
+| income | 1.8 | 0.35 |
+| education | 2.4 | 0.10 |
+
+(a) Explain why the outcome coefficient $\hat\gamma_j$ alone is not a complete benchmark under the linear sensitivity model, and state what the second component contributes.
+(b) Compute each covariate's implied bias $\hat\gamma_j \hat d_j$ and identify which covariate is the strongest benchmark on that scale. Note that the ranking differs from the ranking by $\hat\gamma_j$ alone.
+(c) Compare $\delta^\star = 3.0$ with the largest observed outcome coefficient, while holding the imbalance fixed at $d = 0.8$. Is the result robust to an unmeasured confounder with the same outcome association as the strongest observed covariate?
+(d) Write two sentences of interpretation suitable for an applied report, making clear which quantity is being held fixed.
+
+**5. E-value calculation.** An observational study reports an adjusted risk ratio of $1.9$ with 95% CI $[1.3, 2.8]$.
 
 (a) Compute the E-value for the point estimate using @eq-evalue.
 (b) Compute the E-value for the lower confidence limit.
-(c) Write one sentence of interpretation for each.
+(c) Write one sentence of interpretation for each, stating the symmetric reading correctly.
+(d) Exhibit a pair $(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})$ with $\mathrm{RR}_{TU}$ strictly below the E-value of part (a) that nonetheless explains the point estimate away, and verify it using @eq-bias-factor. Explain why this does not contradict @eq-evalue-minmax, and why one may not conclude that both associations must individually exceed the E-value.
 
-**6. IV sensitivity curve.** In a scalar-IV model with $\mathrm{Cov}(Y,Z) = 3$, $\mathrm{Cov}(T,Z) = 1.5$, $\mathrm{Var}(Z) = 1$:
+**6. Manski bound calculation.** Suppose consistency holds and both potential outcomes satisfy $Y(t) \in [0, 10]$ almost surely. Also suppose $P(T = 1) = 0.3$, $\E(Y \mid T=1) = 6.5$, and $\E(Y \mid T=0) = 4.0$.
 
-(a) Use @eq-beta-delta to compute $\hat\beta(\delta)$ for $\delta \in \{0, 0.5, 1.0, 1.5, 2.0\}$.
-(b) Find the tipping point $\delta^\star$.
-(c) Repeat for the weaker-instrument case $\mathrm{Cov}(T,Z) = 0.5$ (keeping other quantities fixed). Explain why the same $\delta$ produces a larger bias.
+(a) Compute Manski's no-assumption bound for the ATE using @eq-manski-lower--@eq-manski-upper.
+(b) Compute the width of the bound and verify @eq-manski-width.
+(c) The observed association is $2.5$. Does the no-assumption identified set include zero? Discuss what this implies about the informational content of the data alone.
 
-**7. Manski bound calculation.** Suppose $Y \in [0, 10]$, $P(T=1) = 0.3$, $\E(Y \mid T=1) = 6.5$, $\E(Y \mid T=0) = 4.0$.
-
-(a) Compute Manski's no-assumption bound using @eq-manski-lower--@eq-manski-upper.
-(b) Compute the width and verify @eq-manski-width.
-(c) The observed association is 2.5. Does the no-assumption identified set include zero? Discuss what this implies about the informational content of the data alone.
-
-**8. Positivity sensitivity.** Explain why the trimmed estimand $\tau_\alpha$ of @eq-trimmed-ate is generally not equal to the untrimmed ATE $\tau$. In a dataset with $\pi(X)$ distributed uniformly on $[0,1]$, what fraction of the population is retained at trimming levels $\alpha \in \{0.01, 0.05, 0.10, 0.20\}$? Under what scientific questions is $\tau_\alpha$ preferable to $\tau$ as a target?
-
-**9. Mediation sensitivity.** In a mediation study of a behavioral intervention ($T$) on depression ($Y$) through sleep quality ($M$), explain why randomization of $T$ alone does not eliminate the need for a sensitivity analysis for the indirect effect. Draw the DAG that describes the residual concern and identify which arrow corresponds to a nonzero $\rho$ in @eq-rho-def. Give a plausible scientific story in which the residual correlation could be large.
-
-**10. Modern estimators and identification.** A colleague argues that because DML and AIPW are "doubly robust and orthogonalized," they "automatically correct for unmeasured confounding provided the machine-learning models are good enough." Explain why this is incorrect, referring to the bias decomposition of the Bias Decomposition Theorem. Identify which term in that decomposition machine-learning methods can estimate consistently, and which term they cannot estimate at all.
+**7. Modern estimators and identification.** A colleague argues that because DML and AIPW are "doubly robust and orthogonalized," they "automatically correct for unmeasured confounding provided the machine-learning models are good enough." Explain why this is incorrect, referring to the bias decomposition of @thm-bias-decomp. Be precise about what is and is not estimable: machine learning can consistently estimate the observed-data functional $\Delta_{\mathrm{obs}}$ and the observed conditional means $\mu_t(X)$, but it cannot recover the split of $\Delta_{\mathrm{obs}}$ into $\tau$ and $B$, nor the $U$-indexed quantities $m_t(X, U)$ and $g_t(X, U)$, without information beyond the observed data. Explain why no amount of flexibility in the nuisance estimators changes this.

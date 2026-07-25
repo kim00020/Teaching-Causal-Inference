@@ -53,7 +53,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./chapter_11.html" rel="next">
-<link href="./chapter_09.html" rel="prev">
+<link href="./chapter_09_supplement.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -274,6 +274,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09_supplement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span></a>
   </div>
 </li>
       </ul>
@@ -999,10 +1005,10 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Two important properties of <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a> will be central in Chapter 11:</p>
+<p>Two important properties of <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.9</span></a> will be central in Chapter 11:</p>
 <p><strong>(i) Double robustness.</strong> The estimator obtained by replacing <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> by estimates and averaging <span class="math inline">\(\varphi^*(O_i)\)</span> is consistent for <span class="math inline">\(\tau\)</span> if <em>either</em> <span class="math inline">\(\hat\pi\)</span> or <span class="math inline">\(\hat\mu_t\)</span> is consistent — not necessarily both. This is the <em>doubly robust</em> property.</p>
 <p><strong>(ii) Semiparametric efficiency.</strong> When both nuisance estimators are consistent and converge at suitable rates, the resulting estimator is asymptotically linear with influence function <span class="math inline">\(\varphi^*(O)\)</span> and therefore achieves the efficiency bound <span class="math inline">\(V^*\)</span>.</p>
-<p>The augmented IPW (AIPW) estimator, sometimes called the one-step or debiased estimator, is the principal tool for exploiting both properties simultaneously; it will be derived and analyzed in Chapter 11. The EIF <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a> becomes central there: the same object generates both doubly robust estimating equations and the semiparametric efficiency bound.</p>
+<p>The augmented IPW (AIPW) estimator, sometimes called the one-step or debiased estimator, is the principal tool for exploiting both properties simultaneously; it will be derived and analyzed in Chapter 11. The EIF <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.9</span></a> becomes central there: the same object generates both doubly robust estimating equations and the semiparametric efficiency bound.</p>
 </div>
 </div>
 </section>
@@ -1071,7 +1077,7 @@ window.Quarto = {
 <ol type="a">
 <li>Assume <span class="math inline">\(\pi(X)\)</span> and <span class="math inline">\(\mu_t(X)\)</span> are both known. Compute the influence functions of: (i) the regression estimator <span class="math inline">\(\hat\tau_{\mathrm{reg}} = \mathbb{P}_n\{\mu_1(X) - \mu_0(X)\}\)</span>; (ii) the IPW estimator <span class="math inline">\(\hat\tau_{\mathrm{IPW}} = \mathbb{P}_n\{TY/\pi(X) - (1-T)Y/(1-\pi(X))\}\)</span>.</li>
 <li>Under what conditions on the data-generating process will <span class="math inline">\(\hat\tau_{\mathrm{reg}}\)</span> have a smaller asymptotic variance than <span class="math inline">\(\hat\tau_{\mathrm{IPW}}\)</span>?</li>
-<li>Verify that the EIF <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a> has mean zero under <span class="math inline">\(P\)</span> by computing <span class="math inline">\(\E[\varphi^*(O)]\)</span>.</li>
+<li>Verify that the EIF <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.9</span></a> has mean zero under <span class="math inline">\(P\)</span> by computing <span class="math inline">\(\E[\varphi^*(O)]\)</span>.</li>
 </ol>
 <p><strong>4. Variance estimation.</strong></p>
 <ol type="a">
@@ -1082,7 +1088,7 @@ window.Quarto = {
 <p><strong>5. Efficiency comparisons.</strong></p>
 <ol type="a">
 <li>Suppose <span class="math inline">\(\varphi_{\mathrm{reg}}\)</span> and <span class="math inline">\(\varphi_{\mathrm{IPW}}\)</span> denote the influence functions of the regression and IPW estimators. Without calculation, explain why neither estimator is always more efficient than the other.</li>
-<li>The semiparametric efficiency bound for the ATE is <span class="math inline">\(\E[\varphi^*(O)^2]\)</span>, where <span class="math inline">\(\varphi^*\)</span> is given in <a href="chapter_11.html#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>11.11</span></a>. Show that <span class="math inline">\(\E[\varphi^*(O)^2] \leq \E[\varphi_{\mathrm{IPW}}(O)^2]\)</span> by expanding the squared EIF. (<em>Hint</em>: use the law of iterated expectations to show that the cross-terms cancel.)</li>
+<li>The semiparametric efficiency bound for the ATE is <span class="math inline">\(\E[\varphi^*(O)^2]\)</span>, where <span class="math inline">\(\varphi^*\)</span> is given in <a href="#eq-eif-ate" class="quarto-xref">Equation&nbsp;<span>10.9</span></a>. Show that <span class="math inline">\(\E[\varphi^*(O)^2] \leq \E[\varphi_{\mathrm{IPW}}(O)^2]\)</span> by expanding the squared EIF. (<em>Hint</em>: use the law of iterated expectations to show that the cross-terms cancel.)</li>
 <li>Give one practical reason why an efficient estimator based on the EIF may not always be preferred over a simpler, less efficient estimator.</li>
 </ol>
 
@@ -1515,8 +1521,8 @@ Vaart, Aad W. van der. 1998. <em>Asymptotic Statistics</em>. Cambridge Universit
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./chapter_09.html" class="pagination-link" aria-label="Sensitivity Analysis and Partial Identification">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span>
+      <a href="./chapter_09_supplement.html" class="pagination-link" aria-label="Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

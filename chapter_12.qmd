@@ -19,7 +19,7 @@ By the end of this chapter, students should be able to:
 8. Articulate what machine learning can and cannot contribute to causal inference, and follow the practical workflow for cross-fitted orthogonal-score estimation.
 :::
 
-## Why Flexible Nuisance Estimation Is Both Attractive and Dangerous {#sec-motivation}
+## Why Flexible Nuisance Estimation Is Both Attractive and Dangerous {#sec-w12-motivation}
 
 In Chapters 10 and 11 we developed estimation and inference using estimating equations, influence functions, doubly robust scores, and semiparametric efficiency. A central feature of these methods is that the causal parameter depends on nuisance functions such as the outcome regressions $\mu_t(x) = \E(Y \mid T{=}t,\, X{=}x)$ and the propensity score $\pi(x) = P(T{=}1 \mid X{=}x)$. When these nuisance functions are too complex for low-dimensional parametric forms, flexible methods --- penalized regression, splines, random forests, boosting, neural networks, ensembles --- become attractive.
 
@@ -129,7 +129,7 @@ The score @eq-orth-score-ate simultaneously fulfills three purposes:
 ::: {.callout-note icon=false}
 ## Remark: Double Robustness versus Semiparametric Efficiency
 
-Properties (ii) and (iii) are distinct claims requiring distinct conditions. *Double robustness* (ii) is a consistency claim: under standard overlap and LLN regularity, the AIPW estimator is consistent for $\tau$ if either $\hat\mu_t$ converges to the true $\mu_t$ *or* $\hat\pi$ converges to the true $\pi$, but not necessarily both. *Semiparametric efficiency* (iii) is a distributional claim about $\sqrt{n}(\hat\tau - \tau_0)$: it requires that both nuisance estimators converge to the truth at rates satisfying the product-rate condition @eq-product-rate. When only one nuisance block is correctly specified, the estimator can remain consistent by double robustness, but the asymptotic-linearity expansion with influence function $\varphi_{\mathrm{eff}}$ and the efficient-bound variance need not apply, and inference based on them can be misleading without further analysis of the actual limiting estimating function.
+Properties (ii) and (iii) are distinct claims requiring distinct conditions. *Double robustness* (ii) is a consistency claim: under standard overlap and LLN regularity, the AIPW estimator is consistent for $\tau$ if either $\hat\mu_t$ converges to the true $\mu_t$ *or* $\hat\pi$ converges to the true $\pi$, but not necessarily both. *Semiparametric efficiency* (iii) is a distributional claim about $\sqrt{n}(\hat\tau - \tau_0)$: it requires that both nuisance estimators converge to the truth at rates satisfying the product-rate condition @eq-w12-product-rate. When only one nuisance block is correctly specified, the estimator can remain consistent by double robustness, but the asymptotic-linearity expansion with influence function $\varphi_{\mathrm{eff}}$ and the efficient-bound variance need not apply, and inference based on them can be misleading without further analysis of the actual limiting estimating function.
 :::
 
 ## Why Reusing the Same Data Can Be Problematic {#sec-reuse}
@@ -240,10 +240,10 @@ It is tempting to think that estimating any two of $\mu_0$, $\mu_1$, and $\pi$ f
 ## Theorem: Asymptotic Linearity Under Cross-Fitting {#thm-asymp}
 
 Suppose: (i) the score $\varphi_{\mathrm{eff}}(O;\,\tau,\eta)$ is orthogonal at the truth; (ii) the nuisance estimators are consistent in mean squared error; (iii) **strong overlap**: there exists $c > 0$ such that $c \leq \pi(X) \leq 1-c$ and $c \leq \hat\pi^{(-k)}(X) \leq 1-c$ a.s. for each fold $k$; (iv) the **product-rate condition**:
-$$\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1.$$ {#eq-product-rate}
+$$\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1.$$ {#eq-w12-product-rate}
 Then the cross-fitted estimator satisfies:
 $$\sqrt{n}(\hat\tau_{\mathrm{DML}} - \tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta) + o_p(1) \overset{d}{\longrightarrow} N\!\Bigl(0,\;\E\bigl[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2\bigr]\Bigr).$$
-The asymptotic variance equals the semiparametric efficiency bound; $\hat\tau_{\mathrm{DML}}$ is asymptotically efficient whenever @eq-product-rate holds.
+The asymptotic variance equals the semiparametric efficiency bound; $\hat\tau_{\mathrm{DML}}$ is asymptotically efficient whenever @eq-w12-product-rate holds.
 :::
 
 ::: {.callout-note icon=false}
@@ -263,7 +263,7 @@ where each fold remainder $R_n^{(k)}$ decomposes as in @eq-split-decomp. It suff
 $$B_n^{(k)} = -\E\!\left[(\hat\mu_1^{(-k)}-\mu_1)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{\hat\pi^{(-k)}(X)} - (\hat\mu_0^{(-k)}-\mu_0)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{1-\hat\pi^{(-k)}(X)}\right].$$
 Under strong overlap, the denominators are bounded below. By Cauchy-Schwarz:
 $$|B_n^{(k)}| \leq C\Bigl(\|\hat\mu_1^{(-k)}-\mu_1\|\cdot\|\hat\pi^{(-k)}-\pi\| + \|\hat\mu_0^{(-k)}-\mu_0\|\cdot\|\hat\pi^{(-k)}-\pi\|\Bigr) = o_p(n^{-1/2})$$
-by the product-rate condition @eq-product-rate. Hence $\sqrt{n}\,B_n^{(k)} = o_p(1)$.
+by the product-rate condition @eq-w12-product-rate. Hence $\sqrt{n}\,B_n^{(k)} = o_p(1)$.
 
 **Step 2: Empirical process term.** Condition on $\hat\eta^{(-k)}$. Since $\hat\eta^{(-k)}$ is trained on $\{1,\ldots,n\}\setminus\mathcal{I}_k$, the summands for $i\in\mathcal{I}_k$ are conditionally i.i.d. with conditional mean zero (after removing $B_n^{(k)}$). Let $f_k = \varphi_{\mathrm{eff}}(\cdot;\tau,\hat\eta^{(-k)}) - \varphi_{\mathrm{eff}}(\cdot;\tau,\eta_0)$. The conditional variance:
 $$\mathrm{Var}\bigl(E_n^{(k)}\mid\hat\eta^{(-k)}\bigr) = \frac{1}{n_k}\,\|f_k\|_{L_2}^2.$$
@@ -275,16 +275,16 @@ Under strong overlap and consistency, $\|f_k\|_{L_2}^2 = o_p(1)$, so $\mathrm{Va
 ::: {.callout-note icon=false}
 ## Remark: Interpreting the Product-Rate Condition
 
-Condition @eq-product-rate requires the *product* of the two nuisance estimation errors to be $o_p(n^{-1/2})$. A sufficient symmetric condition is that each nuisance estimator converges at rate $o_p(n^{-1/4})$ in $L_2(P)$ norm. This rate is achievable by many nonparametric and machine-learning methods under regularity conditions, and is what makes flexible nuisance estimation feasible in semiparametric causal inference.
+Condition @eq-w12-product-rate requires the *product* of the two nuisance estimation errors to be $o_p(n^{-1/2})$. A sufficient symmetric condition is that each nuisance estimator converges at rate $o_p(n^{-1/4})$ in $L_2(P)$ norm. This rate is achievable by many nonparametric and machine-learning methods under regularity conditions, and is what makes flexible nuisance estimation feasible in semiparametric causal inference.
 :::
 
 ::: {.callout-note icon=false}
 ## Remark: Connection to Chapter 11
 
-@thm-asymp is the cross-fitting version of the asymptotic normality result in Chapter 11. The product-rate condition @eq-product-rate is identical to the one in Chapter 11; the difference is that here the nuisance estimates are out-of-fold, which removes the need for Donsker conditions. Cross-fitting provides the same asymptotic conclusion while accommodating a substantially broader class of nuisance learners.
+@thm-asymp is the cross-fitting version of the asymptotic normality result in Chapter 11. The product-rate condition @eq-w12-product-rate is identical to the one in Chapter 11; the difference is that here the nuisance estimates are out-of-fold, which removes the need for Donsker conditions. Cross-fitting provides the same asymptotic conclusion while accommodating a substantially broader class of nuisance learners.
 :::
 
-## Lab: Simulation Study of the DML Estimator {#sec-lab}
+## Lab: Simulation Study of the DML Estimator {#sec-w12-lab}
 
 This lab verifies the theoretical properties of @thm-asymp. The central message is that flexible nuisance estimation alone is not sufficient for valid inference: a consistent nonparametric estimator can still produce a biased AIPW estimator if the same sample is reused for nuisance estimation and score evaluation.
 
@@ -316,7 +316,7 @@ True ATE: $\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0$ (b
 The key comparison is between Naive RF AIPW and DML, not between either and the oracle. Both use identical random forest learners; the only difference is cross-fitting. The bias reduction from 0.039 to 0.007 is attributable solely to removing the same-sample data-reuse problem. The accompanying small increase in variance is a finite-sample phenomenon, not an asymptotic penalty: the gap should narrow as $n$ grows.
 :::
 
-## Variance Estimation and Confidence Intervals {#sec-variance}
+## Variance Estimation and Confidence Intervals {#sec-w12-variance}
 
 Inference for $\hat\tau_{\mathrm{DML}}$ proceeds exactly as in Chapter 11, except that nuisance estimates are now out-of-fold. Let $k(i)$ denote the fold containing observation $i$, and define the estimated influence value:
 $$\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\hat\tau_{\mathrm{DML}},\,\hat\eta^{(-k(i))}\bigr).$$
@@ -349,7 +349,7 @@ Because $\varphi_{\mathrm{eff}}$ is linear in $\tau$ with $\partial_\tau\varphi_
 
 1. **Specify the estimand.** State the target causal parameter and verify the identification assumptions --- conditional exchangeability, positivity, and consistency for the ATE.
 2. **Choose the orthogonal score.** For the ATE, this is the efficient influence function @eq-orth-score-ate. The score fixes which nuisance components must be estimated.
-3. **Select nuisance learners.** Choose flexible learners for $\mu_0(x)$, $\mu_1(x)$, and $\pi(x)$. Verify informally that the product-rate condition @eq-product-rate is plausible.
+3. **Select nuisance learners.** Choose flexible learners for $\mu_0(x)$, $\mu_1(x)$, and $\pi(x)$. Verify informally that the product-rate condition @eq-w12-product-rate is plausible.
 4. **Assess covariate overlap.** Before fitting, examine the empirical distribution of each covariate by treatment group. Near-violations of positivity at the design level will inflate influence values and destabilize inference.
 
 **Phase 2: Estimation**
@@ -406,7 +406,7 @@ Modern causal estimation is not merely machine learning plus a causal estimand: 
 4. Even with an orthogonal score, reusing the same data can induce overfitting bias, especially when the nuisance class falls outside classical fixed Donsker regimes.
 5. Sample splitting removes this bias but wastes data. Cross-fitting recovers efficiency by rotating training and evaluation roles across $K$ folds.
 6. The cross-fitted AIPW estimator $\hat\tau_{\mathrm{DML}}$ is the standard DML estimator for the ATE.
-7. Under the product-rate condition @eq-product-rate, orthogonality and cross-fitting yield asymptotic linearity, root-$n$ consistency, and asymptotic normality, with asymptotic variance equal to the semiparametric efficiency bound (@thm-asymp). A sufficient symmetric condition is that each nuisance estimator converges at rate $o_p(n^{-1/4})$.
+7. Under the product-rate condition @eq-w12-product-rate, orthogonality and cross-fitting yield asymptotic linearity, root-$n$ consistency, and asymptotic normality, with asymptotic variance equal to the semiparametric efficiency bound (@thm-asymp). A sufficient symmetric condition is that each nuisance estimator converges at rate $o_p(n^{-1/4})$.
 8. The asymptotic variance is estimated consistently from the empirical variance of the out-of-fold estimated influence values.
 9. Machine learning improves nuisance estimation, but it does not resolve identification problems: unmeasured confounding, positivity failures, and untestable structural assumptions remain the researcher's responsibility.
 
@@ -431,7 +431,7 @@ Modern causal estimation is not merely machine learning plus a causal estimand: 
 
 **4. The product-rate condition.** Suppose $\|\hat\pi - \pi\|_{L_2} = o_p(n^{-\alpha})$ and $\|\hat\mu_t - \mu_t\|_{L_2} = o_p(n^{-\beta})$ for $\alpha, \beta > 0$.
 
-(a) State the condition on $\alpha$ and $\beta$ under which the product-rate condition @eq-product-rate holds.
+(a) State the condition on $\alpha$ and $\beta$ under which the product-rate condition @eq-w12-product-rate holds.
 (b) Show that $\alpha = \beta = 1/4$ satisfies your condition.
 (c) Does $\alpha = 1/2$, $\beta = 0$ satisfy it? What does this say about the case where the propensity score is estimated parametrically but the outcome model converges only at an unspecified rate?
 

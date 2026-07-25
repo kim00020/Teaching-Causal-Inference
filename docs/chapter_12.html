@@ -276,6 +276,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09_supplement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -352,7 +358,7 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-motivation" id="toc-sec-motivation" class="nav-link active" data-scroll-target="#sec-motivation"><span class="header-section-number">12.1</span> Why Flexible Nuisance Estimation Is Both Attractive and Dangerous</a></li>
+  <li><a href="#sec-w12-motivation" id="toc-sec-w12-motivation" class="nav-link active" data-scroll-target="#sec-w12-motivation"><span class="header-section-number">12.1</span> Why Flexible Nuisance Estimation Is Both Attractive and Dangerous</a></li>
   <li><a href="#sec-plugin" id="toc-sec-plugin" class="nav-link" data-scroll-target="#sec-plugin"><span class="header-section-number">12.2</span> Why Naive Plug-In Estimation Can Fail</a>
   <ul class="collapse">
   <li><a href="#sec-taylor" id="toc-sec-taylor" class="nav-link" data-scroll-target="#sec-taylor"><span class="header-section-number">12.2.1</span> The First-Order Taylor Expansion</a></li>
@@ -371,8 +377,8 @@ window.Quarto = {
   <li><a href="#sec-crossfit" id="toc-sec-crossfit" class="nav-link" data-scroll-target="#sec-crossfit"><span class="header-section-number">12.7</span> Cross-Fitting</a></li>
   <li><a href="#sec-dml" id="toc-sec-dml" class="nav-link" data-scroll-target="#sec-dml"><span class="header-section-number">12.8</span> Double Machine Learning for the Average Treatment Effect</a></li>
   <li><a href="#sec-rates" id="toc-sec-rates" class="nav-link" data-scroll-target="#sec-rates"><span class="header-section-number">12.9</span> Rate Conditions and Asymptotic Normality</a></li>
-  <li><a href="#sec-lab" id="toc-sec-lab" class="nav-link" data-scroll-target="#sec-lab"><span class="header-section-number">12.10</span> Lab: Simulation Study of the DML Estimator</a></li>
-  <li><a href="#sec-variance" id="toc-sec-variance" class="nav-link" data-scroll-target="#sec-variance"><span class="header-section-number">12.11</span> Variance Estimation and Confidence Intervals</a></li>
+  <li><a href="#sec-w12-lab" id="toc-sec-w12-lab" class="nav-link" data-scroll-target="#sec-w12-lab"><span class="header-section-number">12.10</span> Lab: Simulation Study of the DML Estimator</a></li>
+  <li><a href="#sec-w12-variance" id="toc-sec-w12-variance" class="nav-link" data-scroll-target="#sec-w12-variance"><span class="header-section-number">12.11</span> Variance Estimation and Confidence Intervals</a></li>
   <li><a href="#sec-workflow" id="toc-sec-workflow" class="nav-link" data-scroll-target="#sec-workflow"><span class="header-section-number">12.12</span> A Practical Workflow</a></li>
   <li><a href="#sec-limits" id="toc-sec-limits" class="nav-link" data-scroll-target="#sec-limits"><span class="header-section-number">12.13</span> What Machine Learning Does Not Solve</a></li>
   <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">12.14</span> Chapter Summary</a></li>
@@ -425,8 +431,8 @@ window.Quarto = {
 </ol>
 </div>
 </div>
-<section id="sec-motivation" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="sec-motivation"><span class="header-section-number">12.1</span> Why Flexible Nuisance Estimation Is Both Attractive and Dangerous</h2>
+<section id="sec-w12-motivation" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="sec-w12-motivation"><span class="header-section-number">12.1</span> Why Flexible Nuisance Estimation Is Both Attractive and Dangerous</h2>
 <p>In Chapters 10 and 11 we developed estimation and inference using estimating equations, influence functions, doubly robust scores, and semiparametric efficiency. A central feature of these methods is that the causal parameter depends on nuisance functions such as the outcome regressions <span class="math inline">\(\mu_t(x) = \E(Y \mid T{=}t,\, X{=}x)\)</span> and the propensity score <span class="math inline">\(\pi(x) = P(T{=}1 \mid X{=}x)\)</span>. When these nuisance functions are too complex for low-dimensional parametric forms, flexible methods — penalized regression, splines, random forests, boosting, neural networks, ensembles — become attractive.</p>
 <p>These methods can substantially improve predictive accuracy, but they create new statistical difficulties: slower convergence, overfitting, difficult asymptotic characterization, and failure of naive plug-in inference even when prediction quality is high.</p>
 <p>Better nuisance prediction therefore does not automatically imply valid inference for the target causal parameter. This chapter explains how orthogonal scores, sample splitting, and cross-fitting make it possible to combine flexible nuisance estimation with valid large-sample inference. The solution combines an <em>orthogonal score</em>, which removes first-order sensitivity to nuisance estimation error, with <em>cross-fitting</em>, which separates nuisance estimation from score evaluation to control the remaining empirical process remainder.</p>
@@ -569,7 +575,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Properties (ii) and (iii) are distinct claims requiring distinct conditions. <em>Double robustness</em> (ii) is a consistency claim: under standard overlap and LLN regularity, the AIPW estimator is consistent for <span class="math inline">\(\tau\)</span> if either <span class="math inline">\(\hat\mu_t\)</span> converges to the true <span class="math inline">\(\mu_t\)</span> <em>or</em> <span class="math inline">\(\hat\pi\)</span> converges to the true <span class="math inline">\(\pi\)</span>, but not necessarily both. <em>Semiparametric efficiency</em> (iii) is a distributional claim about <span class="math inline">\(\sqrt{n}(\hat\tau - \tau_0)\)</span>: it requires that both nuisance estimators converge to the truth at rates satisfying the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>. When only one nuisance block is correctly specified, the estimator can remain consistent by double robustness, but the asymptotic-linearity expansion with influence function <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> and the efficient-bound variance need not apply, and inference based on them can be misleading without further analysis of the actual limiting estimating function.</p>
+<p>Properties (ii) and (iii) are distinct claims requiring distinct conditions. <em>Double robustness</em> (ii) is a consistency claim: under standard overlap and LLN regularity, the AIPW estimator is consistent for <span class="math inline">\(\tau\)</span> if either <span class="math inline">\(\hat\mu_t\)</span> converges to the true <span class="math inline">\(\mu_t\)</span> <em>or</em> <span class="math inline">\(\hat\pi\)</span> converges to the true <span class="math inline">\(\pi\)</span>, but not necessarily both. <em>Semiparametric efficiency</em> (iii) is a distributional claim about <span class="math inline">\(\sqrt{n}(\hat\tau - \tau_0)\)</span>: it requires that both nuisance estimators converge to the truth at rates satisfying the product-rate condition <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>. When only one nuisance block is correctly specified, the estimator can remain consistent by double robustness, but the asymptotic-linearity expansion with influence function <span class="math inline">\(\varphi_{\mathrm{eff}}\)</span> and the efficient-bound variance need not apply, and inference based on them can be misleading without further analysis of the actual limiting estimating function.</p>
 </div>
 </div>
 </section>
@@ -715,7 +721,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Suppose: (i) the score <span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\)</span> is orthogonal at the truth; (ii) the nuisance estimators are consistent in mean squared error; (iii) <strong>strong overlap</strong>: there exists <span class="math inline">\(c &gt; 0\)</span> such that <span class="math inline">\(c \leq \pi(X) \leq 1-c\)</span> and <span class="math inline">\(c \leq \hat\pi^{(-k)}(X) \leq 1-c\)</span> a.s. for each fold <span class="math inline">\(k\)</span>; (iv) the <strong>product-rate condition</strong>: <span id="eq-product-rate"><span class="math display">\[\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1. \tag{12.12}\]</span></span> Then the cross-fitted estimator satisfies: <span class="math display">\[\sqrt{n}(\hat\tau_{\mathrm{DML}} - \tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta) + o_p(1) \overset{d}{\longrightarrow} N\!\Bigl(0,\;\E\bigl[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2\bigr]\Bigr).\]</span> The asymptotic variance equals the semiparametric efficiency bound; <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is asymptotically efficient whenever <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> holds.</p>
+<p>Suppose: (i) the score <span class="math inline">\(\varphi_{\mathrm{eff}}(O;\,\tau,\eta)\)</span> is orthogonal at the truth; (ii) the nuisance estimators are consistent in mean squared error; (iii) <strong>strong overlap</strong>: there exists <span class="math inline">\(c &gt; 0\)</span> such that <span class="math inline">\(c \leq \pi(X) \leq 1-c\)</span> and <span class="math inline">\(c \leq \hat\pi^{(-k)}(X) \leq 1-c\)</span> a.s. for each fold <span class="math inline">\(k\)</span>; (iv) the <strong>product-rate condition</strong>: <span id="eq-w12-product-rate"><span class="math display">\[\|\hat\pi^{(-k)} - \pi\| \cdot \|\hat\mu_t^{(-k)} - \mu_t\| = o_p(n^{-1/2}), \qquad t = 0, 1. \tag{12.12}\]</span></span> Then the cross-fitted estimator satisfies: <span class="math display">\[\sqrt{n}(\hat\tau_{\mathrm{DML}} - \tau) = \frac{1}{\sqrt{n}}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta) + o_p(1) \overset{d}{\longrightarrow} N\!\Bigl(0,\;\E\bigl[\varphi_{\mathrm{eff}}(O;\,\tau,\eta)^2\bigr]\Bigr).\]</span> The asymptotic variance equals the semiparametric efficiency bound; <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is asymptotically efficient whenever <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> holds.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -744,7 +750,7 @@ window.Quarto = {
 <div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Write <span class="math inline">\(n_k = |\mathcal{I}_k|\)</span> and <span class="math inline">\(\mathbb{P}_{n_k}\)</span> for the empirical measure over fold <span class="math inline">\(k\)</span>. From the cross-fitted moment equation <a href="#eq-crossfit-moment" class="quarto-xref">Equation&nbsp;<span>12.10</span></a>: <span class="math display">\[\hat\tau_{\mathrm{DML}} - \tau = \frac{1}{n}\sum_{i=1}^n\varphi_{\mathrm{eff}}(O_i;\,\tau,\eta_0) + \frac{1}{K}\sum_{k=1}^K R_n^{(k)},\]</span> where each fold remainder <span class="math inline">\(R_n^{(k)}\)</span> decomposes as in <a href="#eq-split-decomp" class="quarto-xref">Equation&nbsp;<span>12.9</span></a>. It suffices to show <span class="math inline">\(\sqrt{n}\,R_n^{(k)} = o_p(1)\)</span> for each <span class="math inline">\(k\)</span>.</p>
-<p><strong>Step 1: Population bias.</strong> By iterated expectations conditioning on <span class="math inline">\(X\)</span>: <span class="math display">\[B_n^{(k)} = -\E\!\left[(\hat\mu_1^{(-k)}-\mu_1)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{\hat\pi^{(-k)}(X)} - (\hat\mu_0^{(-k)}-\mu_0)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{1-\hat\pi^{(-k)}(X)}\right].\]</span> Under strong overlap, the denominators are bounded below. By Cauchy-Schwarz: <span class="math display">\[|B_n^{(k)}| \leq C\Bigl(\|\hat\mu_1^{(-k)}-\mu_1\|\cdot\|\hat\pi^{(-k)}-\pi\| + \|\hat\mu_0^{(-k)}-\mu_0\|\cdot\|\hat\pi^{(-k)}-\pi\|\Bigr) = o_p(n^{-1/2})\]</span> by the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>. Hence <span class="math inline">\(\sqrt{n}\,B_n^{(k)} = o_p(1)\)</span>.</p>
+<p><strong>Step 1: Population bias.</strong> By iterated expectations conditioning on <span class="math inline">\(X\)</span>: <span class="math display">\[B_n^{(k)} = -\E\!\left[(\hat\mu_1^{(-k)}-\mu_1)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{\hat\pi^{(-k)}(X)} - (\hat\mu_0^{(-k)}-\mu_0)(X) \cdot \frac{\hat\pi^{(-k)}(X)-\pi(X)}{1-\hat\pi^{(-k)}(X)}\right].\]</span> Under strong overlap, the denominators are bounded below. By Cauchy-Schwarz: <span class="math display">\[|B_n^{(k)}| \leq C\Bigl(\|\hat\mu_1^{(-k)}-\mu_1\|\cdot\|\hat\pi^{(-k)}-\pi\| + \|\hat\mu_0^{(-k)}-\mu_0\|\cdot\|\hat\pi^{(-k)}-\pi\|\Bigr) = o_p(n^{-1/2})\]</span> by the product-rate condition <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>. Hence <span class="math inline">\(\sqrt{n}\,B_n^{(k)} = o_p(1)\)</span>.</p>
 <p><strong>Step 2: Empirical process term.</strong> Condition on <span class="math inline">\(\hat\eta^{(-k)}\)</span>. Since <span class="math inline">\(\hat\eta^{(-k)}\)</span> is trained on <span class="math inline">\(\{1,\ldots,n\}\setminus\mathcal{I}_k\)</span>, the summands for <span class="math inline">\(i\in\mathcal{I}_k\)</span> are conditionally i.i.d. with conditional mean zero (after removing <span class="math inline">\(B_n^{(k)}\)</span>). Let <span class="math inline">\(f_k = \varphi_{\mathrm{eff}}(\cdot;\tau,\hat\eta^{(-k)}) - \varphi_{\mathrm{eff}}(\cdot;\tau,\eta_0)\)</span>. The conditional variance: <span class="math display">\[\mathrm{Var}\bigl(E_n^{(k)}\mid\hat\eta^{(-k)}\bigr) = \frac{1}{n_k}\,\|f_k\|_{L_2}^2.\]</span> Under strong overlap and consistency, <span class="math inline">\(\|f_k\|_{L_2}^2 = o_p(1)\)</span>, so <span class="math inline">\(\mathrm{Var}(\sqrt{n}\,E_n^{(k)}\mid\hat\eta^{(-k)}) = (n/n_k)\,\|f_k\|_{L_2}^2 = O(1)\cdot o_p(1) = o_p(1)\)</span>. By conditional Chebyshev, <span class="math inline">\(\sqrt{n}\,E_n^{(k)} = o_p(1)\)</span>.</p>
 <p><strong>Conclusion.</strong> Combining Steps 1 and 2, <span class="math inline">\(\sqrt{n}\,R_n^{(k)} = o_p(1)\)</span> for each <span class="math inline">\(k\)</span>, and hence <span class="math inline">\(\sqrt{n}\cdot K^{-1}\sum_k R_n^{(k)} = o_p(1)\)</span>. The first term converges in distribution to <span class="math inline">\(N(0, \E[\varphi_{\mathrm{eff}}^2])\)</span> by the ordinary CLT. Asymptotic linearity and normality follow by Slutsky. <span class="math inline">\(\square\)</span></p>
 </div>
@@ -760,7 +766,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> requires the <em>product</em> of the two nuisance estimation errors to be <span class="math inline">\(o_p(n^{-1/2})\)</span>. A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span> in <span class="math inline">\(L_2(P)\)</span> norm. This rate is achievable by many nonparametric and machine-learning methods under regularity conditions, and is what makes flexible nuisance estimation feasible in semiparametric causal inference.</p>
+<p>Condition <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> requires the <em>product</em> of the two nuisance estimation errors to be <span class="math inline">\(o_p(n^{-1/2})\)</span>. A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span> in <span class="math inline">\(L_2(P)\)</span> norm. This rate is achievable by many nonparametric and machine-learning methods under regularity conditions, and is what makes flexible nuisance estimation feasible in semiparametric causal inference.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -773,12 +779,12 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="quarto-unresolved-ref">?thm-asymp</span> is the cross-fitting version of the asymptotic normality result in Chapter 11. The product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is identical to the one in Chapter 11; the difference is that here the nuisance estimates are out-of-fold, which removes the need for Donsker conditions. Cross-fitting provides the same asymptotic conclusion while accommodating a substantially broader class of nuisance learners.</p>
+<p><span class="quarto-unresolved-ref">?thm-asymp</span> is the cross-fitting version of the asymptotic normality result in Chapter 11. The product-rate condition <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is identical to the one in Chapter 11; the difference is that here the nuisance estimates are out-of-fold, which removes the need for Donsker conditions. Cross-fitting provides the same asymptotic conclusion while accommodating a substantially broader class of nuisance learners.</p>
 </div>
 </div>
 </section>
-<section id="sec-lab" class="level2" data-number="12.10">
-<h2 data-number="12.10" class="anchored" data-anchor-id="sec-lab"><span class="header-section-number">12.10</span> Lab: Simulation Study of the DML Estimator</h2>
+<section id="sec-w12-lab" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="sec-w12-lab"><span class="header-section-number">12.10</span> Lab: Simulation Study of the DML Estimator</h2>
 <p>This lab verifies the theoretical properties of <span class="quarto-unresolved-ref">?thm-asymp</span>. The central message is that flexible nuisance estimation alone is not sufficient for valid inference: a consistent nonparametric estimator can still produce a biased AIPW estimator if the same sample is reused for nuisance estimation and score evaluation.</p>
 <p><strong>DGP.</strong> <span class="math inline">\(n = 2000\)</span>, covariates <span class="math inline">\(X_1, X_2, X_3 \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(-1, 1)\)</span>. True nuisance functions: <span class="math display">\[\pi(X) = \mathrm{expit}\!\bigl(\sin(\pi X_1) + X_2^2 - 0.5\bigr), \quad \mu_1(X) = 2\sin(\pi X_1) + X_2^2 + X_3, \quad \mu_0(X) = \sin(\pi X_1) + X_2^2 - X_3.\]</span> True ATE: <span class="math inline">\(\tau = \E\{\mu_1(X) - \mu_0(X)\} = \E\{\sin(\pi X_1) + 2X_3\} = 0\)</span> (both <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_3\)</span> symmetric about zero). The nonlinearity of <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\mu_t\)</span> means random forests can fit them consistently; their function class falls outside classical fixed Donsker regimes.</p>
 <p><strong>Three estimators.</strong> (1) <em>Oracle AIPW</em>: plug in the true nuisance functions — infeasible but provides the semiparametric efficiency benchmark. (2) <em>Naive RF AIPW</em>: estimate nuisance functions using random forests on the <em>full sample</em>, then evaluate the AIPW score on the same sample. (3) <em>DML (cross-fitted AIPW)</em>: same random forest learners, but via <span class="math inline">\(K = 5\)</span> fold cross-fitting. Estimators (2) and (3) use identical learners; the only difference is data reuse versus cross-fitting.</p>
@@ -831,8 +837,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="sec-variance" class="level2" data-number="12.11">
-<h2 data-number="12.11" class="anchored" data-anchor-id="sec-variance"><span class="header-section-number">12.11</span> Variance Estimation and Confidence Intervals</h2>
+<section id="sec-w12-variance" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="sec-w12-variance"><span class="header-section-number">12.11</span> Variance Estimation and Confidence Intervals</h2>
 <p>Inference for <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> proceeds exactly as in Chapter 11, except that nuisance estimates are now out-of-fold. Let <span class="math inline">\(k(i)\)</span> denote the fold containing observation <span class="math inline">\(i\)</span>, and define the estimated influence value: <span class="math display">\[\hat\varphi_i = \varphi_{\mathrm{eff}}\!\bigl(O_i;\,\hat\tau_{\mathrm{DML}},\,\hat\eta^{(-k(i))}\bigr).\]</span></p>
 <p>The variance estimator is: <span id="eq-var-est"><span class="math display">\[\hat{V} = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i. \tag{12.13}\]</span></span></p>
 <p>The Wald confidence interval is <span class="math inline">\(\hat\tau_{\mathrm{DML}} \pm z_{1-\alpha/2}\sqrt{\hat{V}}\)</span>.</p>
@@ -880,7 +886,7 @@ window.Quarto = {
 <ol type="1">
 <li><strong>Specify the estimand.</strong> State the target causal parameter and verify the identification assumptions — conditional exchangeability, positivity, and consistency for the ATE.</li>
 <li><strong>Choose the orthogonal score.</strong> For the ATE, this is the efficient influence function <a href="#eq-orth-score-ate" class="quarto-xref">Equation&nbsp;<span>12.4</span></a>. The score fixes which nuisance components must be estimated.</li>
-<li><strong>Select nuisance learners.</strong> Choose flexible learners for <span class="math inline">\(\mu_0(x)\)</span>, <span class="math inline">\(\mu_1(x)\)</span>, and <span class="math inline">\(\pi(x)\)</span>. Verify informally that the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is plausible.</li>
+<li><strong>Select nuisance learners.</strong> Choose flexible learners for <span class="math inline">\(\mu_0(x)\)</span>, <span class="math inline">\(\mu_1(x)\)</span>, and <span class="math inline">\(\pi(x)\)</span>. Verify informally that the product-rate condition <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> is plausible.</li>
 <li><strong>Assess covariate overlap.</strong> Before fitting, examine the empirical distribution of each covariate by treatment group. Near-violations of positivity at the design level will inflate influence values and destabilize inference.</li>
 </ol>
 <p><strong>Phase 2: Estimation</strong></p>
@@ -981,7 +987,7 @@ window.Quarto = {
 <li>Even with an orthogonal score, reusing the same data can induce overfitting bias, especially when the nuisance class falls outside classical fixed Donsker regimes.</li>
 <li>Sample splitting removes this bias but wastes data. Cross-fitting recovers efficiency by rotating training and evaluation roles across <span class="math inline">\(K\)</span> folds.</li>
 <li>The cross-fitted AIPW estimator <span class="math inline">\(\hat\tau_{\mathrm{DML}}\)</span> is the standard DML estimator for the ATE.</li>
-<li>Under the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>, orthogonality and cross-fitting yield asymptotic linearity, root-<span class="math inline">\(n\)</span> consistency, and asymptotic normality, with asymptotic variance equal to the semiparametric efficiency bound (<span class="quarto-unresolved-ref">?thm-asymp</span>). A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span>.</li>
+<li>Under the product-rate condition <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a>, orthogonality and cross-fitting yield asymptotic linearity, root-<span class="math inline">\(n\)</span> consistency, and asymptotic normality, with asymptotic variance equal to the semiparametric efficiency bound (<span class="quarto-unresolved-ref">?thm-asymp</span>). A sufficient symmetric condition is that each nuisance estimator converges at rate <span class="math inline">\(o_p(n^{-1/4})\)</span>.</li>
 <li>The asymptotic variance is estimated consistently from the empirical variance of the out-of-fold estimated influence values.</li>
 <li>Machine learning improves nuisance estimation, but it does not resolve identification problems: unmeasured confounding, positivity failures, and untestable structural assumptions remain the researcher’s responsibility.</li>
 </ol>
@@ -1007,7 +1013,7 @@ window.Quarto = {
 </ol>
 <p><strong>4. The product-rate condition.</strong> Suppose <span class="math inline">\(\|\hat\pi - \pi\|_{L_2} = o_p(n^{-\alpha})\)</span> and <span class="math inline">\(\|\hat\mu_t - \mu_t\|_{L_2} = o_p(n^{-\beta})\)</span> for <span class="math inline">\(\alpha, \beta &gt; 0\)</span>.</p>
 <ol type="a">
-<li>State the condition on <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> under which the product-rate condition <a href="#eq-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> holds.</li>
+<li>State the condition on <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> under which the product-rate condition <a href="#eq-w12-product-rate" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> holds.</li>
 <li>Show that <span class="math inline">\(\alpha = \beta = 1/4\)</span> satisfies your condition.</li>
 <li>Does <span class="math inline">\(\alpha = 1/2\)</span>, <span class="math inline">\(\beta = 0\)</span> satisfy it? What does this say about the case where the propensity score is estimated parametrically but the outcome model converges only at an unspecified rate?</li>
 </ol>

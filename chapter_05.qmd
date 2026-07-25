@@ -303,7 +303,7 @@ The ATE and ATT follow immediately as corollaries.
 ## Theorem: Identification of the ATE and ATT {#thm-ident-ate}
 
 Under the conditions of @lem-ident-pot, imposed for both treatment levels $t \in \{0,1\}$:
-$$\tau_{\mathrm{ATE}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x)\, dx,$$ {#eq-backdoor}
+$$\tau_{\mathrm{ATE}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x)\, dx,$$ {#eq-w5-backdoor}
 $$\tau_{\mathrm{ATT}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x \mid T{=}1)\, dx.$$ {#eq-backdoor-att}
 :::
 
@@ -411,7 +411,7 @@ The back-door criterion typically admits more than one valid set. In the educati
 
 ### The Common Three-Step Logic
 
-Both regression adjustment and standardization are implementations of the same back-door formula @eq-backdoor. They differ only in *how* they estimate the conditional mean $\mu(t, x) = \E[Y \mid T{=}t, X{=}x]$, not in the underlying procedure. Throughout this section $X$ denotes a set of *pre-treatment* covariates satisfying the back-door criterion.
+Both regression adjustment and standardization are implementations of the same back-door formula @eq-w5-backdoor. They differ only in *how* they estimate the conditional mean $\mu(t, x) = \E[Y \mid T{=}t, X{=}x]$, not in the underlying procedure. Throughout this section $X$ denotes a set of *pre-treatment* covariates satisfying the back-door criterion.
 
 ::: {.callout-note icon=false}
 ## The Three-Step Recipe: Outcome Regression / g-Formula
@@ -750,7 +750,7 @@ The simulation fixes the bandwidth $h = 0.5 \cdot n^{-1/5}$ and does not perform
 
 ## Where the Propensity Score Fits
 
-The three methods developed above --- regression adjustment, standardization, and stratification --- all implement the same identifying formula @eq-backdoor, and all three therefore rest on the *same* causal identification conditions: consistency, conditional exchangeability, and positivity. What distinguishes them is only how they handle the conditioning on the high-dimensional covariate vector $X$, and what each additionally requires *at the estimation stage*:
+The three methods developed above --- regression adjustment, standardization, and stratification --- all implement the same identifying formula @eq-w5-backdoor, and all three therefore rest on the *same* causal identification conditions: consistency, conditional exchangeability, and positivity. What distinguishes them is only how they handle the conditioning on the high-dimensional covariate vector $X$, and what each additionally requires *at the estimation stage*:
 
 | **Method** | **How it handles $X$** | **Method-specific estimation requirement** |
 |---|---|---|

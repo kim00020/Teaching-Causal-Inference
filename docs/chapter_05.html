@@ -276,6 +276,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09_supplement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -805,7 +811,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under the conditions of <span class="quarto-unresolved-ref">?lem-ident-pot</span>, imposed for both treatment levels <span class="math inline">\(t \in \{0,1\}\)</span>: <span id="eq-backdoor"><span class="math display">\[\tau_{\mathrm{ATE}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x)\, dx, \tag{5.8}\]</span></span> <span id="eq-backdoor-att"><span class="math display">\[\tau_{\mathrm{ATT}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x \mid T{=}1)\, dx. \tag{5.9}\]</span></span></p>
+<p>Under the conditions of <span class="quarto-unresolved-ref">?lem-ident-pot</span>, imposed for both treatment levels <span class="math inline">\(t \in \{0,1\}\)</span>: <span id="eq-w5-backdoor"><span class="math display">\[\tau_{\mathrm{ATE}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x)\, dx, \tag{5.8}\]</span></span> <span id="eq-backdoor-att"><span class="math display">\[\tau_{\mathrm{ATT}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x \mid T{=}1)\, dx. \tag{5.9}\]</span></span></p>
 </div>
 </div>
 <p><em>Proof.</em> For the ATE, apply <span class="quarto-unresolved-ref">?lem-ident-pot</span> separately to <span class="math inline">\(t = 1\)</span> and <span class="math inline">\(t = 0\)</span> and subtract.</p>
@@ -873,7 +879,7 @@ window.Quarto = {
 <p>There is still an asymmetry among the assumptions, but it must be stated carefully. <em>Empirical</em> overlap can be diagnosed: for any candidate <span class="math inline">\(X\)</span>, one can compare the distributions of <span class="math inline">\(X \mid T{=}1\)</span> and <span class="math inline">\(X \mid T{=}0\)</span> and look for regions where one arm is absent or nearly so. <em>Population</em> positivity, by contrast, is an assumption about the data-generating distribution and is not fully testable from a finite sample — especially with continuous or high-dimensional covariates. Two distinct failure modes should not be conflated: a structural zero is an <em>identification</em> failure for the original target; a finite-sample empty cell despite positive population probability is an <em>estimation</em> problem. Restricting the analysis to a region of common support can yield an identified effect <em>for that restricted target population</em>, but it changes the estimand. Weak ignorability and consistency remain untestable from data alone. Overlap diagnostics using the propensity score are developed in Chapter 6.</p>
 </div>
 </div>
-<p>Equations <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>–<a href="#eq-backdoor-att" class="quarto-xref">Equation&nbsp;<span>5.9</span></a> are the <em>identification results</em>. The next sections present methods for <em>estimating</em> the identified quantities from data.</p>
+<p>Equations <a href="chapter_01.html#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>1.6</span></a>–<a href="#eq-backdoor-att" class="quarto-xref">Equation&nbsp;<span>5.9</span></a> are the <em>identification results</em>. The next sections present methods for <em>estimating</em> the identified quantities from data.</p>
 </section>
 <section id="sec-w5-pretreatment" class="level3" data-number="5.2.6">
 <h3 data-number="5.2.6" class="anchored" data-anchor-id="sec-w5-pretreatment"><span class="header-section-number">5.2.6</span> Which Variables to Condition On: The Pre-Treatment Requirement</h3>
@@ -948,7 +954,7 @@ window.Quarto = {
 <h2 data-number="5.3" class="anchored" data-anchor-id="sec-w5-regression"><span class="header-section-number">5.3</span> Regression Adjustment and Standardization</h2>
 <section id="the-common-three-step-logic" class="level3" data-number="5.3.1">
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="the-common-three-step-logic"><span class="header-section-number">5.3.1</span> The Common Three-Step Logic</h3>
-<p>Both regression adjustment and standardization are implementations of the same back-door formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>. They differ only in <em>how</em> they estimate the conditional mean <span class="math inline">\(\mu(t, x) = \E[Y \mid T{=}t, X{=}x]\)</span>, not in the underlying procedure. Throughout this section <span class="math inline">\(X\)</span> denotes a set of <em>pre-treatment</em> covariates satisfying the back-door criterion.</p>
+<p>Both regression adjustment and standardization are implementations of the same back-door formula <a href="#eq-w5-backdoor" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>. They differ only in <em>how</em> they estimate the conditional mean <span class="math inline">\(\mu(t, x) = \E[Y \mid T{=}t, X{=}x]\)</span>, not in the underlying procedure. Throughout this section <span class="math inline">\(X\)</span> denotes a set of <em>pre-treatment</em> covariates satisfying the back-door criterion.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1433,7 +1439,7 @@ window.Quarto = {
 </section>
 <section id="where-the-propensity-score-fits" class="level2" data-number="5.7">
 <h2 data-number="5.7" class="anchored" data-anchor-id="where-the-propensity-score-fits"><span class="header-section-number">5.7</span> Where the Propensity Score Fits</h2>
-<p>The three methods developed above — regression adjustment, standardization, and stratification — all implement the same identifying formula <a href="#eq-backdoor" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>, and all three therefore rest on the <em>same</em> causal identification conditions: consistency, conditional exchangeability, and positivity. What distinguishes them is only how they handle the conditioning on the high-dimensional covariate vector <span class="math inline">\(X\)</span>, and what each additionally requires <em>at the estimation stage</em>:</p>
+<p>The three methods developed above — regression adjustment, standardization, and stratification — all implement the same identifying formula <a href="#eq-w5-backdoor" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>, and all three therefore rest on the <em>same</em> causal identification conditions: consistency, conditional exchangeability, and positivity. What distinguishes them is only how they handle the conditioning on the high-dimensional covariate vector <span class="math inline">\(X\)</span>, and what each additionally requires <em>at the estimation stage</em>:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">

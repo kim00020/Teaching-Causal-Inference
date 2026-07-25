@@ -19,7 +19,7 @@ By the end of this chapter, students should be able to:
 8. Identify the product-rate condition as the key sufficient condition for nuisance estimation error to be asymptotically negligible, and construct a consistent variance estimator and Wald confidence interval.
 :::
 
-## Why Combine Outcome Regression and Weighting? {#sec-motivation}
+## Why Combine Outcome Regression and Weighting? {#sec-w11-motivation}
 
 Under consistency, conditional exchangeability, and positivity, the ATE $\tau = \E\{Y(1) - Y(0)\}$ is identified by either of the following:
 $$\tau = \E\{\mu_1(X) - \mu_0(X)\}, \qquad \text{or} \qquad \tau = \E\!\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\},$$
@@ -224,16 +224,16 @@ The joint optimization in the Unbiasedness and Variance theorem has a non-unique
 *This section states the semiparametric efficiency result and interprets it in light of the estimator development above. A complete proof requires explicit characterization of the nuisance tangent space; see @tsiatis2006semiparametric for a rigorous development.*
 
 Under the nonparametric model for $O=(X,T,Y)$, the efficient influence function for the ATE is:
-$$\varphi_{\mathrm{eff}}(O) = \frac{T}{\pi(X)}\{Y-\mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau.$$ {#eq-eif-ate}
+$$\varphi_{\mathrm{eff}}(O) = \frac{T}{\pi(X)}\{Y-\mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y-\mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau.$$ {#eq-w11-eif-ate}
 
-Comparing @eq-eif-ate with @eq-dr-score, the AIPW estimating function *is* the efficient influence function $\varphi^*(O)$ from Chapter 10. The augmentation space $\Lambda$ in @eq-aug-space is the finite-sample analogue of the nuisance tangent space of the nonparametric model, and projection onto $\Lambda^\perp$ is the finite-sample counterpart of the semiparametric operation that removes nuisance tangent directions.
+Comparing @eq-w11-eif-ate with @eq-dr-score, the AIPW estimating function *is* the efficient influence function $\varphi^*(O)$ from Chapter 10. The augmentation space $\Lambda$ in @eq-aug-space is the finite-sample analogue of the nuisance tangent space of the nonparametric model, and projection onto $\Lambda^\perp$ is the finite-sample counterpart of the semiparametric operation that removes nuisance tangent directions.
 
 ::: {.callout-tip icon=false}
 ## Theorem: Semiparametric Efficiency Bound for the ATE
 
 Under the nonparametric model for $O = (X, T, Y)$, every regular asymptotically linear estimator $\hat\tau$ of the ATE satisfies:
 $$\mathrm{Avar}(\sqrt{n}(\hat\tau - \tau)) \;\geq\; \E\{\varphi_{\mathrm{eff}}(O)^2\},$$
-and the bound is attained by estimators whose influence function equals $\varphi_{\mathrm{eff}}$ in @eq-eif-ate.
+and the bound is attained by estimators whose influence function equals $\varphi_{\mathrm{eff}}$ in @eq-w11-eif-ate.
 :::
 
 ::: {.callout-note icon=false}
@@ -406,7 +406,7 @@ When overlap is weak, the IBC-based approaches of @sec-ibc can improve numerical
 | $b_t(x)$ | Control function; optimal $b_t^*(x) = \mu_t^*(x)$ |
 | $\hat\tau_{\mathrm{AIPW}}$ | AIPW estimator @eq-aipw |
 | $\Lambda$ | Augmentation space @eq-aug-space |
-| $\varphi_{\mathrm{eff}}(O)$ | Efficient influence function @eq-eif-ate |
+| $\varphi_{\mathrm{eff}}(O)$ | Efficient influence function @eq-w11-eif-ate |
 | IBC | Internal bias calibration conditions @eq-ibc [@firth1998robust] |
 | $\hat\pi_i^{-1}$ | Clever covariate; its normal equation enforces IBC |
 

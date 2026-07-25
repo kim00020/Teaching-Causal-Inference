@@ -90,10 +90,10 @@ The graph encodes two causal pathways: the **direct pathway** $T \to Y$, in whic
 The prototype graph corresponds to the following nonparametric structural equation model:
 $$T = f_T(\mathbf{X},\, U,\, \varepsilon_T),$$ {#eq-sem-t}
 $$M = f_M(T,\, \mathbf{X},\, \varepsilon_M),$$ {#eq-sem-m}
-$$Y = f_Y(T,\, M,\, \mathbf{X},\, U,\, \varepsilon_Y),$$ {#eq-sem-y}
+$$Y = f_Y(T,\, M,\, \mathbf{X},\, U,\, \varepsilon_Y),$$ {#eq-w8-sem-y}
 where each arrow corresponds to the presence of the parent in the child's structural equation. In particular, $U$ enters both $T$'s and $Y$'s equations, making the confounding paths explicit; $U$ is *absent* from $M$'s equation, reflecting the absence of an arrow $U \to M$.
 
-**Disturbance structure.** Writing a recursive system compatible with the graph is not yet a complete causal model: one must also say how the disturbances are jointly distributed. Unless stated otherwise, we adopt the NPSEM-IE reading of @eq-sem-t--@eq-sem-y: all shared causes represented in the model appear explicitly as variables (here $\mathbf{X}$ and $U$), and the equation-specific disturbances $\varepsilon_T$, $\varepsilon_M$, $\varepsilon_Y$ are mutually independent given those explicitly represented background variables. This independent-errors assumption is innocuous for the total-effect results of @sec-w8-te, but it becomes load-bearing when cross-world counterfactuals appear in @sec-w8-nie--@sec-w8-id-natural.
+**Disturbance structure.** Writing a recursive system compatible with the graph is not yet a complete causal model: one must also say how the disturbances are jointly distributed. Unless stated otherwise, we adopt the NPSEM-IE reading of @eq-sem-t--@eq-w8-sem-y: all shared causes represented in the model appear explicitly as variables (here $\mathbf{X}$ and $U$), and the equation-specific disturbances $\varepsilon_T$, $\varepsilon_M$, $\varepsilon_Y$ are mutually independent given those explicitly represented background variables. This independent-errors assumption is innocuous for the total-effect results of @sec-w8-te, but it becomes load-bearing when cross-world counterfactuals appear in @sec-w8-nie--@sec-w8-id-natural.
 
 ### What Makes Mediation Harder Than Total Effect Estimation
 
@@ -301,7 +301,7 @@ $$\mathrm{NIE} = \E\!\left[Y(1, M(1)) - Y(1, M(0))\right].$$ {#eq-nie}
 The **natural direct effect** (NDE) is the expected change in the outcome when $T$ shifts from 0 to 1, holding the mediator at the value it would naturally take under $T = 0$. The **natural indirect effect** (NIE) is the expected change in the outcome due to the shift in the mediator from $M(0)$ to $M(1)$, holding $T = 1$ fixed.
 :::
 
-*Running example.* The NDE is the expected reduction in depression score when the intervention is delivered but each participant's sleep is held at the value it *would have had* without the intervention --- the part of the benefit that comes from cognitive, behavioral, or therapeutic-alliance pathways, not from sleep. The NIE is the complementary piece. By construction $\mathrm{NDE} + \mathrm{NIE} = \mathrm{TE}$. One caveat carries over from the CDE discussion: the nested counterfactual $Y(t, m)$ presupposes that the mediator value is a well-defined causal input. If two different ways of arriving at the same sleep score would have different effects on depression, then "holding sleep at the value it would have had without the intervention" is ambiguous, and the NDE inherits that ambiguity. Throughout, we read $Y(t, m)$ structurally, as the output of the equation $f_Y$ in @eq-sem-y evaluated at $(t, m)$.
+*Running example.* The NDE is the expected reduction in depression score when the intervention is delivered but each participant's sleep is held at the value it *would have had* without the intervention --- the part of the benefit that comes from cognitive, behavioral, or therapeutic-alliance pathways, not from sleep. The NIE is the complementary piece. By construction $\mathrm{NDE} + \mathrm{NIE} = \mathrm{TE}$. One caveat carries over from the CDE discussion: the nested counterfactual $Y(t, m)$ presupposes that the mediator value is a well-defined causal input. If two different ways of arriving at the same sleep score would have different effects on depression, then "holding sleep at the value it would have had without the intervention" is ambiguous, and the NDE inherits that ambiguity. Throughout, we read $Y(t, m)$ structurally, as the output of the equation $f_Y$ in @eq-w8-sem-y evaluated at $(t, m)$.
 
 **Decomposition.** The total effect decomposes as
 $$\mathrm{TE} = \mathrm{NDE} + \mathrm{NIE}.$$ {#eq-decomp-natural}
@@ -801,10 +801,10 @@ Suppose $M$ satisfies the front-door criterion for the effect of $T$ on $Y$. Ass
 **(F2) Mediator overlap across treatment arms.** For every mediator value $m$ with $P(M{=}m \mid T{=}t) > 0$ and every $t'$ with $P(T{=}t') > 0$, $P(M{=}m \mid T{=}t') > 0$.
 
 Then
-$$P\!\left(y \mid \doop(T{=}t)\right) = \sum_m P(m \mid t) \sum_{t'} P(y \mid m, t')\, P(t').$$ {#eq-frontdoor}
+$$P\!\left(y \mid \doop(T{=}t)\right) = \sum_m P(m \mid t) \sum_{t'} P(y \mid m, t')\, P(t').$$ {#eq-w8-frontdoor}
 :::
 
-Condition (F2) is the front-door analogue of the mediator overlap (P2): it ensures that $P(y \mid m, t')$ is empirically defined at every $(m, t')$ cell that receives positive weight in @eq-frontdoor.
+Condition (F2) is the front-door analogue of the mediator overlap (P2): it ensures that $P(y \mid m, t')$ is empirically defined at every $(m, t')$ cell that receives positive weight in @eq-w8-frontdoor.
 
 *Proof.* We apply the do-calculus in three steps, each exploiting one of the front-door conditions.
 
@@ -822,7 +822,7 @@ First, apply Rule 2 with $X = T$, $Z = M$, $W = \varnothing$; the required graph
 $$P\!\left(y \mid \doop(T{=}t),\, m\right) = P\!\left(y \mid \doop(T{=}t),\, \doop(M{=}m)\right).$$
 Second, apply Rule 3 with $X = M$, $Z = T$, $W = \varnothing$; the required graph is $\Gcal_{\overline{M}\,\overline{T}}$. Deleting the arrows into both $M$ and $T$ isolates $T$, so the now-redundant $\doop(T{=}t)$ can be dropped:
 $$P\!\left(y \mid \doop(T{=}t),\, \doop(M{=}m)\right) = P\!\left(y \mid \doop(M{=}m)\right).$$
-Condition 1 secures this second step in general: every directed path from $T$ to $Y$ passes through $M$, whose incoming arrows have been deleted, so no route from $T$ to $Y$ survives. This is the formal content of "the total effect of $T$ factors through $M$." Substituting Steps 1 and 2 into @eq-frontdoor-chain yields @eq-frontdoor. $\square$
+Condition 1 secures this second step in general: every directed path from $T$ to $Y$ passes through $M$, whose incoming arrows have been deleted, so no route from $T$ to $Y$ survives. This is the formal content of "the total effect of $T$ factors through $M$." Substituting Steps 1 and 2 into @eq-frontdoor-chain yields @eq-w8-frontdoor. $\square$
 
 ::: {.callout-note icon=false}
 ## Remark: Two Routes to the Same Two-Stage Logic
@@ -983,7 +983,7 @@ The *front-door identification* formula is the closest bridge between the two wi
 
 (a) Verify that the three front-door conditions hold.
 (b) Walk through the three-step proof of @thm-frontdoor for this graph: identify which do-calculus rule justifies each step.
-(c) Add a direct edge $T \to Y$ to the graph. Which front-door condition is violated? Does @eq-frontdoor still hold?
+(c) Add a direct edge $T \to Y$ to the graph. Which front-door condition is violated? Does @eq-w8-frontdoor still hold?
 (d) Explain how front-door Condition 3 corresponds to the Baron--Kenny requirement that the $M \to Y$ relation be unconfounded after conditioning on $T$ (equivalently, Assumption 2 of @sec-w8-id-natural). The front-door graph does not dispense with this requirement --- it satisfies it *by construction of the graph*. Why does the condition hold in the front-door graph but fail in the graph with an $M$--$Y$ confounder $V$?
 
 **7. Mediation vs. instrumental variables.** A researcher studies the effect of a job training program ($T$) on wages ($Y$). She proposes two intermediate variables: (A) motivation ($M_A$), measured after the program starts; (B) a lottery that randomly selects applicants for admission ($Z$), measured before the program.
@@ -999,7 +999,7 @@ The *front-door identification* formula is the closest bridge between the two wi
 (b) Derive the covariate-adjusted front-door formula
 $$P\!\left(y \mid \doop(T{=}t)\right) = \sum_{\mathbf{x}} P(\mathbf{x}) \sum_m P(m \mid t, \mathbf{x}) \sum_{t'} P(y \mid m, t', \mathbf{x})\, P(t' \mid \mathbf{x})$$
 by repeating the three-step do-calculus argument of @thm-frontdoor with $W = \{\mathbf{X}\}$ carried through each rule application. (You will also need $P(\mathbf{x} \mid \doop(t)) = P(\mathbf{x})$; which rule justifies it, and why does it require $\mathbf{X}$ to be pre-treatment?)
-(c) Explain why the inner average uses the *covariate-conditional* distribution $P(t' \mid \mathbf{x})$ rather than the marginal $P(t')$ used in @eq-frontdoor.
+(c) Explain why the inner average uses the *covariate-conditional* distribution $P(t' \mid \mathbf{x})$ rather than the marginal $P(t')$ used in @eq-w8-frontdoor.
 (d) Now add the edge $U \to M$. Which conditional front-door condition fails, and which stage of the two-stage argument collapses?
 
 **9. Nonidentifiability by construction** *(advanced / second pass)*. This problem practices the technique of the bow-graph example in Chapter 3: prove nonidentifiability by exhibiting two observationally equivalent models with different causal effects.

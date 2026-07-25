@@ -32,7 +32,7 @@ Chapter 7 established what IV identifies and under what assumptions. This chapte
 
 Chapter 7 showed that when an instrument $Z$ satisfies relevance, exogeneity, and exclusion, the residualized-covariance ratio $\mathrm{Cov}(\tilde Z, Y)/\mathrm{Cov}(\tilde Z, T)$ is a well-defined function of observable quantities but does not identify any specific causal parameter without a fourth structural assumption. This chapter works within the linear constant-effect model:
 $$Y = \alpha + \beta T + \gamma^\top X + \varepsilon,$$ {#eq-structural}
-$$T = a_T + \pi Z + \delta^\top X + \eta,$$ {#eq-firststage}
+$$T = a_T + \pi Z + \delta^\top X + \eta,$$ {#eq-w13-firststage}
 where the fourth structural assumption is the constant-effect restriction: $Y_i(1) - Y_i(0) = \beta$ for all $i$. Under the three core assumptions plus this restriction, the structural coefficient $\beta$ is identified by the Wald formula:
 $$\beta = \frac{\mathrm{Cov}(\tilde Z,\, Y)}{\mathrm{Cov}(\tilde Z,\, T)}.$$
 
@@ -98,9 +98,9 @@ The Wald estimator is the special case $Z \in \{0,1\}$, no covariates: $M_X = I_
 
 ### Structural Form, Reduced Form, and the Reduced Form Regression
 
-**The structural form.** System @eq-structural--@eq-firststage is the *structural form*: each equation describes how one variable is determined by others, including endogenous variables on the right-hand side. The structural coefficient $\beta$ has a causal interpretation, but $T$ is correlated with $\varepsilon$, so OLS applied to the structural form is inconsistent.
+**The structural form.** System @eq-structural--@eq-w13-firststage is the *structural form*: each equation describes how one variable is determined by others, including endogenous variables on the right-hand side. The structural coefficient $\beta$ has a causal interpretation, but $T$ is correlated with $\varepsilon$, so OLS applied to the structural form is inconsistent.
 
-**The reduced form.** The *reduced form* is obtained by solving the structural system so each endogenous variable is expressed purely as a function of exogenous variables $Z$ and $X$. Substituting @eq-firststage into @eq-structural:
+**The reduced form.** The *reduced form* is obtained by solving the structural system so each endogenous variable is expressed purely as a function of exogenous variables $Z$ and $X$. Substituting @eq-w13-firststage into @eq-structural:
 $$Y = \underbrace{(\alpha + \beta a_T)}_{\alpha_{\mathrm{rf}}} + \underbrace{\beta\pi}_{\phi}\, Z + \underbrace{(\beta\delta + \gamma)^\top}_{\gamma_{\mathrm{rf}}^\top}\, X + \underbrace{(\beta\eta + \varepsilon)}_{\nu}.$$ {#eq-reduced-form}
 
 Writing compactly: $Y = \alpha_{\mathrm{rf}} + \phi Z + \gamma_{\mathrm{rf}}^\top X + \nu$, where $\phi = \beta\pi$, $\nu = \beta\eta + \varepsilon$. Both right-hand-side variables ($Z$ and $X$) are exogenous, so OLS is consistent for $\phi$. Neither $\beta$ nor $\pi$ is separately identified from the reduced form alone.
@@ -145,7 +145,7 @@ The component of $T$ orthogonal to $(Z, X)$ --- the residual $\hat\eta_i = T_i -
 ::: {.callout-warning icon=false}
 ## Standard Errors from the Second-Stage OLS Are Incorrect
 
-A common error is to report the standard errors from the second-stage OLS regression directly. Those standard errors use $\hat{T}$ rather than $T$ and residuals that do not equal the structural errors $\varepsilon_i$, so they are invalid. Correct inference requires the sandwich variance formula from @sec-asymp, or software that implements 2SLS natively.
+A common error is to report the standard errors from the second-stage OLS regression directly. Those standard errors use $\hat{T}$ rather than $T$ and residuals that do not equal the structural errors $\varepsilon_i$, so they are invalid. Correct inference requires the sandwich variance formula from @sec-w13-asymp, or software that implements 2SLS natively.
 :::
 
 ## Equivalence of the IV Regression Estimator and 2SLS {#sec-equiv}
@@ -220,7 +220,7 @@ A precision-weighted average lying between 0.75 and 0.80, with more weight on $Z
 **Sargan--Hansen $J$-test.** Residual moments at $\hat\beta = 0.764$: $\hat{U}_1 = 0.018$, $\hat{U}_2 = -0.011$. The $J$-statistic $J = n\,\hat{U}(\hat\beta)^\top\hat\Sigma^{-1}\hat{U}(\hat\beta)$ has a $\chi^2_1$ null distribution. A failure to reject is consistent with both instruments satisfying the exclusion restriction.
 :::
 
-## Asymptotic Theory of the GMM Estimator {#sec-asymp}
+## Asymptotic Theory of the GMM Estimator {#sec-w13-asymp}
 
 ### Setup and Notation
 
@@ -316,7 +316,7 @@ The weak-instrument problem is a *statistical* concern: it questions the quality
 This section introduces GEL as a one-step alternative to efficient GMM. The main takeaway is that every GEL estimator shares the same first-order asymptotic efficiency as efficient GMM, while GEL can have better higher-order finite-sample properties in overidentified models. The duality formulation and special-cases table may be treated as optional reading.
 :::
 
-GEL uses the same IV moment restrictions but incorporates them through an implied reweighting of the sample rather than through a separately estimated covariance weight matrix. Section @sec-asymp showed that efficient GMM requires a two-step procedure; this two-step structure introduces finite-sample bias [@neweysmith2004]. GEL provides a one-step alternative.
+GEL uses the same IV moment restrictions but incorporates them through an implied reweighting of the sample rather than through a separately estimated covariance weight matrix. Section @sec-w13-asymp showed that efficient GMM requires a two-step procedure; this two-step structure introduces finite-sample bias [@neweysmith2004]. GEL provides a one-step alternative.
 
 ### The GEL Estimator
 
