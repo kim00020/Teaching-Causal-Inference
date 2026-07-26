@@ -349,7 +349,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability, Tangent Spaces, and the Efficient Influence Function</span></span></a>
   </div>
 </li>
       </ul>
@@ -379,8 +379,14 @@ window.Quarto = {
   <li><a href="#sec-appA-checklist" id="toc-sec-appA-checklist" class="nav-link" data-scroll-target="#sec-appA-checklist"><span class="header-section-number">A.3.3</span> A Practical Checklist</a></li>
   </ul></li>
   <li><a href="#sec-appA-markov" id="toc-sec-appA-markov" class="nav-link" data-scroll-target="#sec-appA-markov"><span class="header-section-number">A.4</span> DAG Factorization and the Markov Property</a></li>
-  <li><a href="#sec-appA-moralization" id="toc-sec-appA-moralization" class="nav-link" data-scroll-target="#sec-appA-moralization">Optional: Moralization as an Alternative Criterion</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#sec-appA-moralization" id="toc-sec-appA-moralization" class="nav-link" data-scroll-target="#sec-appA-moralization"><span class="header-section-number">A.5</span> Optional: Moralization as an Alternative Criterion</a></li>
+  <li><a href="#sec-appA-idsketch" id="toc-sec-appA-idsketch" class="nav-link" data-scroll-target="#sec-appA-idsketch"><span class="header-section-number">A.6</span> The ID Algorithm and the Hedge: A Proof Sketch of Completeness</a>
+  <ul class="collapse">
+  <li><a href="#sec-appA-admg" id="toc-sec-appA-admg" class="nav-link" data-scroll-target="#sec-appA-admg"><span class="header-section-number">A.6.1</span> ADMGs and Semi-Markovian Models</a></li>
+  <li><a href="#sec-appA-id-succeeds" id="toc-sec-appA-id-succeeds" class="nav-link" data-scroll-target="#sec-appA-id-succeeds"><span class="header-section-number">A.6.2</span> How ID Succeeds: Districts and Kernels</a></li>
+  <li><a href="#sec-appA-id-fails" id="toc-sec-appA-id-fails" class="nav-link" data-scroll-target="#sec-appA-id-fails"><span class="header-section-number">A.6.3</span> How ID Fails: The Hedge and the Two-Model Witness</a></li>
+  </ul></li>
+  <li><a href="#sec-appA-summary" id="toc-sec-appA-summary" class="nav-link" data-scroll-target="#sec-appA-summary"><span class="header-section-number">A.7</span> Summary</a></li>
   </ul>
 </nav>
     </div>
@@ -389,7 +395,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./appendix_A.html">Appendices</a></li><li class="breadcrumb-item"><a href="./appendix_A.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-appendix-a" class="quarto-section-identifier">Appendix A — Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></h1>
+<h1 class="title"><span id="sec-appA" class="quarto-section-identifier">Appendix A — Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></h1>
 </div>
 
 
@@ -408,7 +414,7 @@ window.Quarto = {
 
 <p>This appendix provides a gentle introduction to the probabilistic and graphical ideas that underlie Chapters 2 and 3. Our goal is not to give a complete treatment of graphical models, but rather to develop enough intuition so that the formal machinery of <span class="math inline">\(d\)</span>-separation, back-door adjustment, and intervention graphs does not appear abruptly.</p>
 <p>A directed acyclic graph (DAG) is more than a picture. It is a compact language for expressing assumptions about how variables are related. Once those assumptions are represented graphically, the graph tells us which variables may be associated, which paths transmit dependence, and which variables should or should not be conditioned on. These ideas become central in Chapter 2, where we study <span class="math inline">\(d\)</span>-separation, and in Chapter 3, where we use graph surgery to derive identification results.</p>
-<p>The key pedagogical idea of this appendix is simple: before learning the full <span class="math inline">\(d\)</span>-separation criterion, it is helpful to understand three elementary three-node patterns. Those local patterns explain most of what happens later in larger graphs.</p>
+<p>The key pedagogical idea of this appendix is simple: before learning the full <span class="math inline">\(d\)</span>-separation criterion, it is helpful to understand three elementary three-node patterns. Those local patterns explain most of what happens later in larger graphs. Chapter 2 follows the same route — the three motifs with examples, then the blocking rules, then the <span class="math inline">\(d\)</span>-separation criterion — so this appendix can be read as a gentler first pass over the same arc.</p>
 <section id="sec-appA-ci" class="level2" data-number="A.1">
 <h2 data-number="A.1" class="anchored" data-anchor-id="sec-appA-ci"><span class="header-section-number">A.1</span> Conditional Independence: The Probabilistic Language Behind Graphs</h2>
 <p>Before introducing graphs, we first recall the probabilistic notion that graphs are designed to encode.</p>
@@ -433,18 +439,13 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Proposition: Fundamental Properties of Conditional Independence <span class="citation" data-cites="dawid1979conditional dawid1980conditional">(<a href="#ref-dawid1979conditional" role="doc-biblioref">Dawid 1979</a>, <a href="#ref-dawid1980conditional" role="doc-biblioref">1980</a>)</span>
+<span class="screen-reader-only">Tip</span>Proposition: Fundamental Properties of Conditional Independence
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>For random variables <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(Z\)</span>, and <span class="math inline">\(W\)</span>, the following hold:</p>
-<ul>
-<li><strong>(C1) Symmetry.</strong> <span class="math inline">\(X \indep Y \mid Z \;\Rightarrow\; Y \indep X \mid Z\)</span>.</li>
-<li><strong>(C2) Decomposition.</strong> <span class="math inline">\(X \indep (Y,W) \mid Z \;\Rightarrow\; X \indep Y \mid Z\)</span>.</li>
-<li><strong>(C3) Weak Union.</strong> <span class="math inline">\(X \indep (Y,W) \mid Z \;\Rightarrow\; X \indep Y \mid (Z,W)\)</span>.</li>
-<li><strong>(C4) Contraction.</strong> <span class="math inline">\(X \indep Y \mid Z\)</span> and <span class="math inline">\(X \indep W \mid (Y,Z) \;\Rightarrow\; X \indep (Y,W) \mid Z\)</span>.</li>
-<li><strong>(C5) Intersection.</strong> If <span class="math inline">\(f(x,y,z,w) &gt; 0\)</span> for all <span class="math inline">\((x,y,z,w)\)</span>, then <span class="math inline">\(X \indep Y \mid (Z,W)\)</span> and <span class="math inline">\(X \indep Z \mid (Y,W) \;\Rightarrow\; X \indep (Y,Z) \mid W\)</span>.</li>
-</ul>
+<p>(C1) <strong>Symmetry.</strong> <span class="math inline">\(X \indep Y \mid Z \;\Rightarrow\; Y \indep X \mid Z\)</span>. (C2) <strong>Decomposition.</strong> <span class="math inline">\(X \indep (Y,W) \mid Z \;\Rightarrow\; X \indep Y \mid Z\)</span>. (C3) <strong>Weak Union.</strong> <span class="math inline">\(X \indep (Y,W) \mid Z \;\Rightarrow\; X \indep Y \mid (Z,W)\)</span>. (C4) <strong>Contraction.</strong> <span class="math inline">\(X \indep Y \mid Z\)</span> and <span class="math inline">\(X \indep W \mid (Y,Z) \;\Rightarrow\; X \indep (Y,W) \mid Z\)</span>. (C5) <strong>Intersection.</strong> If <span class="math inline">\(f(x,y,z,w) &gt; 0\)</span> for all <span class="math inline">\((x,y,z,w)\)</span>, then <span class="math inline">\(X \indep Y \mid (Z,W)\)</span> and <span class="math inline">\(X \indep Z \mid (Y,W) \;\Rightarrow\; X \indep (Y,Z) \mid W\)</span>.</p>
+<p><em>Source</em>: <span class="citation" data-cites="dawid1979conditional">Dawid (<a href="#ref-dawid1979conditional" role="doc-biblioref">1979</a>)</span>; <span class="citation" data-cites="dawid1980conditional">Dawid (<a href="#ref-dawid1980conditional" role="doc-biblioref">1980</a>)</span>.</p>
 </div>
 </div>
 <p>Properties (C1)–(C4) hold for any probability distribution and are known as the <em>semigraphoid axioms</em>. Property (C5) additionally requires the joint density to be strictly positive; together with (C1)–(C4) it forms the <em>graphoid axioms</em>. These properties are used implicitly throughout the course whenever conditional independence statements are combined or simplified.</p>
@@ -455,7 +456,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Ice cream, drowning, and season
+<span class="screen-reader-only">Note</span>Example: Ice Cream, Drowning, and Season
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -473,7 +474,11 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>At this stage, the main question for the reader is: <em>Does conditioning on a variable remove association, preserve it, or create it?</em> Graphs provide a systematic answer to exactly this question.</p>
+<p>At this stage, the main question for the reader is:</p>
+<blockquote class="blockquote">
+<p>Does conditioning on a variable remove association, preserve it, or create it?</p>
+</blockquote>
+<p>Graphs provide a systematic answer to exactly this question.</p>
 </div>
 </div>
 </section>
@@ -481,42 +486,26 @@ window.Quarto = {
 <h2 data-number="A.2" class="anchored" data-anchor-id="sec-appA-motifs"><span class="header-section-number">A.2</span> Three Basic Motifs: Chain, Fork, and Collider</h2>
 <p>Every path in a DAG is built from local three-node configurations. There are three fundamental types: a <em>chain</em>, a <em>fork</em>, and a <em>collider</em>. Their behavior under conditioning is the foundation of <span class="math inline">\(d\)</span>-separation.</p>
 <figure style="text-align:center;margin:1.5em auto;" class="figure">
-<svg viewbox="0 0 540 90" width="100%" style="max-width:540px;font-family:sans-serif;font-size:12px;">
-  <defs>
-    <marker id="arrA" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto">
-      <path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path>
-    </marker>
-  </defs>
-  <!-- Chain -->
-  <circle cx="30" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="30" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₁</text>
-  <circle cx="90" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="90" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₂</text>
-  <circle cx="150" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="150" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₃</text>
-  <line x1="48" y1="30" x2="70" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"></line>
-  <line x1="108" y1="30" x2="130" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"></line>
-  <text x="90" y="72" text-anchor="middle" fill="#555" font-style="italic">Chain</text>
-  <!-- Fork -->
-  <circle cx="220" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="220" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₁</text>
-  <circle cx="280" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="280" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₂</text>
-  <circle cx="340" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="340" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₃</text>
-  <line x1="262" y1="30" x2="240" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"></line>
-  <line x1="298" y1="30" x2="320" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"></line>
-  <text x="280" y="72" text-anchor="middle" fill="#555" font-style="italic">Fork</text>
-  <!-- Collider -->
-  <circle cx="400" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="400" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₁</text>
-  <circle cx="460" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="460" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₂</text>
-  <circle cx="520" cy="30" r="18" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.5"></circle>
-  <text x="520" y="35" text-anchor="middle" fill="#2E74B6" font-size="11">X₃</text>
-  <line x1="418" y1="30" x2="440" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"></line>
-  <line x1="502" y1="30" x2="480" y2="30" stroke="#2E74B6" stroke-width="1.5" marker-end="url(#arrA)"></line>
-  <text x="460" y="72" text-anchor="middle" fill="#555" font-style="italic">Collider</text>
+<svg viewbox="0 0 620 130" width="100%" style="max-width:620px;font-family:sans-serif;font-size:13px;">
+  <defs><marker id="aA" markerwidth="8" markerheight="8" refx="6" refy="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2E74B6"></path></marker></defs>
+  <circle cx="30" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="30" y="51" text-anchor="middle">X₁</text>
+  <circle cx="100" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="100" y="51" text-anchor="middle">X₂</text>
+  <circle cx="170" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="170" y="51" text-anchor="middle">X₃</text>
+  <line x1="50" y1="45" x2="78" y2="45" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aA)"></line>
+  <line x1="120" y1="45" x2="148" y2="45" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aA)"></line>
+  <text x="100" y="98" text-anchor="middle" font-size="12">Chain</text>
+  <circle cx="230" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="230" y="51" text-anchor="middle">X₁</text>
+  <circle cx="300" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="300" y="51" text-anchor="middle">X₂</text>
+  <circle cx="370" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="370" y="51" text-anchor="middle">X₃</text>
+  <line x1="280" y1="45" x2="252" y2="45" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aA)"></line>
+  <line x1="320" y1="45" x2="348" y2="45" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aA)"></line>
+  <text x="300" y="98" text-anchor="middle" font-size="12">Fork</text>
+  <circle cx="430" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="430" y="51" text-anchor="middle">X₁</text>
+  <circle cx="500" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="500" y="51" text-anchor="middle">X₂</text>
+  <circle cx="570" cy="45" r="20" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="570" y="51" text-anchor="middle">X₃</text>
+  <line x1="450" y1="45" x2="478" y2="45" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aA)"></line>
+  <line x1="550" y1="45" x2="522" y2="45" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aA)"></line>
+  <text x="500" y="98" text-anchor="middle" font-size="12">Collider</text>
 </svg>
 <figcaption>The three fundamental three-node motifs. Chains and forks are blocked by conditioning on the middle node. Colliders are blocked by default but opened by conditioning on the middle node or one of its descendants.</figcaption>
 </figure>
@@ -529,11 +518,11 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Exercise, body weight, and blood pressure
+<span class="screen-reader-only">Note</span>Example: Exercise, Body Weight, and Blood Pressure
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(X_1 = \text{exercise}\)</span>, <span class="math inline">\(X_2 = \text{body weight}\)</span>, and <span class="math inline">\(X_3 = \text{blood pressure}\)</span>. Exercise may affect blood pressure partly through its effect on body weight. Marginally, exercise and blood pressure are associated; conditioning on body weight blocks this particular pathway. In the isolated three-node DAG, <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>.</p>
+<p>Let <span class="math inline">\(X_1 = \text{exercise}\)</span>, <span class="math inline">\(X_2 = \text{body weight}\)</span>, and <span class="math inline">\(X_3 = \text{blood pressure}\)</span>. Exercise may affect blood pressure partly through its effect on body weight, so the path <span class="math inline">\(X_1 \to X_2 \to X_3\)</span> transmits association from <span class="math inline">\(X_1\)</span> to <span class="math inline">\(X_3\)</span>. Marginally, exercise and blood pressure are associated; conditioning on body weight blocks this particular pathway. In the isolated three-node DAG as drawn, this is the only pathway, so <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>.</p>
 </div>
 </div>
 <p>Once the middle variable is fixed, the chain no longer transmits additional information from <span class="math inline">\(X_1\)</span> to <span class="math inline">\(X_3\)</span>.</p>
@@ -547,7 +536,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Ice cream, season, and drowning
+<span class="screen-reader-only">Note</span>Example: Ice Cream, Season, and Drowning
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -565,18 +554,18 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Talent, legacy status, and college admission
+<span class="screen-reader-only">Note</span>Example: Talent, Legacy Status, and College Admission
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(X_1 = \text{academic talent}\)</span>, <span class="math inline">\(X_3 = \text{legacy status}\)</span>, and <span class="math inline">\(X_2 = \text{admission to an elite university}\)</span>. Talent and legacy status may be unrelated in the general applicant pool. But among admitted students they can become statistically associated: low legacy status makes unusually high talent more likely among admitted applicants, and vice versa. Symbolically, <span class="math inline">\(X_1 \indep X_3\)</span>, but conditioning on <span class="math inline">\(X_2\)</span> opens the path, so <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_3\)</span> are typically dependent given <span class="math inline">\(X_2\)</span>.</p>
+<p>Let <span class="math inline">\(X_1 = \text{academic talent}\)</span>, <span class="math inline">\(X_3 = \text{legacy status}\)</span>, and <span class="math inline">\(X_2 = \text{admission to an elite university}\)</span>. Talent and legacy status may be unrelated in the general applicant pool. But among admitted students they can become statistically associated: low legacy status makes unusually high talent more likely among admitted applicants, and vice versa. Symbolically, <span class="math inline">\(X_1 \indep X_3\)</span>, but conditioning on <span class="math inline">\(X_2\)</span> opens the path between them, so <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_3\)</span> are typically dependent given <span class="math inline">\(X_2\)</span>.</p>
 </div>
 </div>
 <p>Unlike chains and forks, a collider <em>blocks</em> the path by default. Conditioning on the collider opens the path and may induce association that was not present marginally.</p>
 </section>
 <section id="sec-appA-motif-summary" class="level3" data-number="A.2.4">
 <h3 data-number="A.2.4" class="anchored" data-anchor-id="sec-appA-motif-summary"><span class="header-section-number">A.2.4</span> Summary of the Three Motifs</h3>
-<p>A chain (<span class="math inline">\(X_1 \to X_2 \to X_3\)</span>) and a fork (<span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span>) are each open by default and blocked by conditioning on the middle node <span class="math inline">\(X_2\)</span>. A collider (<span class="math inline">\(X_1 \to X_2 \leftarrow X_3\)</span>) is blocked by default and opened by conditioning on the middle node or any of its descendants.</p>
+<p>The three motifs behave as follows. A chain (<span class="math inline">\(X_1 \to X_2 \to X_3\)</span>) and a fork (<span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span>) are each open by default and blocked by conditioning on the middle node <span class="math inline">\(X_2\)</span>. A collider (<span class="math inline">\(X_1 \to X_2 \leftarrow X_3\)</span>) is blocked by default and opened by conditioning on the middle node or any of its descendants. The stories here deliberately differ from those in Chapter 2 (smoking–tar–cancer, poverty–diet–exercise, accident–hospitalization–cancer), so that each motif is anchored in two contexts; the admission example reappears as the talent–wealth example in the IV-DAG section of Chapter 2.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -587,7 +576,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The independence statements in the chain, fork, and collider examples above are read in the isolated three-node DAGs as drawn. In a larger DAG, conditioning on the middle node <span class="math inline">\(X_2\)</span> of a chain or fork blocks <em>that particular path</em>, but <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_3\)</span> are conditionally independent only if every other path between them is also blocked.</p>
+<p>The independence statements in the chain, fork, and collider examples above are read in the isolated three-node DAGs as drawn. In a larger DAG, conditioning on the middle node <span class="math inline">\(X_2\)</span> of a chain or fork blocks <em>that particular path</em>, but <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_3\)</span> are conditionally independent only if every other path between them is also blocked. We return to this point in <a href="#sec-appA-dsep" class="quarto-xref"><span>Section A.3</span></a>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
@@ -603,7 +592,7 @@ window.Quarto = {
 <p>Many adjustment mistakes arise from forgetting this asymmetry. Conditioning on a collider can create bias rather than remove it. The informal rule “control for more variables” is unsafe in causal inference; <span class="math inline">\(d\)</span>-separation teaches a more precise lesson: condition on the <em>right</em> variables, not simply on many variables.</p>
 </div>
 </div>
-<p>Chapter 2 develops these three motifs into the full <span class="math inline">\(d\)</span>-separation criterion; see in particular the blocking rules and the extended treatment of collider bias.</p>
+<p>None of these behaviors needs to be taken on faith: each is provable from the DAG factorization of <a href="#sec-appA-markov" class="quarto-xref"><span>Section A.4</span></a>. The chain-proof example of Chapter 2 carries out the chain computation, and the blocking-derivation remark there obtains the remaining rules from the same factorization. Chapter 2 develops these three motifs into the full <span class="math inline">\(d\)</span>-separation criterion; see in particular its sections on the blocking rules, on the criterion itself, and on the extended treatment of collider bias.</p>
 </section>
 </section>
 <section id="sec-appA-dsep" class="level2" data-number="A.3">
@@ -632,7 +621,12 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A path is <em>blocked</em> by a conditioning set <span class="math inline">\(S\)</span> if at least one of the following holds: (1) the path contains a chain or fork node that belongs to <span class="math inline">\(S\)</span>, or (2) the path contains a collider such that neither the collider nor any of its descendants belongs to <span class="math inline">\(S\)</span>. A path is <em>open</em> given <span class="math inline">\(S\)</span> if it is not blocked.</p>
+<p>A path is <em>blocked</em> by a conditioning set <span class="math inline">\(S\)</span> if at least one of the following holds:</p>
+<ol type="1">
+<li>the path contains a chain or fork node that belongs to <span class="math inline">\(S\)</span>, or</li>
+<li>the path contains a collider such that neither the collider nor any of its descendants belongs to <span class="math inline">\(S\)</span>.</li>
+</ol>
+<p>A path is <em>open</em> given <span class="math inline">\(S\)</span> if it is not blocked.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -658,27 +652,62 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="math inline">\(d\)</span>-Separation is a graphical condition; conditional independence is a probabilistic one. The Markov property guarantees only one direction: <span class="math inline">\(d\)</span>-separation in <span class="math inline">\(\mathcal{G}\)</span> implies the corresponding conditional independence in every distribution that factorizes according to <span class="math inline">\(\mathcal{G}\)</span>. The reverse implication — that <span class="math inline">\(d\)</span>-connection forces conditional dependence — requires a faithfulness or no-cancellation assumption. We therefore read an open path as “the graph does not force independence,” not as “dependence is guaranteed.” This distinction is taken up in detail in Chapter 2.</p>
+<p><span class="math inline">\(d\)</span>-Separation is a graphical condition; conditional independence is a probabilistic one. The Markov property guarantees only one direction: <span class="math inline">\(d\)</span>-separation in <span class="math inline">\(\Gcal\)</span> implies the corresponding conditional independence in every distribution that factorizes according to <span class="math inline">\(\Gcal\)</span>. The reverse implication — that <span class="math inline">\(d\)</span>-connection forces conditional dependence — requires a faithfulness or no-cancellation assumption, since path coefficients in a parametric model can cancel exactly (for instance, in a linear Gaussian DAG). We therefore read an open path as “the graph does not force independence,” not as “dependence is guaranteed.” This distinction is taken up in detail in Chapter 2.</p>
 </div>
 </div>
 <section id="sec-appA-confounding" class="level3" data-number="A.3.1">
 <h3 data-number="A.3.1" class="anchored" data-anchor-id="sec-appA-confounding"><span class="header-section-number">A.3.1</span> A Confounding Example</h3>
 <p>Consider the DAG with edges <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, and <span class="math inline">\(X \to Y\)</span>. Here <span class="math inline">\(T\)</span> is the treatment, <span class="math inline">\(Y\)</span> is the outcome, and <span class="math inline">\(X\)</span> is a pre-treatment covariate that affects both. There are two paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>: the directed causal path <span class="math inline">\(T \to Y\)</span>, and the back-door path <span class="math inline">\(T \leftarrow X \to Y\)</span>.</p>
-<p>Without conditioning, the back-door path is open, so the observed association between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> mixes the causal effect with confounding. Conditioning on <span class="math inline">\(X\)</span> blocks the fork <span class="math inline">\(T \leftarrow X \to Y\)</span>, thereby isolating the causal path. This confounding graph anticipates the back-door criterion of Chapter 3: the graphical condition that makes adjustment valid is precisely that all back-door paths are blocked.</p>
+<p>Without conditioning, the back-door path is open, so the observed association between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> mixes the causal effect with confounding. Conditioning on <span class="math inline">\(X\)</span> blocks the fork <span class="math inline">\(T \leftarrow X \to Y\)</span>, thereby isolating the causal path.</p>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 400 150" width="100%" style="max-width:400px;font-family:sans-serif;font-size:13px;">
+  <defs><marker id="aB" markerwidth="8" markerheight="8" refx="6" refy="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2E74B6"></path></marker></defs>
+  <circle cx="55" cy="100" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="55" y="106" text-anchor="middle">X</text>
+  <circle cx="200" cy="100" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="200" y="106" text-anchor="middle">T</text>
+  <circle cx="345" cy="100" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="345" y="106" text-anchor="middle">Y</text>
+  <line x1="76" y1="100" x2="177" y2="100" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aB)"></line>
+  <line x1="221" y1="100" x2="322" y2="100" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aB)"></line>
+  <path d="M 48 80 Q 200 22 340 80" fill="none" stroke="#2E74B6" stroke-width="1.6" marker-end="url(#aB)"></path>
+  <text x="55" y="134" text-anchor="middle" font-size="11" fill="#666">Confounder</text>
+  <text x="200" y="134" text-anchor="middle" font-size="11" fill="#666">Treatment</text>
+  <text x="345" y="134" text-anchor="middle" font-size="11" fill="#666">Outcome</text>
+</svg>
+<figcaption>A simple confounding graph. The path $T \leftarrow X \to Y$ is a back-door path from treatment to outcome. Conditioning on $X$ blocks this noncausal path.</figcaption>
+</figure>
+<p>This confounding graph anticipates the back-door criterion of Chapter 3: the graphical condition that makes adjustment valid is precisely that all back-door paths are blocked.</p>
 </section>
 <section id="sec-appA-collider-warning" class="level3" data-number="A.3.2">
 <h3 data-number="A.3.2" class="anchored" data-anchor-id="sec-appA-collider-warning"><span class="header-section-number">A.3.2</span> A Collider Warning</h3>
 <p>Now consider the DAG with edges <span class="math inline">\(T \to C\)</span>, <span class="math inline">\(U \to C\)</span>, and <span class="math inline">\(U \to Y\)</span>. Here <span class="math inline">\(C\)</span> is a collider on the path <span class="math inline">\(T \to C \leftarrow U \to Y\)</span>. Without conditioning on <span class="math inline">\(C\)</span>, the path is blocked at the collider. Conditioning on <span class="math inline">\(C\)</span> opens the path, creating a spurious association between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> through <span class="math inline">\(U\)</span>.</p>
-<p>Even more subtly, conditioning on a <em>descendant</em> of <span class="math inline">\(C\)</span> can also open the path: if additionally <span class="math inline">\(C \to D\)</span>, then conditioning on <span class="math inline">\(D\)</span> may also induce association between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> through the collider at <span class="math inline">\(C\)</span>.</p>
+<p>Even more subtly, conditioning on a <em>descendant</em> of <span class="math inline">\(C\)</span> can also open the path. If additionally <span class="math inline">\(C \to D\)</span>, then conditioning on <span class="math inline">\(D\)</span> may also induce association between <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> through the collider at <span class="math inline">\(C\)</span>: observing <span class="math inline">\(D\)</span> amounts to observing a noisy proxy of <span class="math inline">\(C\)</span>. The blocking-derivation remark of Chapter 2 derives this descendant rule from the factorization.</p>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 400 220" width="100%" style="max-width:400px;font-family:sans-serif;font-size:13px;">
+  <defs><marker id="aC" markerwidth="8" markerheight="8" refx="6" refy="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2E74B6"></path></marker></defs>
+  <circle cx="55" cy="55" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="55" y="61" text-anchor="middle">T</text>
+  <circle cx="200" cy="55" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="200" y="61" text-anchor="middle">C</text>
+  <circle cx="345" cy="55" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="345" y="61" text-anchor="middle">U</text>
+  <circle cx="200" cy="165" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="200" y="171" text-anchor="middle">D</text>
+  <circle cx="345" cy="165" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="345" y="171" text-anchor="middle">Y</text>
+  <line x1="76" y1="55" x2="177" y2="55" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aC)"></line>
+  <line x1="324" y1="55" x2="223" y2="55" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aC)"></line>
+  <line x1="200" y1="76" x2="200" y2="142" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aC)"></line>
+  <line x1="345" y1="76" x2="345" y2="142" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aC)"></line>
+  <text x="200" y="26" text-anchor="middle" font-size="11" fill="#666">Collider</text>
+  <text x="200" y="200" text-anchor="middle" font-size="11" fill="#666">Descendant</text>
+</svg>
+<figcaption>Collider bias with a descendant. The path $T \to C \leftarrow U \to Y$ is blocked by default at the collider $C$. Conditioning on $C$, or on its descendant $D$, can open the path and induce a spurious association between $T$ and $Y$.</figcaption>
+</figure>
 </section>
 <section id="sec-appA-checklist" class="level3" data-number="A.3.3">
 <h3 data-number="A.3.3" class="anchored" data-anchor-id="sec-appA-checklist"><span class="header-section-number">A.3.3</span> A Practical Checklist</h3>
 <p>To decide whether <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are <span class="math inline">\(d\)</span>-separated by <span class="math inline">\(S\)</span>, proceed as follows. First, list all paths between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. On each path, classify each interior node as part of a chain, fork, or collider. Then check whether each path is blocked by <span class="math inline">\(S\)</span>. Finally, conclude that <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are <span class="math inline">\(d\)</span>-separated if and only if every path is blocked.</p>
+<p>For beginners, this path-by-path procedure is often more useful than starting with the most compact formal definition.</p>
 </section>
 </section>
 <section id="sec-appA-markov" class="level2" data-number="A.4">
 <h2 data-number="A.4" class="anchored" data-anchor-id="sec-appA-markov"><span class="header-section-number">A.4</span> DAG Factorization and the Markov Property</h2>
-<p>Up to this point, we have used DAGs qualitatively, to decide which paths are open or blocked. We now connect the graph to probability algebra.</p>
+<p>So far the graph has served purely qualitative purposes: classifying paths as open or blocked. The same parent structure carries quantitative information as well, because it prescribes how a joint distribution can be broken into simple pieces.</p>
+<p>Any joint distribution can be written by conditioning each variable on all of its predecessors, but that generic decomposition involves high-dimensional conditional distributions and reveals little. The graphical model earns its keep by replacing the generic decomposition with a sparse one, in which each variable is conditioned only on its parents.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -689,21 +718,21 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\mathcal{G}\)</span> be a DAG with nodes <span class="math inline">\(V_1, \ldots, V_p\)</span>. A joint distribution <span class="math inline">\(p(v_1, \ldots, v_p)\)</span> is said to <em>factorize according to <span class="math inline">\(\mathcal{G}\)</span></em> if <span class="math display">\[p(v_1, \ldots, v_p) = \prod_{j=1}^{p} p\!\left(v_j \mid \mathrm{Pa}(V_j)\right),\]</span> where <span class="math inline">\(\mathrm{Pa}(V_j)\)</span> denotes the set of parents of <span class="math inline">\(V_j\)</span> in <span class="math inline">\(\mathcal{G}\)</span>.</p>
+<p>Let <span class="math inline">\(\Gcal\)</span> be a DAG with nodes <span class="math inline">\(V_1, \ldots, V_p\)</span>. A joint distribution <span class="math inline">\(p(v_1, \ldots, v_p)\)</span> is said to <em>factorize according to <span class="math inline">\(\Gcal\)</span></em> if <span class="math display">\[p(v_1, \ldots, v_p) = \prod_{j=1}^{p} p\!\left(v_j \mid \Pa(V_j)\right),\]</span> where <span class="math inline">\(\Pa(V_j)\)</span> denotes the set of parents of <span class="math inline">\(V_j\)</span> in <span class="math inline">\(\Gcal\)</span>.</p>
 </div>
 </div>
-<p>This factorization implies the local Markov property: once its parents are known, a node is conditionally independent of all variables that are neither its descendants nor its parents.</p>
+<p>This factorization implies the local Markov property, defined below: once its parents are known, a node is conditionally independent of all variables that are neither its descendants nor its parents. In a causal DAG, drawing a parent arrow is an additional substantive claim that the parent is a direct causal input; this informally rules out exact cancellations or redundant arrows, and is connected to the notions of minimality and faithfulness discussed in Chapter 2.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: A simple confounding graph
+<span class="screen-reader-only">Note</span>Example: A Simple Confounding Graph
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For the DAG with edges <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, and <span class="math inline">\(X \to Y\)</span>, the joint density factorizes as <span class="math inline">\(p(x, t, y) = p(x)\,p(t \mid x)\,p(y \mid t, x)\)</span>.</p>
+<p>For the DAG with edges <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, and <span class="math inline">\(X \to Y\)</span>, the joint density factorizes as <span class="math display">\[p(x, t, y) = p(x)\,p(t \mid x)\,p(y \mid t, x).\]</span> Thus the graph determines which local conditional distributions appear in the factorization.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -716,7 +745,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\mathrm{Nd}(V_i) = V \setminus \bigl(\{V_i\} \cup \mathrm{De}(V_i)\bigr)\)</span> denote the set of <em>non-descendants</em> of <span class="math inline">\(V_i\)</span>. A distribution <span class="math inline">\(P\)</span> satisfies the <em>local Markov property</em> with respect to <span class="math inline">\(\mathcal{G}\)</span> if, for every node <span class="math inline">\(V_i \in V\)</span>, <span class="math display">\[V_i \indep \bigl(\mathrm{Nd}(V_i) \setminus \mathrm{Pa}(V_i)\bigr) \mid \mathrm{Pa}(V_i).\]</span></p>
+<p>Let <span class="math inline">\(\Nd(V_i) = V \setminus \bigl(\{V_i\} \cup \De(V_i)\bigr)\)</span> denote the set of <em>non-descendants</em> of <span class="math inline">\(V_i\)</span>, where <span class="math inline">\(\De(V_i)\)</span> is the set of descendants of <span class="math inline">\(V_i\)</span> in <span class="math inline">\(\Gcal\)</span>. A distribution <span class="math inline">\(P\)</span> satisfies the <em>local Markov property</em> with respect to <span class="math inline">\(\Gcal\)</span> if, for every node <span class="math inline">\(V_i \in V\)</span>, <span class="math display">\[V_i \indep \bigl(\Nd(V_i) \setminus \Pa(V_i)\bigr) \mid \Pa(V_i).\]</span> That is, once we condition on the direct causes of a node, that node is independent of all variables that are neither its descendants nor its parents.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -729,33 +758,75 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The global Markov property is the statement that every <span class="math inline">\(d\)</span>-separation in <span class="math inline">\(\mathcal{G}\)</span> implies a conditional independence in <span class="math inline">\(P\)</span>. This is studied in detail in Chapter 2.</p>
+<p>The global Markov property is the statement that every <span class="math inline">\(d\)</span>-separation in <span class="math inline">\(\Gcal\)</span> implies a conditional independence in <span class="math inline">\(P\)</span>. Thus, if two sets of variables are <span class="math inline">\(d\)</span>-separated by a set <span class="math inline">\(S\)</span> in the graph, then they are conditionally independent given <span class="math inline">\(S\)</span> in the distribution. This is studied in detail in Chapter 2.</p>
 </div>
 </div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem: Equivalence of the Three Markov Properties <span class="citation" data-cites="lauritzen1996graphical">(<a href="#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Theorem 3.27)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(\Gcal\)</span> be a DAG and let <span class="math inline">\(P\)</span> admit a joint density with respect to a product dominating measure, with regular conditional distributions. Then the following are equivalent:</p>
+<ol type="i">
+<li><span class="math inline">\(P\)</span> admits the recursive factorization <span class="math inline">\(p(v_1, \dots, v_k) = \prod_i p(v_i \mid \Pa(v_i))\)</span>;</li>
+<li><span class="math inline">\(P\)</span> satisfies the local Markov property;</li>
+<li><span class="math inline">\(P\)</span> satisfies the global Markov property.</li>
+</ol>
+</div>
+</div>
+<p><em>Proof.</em> We sketch the cycle (iii) <span class="math inline">\(\Rightarrow\)</span> (ii) <span class="math inline">\(\Rightarrow\)</span> (i) <span class="math inline">\(\Rightarrow\)</span> (iii); full details are given by <span class="citation" data-cites="lauritzen1996graphical">Lauritzen (<a href="#ref-lauritzen1996graphical" role="doc-biblioref">1996</a>)</span>.</p>
+<p><em>Global <span class="math inline">\(\Rightarrow\)</span> local (instantiation).</em> Each local statement is itself a <span class="math inline">\(d\)</span>-separation, hence one entry of the global dictionary. Take any path from <span class="math inline">\(V_i\)</span> to a non-descendant <span class="math inline">\(W\)</span>. If the path leaves <span class="math inline">\(V_i\)</span> through a parent, it is blocked there: the parent is a conditioned non-collider. If it leaves through a child, then reaching a <em>non</em>-descendant forces the path to reverse direction somewhere, and the reversal point is a collider that is a descendant of <span class="math inline">\(V_i\)</span>; by acyclicity no descendant of <span class="math inline">\(V_i\)</span> can lie in <span class="math inline">\(\Pa(V_i)\)</span>, so the collider is unactivated and the path is blocked.</p>
+<p><em>Local <span class="math inline">\(\Rightarrow\)</span> factorization (chain rule).</em> List the nodes in a topological ordering, so that every predecessor of <span class="math inline">\(V_i\)</span> is a non-descendant. The chain rule gives <span class="math inline">\(p(v_1, \dots, v_k) = \prod_i p(v_i \mid v_1, \dots, v_{i-1})\)</span>, and the local statement for <span class="math inline">\(V_i\)</span> licenses shrinking each conditioning set to the parents: <span class="math inline">\(p(v_i \mid v_1, \dots, v_{i-1}) = p(v_i \mid \Pa(v_i))\)</span>. The <span class="math inline">\(k\)</span> local statements are thus exactly calibrated to the <span class="math inline">\(k\)</span> factors of the chain rule: they pin the functional form of the joint density to a product.</p>
+<p><em>Factorization <span class="math inline">\(\Rightarrow\)</span> global (the substantive arrow).</em> This is the soundness theorem of Chapter 2, and the standard proof runs through the moral-graph criterion of <a href="#sec-appA-moralization" class="quarto-xref"><span>Section A.5</span></a>: restrict to the ancestral set of <span class="math inline">\(A \cup B \cup \mathbf{S}\)</span> (marginalizing over non-ancestors preserves the product form), moralize (each factor <span class="math inline">\(p(v_i \mid \mathrm{pa}_i)\)</span> becomes a function on one clique of the moral graph, so the density is a product of clique functions), and observe that separation of <span class="math inline">\(A\)</span> from <span class="math inline">\(B\)</span> by <span class="math inline">\(\mathbf{S}\)</span> in the moralized ancestral graph splits that product into <span class="math inline">\(g(a, \mathbf{s})\,h(b, \mathbf{s})\)</span> — which is conditional independence. <span class="math inline">\(\square\)</span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Remark: Equivalence for DAGs
+<span class="screen-reader-only">Note</span>Remark: Reading the Equivalence
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For DAGs, under the existence of regular conditional distributions, the recursive factorization, the local Markov property, and the global Markov property are all equivalent. The local property is the version most commonly verified in practice, since the factorization makes it immediate.</p>
+<p>Once the density has product form, which marginalizations and conditionings preserve it becomes a purely combinatorial question, and <span class="math inline">\(d\)</span>-separation is exactly the graphical language of that combinatorics; the equivalence amounts to one theorem plus two lines of bookkeeping. Notably, the implication from factorization to the global Markov property does not require strict positivity of the joint density; strict positivity is needed only for axioms involving the intersection property among general conditional-independence relations. The local property is the version most commonly verified in practice, since the factorization makes it immediate.</p>
 </div>
 </div>
+<figure style="text-align:center;margin:1.5em auto;" class="figure">
+<svg viewbox="0 0 480 190" width="100%" style="max-width:480px;font-family:sans-serif;font-size:13px;">
+  <defs><marker id="aD" markerwidth="8" markerheight="8" refx="6" refy="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2E74B6"></path></marker></defs>
+  <circle cx="115" cy="45" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="115" y="51" text-anchor="middle">N</text>
+  <circle cx="115" cy="130" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="115" y="136" text-anchor="middle">B</text>
+  <circle cx="270" cy="88" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="270" y="94" text-anchor="middle">E</text>
+  <circle cx="420" cy="88" r="21" fill="#EEF4FB" stroke="#2E74B6" stroke-width="1.6"></circle><text x="420" y="94" text-anchor="middle">Y</text>
+  <line x1="134" y1="55" x2="250" y2="79" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aD)"></line>
+  <line x1="134" y1="120" x2="250" y2="97" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aD)"></line>
+  <line x1="291" y1="88" x2="397" y2="88" stroke="#2E74B6" stroke-width="1.7" marker-end="url(#aD)"></line>
+  <path d="M 128 148 Q 270 186 412 108" fill="none" stroke="#2E74B6" stroke-width="1.6" marker-end="url(#aD)"></path>
+  <text x="86" y="40" text-anchor="end" font-size="11" fill="#666">neighborhood</text>
+  <text x="86" y="135" text-anchor="end" font-size="11" fill="#666">family background</text>
+  <text x="270" y="56" text-anchor="middle" font-size="11" fill="#666">education</text>
+  <text x="420" y="56" text-anchor="middle" font-size="11" fill="#666">earnings</text>
+</svg>
+<figcaption>Education--earnings DAG used to illustrate factorization and the local and global Markov properties.</figcaption>
+</figure>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Education–earnings graph
+<span class="screen-reader-only">Note</span>Example: Education–Earnings Graph
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Consider the DAG with edges <span class="math inline">\(N \to E\)</span>, <span class="math inline">\(B \to E\)</span>, <span class="math inline">\(E \to Y\)</span>, and <span class="math inline">\(B \to Y\)</span> (<span class="math inline">\(N\)</span> = neighborhood, <span class="math inline">\(B\)</span> = family background, <span class="math inline">\(E\)</span> = education, <span class="math inline">\(Y\)</span> = earnings). The corresponding factorization is <span class="math inline">\(p(n,b,e,y) = p(n)\,p(b)\,p(e \mid n,b)\,p(y \mid e,b)\)</span>. The parent set of <span class="math inline">\(Y\)</span> is <span class="math inline">\(\mathrm{Pa}(Y) = \{E, B\}\)</span>, so the local Markov property gives <span class="math inline">\(Y \indep N \mid \{E, B\}\)</span>. The factorization also implies <span class="math inline">\(N \indep B\)</span>, since neither node has a common ancestor; this is a substantive modeling assumption.</p>
+<p>Consider the DAG above, with edges <span class="math inline">\(N \to E\)</span>, <span class="math inline">\(B \to E\)</span>, <span class="math inline">\(E \to Y\)</span>, and <span class="math inline">\(B \to Y\)</span>. The corresponding factorization is <span class="math display">\[p(n,b,e,y) = p(n)\,p(b)\,p(e \mid n,b)\,p(y \mid e,b).\]</span> The parent set of <span class="math inline">\(Y\)</span> is <span class="math inline">\(\Pa(Y) = \{E, B\}\)</span>, so the local Markov property gives <span class="math inline">\(Y \indep N \mid \{E, B\}\)</span>.</p>
+<p>The same conclusion follows by <span class="math inline">\(d\)</span>-separation. There are two paths from <span class="math inline">\(N\)</span> to <span class="math inline">\(Y\)</span>: <span class="math display">\[N \to E \to Y \qquad\text{and}\qquad N \to E \leftarrow B \to Y.\]</span> Given <span class="math inline">\(\{E, B\}\)</span>, the first path is blocked at the non-collider <span class="math inline">\(E\)</span>. The second path is opened at the collider <span class="math inline">\(E\)</span>, but blocked at the non-collider <span class="math inline">\(B\)</span>. Thus every path from <span class="math inline">\(N\)</span> to <span class="math inline">\(Y\)</span> is blocked by <span class="math inline">\(\{E, B\}\)</span>.</p>
+<p>The factorization above also implies that <span class="math inline">\(N \indep B\)</span>, since neither node has a parent or a common ancestor in the graph. This is a substantive modeling assumption: if neighborhood and family background are believed to be associated, the graph should include an edge between them, a common cause, or a different ordering.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -768,12 +839,13 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In a causal DAG, an arrow is typically drawn only when a direct dependence-generating relation is believed to be present. Every arrow represents a substantive scientific claim. Minimality and faithfulness are discussed in Chapter 2.</p>
+<p>In a causal DAG, an arrow is typically drawn only when a direct dependence-generating relation is believed to be present. This explains why edges are not included gratuitously: every arrow represents a substantive scientific claim. We do not formalize minimality or faithfulness here; both are discussed in Chapter 2.</p>
 </div>
 </div>
+<p>Chapter 2 states the local and global Markov properties formally and uses them to connect <span class="math inline">\(d\)</span>-separation to conditional independence; it then applies the same factorization to the education–earnings DAG introduced above.</p>
 </section>
-<section id="sec-appA-moralization" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="sec-appA-moralization">Optional: Moralization as an Alternative Criterion</h2>
+<section id="sec-appA-moralization" class="level2" data-number="A.5">
+<h2 data-number="A.5" class="anchored" data-anchor-id="sec-appA-moralization"><span class="header-section-number">A.5</span> Optional: Moralization as an Alternative Criterion</h2>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -787,24 +859,66 @@ window.Quarto = {
 <p>This section may be skipped on a first reading.</p>
 </div>
 </div>
-<p>There is an alternative graph-theoretic way to check <span class="math inline">\(d\)</span>-separation based on constructing an undirected graph called the <em>moral graph</em>. To check whether <span class="math inline">\(X \indep Y \mid S\)</span>: First, take the induced subgraph on <span class="math inline">\(\mathrm{An}(X \cup Y \cup S)\)</span>, the ancestors of all variables under consideration. Second, connect any two parents of a common child by an undirected edge. Third, drop all arrow directions. Finally, check whether <span class="math inline">\(S\)</span> separates <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> in the resulting undirected graph. This procedure yields a criterion equivalent to <span class="math inline">\(d\)</span>-separation.</p>
+<p>There is an alternative graph-theoretic way to check <span class="math inline">\(d\)</span>-separation based on constructing an undirected graph called the <em>moral graph</em>. The method is elegant and useful in more advanced graphical-model theory, but it is not necessary for understanding the main causal ideas of Chapters 2 and 3. For most students, the path-by-path method using chains, forks, and colliders is more intuitive on first exposure.</p>
+<p>To check whether <span class="math inline">\(X \indep Y \mid S\)</span>, the procedure is as follows. First, take the induced subgraph on <span class="math inline">\(\An(X \cup Y \cup S)\)</span>, the ancestors of all variables under consideration, including those in the conditioning set <span class="math inline">\(S\)</span>. Second, connect any two parents of a common child by an undirected edge. Third, drop all arrow directions. Finally, check whether <span class="math inline">\(S\)</span> separates <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> in the resulting undirected graph; equivalently, whether <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> become disconnected once the nodes in <span class="math inline">\(S\)</span> and their incident edges are removed. This procedure yields a criterion equivalent to <span class="math inline">\(d\)</span>-separation.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Moral graph of a collider
+<span class="screen-reader-only">Note</span>Example: Moral Graph of a Collider
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Consider the DAG <span class="math inline">\(A \to C \leftarrow B\)</span>. For the conditional query <span class="math inline">\(A \indep B \mid C\)</span>, the ancestral set is <span class="math inline">\(\{A, B, C\}\)</span>. Moralization connects the two parents <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, and after deleting the conditioned node <span class="math inline">\(C\)</span> the edge <span class="math inline">\(A - B\)</span> remains; therefore <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are not separated, matching the fact that conditioning on a collider opens the path. By contrast, for the marginal query <span class="math inline">\(A \indep B\)</span>, the ancestral set is <span class="math inline">\(\{A, B\}\)</span>, so <span class="math inline">\(C\)</span> is discarded before moralization and no moral edge is added; <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are separated, as expected.</p>
+<p>Consider the DAG <span class="math inline">\(A \to C \leftarrow B\)</span>. For the conditional query <span class="math inline">\(A \indep B \mid C\)</span>, the ancestral set is <span class="math inline">\(\An(\{A, B, C\}) = \{A, B, C\}\)</span>, so <span class="math inline">\(C\)</span> is retained. Moralization connects the two parents <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, and after deleting the conditioned node <span class="math inline">\(C\)</span> the edge <span class="math inline">\(A - B\)</span> remains; therefore <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are not separated, matching the fact that conditioning on a collider opens the path. By contrast, for the marginal query <span class="math inline">\(A \indep B\)</span>, the ancestral set is <span class="math inline">\(\An(\{A, B\}) = \{A, B\}\)</span>, so <span class="math inline">\(C\)</span> is discarded before moralization and no moral edge is added; <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are separated, as expected.</p>
 </div>
 </div>
 </section>
-<section id="summary" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="summary">Summary</h2>
-<p>This appendix introduced the graphical ideas that support Chapters 2 and 3. Conditional independence is the probabilistic language that graphs are designed to encode. The three local motifs — chain, fork, and collider — determine how conditioning affects association along a path. <span class="math inline">\(d\)</span>-Separation extends these local rules to arbitrary graphs: two variables are <span class="math inline">\(d\)</span>-separated by <span class="math inline">\(S\)</span> if every path between them is blocked by <span class="math inline">\(S\)</span>. The most important application in causal inference is to distinguish confounding paths from causal paths and to identify valid adjustment sets. Finally, the Markov property gives a probabilistic interpretation to the graph by linking graphical structure to a factorization of the joint distribution.</p>
+<section id="sec-appA-idsketch" class="level2" data-number="A.6">
+<h2 data-number="A.6" class="anchored" data-anchor-id="sec-appA-idsketch"><span class="header-section-number">A.6</span> The ID Algorithm and the Hedge: A Proof Sketch of Completeness</h2>
+<p>This section collects the graph terminology behind the completeness theorem of Chapter 3 and sketches its proof. It is reference material for independent reading: the machinery below — ADMGs, districts, kernels, fixing, and the hedge — is not required elsewhere in the course.</p>
+<section id="sec-appA-admg" class="level3" data-number="A.6.1">
+<h3 data-number="A.6.1" class="anchored" data-anchor-id="sec-appA-admg"><span class="header-section-number">A.6.1</span> ADMGs and Semi-Markovian Models</h3>
+<p>Chapters 2 and 3 represent latent common causes as explicit unobserved nodes (e.g.&nbsp;<span class="math inline">\(U \to T\)</span> and <span class="math inline">\(U \to Y\)</span>). The completeness theorem uses a more general graph class that encodes latent common causes compactly as <em>bidirected edges</em>: a bidirected edge <span class="math inline">\(X \leftrightarrow Y\)</span> records latent common-cause dependence between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>; in the canonical semi-Markovian representation, it is realized by an exogenous latent common cause <span class="math inline">\(U\)</span> with <span class="math inline">\(U \to X\)</span> and <span class="math inline">\(U \to Y\)</span>. A graph containing both directed and bidirected edges, with the directed part acyclic, is called an <em>acyclic directed mixed graph</em> (ADMG): directed edges represent causal relations among the observed variables, while bidirected edges represent latent common-cause relations. In the <em>canonical semi-Markovian representation</em>, every latent variable is exogenous, the exogenous variables are mutually independent, and each latent common cause has at most two observed children, so that it enters the ADMG as a bidirected edge between the pair of observed variables it affects. Causal models of this form are called <em>semi-Markovian</em>. (Conditional interventional distributions <span class="math inline">\(P(y \mid \doop(t), c)\)</span> require an extension of the ID algorithm known as IDC, for which an analogous completeness result holds; Chapter 3 treats only the unconditional case.)</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark: A Convention for Nonidentification Witnesses
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Chapter 2 adopted an informal minimality convention: arrows are not drawn gratuitously. For <em>nonidentification</em> arguments the opposite convention is the appropriate one. A structural causal model is <em>compatible</em> with <span class="math inline">\(\Gcal\)</span> if each structural equation depends on some subset of the displayed parents — possibly a strict subset, so that a displayed arrow may carry a null effect; <span class="math inline">\(\Gcal\)</span> acts as an allowed-parent supergraph. This matches the definition of identifiability, which quantifies over <em>every</em> model compatible with the graph in this permissive sense. The two-model witness constructions used to demonstrate nonidentification are to be read this way.</p>
+</div>
+</div>
+</section>
+<section id="sec-appA-id-succeeds" class="level3" data-number="A.6.2">
+<h3 data-number="A.6.2" class="anchored" data-anchor-id="sec-appA-id-succeeds"><span class="header-section-number">A.6.2</span> How ID Succeeds: Districts and Kernels</h3>
+<p><span class="citation" data-cites="shpitser2006identification">Shpitser and Pearl (<a href="#ref-shpitser2006identification" role="doc-biblioref">2006</a>)</span> introduced the <em>identification (ID) algorithm</em>: a procedure that takes as input an ADMG <span class="math inline">\(\Gcal\)</span>, a target intervention distribution <span class="math inline">\(P(y \mid \doop(t))\)</span>, and the observed joint distribution <span class="math inline">\(P\)</span>, and either returns an explicit observational formula for <span class="math inline">\(P(y \mid \doop(t))\)</span> or reports that the quantity is not identifiable from <span class="math inline">\(P\)</span> given <span class="math inline">\(\Gcal\)</span>.</p>
+<p><strong>Sufficiency</strong> (do-calculus identifies whenever identification is possible): proved constructively via the ID algorithm. The key structural concept is the <em>district</em> (called a <em>c-component</em>, for confounded component, in the original ID literature): a maximal set of observed nodes connected by paths of bidirected edges. Its members are linked through a network of latent common-cause relations, though they need not all share a single latent parent. For a single node <span class="math inline">\(V\)</span> with no bidirected edges, its district is <span class="math inline">\(\{V\}\)</span> itself.</p>
+<p>The ID algorithm first restricts attention to the relevant ancestral set <span class="math inline">\(Y^*\)</span> — the vertices with a directed path to <span class="math inline">\(Y\)</span> that avoids <span class="math inline">\(T\)</span>, together with <span class="math inline">\(Y\)</span> itself — and decomposes the induced subgraph <span class="math inline">\(\Gcal[Y^*]\)</span>, denoted below by <span class="math inline">\(\Gcal_{Y^*}\)</span> (not to be confused with the edge-deletion operations <span class="math inline">\(\Gcal_{\overline{X}}\)</span> and <span class="math inline">\(\Gcal_{\underline{X}}\)</span>), into districts. It then attempts to recover one interventional kernel for each district by a recursive reduction of the observed distribution (Tian’s <em>Q-factorization</em> <span class="citation" data-cites="tian2002general">(<a href="#ref-tian2002general" role="doc-biblioref">Tian and Pearl 2002</a>)</span>; in modern terminology, a sequence of <em>fixing</em> operations). If every required district kernel is recoverable — every district is <em>intrinsic</em> — the kernels combine into an identifying functional; the output is best viewed as a modified <em>nested</em> Markov factorization of the ADMG, in the same way that the g-formula is a modified Markov factorization of a DAG. If some required district is not intrinsic, the algorithm fails and exposes a hedge (defined below). When the algorithm succeeds, it has produced an explicit identification formula, demonstrating that the do-calculus is sufficient.</p>
+</section>
+<section id="sec-appA-id-fails" class="level3" data-number="A.6.3">
+<h3 data-number="A.6.3" class="anchored" data-anchor-id="sec-appA-id-fails"><span class="header-section-number">A.6.3</span> How ID Fails: The Hedge and the Two-Model Witness</h3>
+<p><strong>Necessity</strong> (do-calculus cannot identify nonidentifiable quantities): proved by showing that whenever the ID algorithm fails, the causal effect is genuinely nonidentifiable — not merely hard to compute. The key graphical obstruction is the <em>hedge</em>.</p>
+<blockquote class="blockquote">
+<p>Informally, a <em>hedge</em> for <span class="math inline">\(P(y \mid \doop(t))\)</span> in <span class="math inline">\(\Gcal\)</span> is a pair of nested <em>C-forests</em> <span class="math inline">\(\langle F, F' \rangle\)</span> with <span class="math inline">\(F' \subseteq F\)</span>, both rooted at the same set <span class="math inline">\(R \subseteq F'\)</span>, such that <span class="math inline">\(F\)</span> intersects the treatment set <span class="math inline">\(T\)</span> while <span class="math inline">\(F'\)</span> does not, and every node of <span class="math inline">\(R\)</span> has a directed path to <span class="math inline">\(Y\)</span> that avoids <span class="math inline">\(T\)</span>. (A C-forest is a subgraph whose nodes form a single district — all connected through bidirected edges — and whose directed edges form a forest with root set <span class="math inline">\(R\)</span>.) Intuitively, the hedge encodes a “loop” of confounding surrounding the treatment that the do-calculus cannot break.</p>
+</blockquote>
+<p><span class="citation" data-cites="shpitser2006identification">Shpitser and Pearl (<a href="#ref-shpitser2006identification" role="doc-biblioref">2006</a>)</span> prove that whenever a hedge for <span class="math inline">\(P(y \mid \doop(t))\)</span> exists in <span class="math inline">\(\Gcal\)</span>, the target is not identifiable. Conversely, whenever the ID algorithm fails, it exposes a hedge for the target query: the algorithm fails if and only if <span class="math inline">\(\Gcal\)</span> contains a hedge <em>for <span class="math inline">\(P(y \mid \doop(t))\)</span> itself</em> — equivalently, some district of <span class="math inline">\(\Gcal_{Y^*}\)</span> is not intrinsic <span class="citation" data-cites="shpitser2023id">(<a href="#ref-shpitser2023id" role="doc-biblioref">Shpitser 2023</a>)</span>. (An older formulation characterized identifiability by the absence of hedges for every reduced subquery <span class="math inline">\(P(y' \mid \doop(t'))\)</span> with <span class="math inline">\(T' \subseteq T\)</span> and <span class="math inline">\(Y' \subseteq Y\)</span>. That subset-subquery formulation is incorrect as stated: a target such as <span class="math inline">\(P(y \mid \doop(t_1, t_2))\)</span> can be identifiable even though the reduced query <span class="math inline">\(P(y \mid \doop(t_2))\)</span> has a hedge <span class="citation" data-cites="shpitser2023id">(<a href="#ref-shpitser2023id" role="doc-biblioref">Shpitser 2023</a>)</span>. The corrected criterion concerns the target query itself.) When a hedge for the target exists, one can explicitly construct two semi-Markovian models <span class="math inline">\(\mathcal{M}_1\)</span> and <span class="math inline">\(\mathcal{M}_2\)</span> that:</p>
+<ul>
+<li>induce the same observed joint distribution <span class="math inline">\(P\)</span>, so no data can distinguish them; but</li>
+<li>assign different values to <span class="math inline">\(P(y \mid \doop(t))\)</span>, so the interventional distribution is not a function of <span class="math inline">\(P\)</span> alone.</li>
+</ul>
+<p>The construction builds <span class="math inline">\(\mathcal{M}_1\)</span> and <span class="math inline">\(\mathcal{M}_2\)</span> by altering the causal mechanisms of the <em>observed</em> variables in the relevant district (and, if needed, the distribution of the exogenous variables — which, being exogenous, have no structural equations of their own), keeping the observed joint distribution identical. Since the two models are observationally indistinguishable yet causally distinct, no method — including the do-calculus — can identify <span class="math inline">\(P(y \mid \doop(t))\)</span> from <span class="math inline">\(P\)</span> alone. This establishes necessity.</p>
+<p>Combining sufficiency and necessity: the ID algorithm (and hence the do-calculus) succeeds if and only if no hedge exists for the target query, which is if and only if <span class="math inline">\(P(y \mid \doop(t))\)</span> is identifiable. <span class="math inline">\(\square\)</span></p>
+</section>
+</section>
+<section id="sec-appA-summary" class="level2" data-number="A.7">
+<h2 data-number="A.7" class="anchored" data-anchor-id="sec-appA-summary"><span class="header-section-number">A.7</span> Summary</h2>
+<p>This appendix introduced the graphical ideas that support Chapters 2 and 3. Conditional independence is the probabilistic language that graphs are designed to encode. The three local motifs — chain, fork, and collider — determine how conditioning affects association along a path. <span class="math inline">\(d\)</span>-Separation extends these local rules to arbitrary graphs: two variables are <span class="math inline">\(d\)</span>-separated by <span class="math inline">\(S\)</span> if every path between them is blocked by <span class="math inline">\(S\)</span>. The most important application in causal inference is to distinguish confounding paths from causal paths and to identify valid adjustment sets. The Markov property gives a probabilistic interpretation to the graph by linking graphical structure to a factorization of the joint distribution. Finally, an optional last section sketches the ID algorithm and the hedge obstruction — the machinery behind the completeness theorem of Chapter 3.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
@@ -813,6 +927,18 @@ Dawid, A. Philip. 1979. <span>“Conditional Independence in Statistical Theory.
 </div>
 <div id="ref-dawid1980conditional" class="csl-entry" role="listitem">
 Dawid, A. Philip. 1980. <span>“Conditional Independence for Statistical Operations.”</span> <em>Annals of Statistics</em> 8 (3): 598–617.
+</div>
+<div id="ref-lauritzen1996graphical" class="csl-entry" role="listitem">
+Lauritzen, Steffen L. 1996. <em>Graphical Models</em>. Oxford University Press.
+</div>
+<div id="ref-shpitser2023id" class="csl-entry" role="listitem">
+Shpitser, Ilya. 2023. <span>“When Does the <span>ID</span> Algorithm Fail?”</span> <em>arXiv Preprint arXiv:2307.03750</em>.
+</div>
+<div id="ref-shpitser2006identification" class="csl-entry" role="listitem">
+Shpitser, Ilya, and Judea Pearl. 2006. <span>“Identification of Joint Interventional Distributions in Recursive Semi-<span>M</span>arkovian Causal Models.”</span> <em>Proceedings of the Twenty-First National Conference on Artificial Intelligence (AAAI)</em> 21: 1219–26.
+</div>
+<div id="ref-tian2002general" class="csl-entry" role="listitem">
+Tian, Jin, and Judea Pearl. 2002. <span>“A General Identification Condition for Causal Effects.”</span> <em>Proceedings of the Eighteenth National Conference on Artificial Intelligence (AAAI)</em> (Menlo Park, CA), 567–73.
 </div>
 </div>
 </section>

@@ -396,7 +396,7 @@ Chapter 10 also flagged two central properties of $\varphi^*$ whose proofs were 
 
 The natural decomposition noted in Chapter 10 --- an IPW-style residual correction plus a regression-centered term --- is exactly the structure that emerged from both the bias-correction derivation of @sec-w11-prediction and the optimal-augmentation derivation of @sec-w11-class. The augmentation space $\Lambda$ corresponds to a specific component of the nuisance structure: it is the finite-sample analogue of the treatment-mechanism score subspace
 $$\mathcal{H}_T = \bigl\{a(X)\{T-\pi(X)\} : a \in L^2(P_X)\bigr\},$$
-as the common form @eq-lambda-common makes explicit. Orthogonalizing the Horvitz--Thompson estimating function against $\mathcal{H}_T$ yields the AIPW form; this removes a nuisance-score component, but it is not the general definition of the efficient influence function, which is the canonical gradient (see also @sec-appC).
+as the common form @eq-lambda-common makes explicit. This parametrization presumes strong overlap, $\epsilon \leq \pi(X) \leq 1-\epsilon$ almost surely. @sec-appC defines the treatment-score space instead by the conditional mean-zero condition $\E\{h(T,X) \mid X\} = 0$, which under weak positivity is strictly larger; the two agree under strong overlap. Orthogonalizing the Horvitz--Thompson estimating function against $\mathcal{H}_T$ yields the AIPW form; this removes a nuisance-score component, but it is not the general definition of the efficient influence function, which is the canonical gradient (see also @sec-appC).
 
 To state the bound precisely, define the observed-data functional
 $$\Psi(P) = \E_P\{\mu_{1,P}(X) - \mu_{0,P}(X)\}, \qquad \mu_{t,P}(x) = \E_P(Y \mid T=t, X=x),$$
