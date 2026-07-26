@@ -1,0 +1,218 @@
+---
+engine: knitr
+---
+
+# Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation {#sec-w13s .unnumbered}
+
+This supplement collects the material referenced as optional in @sec-w13-gel: the convex-conjugate duality between the GEL saddle-point problem and a minimum-discrepancy primal problem, the distinction between raw dual weights and normalized probabilities, the full table of generating functions and their conjugates, the two-loop computational algorithm, higher-order comparisons with two-step GMM, and additional problems. References of the form @eq-gel or @sec-w13-gel point back into the main chapter, and the notation is that of @sec-w13-gel-def: $U_i(\theta) = W_i(Y_i - D_i^\top\theta)$, $\bar{U}(\theta) = n^{-1}\sum_i U_i(\theta)$, $G$ is the strictly convex generating function with $g = G'$, and $\Lambda_n(\theta) = \{\lambda : \lambda^\top U_i(\theta) \in \mathcal{V}\ \text{for all } i\}$.
+
+## S13.1 Convex-Conjugate Duality {#sec-w13s-duality}
+
+The GEL saddle-point problem @eq-gel is the Lagrangian dual of a natural primal problem that re-weights observations rather than moments. The bridge between the two is the Legendre--Fenchel conjugate of $G$.
+
+### The Primal: Minimum-Discrepancy Estimation
+
+The *minimum-discrepancy* (MD) estimator minimizes a convex divergence between a vector of observation weights $\boldsymbol\omega = (\omega_1, \ldots, \omega_n)$ and the reference weight $\omega_i = 1$ (one unit of mass per observation), subject to the sample moment condition being exactly satisfied:
+$$\hat\theta_{\mathrm{MD}} = \arg\min_{\theta,\;\omega_i \in \mathcal{W}}\;\sum_{i=1}^n F(\omega_i) \quad \text{subject to} \quad \sum_{i=1}^n \omega_i U_i(\theta) = 0,$$ {#eq-md}
+where $F$ is a strictly convex function with minimum at $\omega = 1$. The domain of $F$ is member-specific and must be carried along explicitly. Write
+$$\mathcal{W} = \operatorname{int}\operatorname{dom} F,$$
+so that the primal optimization is taken over $\omega_i \in \mathcal{W}$. For EL, ET, and Hellinger, $\mathcal{W} = (0,\infty)$; for CUE, $F(\omega) = \tfrac{1}{2}(\omega-1)^2$ is finite on the whole line and $\mathcal{W} = \mathbb{R}$, so CUE weights may be negative. This distinction propagates through @eq-md, @thm-gel-md, and the feasibility discussion below, and it is the reason the convex-hull condition stated later cannot be applied uniformly across members.
+
+The problem asks: what is the re-weighting of observations, closest to the uniform reference $\omega_i = 1$ in the $F$-divergence sense, that exactly satisfies the moment restriction?
+
+Note that @eq-md imposes *no* constraint $\sum_i \omega_i = n$. This is a modeling choice with consequences that are developed in @sec-w13s-weights; it is made here because it produces a duality in the single dual variable $\lambda$, whereas imposing the normalization explicitly introduces a second Lagrange multiplier.
+
+### The Conjugate Relationship
+
+The key structural fact is that the MD divergence $F$ and the GEL generating function $G$ are related through the Legendre--Fenchel conjugate. Define
+$$F(\omega) = \sup_{v \in \mathcal{V}}\,\bigl[\,\omega v - G(v)\bigr],$$ {#eq-conjugate}
+the Legendre--Fenchel conjugate of $G$. Under the Legendre-type assumptions of @thm-gel-md below (properness, closedness, strict convexity, differentiability, and essential smoothness of $G$), the conjugate $F = G^\ast$ is essentially strictly convex and differentiable on $\operatorname{int}\operatorname{dom} F$, with the inverse-gradient relation $F' = (G')^{-1}$; strict convexity of $G$ alone would not deliver these differentiability properties. The normalization @eq-gel-norm determines the behavior of $F$ at the reference point $\omega = 1$: the supremum in @eq-conjugate is attained at $v^* = 0$ (since the first-order condition gives $\omega = g(v^*)$, so $\omega = 1 \Rightarrow v^* = 0$), yielding
+$$F(1) = 1 \cdot 0 - G(0) = 0, \qquad f(1) = v^*(1) = 0,$$ {#eq-F-norm}
+where $f = F'$ and the second equality uses the envelope theorem. The location of the minimizer follows entirely from $g(0) = 1$: the first-order condition $\omega = g(v^*)$ gives $v^* = 0$ at $\omega = 1$, and hence $f(1) = 0$, regardless of the value of $G(0)$. The condition $G(0) = 0$ has no bearing on which $\omega$ minimizes $F$; it normalizes the *level* of $F$ so that $F(1) = 0$, making the divergence interpretable as a non-negative cost with zero cost at the reference weight $\omega_i = 1$.
+
+### The Duality Theorem
+
+::: {.callout-tip icon=false}
+## Theorem S13.1: Fixed-$\theta$ Fenchel Duality {#thm-gel-md}
+
+Let $G$ be proper, closed, strictly convex, differentiable, and essentially smooth on the open interval $\mathcal{V} \ni 0$, and satisfy the normalization @eq-gel-norm. Let $F = G^\ast$ be its Legendre--Fenchel conjugate @eq-conjugate, with $\mathcal{W} = \operatorname{int}\operatorname{dom} F$. Fix $\theta$, and suppose the primal problem
+$$\inf_{\omega_i \in \mathcal{W}}\Bigl\{\sum_{i=1}^n F(\omega_i) : \sum_{i=1}^n \omega_i U_i(\theta) = 0\Bigr\}$$
+has a relative-interior feasible point and that the primal and dual optima are attained. Then strong duality holds:
+$$\inf_{\omega}\sum_{i=1}^n F(\omega_i) = \sup_{\lambda \in \Lambda_n(\theta)}\Bigl\{-\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr)\Bigr\},$$
+and the optimal weights satisfy
+$$\hat\omega_i(\theta) = g\!\bigl(\hat\lambda(\theta)^\top U_i(\theta)\bigr), \qquad f(\hat\omega_i(\theta)) = \hat\lambda(\theta)^\top U_i(\theta).$$
+If in addition the outer optima over $\theta$ are attained, then minimizing the common profiled value over $\theta$ yields the same set of estimators, so $\hat\theta_{\mathrm{GEL}} = \hat\theta_{\mathrm{MD}}$.
+:::
+
+Two points about the hypotheses deserve emphasis, because weaker statements circulate.
+
+First, the normalization @eq-gel-norm is nowhere near sufficient on its own. Properness, closedness, essential smoothness, differentiability with invertible gradient on the relevant interior, primal feasibility with a relative-interior point, and attainment of the optima all do real work. Nor does strict convexity of $G$ by itself deliver every property of $F$ used later: it gives strict convexity of the conjugate on the appropriate domain, but the differentiability and inverse-gradient identity $f^{-1} = g$ require the essential-smoothness and Legendre-type conditions.
+
+Second, the estimator-level conclusion is obtained from equality of the *globally profiled objective values* under strong duality, not from the observation that first-order conditions coincide. The outer problem in $\theta$ is generally nonconvex, so matching stationarity conditions would establish only that the two procedures share critical points.
+
+::: {.callout-warning icon=false}
+## Feasibility Is Member-Specific
+
+The Slater-type condition is often summarized as "the origin must lie in the relative interior of the convex hull of $\{U_i(\theta)\}$" (the interior proper if the sample moments span $\mathbb{R}^m$). That is the correct condition for the *positive-weight* members EL, ET, and Hellinger, for which $\mathcal{W} = (0,\infty)$, and it can fail when $n$ is small relative to the number of moment conditions. It is *not* the condition for CUE. Because $\mathcal{W} = \mathbb{R}$ there, CUE admits signed weights and its inner problem is a concave quadratic in $\lambda$; it is well defined whenever the sample second-moment matrix $n^{-1}\sum_i U_i(\theta)U_i(\theta)^\top$ is nonsingular, with no convex-hull requirement at all.
+:::
+
+A note on the relation of @thm-gel-md to the literature. @neweysmith2004 develop the minimum-discrepancy representation for the *Cressie--Read family* [@cressieread1984], with explicitly normalized probability weights; in that family $G(v) = (1+\gamma v)^{(\gamma+1)/\gamma}/(\gamma+1) - 1/(\gamma+1)$ and $F(\omega) = [(\omega)^{\gamma+1} - 1 - (\gamma+1)(\omega-1)]/[\gamma(\gamma+1)]$, with EL, ET, and CUE at $\gamma = -1$, $\gamma = 0$, and $\gamma = 1$. @ragusa2011 studies the broader relationship between minimum-divergence and GEL formulations, and shows that the standard tractable probability-constrained MD problem corresponds to GEL only for an appropriate subclass of divergences --- the correspondence is not free of charge outside that subclass. The *unnormalized* primal @eq-md used here is neither of these: it is introduced directly through Legendre--Fenchel duality, and under the regularity, relative-interior feasibility, attainment, and strong-duality conditions of @thm-gel-md it is dual to the GEL inner problem for the specified conjugate pair $(G, F)$.
+
+## S13.2 Minimum-Discrepancy Formulations and the Profile Identity {#sec-w13s-profile}
+
+Although the MD problem @eq-md jointly optimizes over $(\theta, \omega_1,\ldots,\omega_n)$, it can be solved by a two-loop profile procedure that exploits the convexity of $F$ in the weights.
+
+**Inner loop: profile weights at fixed $\theta$.** For a given $\theta$, the minimization over $(\omega_1,\ldots,\omega_n)$ subject to $\sum_i \omega_i U_i(\theta) = 0$ is a convex program. Its Lagrangian is
+$$L(\omega, \lambda) = \sum_{i=1}^n F(\omega_i) - \lambda^\top \sum_{i=1}^n \omega_i U_i(\theta),$$
+and the first-order condition $f(\omega_i) = \lambda^\top U_i(\theta)$ gives the profile weight
+$$\hat\omega_i(\theta) = f^{-1}\!\bigl(\lambda^\top U_i(\theta)\bigr) = g\!\bigl(\lambda^\top U_i(\theta)\bigr),$$
+where the last equality uses the conjugate identity $f^{-1} = g$. Substituting into the moment constraint $\sum_i \hat\omega_i(\theta) U_i(\theta) = 0$ determines the Lagrange multiplier $\hat\lambda(\theta)$ as the solution to
+$$\hat\lambda(\theta) = \arg\min_{\lambda \in \Lambda_n(\theta)}\;\frac{1}{n}\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr).$$ {#eq-inner}
+This inner minimization is a convex optimization in $\lambda$ alone and a damped or line-search Newton method often converges rapidly for each fixed $\theta$ when initialized in the feasible interior.
+
+**Profile divergence.** Once $\hat\omega_i(\theta) = g(\hat\lambda(\theta)^\top U_i(\theta))$ is substituted back into the MD objective, the Fenchel--Young equality $F(\omega) = \omega f(\omega) - G(f(\omega))$ and the moment constraint $\sum_i \hat\omega_i(\theta) U_i(\theta) = 0$ together give
+$$Q_{\mathrm{MD}}(\theta) \;\equiv\; \sum_{i=1}^n F\!\bigl(\hat\omega_i(\theta)\bigr) = -\sum_{i=1}^n G\!\bigl(\hat\lambda(\theta)^\top U_i(\theta)\bigr).$$ {#eq-md-profile}
+The profiled divergence therefore reduces to a function of $\theta$ alone, evaluated at the inner-loop solution.
+
+**Outer loop: minimize over $\theta$.** The MD estimator is
+$$\hat\theta_{\mathrm{MD}} = \arg\min_{\theta}\; Q_{\mathrm{MD}}(\theta) = \arg\max_{\theta}\;\min_{\lambda \in \Lambda_n(\theta)}\;\frac{1}{n}\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr),$$
+where the second equality follows from @eq-md-profile. This is exactly the GEL saddle-point problem @eq-gel written as a max--min, confirming at the algorithmic level that the two procedures find the same estimator.
+
+::: {.callout-warning icon=false}
+## The Profile Identity Holds for the Raw Weights
+
+The identity @eq-md-profile is stated for the *unnormalized* weights $\hat\omega_i(\theta) = g(\hat\lambda(\theta)^\top U_i(\theta))$ produced by the unconstrained primal @eq-md. It is not, without modification, an identity for the normalized probabilities of @sec-w13s-weights. See the warning there before reusing it.
+:::
+
+## S13.3 Raw Dual Weights, Normalized Probabilities, and the Overidentification Statistic {#sec-w13s-weights}
+
+Three objects circulate in this literature under similar names, and conflating them is the most common technical error in accounts of GEL. They are:
+
+1. the **raw dual weights**
+$$\hat\omega_i = g\!\bigl(\hat\lambda^\top U_i(\hat\theta)\bigr),$$ {#eq-raw}
+which solve the unconstrained primal @eq-md and satisfy $\sum_i \hat\omega_i U_i(\hat\theta) = 0$ but in general satisfy $\sum_i \hat\omega_i \neq n$;
+
+2. the **normalized weights**
+$$\hat\pi_i = \frac{\hat\omega_i}{\sum_{j=1}^n \hat\omega_j} = \frac{g\!\left(\hat\lambda^\top U_i(\hat\theta)\right)}{\displaystyle\sum_{j=1}^n g\!\left(\hat\lambda^\top U_j(\hat\theta)\right)}, \qquad i = 1,\ldots,n,$$ {#eq-probs}
+which are defined only when the denominator $\sum_j \hat\omega_j$ is nonzero --- automatic for the positive-weight members, an assumption for CUE, whose signed raw weights could in principle sum to zero. When defined they satisfy $\sum_i \hat\pi_i = 1$ and, because normalization is by a common nonzero scalar, also $\sum_i \hat\pi_i U_i(\hat\theta) = 0$;
+
+3. the **probability-constrained MD weights**, obtained from a primal problem that imposes $\sum_i \pi_i = 1$ explicitly as a second constraint, with its own Lagrange multiplier.
+
+::: {.callout-warning icon=false}
+## Normalization Preserves the Moment Equation but Changes the Objective
+
+Rescaling by a common positive constant leaves the weighted moment equation $\sum_i \hat\pi_i U_i(\hat\theta) = 0$ intact, because the right-hand side is zero. It does *not* leave the discrepancy objective intact: $\sum_i F(\hat\pi_i \cdot c)$ is not $\sum_i F(\hat\omega_i)$ up to an additive constant for general $F$. Consequently the exact profile identity @eq-md-profile, which is derived for the raw weights, should not be reused with normalized weights unless the corresponding normalization multiplier and the resulting objective adjustment are carried along explicitly. Objects (2) and (3) above coincide at the solution for the Cressie--Read members under the standard normalization, but the reasoning that establishes this must be supplied, not assumed.
+:::
+
+For EL, ET, and Hellinger, the function $g$ is strictly positive on the relevant domain $\mathcal{V}$, so the raw weights are all strictly positive and the normalized $\hat\pi_i$ in @eq-probs are genuine probability weights.
+
+::: {.callout-warning icon=false}
+## Empirical Probabilities and CUE
+
+For CUE, $g(v) = 1 + v$ can be negative when $\hat\lambda^\top U_i(\hat\theta) < -1$, in which case some $\hat\omega_i$ are negative and the normalized $\hat\pi_i$ form a signed *weight vector*, not a probability distribution on $\{1,\ldots,n\}$. Whenever raw or CUE weights are under discussion, "weight vector" is the accurate term and "empirical distribution" should be avoided, unless an explicit positivity constraint $\hat\omega_i > 0$ is imposed. This is one reason CUE is sometimes treated as a GMM-type estimator with a one-step weight-update interpretation rather than as a pure empirical-likelihood method.
+:::
+
+### The GEL Overidentification Statistic
+
+::: {.callout-tip icon=false}
+## Theorem S13.2: Wilks' Theorem for GEL [@neweysmith2004] {#thm-gel-wilks}
+
+Under the first-order conditions of @thm-gel-asymp, together with the additional smoothness, moment, interiority, and profile regularity conditions required for the GEL profile statistic (first-order estimator equivalence alone is not sufficient), the GEL profile divergence evaluated at the estimator satisfies
+$$T_{\mathrm{GEL}} \;\equiv\; 2\sum_{i=1}^n F\!\bigl(\hat\omega_i\bigr) \;=\; -2\sum_{i=1}^n G\!\bigl(\hat\lambda^\top U_i(\hat\theta_{\mathrm{GEL}})\bigr) \;\xrightarrow{d}\; \chi^2_{m-k},$$ {#eq-gel-wilks}
+where $m$ is the number of moment conditions, $k$ is the number of parameters, and $m - k$ is the number of overidentifying restrictions.
+:::
+
+The two expressions in @eq-gel-wilks are equal by the profile identity @eq-md-profile: the total primal divergence from the reference weights equals minus the profiled GEL objective at the solution. The $\chi^2_{m-k}$ limit parallels Wilks' theorem for parametric likelihood-ratio tests: the degrees of freedom count the overidentifying restrictions, and the statistic is zero under exact identification ($m = k$). This is the GEL counterpart of the Sargan--Hansen $J$-statistic of @sec-w13-gmm.
+
+For EL specifically, $F(\omega) = \omega - 1 - \log\omega$. Setting $\hat\omega_i = n\hat\pi_i$ --- which for EL is the normalization delivered by the probability-constrained primal, so that $\sum_i \hat\omega_i = n$ --- and substituting,
+$$T_{\mathrm{EL}} = 2\sum_{i=1}^n F(\hat\omega_i) = 2\sum_{i=1}^n \bigl(n\hat\pi_i - 1 - \log(n\hat\pi_i)\bigr) = -2\sum_{i=1}^n \log(n\hat\pi_i),$$
+the empirical likelihood ratio statistic of @qin1994empirical. This is $-2$ times the log empirical likelihood ratio of the constrained EL distribution $\{\hat\pi_i\}$ relative to the unconstrained nonparametric maximum at the uniform empirical distribution $\{1/n\}$.
+
+::: {.callout-note icon=false}
+## Remark S13.1: Comparison with the Sargan--Hansen $J$-Statistic
+
+The $J$-statistic of @sec-w13-gmm equals $n\,\bar{U}(\hat\theta)^\top \hat\Sigma^{-1} \bar{U}(\hat\theta)$ and also converges to $\chi^2_{m-k}$ under the null. The two statistics test the same null hypothesis --- all $m$ moment conditions hold simultaneously --- but differ in construction. The $J$-statistic uses the sample mean $\bar{U}(\hat\theta)$ and a separate estimate $\hat\Sigma$, while $T_{\mathrm{GEL}}$ uses the profile divergence at the re-weighted distribution. For CUE, $F(\omega) = (\omega-1)^2/2$, so $T_{\mathrm{CUE}} = \sum_i (\hat\omega_i - 1)^2$, a quadratic form closely related to the $J$-statistic evaluated at the continuously updated weighting matrix. Under the null all GEL statistics share the same $\chi^2_{m-k}$ limit; they differ in local power and higher-order properties.
+:::
+
+::: {.callout-note icon=false}
+## Remark S13.2: CUE Objective Conventions and the Factor of $\tfrac{1}{2}$
+
+The CUE objective in @thm-cue-gel is written without a leading $\tfrac{1}{2}$, while the divergence $F(\omega) = \tfrac{1}{2}(\omega - 1)^2$ in the table of @sec-w13s-cases carries one. These are two different quantities --- the CUE estimator objective minimized over $\theta$, and the per-observation MD divergence $F$ defined as the conjugate of $G$ --- so neither is "the right" one. The factor is harmless for the minimizer $\hat\theta_{\mathrm{CUE}}$ but matters when comparing $T_{\mathrm{CUE}} = 2\sum_i F(\hat\omega_i)$ to the Sargan--Hansen $J$-statistic, which is what motivates the factor of $2$ in $T_{\mathrm{CUE}}$. The convention is fixed throughout: the CUE estimator objective omits the $\tfrac{1}{2}$, the MD divergence $F$ includes it, and the Wilks statistic accounts for the factor explicitly.
+:::
+
+## S13.4 Detailed Special Cases {#sec-w13s-cases}
+
+The conjugate relationship @eq-conjugate determines the MD divergence $F$ from $G$. The table below summarizes the four leading special cases; the derivations follow by solving the first-order condition $\omega - g(v^*) = 0$ for $v^*$ and substituting back into @eq-conjugate.
+
+| Estimator | $G(v)$ | $g(v) = G'(v)$ | $F(\omega)$ | $\sum_i F(\bar\omega_i)$ |
+|---|---|---|---|---|
+| EL | $-\log(1-v)$ | $\dfrac{1}{1-v}$ | $\omega - 1 - \log\omega$ | $-\sum_i \log(n\hat\pi_i)$ |
+| Hellinger | $\dfrac{2v}{2-v}$ | $\dfrac{4}{(2-v)^2}$ | $2(\sqrt{\omega}-1)^2$ | $2n\sum_i\!\bigl(\sqrt{\hat\pi_i}-\tfrac{1}{\sqrt{n}}\bigr)^{2}$ |
+| ET | $e^v - 1$ | $e^{v}$ | $\omega\log\omega - \omega + 1$ | $n\sum_i \hat\pi_i \log(n\hat\pi_i)$ |
+| CUE | $v + \tfrac{1}{2}v^2$ | $1 + v$ | $\tfrac{1}{2}(\omega - 1)^2$ | $\tfrac{n^2}{2}\sum_i (\hat\pi_i - \tfrac{1}{n})^2$ |
+
+: The four main GEL special cases. $G$ is the strictly convex function defining the GEL estimator @eq-gel; $g = G'$ generates the raw weights @eq-raw; $F(\omega) = \sup_{v}\,[\omega v - G(v)]$ is the Legendre--Fenchel conjugate of $G$ and defines the MD primal @eq-md. All four satisfy $G(0)=0$, $g(0)=1$, $F(1)=0$, $f(1)=0$. The last column evaluates the discrepancy at the *normalized* weights $\bar\omega_i = n\hat\pi_i$, so that $\sum_i \bar\omega_i = n$, with $\hat\pi_i$ as in @eq-probs.
+
+Two features of the table require comment. First, the symbol $\bar\omega_i$ is deliberately distinct from the raw weight $\hat\omega_i$ of @eq-raw, which need not sum to $n$; the warning in @sec-w13s-weights applies to reusing these expressions outside this normalization. Second, each entry in the last column is, up to the factor $n$, a familiar discrepancy between $\hat\pi$ and the uniform reference $P_n$, the uniform distribution on $\{1,\ldots,n\}$: EL gives $n\,D_{\mathrm{KL}}(P_n\|\hat\pi)$ (reverse KL), ET gives $n\,D_{\mathrm{KL}}(\hat\pi\|P_n)$ (forward KL), Hellinger gives $4n\,H^2(\hat\pi, P_n)$ under the standard convention $H^2(P,Q) = \tfrac{1}{2}\sum_i(\sqrt{p_i}-\sqrt{q_i})^2$, and CUE gives $\tfrac{n}{2}\,\chi^2(\hat\pi\|P_n)$ under the standard Pearson convention $\chi^2(\hat\pi\|P_n) = \sum_i (\hat\pi_i - 1/n)^2/(1/n)$. EL, Hellinger, ET, and CUE correspond to $\gamma=-1$, $\gamma=-\tfrac{1}{2}$, $\gamma=0$, and $\gamma=1$ in the Cressie--Read family, respectively. The domain of $G$ is $\mathcal{V}=(-\infty,1)$ for EL, $\mathcal{V}=(-\infty,2)$ for Hellinger, and $\mathcal{V}=\mathbb{R}$ for ET and CUE.
+
+These are discrepancies evaluated at the normalized weights $\bar\omega_i = n\hat\pi_i$, not at the general raw GEL weights $\hat\omega_i$. For EL, $\sum_i F(\bar\omega_i) = -\sum_i \log(n\hat\pi_i)$ is $n$ times the Kullback--Leibler divergence *from* the uniform reference $1/n$ *to* the EL probabilities $\hat\pi$ (the reverse KL); equivalently, EL maximizes $\sum_i \log\hat\pi_i$ subject to $\sum_i \hat\pi_i = 1$ and the moment restriction, which is the nonparametric maximum likelihood estimator of the observation probabilities. (For EL the distinction is immaterial at the solution: the EL first-order conditions themselves imply $\sum_i \hat\omega_i = n$, so raw and normalized weights coincide there. That automatic identity does not hold uniformly across GEL members, which is why the general expressions are stated in $\bar\omega_i$.) For ET, $\sum_i F(\bar\omega_i) = n\sum_i \hat\pi_i \log(n\hat\pi_i)$ is $n$ times the KL divergence in the opposite direction (forward KL). For CUE, the divergence is a quadratic distance from the uniform reference $1/n$.
+
+::: {.callout-note icon=false}
+## Remark S13.3: Re-weighting Observations vs. Re-weighting Moments
+
+The convex-conjugate duality highlights a structural contrast between GMM and GEL. GMM re-weights the *moment conditions* via the matrix $\hat\Omega$, assigning more importance to moment conditions that are precisely estimated. MD --- and its GEL dual --- instead re-weights the *observations* relative to the reference vector of ones. For the positive-weight members, after normalization the weights define an empirical distribution, and the procedure may be read as selecting the distribution closest to the uniform empirical distribution in the corresponding $F$-divergence, subject to the moment restrictions. For CUE the raw weights may be signed, so the geometric reading is instead a quadratic perturbation of the reference weight vector, not a probability distribution. The two approaches exploit overidentification through structurally different mechanisms, yet they are asymptotically equivalent to first order.
+:::
+
+## S13.5 Computation {#sec-w13s-computation}
+
+The GEL saddle-point problem @eq-gel is a joint nonlinear optimization in $(\theta, \lambda)$. In practice it is solved by the two-loop scheme of @sec-w13s-profile: the outer loop iterates over $\theta$, calling the inner loop at each step to evaluate $\hat\lambda(\theta)$ from @eq-inner and the gradient of $Q_{\mathrm{MD}}(\theta)$.
+
+::: {.callout-note icon=false}
+## Remark S13.4: Connection to the GEL Saddle-Point
+
+The two-loop MD procedure and the GEL saddle-point are two computational routes to the same estimator. The GEL formulation jointly optimizes $(\theta, \lambda)$ in @eq-gel, while the MD two-loop approach decouples the problem: the inner loop solves a convex minimization in $\lambda$ for fixed $\theta$, and the outer loop minimizes the profiled divergence in $\theta$. The inner-loop solution $\hat\lambda(\theta)$ from @eq-inner is precisely the dual variable appearing in the GEL first-order conditions, and the profile divergence @eq-md-profile is the GEL profile objective.
+:::
+
+Three practical points deserve emphasis.
+
+1. **The inner problem is convex; the outer problem is not.** For fixed $\theta$, @eq-inner is a smooth convex minimization in $\lambda \in \mathbb{R}^m$, and a damped or line-search Newton method typically converges rapidly when started from a feasible interior point. The outer objective $Q_{\mathrm{MD}}(\theta)$ is generally non-convex in $\theta$ even in the linear IV model, so a global optimizer or multiple starting values is advisable. This is most visible for CUE, whose criterion in @thm-cue-gel is a ratio of quadratics.
+2. **Feasibility can fail, and how it fails depends on the member.** For the positive-weight members EL, ET, and Hellinger, the inner supremum is finite only when the origin lies in the relative interior of the convex hull of $\{U_i(\theta)\}$ (the interior proper under full-dimensionality of the sample moments). With small $n$ or many moment conditions this fails for some $\theta$, and implementations must either restrict the search region or use a penalized or "adjusted" version of the criterion. CUE is not subject to this restriction: its signed weights make the inner problem a concave quadratic, well defined whenever $n^{-1}\sum_i U_i(\theta)U_i(\theta)^\top$ is nonsingular.
+3. **Starting values.** Two-stage least squares provides a consistent and cheap starting value for the outer loop; the corresponding starting value for $\lambda$ is $0$, which is always feasible since $0 \in \mathcal{V}$.
+
+Among the three named members of @def-gel-cases, CUE is the most transparent computationally --- the inner supremum has a closed form at fixed $\theta$ --- but its objective is non-convex in $\theta$ and requires a global optimizer. EL is often preferred in practice for its bias properties. It also supports likelihood-ratio-type confidence regions with Wilks calibration (@thm-gel-wilks); under additional smoothness and moment conditions, Bartlett correction and related refinements can improve their coverage accuracy.
+
+## S13.6 Higher-Order Comparisons {#sec-w13s-higher-order}
+
+@neweysmith2004 show that, to higher asymptotic order, GEL estimators have smaller bias than standard two-step GMM in two specific respects.
+
+First, GEL eliminates the bias component that arises from estimating the Jacobian
+$$\E\bigl[\partial U_i(\theta_0)/\partial\theta^\top\bigr].$$
+This is an important source of finite-sample bias in overidentified IV models. It appears in GMM because the gradient term in the first-order conditions is estimated by a simple sample average rather than by an efficiently weighted one. The inner saddle-point over $\lambda$ in GEL implicitly uses an efficient estimator of the Jacobian, so this component vanishes.
+
+Second, EL additionally eliminates the bias from estimating the weighting matrix $\Sigma$, because EL uses the re-weighted probabilities $\hat\pi_i$ as an efficient estimate of the second moment. Under symmetric disturbances --- a condition satisfied in many IV settings --- these bias reductions extend to the full GEL family.
+
+::: {.callout-warning icon=false}
+## What the Higher-Order Results Do and Do Not Say
+
+These are statements about *particular components* of a higher-order expansion, obtained under smoothness and moment conditions beyond those needed for @thm-gel-asymp, and with the number of moment conditions held fixed. They do not establish a uniform finite-sample ranking of GEL over two-step GMM, and they say nothing about behavior under weak identification, where the expansions themselves are not valid. In particular, EL's bias advantage in overidentified models is often accompanied by higher variance and by the feasibility failures described in @sec-w13s-computation, so the mean-squared error comparison is design-specific. The practical conclusion is that GEL estimators can be attractive in overidentified IV models with moderate sample sizes and several overidentifying restrictions, where the Jacobian bias component is a real concern --- the number of moments being held fixed in the asymptotic approximation. This conclusion should not be extrapolated to many-instrument sequences in which the number of moments grows with $n$, and it does not say that GEL dominates GMM.
+:::
+
+## S13.7 Optional Problems {#sec-w13s-problems}
+
+**S1. GEL first-order conditions and the empirical probabilities.** For empirical likelihood (EL), $G(v) = -\log(1 - v)$ on $\mathcal{V} = (-\infty, 1)$, so that $g(v) = G'(v) = (1-v)^{-1}$ satisfies the GEL normalization $g(0) = 1$.
+
+(a) At fixed $\theta$, the inner problem in @eq-gel maximizes $-n^{-1}\sum_i G(\lambda^\top U_i(\theta))$ over $\lambda$; its first-order condition is equivalently obtained by minimizing $n^{-1}\sum_i G(\lambda^\top U_i(\theta))$. Write this condition, $\partial/\partial\lambda\,[\,n^{-1}\sum_i G(\lambda^\top U_i(\theta))] = 0$, and show that it implies $\sum_{i=1}^n \hat\pi_i U_i(\theta) = 0$, where $\hat\pi_i \propto (1 - \hat\lambda^\top U_i(\theta))^{-1}$.
+(b) Verify that the normalization in @eq-probs is consistent with $g(v) = (1-v)^{-1}$, and explain why the conclusion of part (a) is unaffected by whether one uses the raw weights $\hat\omega_i$ or the normalized $\hat\pi_i$, even though the value of the discrepancy objective is affected.
+
+**S2. The exactly identified case.** In the exactly identified case ($m = k$), assume in addition that $n^{-1}\sum_i U_i(\hat\theta)U_i(\hat\theta)^\top \succ 0$, so that the inner problem is strictly concave in $\lambda$ near the solution. Show that $\hat\lambda = 0$ is then the unique solution of the inner problem at any GEL solution $\hat\theta$. Conclude that every GEL estimator coincides with the just-identified GMM estimator, and that the empirical probabilities @eq-probs all equal $1/n$. (*Hint*: in the exactly identified case $\bar{U}(\hat\theta) = 0$ exactly; $\lambda = 0$ solves the inner first-order condition, and the rank condition rules out other solutions. Verify that the corresponding primal weights from the conjugate relationship @eq-conjugate all equal the reference value $\hat\omega_i = g(0) = 1$.) Relate the conclusion to @thm-gel-wilks: what is $T_{\mathrm{GEL}}$ when $m = k$?
+
+**S3. Deriving a conjugate pair.** For exponential tilting, $G(v) = e^v - 1$ on $\mathcal{V} = \mathbb{R}$.
+
+(a) Verify the normalization @eq-gel-norm.
+(b) Compute the Legendre--Fenchel conjugate @eq-conjugate directly and confirm the entry $F(\omega) = \omega\log\omega - \omega + 1$ of the table in @sec-w13s-cases.
+(c) Confirm $F(1) = 0$ and $f(1) = 0$, and identify which of the three normalizations in @eq-gel-norm each of these two facts depends on.
+
+**S4. Why normalization is not innocuous.** Let $\hat\omega_i > 0$ be raw EL weights with $c = n^{-1}\sum_i \hat\omega_i \neq 1$, and let $\hat\pi_i = \hat\omega_i/(nc)$ be the normalized weights, so that $n\hat\pi_i = \hat\omega_i/c$.
+
+(a) Show that $\sum_i \hat\pi_i U_i(\hat\theta) = 0$ follows from $\sum_i \hat\omega_i U_i(\hat\theta) = 0$.
+(b) With $F(\omega) = \omega - 1 - \log\omega$, compute $\sum_i F(n\hat\pi_i) - \sum_i F(\hat\omega_i)$ explicitly and show that it is not zero in general. Explain, in one sentence, what goes wrong if the profile identity @eq-md-profile is applied to the normalized weights without adjustment.

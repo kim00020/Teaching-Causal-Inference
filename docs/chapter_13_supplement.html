@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./appendix_A.html" rel="next">
+<link href="./chapter_13.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_13_supplement.html">Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Graphical Identification and the Do-Calculus</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Identification</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09_supplement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Estimation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Cross-Fitting and Double Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation for Instrumental Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13_supplement.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability and Efficient Influence Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-w13s-duality" id="toc-sec-w13s-duality" class="nav-link active" data-scroll-target="#sec-w13s-duality">S13.1 Convex-Conjugate Duality</a>
+  <ul class="collapse">
+  <li><a href="#the-primal-minimum-discrepancy-estimation" id="toc-the-primal-minimum-discrepancy-estimation" class="nav-link" data-scroll-target="#the-primal-minimum-discrepancy-estimation">The Primal: Minimum-Discrepancy Estimation</a></li>
+  <li><a href="#the-conjugate-relationship" id="toc-the-conjugate-relationship" class="nav-link" data-scroll-target="#the-conjugate-relationship">The Conjugate Relationship</a></li>
+  <li><a href="#the-duality-theorem" id="toc-the-duality-theorem" class="nav-link" data-scroll-target="#the-duality-theorem">The Duality Theorem</a></li>
+  </ul></li>
+  <li><a href="#sec-w13s-profile" id="toc-sec-w13s-profile" class="nav-link" data-scroll-target="#sec-w13s-profile">S13.2 Minimum-Discrepancy Formulations and the Profile Identity</a></li>
+  <li><a href="#sec-w13s-weights" id="toc-sec-w13s-weights" class="nav-link" data-scroll-target="#sec-w13s-weights">S13.3 Raw Dual Weights, Normalized Probabilities, and the Overidentification Statistic</a>
+  <ul class="collapse">
+  <li><a href="#the-gel-overidentification-statistic" id="toc-the-gel-overidentification-statistic" class="nav-link" data-scroll-target="#the-gel-overidentification-statistic">The GEL Overidentification Statistic</a></li>
+  </ul></li>
+  <li><a href="#sec-w13s-cases" id="toc-sec-w13s-cases" class="nav-link" data-scroll-target="#sec-w13s-cases">S13.4 Detailed Special Cases</a></li>
+  <li><a href="#sec-w13s-computation" id="toc-sec-w13s-computation" class="nav-link" data-scroll-target="#sec-w13s-computation">S13.5 Computation</a></li>
+  <li><a href="#sec-w13s-higher-order" id="toc-sec-w13s-higher-order" class="nav-link" data-scroll-target="#sec-w13s-higher-order">S13.6 Higher-Order Comparisons</a></li>
+  <li><a href="#sec-w13s-problems" id="toc-sec-w13s-problems" class="nav-link" data-scroll-target="#sec-w13s-problems">S13.7 Optional Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./chapter_10.html">Estimation</a></li><li class="breadcrumb-item"><a href="./chapter_13_supplement.html">Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-w13s" class="quarto-section-identifier">Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This supplement collects the material referenced as optional in <a href="chapter_13.html#sec-w13-gel" class="quarto-xref"><span>Generalized Empirical Likelihood</span></a>: the convex-conjugate duality between the GEL saddle-point problem and a minimum-discrepancy primal problem, the distinction between raw dual weights and normalized probabilities, the full table of generating functions and their conjugates, the two-loop computational algorithm, higher-order comparisons with two-step GMM, and additional problems. References of the form <a href="chapter_13.html#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.17</span></a> or <a href="chapter_13.html#sec-w13-gel" class="quarto-xref"><span>Generalized Empirical Likelihood</span></a> point back into the main chapter, and the notation is that of <a href="chapter_13.html#sec-w13-gel-def" class="quarto-xref"><span>GEL as a One-Step Moment Estimator</span></a>: <span class="math inline">\(U_i(\theta) = W_i(Y_i - D_i^\top\theta)\)</span>, <span class="math inline">\(\bar{U}(\theta) = n^{-1}\sum_i U_i(\theta)\)</span>, <span class="math inline">\(G\)</span> is the strictly convex generating function with <span class="math inline">\(g = G'\)</span>, and <span class="math inline">\(\Lambda_n(\theta) = \{\lambda : \lambda^\top U_i(\theta) \in \mathcal{V}\ \text{for all } i\}\)</span>.</p>
+<section id="sec-w13s-duality" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w13s-duality">S13.1 Convex-Conjugate Duality</h2>
+<p>The GEL saddle-point problem <a href="chapter_13.html#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.17</span></a> is the Lagrangian dual of a natural primal problem that re-weights observations rather than moments. The bridge between the two is the Legendre–Fenchel conjugate of <span class="math inline">\(G\)</span>.</p>
+<section id="the-primal-minimum-discrepancy-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="the-primal-minimum-discrepancy-estimation">The Primal: Minimum-Discrepancy Estimation</h3>
+<p>The <em>minimum-discrepancy</em> (MD) estimator minimizes a convex divergence between a vector of observation weights <span class="math inline">\(\boldsymbol\omega = (\omega_1, \ldots, \omega_n)\)</span> and the reference weight <span class="math inline">\(\omega_i = 1\)</span> (one unit of mass per observation), subject to the sample moment condition being exactly satisfied: <span id="eq-md"><span class="math display">\[\hat\theta_{\mathrm{MD}} = \arg\min_{\theta,\;\omega_i \in \mathcal{W}}\;\sum_{i=1}^n F(\omega_i) \quad \text{subject to} \quad \sum_{i=1}^n \omega_i U_i(\theta) = 0, \tag{1}\]</span></span> where <span class="math inline">\(F\)</span> is a strictly convex function with minimum at <span class="math inline">\(\omega = 1\)</span>. The domain of <span class="math inline">\(F\)</span> is member-specific and must be carried along explicitly. Write <span class="math display">\[\mathcal{W} = \operatorname{int}\operatorname{dom} F,\]</span> so that the primal optimization is taken over <span class="math inline">\(\omega_i \in \mathcal{W}\)</span>. For EL, ET, and Hellinger, <span class="math inline">\(\mathcal{W} = (0,\infty)\)</span>; for CUE, <span class="math inline">\(F(\omega) = \tfrac{1}{2}(\omega-1)^2\)</span> is finite on the whole line and <span class="math inline">\(\mathcal{W} = \mathbb{R}\)</span>, so CUE weights may be negative. This distinction propagates through <a href="#eq-md" class="quarto-xref">Equation&nbsp;<span>1</span></a>, <span class="quarto-unresolved-ref">?thm-gel-md</span>, and the feasibility discussion below, and it is the reason the convex-hull condition stated later cannot be applied uniformly across members.</p>
+<p>The problem asks: what is the re-weighting of observations, closest to the uniform reference <span class="math inline">\(\omega_i = 1\)</span> in the <span class="math inline">\(F\)</span>-divergence sense, that exactly satisfies the moment restriction?</p>
+<p>Note that <a href="#eq-md" class="quarto-xref">Equation&nbsp;<span>1</span></a> imposes <em>no</em> constraint <span class="math inline">\(\sum_i \omega_i = n\)</span>. This is a modeling choice with consequences that are developed in <a href="#sec-w13s-weights" class="quarto-xref"><span>S13.3 Raw Dual Weights, Normalized Probabilities, and the Overidentification Statistic</span></a>; it is made here because it produces a duality in the single dual variable <span class="math inline">\(\lambda\)</span>, whereas imposing the normalization explicitly introduces a second Lagrange multiplier.</p>
+</section>
+<section id="the-conjugate-relationship" class="level3">
+<h3 class="anchored" data-anchor-id="the-conjugate-relationship">The Conjugate Relationship</h3>
+<p>The key structural fact is that the MD divergence <span class="math inline">\(F\)</span> and the GEL generating function <span class="math inline">\(G\)</span> are related through the Legendre–Fenchel conjugate. Define <span id="eq-conjugate"><span class="math display">\[F(\omega) = \sup_{v \in \mathcal{V}}\,\bigl[\,\omega v - G(v)\bigr], \tag{2}\]</span></span> the Legendre–Fenchel conjugate of <span class="math inline">\(G\)</span>. Under the Legendre-type assumptions of <span class="quarto-unresolved-ref">?thm-gel-md</span> below (properness, closedness, strict convexity, differentiability, and essential smoothness of <span class="math inline">\(G\)</span>), the conjugate <span class="math inline">\(F = G^\ast\)</span> is essentially strictly convex and differentiable on <span class="math inline">\(\operatorname{int}\operatorname{dom} F\)</span>, with the inverse-gradient relation <span class="math inline">\(F' = (G')^{-1}\)</span>; strict convexity of <span class="math inline">\(G\)</span> alone would not deliver these differentiability properties. The normalization <a href="chapter_13.html#eq-gel-norm" class="quarto-xref">Equation&nbsp;<span>13.18</span></a> determines the behavior of <span class="math inline">\(F\)</span> at the reference point <span class="math inline">\(\omega = 1\)</span>: the supremum in <a href="#eq-conjugate" class="quarto-xref">Equation&nbsp;<span>2</span></a> is attained at <span class="math inline">\(v^* = 0\)</span> (since the first-order condition gives <span class="math inline">\(\omega = g(v^*)\)</span>, so <span class="math inline">\(\omega = 1 \Rightarrow v^* = 0\)</span>), yielding <span id="eq-F-norm"><span class="math display">\[F(1) = 1 \cdot 0 - G(0) = 0, \qquad f(1) = v^*(1) = 0, \tag{3}\]</span></span> where <span class="math inline">\(f = F'\)</span> and the second equality uses the envelope theorem. The location of the minimizer follows entirely from <span class="math inline">\(g(0) = 1\)</span>: the first-order condition <span class="math inline">\(\omega = g(v^*)\)</span> gives <span class="math inline">\(v^* = 0\)</span> at <span class="math inline">\(\omega = 1\)</span>, and hence <span class="math inline">\(f(1) = 0\)</span>, regardless of the value of <span class="math inline">\(G(0)\)</span>. The condition <span class="math inline">\(G(0) = 0\)</span> has no bearing on which <span class="math inline">\(\omega\)</span> minimizes <span class="math inline">\(F\)</span>; it normalizes the <em>level</em> of <span class="math inline">\(F\)</span> so that <span class="math inline">\(F(1) = 0\)</span>, making the divergence interpretable as a non-negative cost with zero cost at the reference weight <span class="math inline">\(\omega_i = 1\)</span>.</p>
+</section>
+<section id="the-duality-theorem" class="level3">
+<h3 class="anchored" data-anchor-id="the-duality-theorem">The Duality Theorem</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem S13.1: Fixed-<span class="math inline">\(\theta\)</span> Fenchel Duality
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(G\)</span> be proper, closed, strictly convex, differentiable, and essentially smooth on the open interval <span class="math inline">\(\mathcal{V} \ni 0\)</span>, and satisfy the normalization <a href="chapter_13.html#eq-gel-norm" class="quarto-xref">Equation&nbsp;<span>13.18</span></a>. Let <span class="math inline">\(F = G^\ast\)</span> be its Legendre–Fenchel conjugate <a href="#eq-conjugate" class="quarto-xref">Equation&nbsp;<span>2</span></a>, with <span class="math inline">\(\mathcal{W} = \operatorname{int}\operatorname{dom} F\)</span>. Fix <span class="math inline">\(\theta\)</span>, and suppose the primal problem <span class="math display">\[\inf_{\omega_i \in \mathcal{W}}\Bigl\{\sum_{i=1}^n F(\omega_i) : \sum_{i=1}^n \omega_i U_i(\theta) = 0\Bigr\}\]</span> has a relative-interior feasible point and that the primal and dual optima are attained. Then strong duality holds: <span class="math display">\[\inf_{\omega}\sum_{i=1}^n F(\omega_i) = \sup_{\lambda \in \Lambda_n(\theta)}\Bigl\{-\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr)\Bigr\},\]</span> and the optimal weights satisfy <span class="math display">\[\hat\omega_i(\theta) = g\!\bigl(\hat\lambda(\theta)^\top U_i(\theta)\bigr), \qquad f(\hat\omega_i(\theta)) = \hat\lambda(\theta)^\top U_i(\theta).\]</span> If in addition the outer optima over <span class="math inline">\(\theta\)</span> are attained, then minimizing the common profiled value over <span class="math inline">\(\theta\)</span> yields the same set of estimators, so <span class="math inline">\(\hat\theta_{\mathrm{GEL}} = \hat\theta_{\mathrm{MD}}\)</span>.</p>
+</div>
+</div>
+<p>Two points about the hypotheses deserve emphasis, because weaker statements circulate.</p>
+<p>First, the normalization <a href="chapter_13.html#eq-gel-norm" class="quarto-xref">Equation&nbsp;<span>13.18</span></a> is nowhere near sufficient on its own. Properness, closedness, essential smoothness, differentiability with invertible gradient on the relevant interior, primal feasibility with a relative-interior point, and attainment of the optima all do real work. Nor does strict convexity of <span class="math inline">\(G\)</span> by itself deliver every property of <span class="math inline">\(F\)</span> used later: it gives strict convexity of the conjugate on the appropriate domain, but the differentiability and inverse-gradient identity <span class="math inline">\(f^{-1} = g\)</span> require the essential-smoothness and Legendre-type conditions.</p>
+<p>Second, the estimator-level conclusion is obtained from equality of the <em>globally profiled objective values</em> under strong duality, not from the observation that first-order conditions coincide. The outer problem in <span class="math inline">\(\theta\)</span> is generally nonconvex, so matching stationarity conditions would establish only that the two procedures share critical points.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Feasibility Is Member-Specific
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Slater-type condition is often summarized as “the origin must lie in the relative interior of the convex hull of <span class="math inline">\(\{U_i(\theta)\}\)</span>” (the interior proper if the sample moments span <span class="math inline">\(\mathbb{R}^m\)</span>). That is the correct condition for the <em>positive-weight</em> members EL, ET, and Hellinger, for which <span class="math inline">\(\mathcal{W} = (0,\infty)\)</span>, and it can fail when <span class="math inline">\(n\)</span> is small relative to the number of moment conditions. It is <em>not</em> the condition for CUE. Because <span class="math inline">\(\mathcal{W} = \mathbb{R}\)</span> there, CUE admits signed weights and its inner problem is a concave quadratic in <span class="math inline">\(\lambda\)</span>; it is well defined whenever the sample second-moment matrix <span class="math inline">\(n^{-1}\sum_i U_i(\theta)U_i(\theta)^\top\)</span> is nonsingular, with no convex-hull requirement at all.</p>
+</div>
+</div>
+<p>A note on the relation of <span class="quarto-unresolved-ref">?thm-gel-md</span> to the literature. <span class="citation" data-cites="neweysmith2004">Newey and Smith (<a href="#ref-neweysmith2004" role="doc-biblioref">2004</a>)</span> develop the minimum-discrepancy representation for the <em>Cressie–Read family</em> <span class="citation" data-cites="cressieread1984">(<a href="#ref-cressieread1984" role="doc-biblioref">Cressie and Read 1984</a>)</span>, with explicitly normalized probability weights; in that family <span class="math inline">\(G(v) = (1+\gamma v)^{(\gamma+1)/\gamma}/(\gamma+1) - 1/(\gamma+1)\)</span> and <span class="math inline">\(F(\omega) = [(\omega)^{\gamma+1} - 1 - (\gamma+1)(\omega-1)]/[\gamma(\gamma+1)]\)</span>, with EL, ET, and CUE at <span class="math inline">\(\gamma = -1\)</span>, <span class="math inline">\(\gamma = 0\)</span>, and <span class="math inline">\(\gamma = 1\)</span>. <span class="citation" data-cites="ragusa2011">Ragusa (<a href="#ref-ragusa2011" role="doc-biblioref">2011</a>)</span> studies the broader relationship between minimum-divergence and GEL formulations, and shows that the standard tractable probability-constrained MD problem corresponds to GEL only for an appropriate subclass of divergences — the correspondence is not free of charge outside that subclass. The <em>unnormalized</em> primal <a href="#eq-md" class="quarto-xref">Equation&nbsp;<span>1</span></a> used here is neither of these: it is introduced directly through Legendre–Fenchel duality, and under the regularity, relative-interior feasibility, attainment, and strong-duality conditions of <span class="quarto-unresolved-ref">?thm-gel-md</span> it is dual to the GEL inner problem for the specified conjugate pair <span class="math inline">\((G, F)\)</span>.</p>
+</section>
+</section>
+<section id="sec-w13s-profile" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w13s-profile">S13.2 Minimum-Discrepancy Formulations and the Profile Identity</h2>
+<p>Although the MD problem <a href="#eq-md" class="quarto-xref">Equation&nbsp;<span>1</span></a> jointly optimizes over <span class="math inline">\((\theta, \omega_1,\ldots,\omega_n)\)</span>, it can be solved by a two-loop profile procedure that exploits the convexity of <span class="math inline">\(F\)</span> in the weights.</p>
+<p><strong>Inner loop: profile weights at fixed <span class="math inline">\(\theta\)</span>.</strong> For a given <span class="math inline">\(\theta\)</span>, the minimization over <span class="math inline">\((\omega_1,\ldots,\omega_n)\)</span> subject to <span class="math inline">\(\sum_i \omega_i U_i(\theta) = 0\)</span> is a convex program. Its Lagrangian is <span class="math display">\[L(\omega, \lambda) = \sum_{i=1}^n F(\omega_i) - \lambda^\top \sum_{i=1}^n \omega_i U_i(\theta),\]</span> and the first-order condition <span class="math inline">\(f(\omega_i) = \lambda^\top U_i(\theta)\)</span> gives the profile weight <span class="math display">\[\hat\omega_i(\theta) = f^{-1}\!\bigl(\lambda^\top U_i(\theta)\bigr) = g\!\bigl(\lambda^\top U_i(\theta)\bigr),\]</span> where the last equality uses the conjugate identity <span class="math inline">\(f^{-1} = g\)</span>. Substituting into the moment constraint <span class="math inline">\(\sum_i \hat\omega_i(\theta) U_i(\theta) = 0\)</span> determines the Lagrange multiplier <span class="math inline">\(\hat\lambda(\theta)\)</span> as the solution to <span id="eq-inner"><span class="math display">\[\hat\lambda(\theta) = \arg\min_{\lambda \in \Lambda_n(\theta)}\;\frac{1}{n}\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr). \tag{4}\]</span></span> This inner minimization is a convex optimization in <span class="math inline">\(\lambda\)</span> alone and a damped or line-search Newton method often converges rapidly for each fixed <span class="math inline">\(\theta\)</span> when initialized in the feasible interior.</p>
+<p><strong>Profile divergence.</strong> Once <span class="math inline">\(\hat\omega_i(\theta) = g(\hat\lambda(\theta)^\top U_i(\theta))\)</span> is substituted back into the MD objective, the Fenchel–Young equality <span class="math inline">\(F(\omega) = \omega f(\omega) - G(f(\omega))\)</span> and the moment constraint <span class="math inline">\(\sum_i \hat\omega_i(\theta) U_i(\theta) = 0\)</span> together give <span id="eq-md-profile"><span class="math display">\[Q_{\mathrm{MD}}(\theta) \;\equiv\; \sum_{i=1}^n F\!\bigl(\hat\omega_i(\theta)\bigr) = -\sum_{i=1}^n G\!\bigl(\hat\lambda(\theta)^\top U_i(\theta)\bigr). \tag{5}\]</span></span> The profiled divergence therefore reduces to a function of <span class="math inline">\(\theta\)</span> alone, evaluated at the inner-loop solution.</p>
+<p><strong>Outer loop: minimize over <span class="math inline">\(\theta\)</span>.</strong> The MD estimator is <span class="math display">\[\hat\theta_{\mathrm{MD}} = \arg\min_{\theta}\; Q_{\mathrm{MD}}(\theta) = \arg\max_{\theta}\;\min_{\lambda \in \Lambda_n(\theta)}\;\frac{1}{n}\sum_{i=1}^n G\!\bigl(\lambda^\top U_i(\theta)\bigr),\]</span> where the second equality follows from <a href="#eq-md-profile" class="quarto-xref">Equation&nbsp;<span>5</span></a>. This is exactly the GEL saddle-point problem <a href="chapter_13.html#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.17</span></a> written as a max–min, confirming at the algorithmic level that the two procedures find the same estimator.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The Profile Identity Holds for the Raw Weights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The identity <a href="#eq-md-profile" class="quarto-xref">Equation&nbsp;<span>5</span></a> is stated for the <em>unnormalized</em> weights <span class="math inline">\(\hat\omega_i(\theta) = g(\hat\lambda(\theta)^\top U_i(\theta))\)</span> produced by the unconstrained primal <a href="#eq-md" class="quarto-xref">Equation&nbsp;<span>1</span></a>. It is not, without modification, an identity for the normalized probabilities of <a href="#sec-w13s-weights" class="quarto-xref"><span>S13.3 Raw Dual Weights, Normalized Probabilities, and the Overidentification Statistic</span></a>. See the warning there before reusing it.</p>
+</div>
+</div>
+</section>
+<section id="sec-w13s-weights" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w13s-weights">S13.3 Raw Dual Weights, Normalized Probabilities, and the Overidentification Statistic</h2>
+<p>Three objects circulate in this literature under similar names, and conflating them is the most common technical error in accounts of GEL. They are:</p>
+<ol type="1">
+<li><p>the <strong>raw dual weights</strong> <span id="eq-raw"><span class="math display">\[\hat\omega_i = g\!\bigl(\hat\lambda^\top U_i(\hat\theta)\bigr), \tag{6}\]</span></span> which solve the unconstrained primal <a href="#eq-md" class="quarto-xref">Equation&nbsp;<span>1</span></a> and satisfy <span class="math inline">\(\sum_i \hat\omega_i U_i(\hat\theta) = 0\)</span> but in general satisfy <span class="math inline">\(\sum_i \hat\omega_i \neq n\)</span>;</p></li>
+<li><p>the <strong>normalized weights</strong> <span id="eq-probs"><span class="math display">\[\hat\pi_i = \frac{\hat\omega_i}{\sum_{j=1}^n \hat\omega_j} = \frac{g\!\left(\hat\lambda^\top U_i(\hat\theta)\right)}{\displaystyle\sum_{j=1}^n g\!\left(\hat\lambda^\top U_j(\hat\theta)\right)}, \qquad i = 1,\ldots,n, \tag{7}\]</span></span> which are defined only when the denominator <span class="math inline">\(\sum_j \hat\omega_j\)</span> is nonzero — automatic for the positive-weight members, an assumption for CUE, whose signed raw weights could in principle sum to zero. When defined they satisfy <span class="math inline">\(\sum_i \hat\pi_i = 1\)</span> and, because normalization is by a common nonzero scalar, also <span class="math inline">\(\sum_i \hat\pi_i U_i(\hat\theta) = 0\)</span>;</p></li>
+<li><p>the <strong>probability-constrained MD weights</strong>, obtained from a primal problem that imposes <span class="math inline">\(\sum_i \pi_i = 1\)</span> explicitly as a second constraint, with its own Lagrange multiplier.</p></li>
+</ol>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Normalization Preserves the Moment Equation but Changes the Objective
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Rescaling by a common positive constant leaves the weighted moment equation <span class="math inline">\(\sum_i \hat\pi_i U_i(\hat\theta) = 0\)</span> intact, because the right-hand side is zero. It does <em>not</em> leave the discrepancy objective intact: <span class="math inline">\(\sum_i F(\hat\pi_i \cdot c)\)</span> is not <span class="math inline">\(\sum_i F(\hat\omega_i)\)</span> up to an additive constant for general <span class="math inline">\(F\)</span>. Consequently the exact profile identity <a href="#eq-md-profile" class="quarto-xref">Equation&nbsp;<span>5</span></a>, which is derived for the raw weights, should not be reused with normalized weights unless the corresponding normalization multiplier and the resulting objective adjustment are carried along explicitly. Objects (2) and (3) above coincide at the solution for the Cressie–Read members under the standard normalization, but the reasoning that establishes this must be supplied, not assumed.</p>
+</div>
+</div>
+<p>For EL, ET, and Hellinger, the function <span class="math inline">\(g\)</span> is strictly positive on the relevant domain <span class="math inline">\(\mathcal{V}\)</span>, so the raw weights are all strictly positive and the normalized <span class="math inline">\(\hat\pi_i\)</span> in <a href="#eq-probs" class="quarto-xref">Equation&nbsp;<span>7</span></a> are genuine probability weights.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Empirical Probabilities and CUE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For CUE, <span class="math inline">\(g(v) = 1 + v\)</span> can be negative when <span class="math inline">\(\hat\lambda^\top U_i(\hat\theta) &lt; -1\)</span>, in which case some <span class="math inline">\(\hat\omega_i\)</span> are negative and the normalized <span class="math inline">\(\hat\pi_i\)</span> form a signed <em>weight vector</em>, not a probability distribution on <span class="math inline">\(\{1,\ldots,n\}\)</span>. Whenever raw or CUE weights are under discussion, “weight vector” is the accurate term and “empirical distribution” should be avoided, unless an explicit positivity constraint <span class="math inline">\(\hat\omega_i &gt; 0\)</span> is imposed. This is one reason CUE is sometimes treated as a GMM-type estimator with a one-step weight-update interpretation rather than as a pure empirical-likelihood method.</p>
+</div>
+</div>
+<section id="the-gel-overidentification-statistic" class="level3">
+<h3 class="anchored" data-anchor-id="the-gel-overidentification-statistic">The GEL Overidentification Statistic</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Theorem S13.2: Wilks’ Theorem for GEL <span class="citation" data-cites="neweysmith2004">(<a href="#ref-neweysmith2004" role="doc-biblioref">Newey and Smith 2004</a>)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the first-order conditions of <span class="quarto-unresolved-ref">?thm-gel-asymp</span>, together with the additional smoothness, moment, interiority, and profile regularity conditions required for the GEL profile statistic (first-order estimator equivalence alone is not sufficient), the GEL profile divergence evaluated at the estimator satisfies <span id="eq-gel-wilks"><span class="math display">\[T_{\mathrm{GEL}} \;\equiv\; 2\sum_{i=1}^n F\!\bigl(\hat\omega_i\bigr) \;=\; -2\sum_{i=1}^n G\!\bigl(\hat\lambda^\top U_i(\hat\theta_{\mathrm{GEL}})\bigr) \;\xrightarrow{d}\; \chi^2_{m-k}, \tag{8}\]</span></span> where <span class="math inline">\(m\)</span> is the number of moment conditions, <span class="math inline">\(k\)</span> is the number of parameters, and <span class="math inline">\(m - k\)</span> is the number of overidentifying restrictions.</p>
+</div>
+</div>
+<p>The two expressions in <a href="#eq-gel-wilks" class="quarto-xref">Equation&nbsp;<span>8</span></a> are equal by the profile identity <a href="#eq-md-profile" class="quarto-xref">Equation&nbsp;<span>5</span></a>: the total primal divergence from the reference weights equals minus the profiled GEL objective at the solution. The <span class="math inline">\(\chi^2_{m-k}\)</span> limit parallels Wilks’ theorem for parametric likelihood-ratio tests: the degrees of freedom count the overidentifying restrictions, and the statistic is zero under exact identification (<span class="math inline">\(m = k\)</span>). This is the GEL counterpart of the Sargan–Hansen <span class="math inline">\(J\)</span>-statistic of <a href="chapter_13.html#sec-w13-gmm" class="quarto-xref"><span>The Moment-Condition View and GMM</span></a>.</p>
+<p>For EL specifically, <span class="math inline">\(F(\omega) = \omega - 1 - \log\omega\)</span>. Setting <span class="math inline">\(\hat\omega_i = n\hat\pi_i\)</span> — which for EL is the normalization delivered by the probability-constrained primal, so that <span class="math inline">\(\sum_i \hat\omega_i = n\)</span> — and substituting, <span class="math display">\[T_{\mathrm{EL}} = 2\sum_{i=1}^n F(\hat\omega_i) = 2\sum_{i=1}^n \bigl(n\hat\pi_i - 1 - \log(n\hat\pi_i)\bigr) = -2\sum_{i=1}^n \log(n\hat\pi_i),\]</span> the empirical likelihood ratio statistic of <span class="citation" data-cites="qin1994empirical">Qin and Lawless (<a href="#ref-qin1994empirical" role="doc-biblioref">1994</a>)</span>. This is <span class="math inline">\(-2\)</span> times the log empirical likelihood ratio of the constrained EL distribution <span class="math inline">\(\{\hat\pi_i\}\)</span> relative to the unconstrained nonparametric maximum at the uniform empirical distribution <span class="math inline">\(\{1/n\}\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark S13.1: Comparison with the Sargan–Hansen <span class="math inline">\(J\)</span>-Statistic
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <span class="math inline">\(J\)</span>-statistic of <a href="chapter_13.html#sec-w13-gmm" class="quarto-xref"><span>The Moment-Condition View and GMM</span></a> equals <span class="math inline">\(n\,\bar{U}(\hat\theta)^\top \hat\Sigma^{-1} \bar{U}(\hat\theta)\)</span> and also converges to <span class="math inline">\(\chi^2_{m-k}\)</span> under the null. The two statistics test the same null hypothesis — all <span class="math inline">\(m\)</span> moment conditions hold simultaneously — but differ in construction. The <span class="math inline">\(J\)</span>-statistic uses the sample mean <span class="math inline">\(\bar{U}(\hat\theta)\)</span> and a separate estimate <span class="math inline">\(\hat\Sigma\)</span>, while <span class="math inline">\(T_{\mathrm{GEL}}\)</span> uses the profile divergence at the re-weighted distribution. For CUE, <span class="math inline">\(F(\omega) = (\omega-1)^2/2\)</span>, so <span class="math inline">\(T_{\mathrm{CUE}} = \sum_i (\hat\omega_i - 1)^2\)</span>, a quadratic form closely related to the <span class="math inline">\(J\)</span>-statistic evaluated at the continuously updated weighting matrix. Under the null all GEL statistics share the same <span class="math inline">\(\chi^2_{m-k}\)</span> limit; they differ in local power and higher-order properties.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark S13.2: CUE Objective Conventions and the Factor of <span class="math inline">\(\tfrac{1}{2}\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The CUE objective in <span class="quarto-unresolved-ref">?thm-cue-gel</span> is written without a leading <span class="math inline">\(\tfrac{1}{2}\)</span>, while the divergence <span class="math inline">\(F(\omega) = \tfrac{1}{2}(\omega - 1)^2\)</span> in the table of <a href="#sec-w13s-cases" class="quarto-xref"><span>S13.4 Detailed Special Cases</span></a> carries one. These are two different quantities — the CUE estimator objective minimized over <span class="math inline">\(\theta\)</span>, and the per-observation MD divergence <span class="math inline">\(F\)</span> defined as the conjugate of <span class="math inline">\(G\)</span> — so neither is “the right” one. The factor is harmless for the minimizer <span class="math inline">\(\hat\theta_{\mathrm{CUE}}\)</span> but matters when comparing <span class="math inline">\(T_{\mathrm{CUE}} = 2\sum_i F(\hat\omega_i)\)</span> to the Sargan–Hansen <span class="math inline">\(J\)</span>-statistic, which is what motivates the factor of <span class="math inline">\(2\)</span> in <span class="math inline">\(T_{\mathrm{CUE}}\)</span>. The convention is fixed throughout: the CUE estimator objective omits the <span class="math inline">\(\tfrac{1}{2}\)</span>, the MD divergence <span class="math inline">\(F\)</span> includes it, and the Wilks statistic accounts for the factor explicitly.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-w13s-cases" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w13s-cases">S13.4 Detailed Special Cases</h2>
+<p>The conjugate relationship <a href="#eq-conjugate" class="quarto-xref">Equation&nbsp;<span>2</span></a> determines the MD divergence <span class="math inline">\(F\)</span> from <span class="math inline">\(G\)</span>. The table below summarizes the four leading special cases; the derivations follow by solving the first-order condition <span class="math inline">\(\omega - g(v^*) = 0\)</span> for <span class="math inline">\(v^*\)</span> and substituting back into <a href="#eq-conjugate" class="quarto-xref">Equation&nbsp;<span>2</span></a>.</p>
+<table class="caption-top table">
+<caption>The four main GEL special cases. <span class="math inline">\(G\)</span> is the strictly convex function defining the GEL estimator <a href="chapter_13.html#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.17</span></a>; <span class="math inline">\(g = G'\)</span> generates the raw weights <a href="#eq-raw" class="quarto-xref">Equation&nbsp;<span>6</span></a>; <span class="math inline">\(F(\omega) = \sup_{v}\,[\omega v - G(v)]\)</span> is the Legendre–Fenchel conjugate of <span class="math inline">\(G\)</span> and defines the MD primal <a href="#eq-md" class="quarto-xref">Equation&nbsp;<span>1</span></a>. All four satisfy <span class="math inline">\(G(0)=0\)</span>, <span class="math inline">\(g(0)=1\)</span>, <span class="math inline">\(F(1)=0\)</span>, <span class="math inline">\(f(1)=0\)</span>. The last column evaluates the discrepancy at the <em>normalized</em> weights <span class="math inline">\(\bar\omega_i = n\hat\pi_i\)</span>, so that <span class="math inline">\(\sum_i \bar\omega_i = n\)</span>, with <span class="math inline">\(\hat\pi_i\)</span> as in <a href="#eq-probs" class="quarto-xref">Equation&nbsp;<span>7</span></a>.</caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Estimator</th>
+<th><span class="math inline">\(G(v)\)</span></th>
+<th><span class="math inline">\(g(v) = G'(v)\)</span></th>
+<th><span class="math inline">\(F(\omega)\)</span></th>
+<th><span class="math inline">\(\sum_i F(\bar\omega_i)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EL</td>
+<td><span class="math inline">\(-\log(1-v)\)</span></td>
+<td><span class="math inline">\(\dfrac{1}{1-v}\)</span></td>
+<td><span class="math inline">\(\omega - 1 - \log\omega\)</span></td>
+<td><span class="math inline">\(-\sum_i \log(n\hat\pi_i)\)</span></td>
+</tr>
+<tr class="even">
+<td>Hellinger</td>
+<td><span class="math inline">\(\dfrac{2v}{2-v}\)</span></td>
+<td><span class="math inline">\(\dfrac{4}{(2-v)^2}\)</span></td>
+<td><span class="math inline">\(2(\sqrt{\omega}-1)^2\)</span></td>
+<td><span class="math inline">\(2n\sum_i\!\bigl(\sqrt{\hat\pi_i}-\tfrac{1}{\sqrt{n}}\bigr)^{2}\)</span></td>
+</tr>
+<tr class="odd">
+<td>ET</td>
+<td><span class="math inline">\(e^v - 1\)</span></td>
+<td><span class="math inline">\(e^{v}\)</span></td>
+<td><span class="math inline">\(\omega\log\omega - \omega + 1\)</span></td>
+<td><span class="math inline">\(n\sum_i \hat\pi_i \log(n\hat\pi_i)\)</span></td>
+</tr>
+<tr class="even">
+<td>CUE</td>
+<td><span class="math inline">\(v + \tfrac{1}{2}v^2\)</span></td>
+<td><span class="math inline">\(1 + v\)</span></td>
+<td><span class="math inline">\(\tfrac{1}{2}(\omega - 1)^2\)</span></td>
+<td><span class="math inline">\(\tfrac{n^2}{2}\sum_i (\hat\pi_i - \tfrac{1}{n})^2\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Two features of the table require comment. First, the symbol <span class="math inline">\(\bar\omega_i\)</span> is deliberately distinct from the raw weight <span class="math inline">\(\hat\omega_i\)</span> of <a href="#eq-raw" class="quarto-xref">Equation&nbsp;<span>6</span></a>, which need not sum to <span class="math inline">\(n\)</span>; the warning in <a href="#sec-w13s-weights" class="quarto-xref"><span>S13.3 Raw Dual Weights, Normalized Probabilities, and the Overidentification Statistic</span></a> applies to reusing these expressions outside this normalization. Second, each entry in the last column is, up to the factor <span class="math inline">\(n\)</span>, a familiar discrepancy between <span class="math inline">\(\hat\pi\)</span> and the uniform reference <span class="math inline">\(P_n\)</span>, the uniform distribution on <span class="math inline">\(\{1,\ldots,n\}\)</span>: EL gives <span class="math inline">\(n\,D_{\mathrm{KL}}(P_n\|\hat\pi)\)</span> (reverse KL), ET gives <span class="math inline">\(n\,D_{\mathrm{KL}}(\hat\pi\|P_n)\)</span> (forward KL), Hellinger gives <span class="math inline">\(4n\,H^2(\hat\pi, P_n)\)</span> under the standard convention <span class="math inline">\(H^2(P,Q) = \tfrac{1}{2}\sum_i(\sqrt{p_i}-\sqrt{q_i})^2\)</span>, and CUE gives <span class="math inline">\(\tfrac{n}{2}\,\chi^2(\hat\pi\|P_n)\)</span> under the standard Pearson convention <span class="math inline">\(\chi^2(\hat\pi\|P_n) = \sum_i (\hat\pi_i - 1/n)^2/(1/n)\)</span>. EL, Hellinger, ET, and CUE correspond to <span class="math inline">\(\gamma=-1\)</span>, <span class="math inline">\(\gamma=-\tfrac{1}{2}\)</span>, <span class="math inline">\(\gamma=0\)</span>, and <span class="math inline">\(\gamma=1\)</span> in the Cressie–Read family, respectively. The domain of <span class="math inline">\(G\)</span> is <span class="math inline">\(\mathcal{V}=(-\infty,1)\)</span> for EL, <span class="math inline">\(\mathcal{V}=(-\infty,2)\)</span> for Hellinger, and <span class="math inline">\(\mathcal{V}=\mathbb{R}\)</span> for ET and CUE.</p>
+<p>These are discrepancies evaluated at the normalized weights <span class="math inline">\(\bar\omega_i = n\hat\pi_i\)</span>, not at the general raw GEL weights <span class="math inline">\(\hat\omega_i\)</span>. For EL, <span class="math inline">\(\sum_i F(\bar\omega_i) = -\sum_i \log(n\hat\pi_i)\)</span> is <span class="math inline">\(n\)</span> times the Kullback–Leibler divergence <em>from</em> the uniform reference <span class="math inline">\(1/n\)</span> <em>to</em> the EL probabilities <span class="math inline">\(\hat\pi\)</span> (the reverse KL); equivalently, EL maximizes <span class="math inline">\(\sum_i \log\hat\pi_i\)</span> subject to <span class="math inline">\(\sum_i \hat\pi_i = 1\)</span> and the moment restriction, which is the nonparametric maximum likelihood estimator of the observation probabilities. (For EL the distinction is immaterial at the solution: the EL first-order conditions themselves imply <span class="math inline">\(\sum_i \hat\omega_i = n\)</span>, so raw and normalized weights coincide there. That automatic identity does not hold uniformly across GEL members, which is why the general expressions are stated in <span class="math inline">\(\bar\omega_i\)</span>.) For ET, <span class="math inline">\(\sum_i F(\bar\omega_i) = n\sum_i \hat\pi_i \log(n\hat\pi_i)\)</span> is <span class="math inline">\(n\)</span> times the KL divergence in the opposite direction (forward KL). For CUE, the divergence is a quadratic distance from the uniform reference <span class="math inline">\(1/n\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark S13.3: Re-weighting Observations vs.&nbsp;Re-weighting Moments
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The convex-conjugate duality highlights a structural contrast between GMM and GEL. GMM re-weights the <em>moment conditions</em> via the matrix <span class="math inline">\(\hat\Omega\)</span>, assigning more importance to moment conditions that are precisely estimated. MD — and its GEL dual — instead re-weights the <em>observations</em> relative to the reference vector of ones. For the positive-weight members, after normalization the weights define an empirical distribution, and the procedure may be read as selecting the distribution closest to the uniform empirical distribution in the corresponding <span class="math inline">\(F\)</span>-divergence, subject to the moment restrictions. For CUE the raw weights may be signed, so the geometric reading is instead a quadratic perturbation of the reference weight vector, not a probability distribution. The two approaches exploit overidentification through structurally different mechanisms, yet they are asymptotically equivalent to first order.</p>
+</div>
+</div>
+</section>
+<section id="sec-w13s-computation" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w13s-computation">S13.5 Computation</h2>
+<p>The GEL saddle-point problem <a href="chapter_13.html#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.17</span></a> is a joint nonlinear optimization in <span class="math inline">\((\theta, \lambda)\)</span>. In practice it is solved by the two-loop scheme of <a href="#sec-w13s-profile" class="quarto-xref"><span>S13.2 Minimum-Discrepancy Formulations and the Profile Identity</span></a>: the outer loop iterates over <span class="math inline">\(\theta\)</span>, calling the inner loop at each step to evaluate <span class="math inline">\(\hat\lambda(\theta)\)</span> from <a href="#eq-inner" class="quarto-xref">Equation&nbsp;<span>4</span></a> and the gradient of <span class="math inline">\(Q_{\mathrm{MD}}(\theta)\)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Remark S13.4: Connection to the GEL Saddle-Point
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The two-loop MD procedure and the GEL saddle-point are two computational routes to the same estimator. The GEL formulation jointly optimizes <span class="math inline">\((\theta, \lambda)\)</span> in <a href="chapter_13.html#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.17</span></a>, while the MD two-loop approach decouples the problem: the inner loop solves a convex minimization in <span class="math inline">\(\lambda\)</span> for fixed <span class="math inline">\(\theta\)</span>, and the outer loop minimizes the profiled divergence in <span class="math inline">\(\theta\)</span>. The inner-loop solution <span class="math inline">\(\hat\lambda(\theta)\)</span> from <a href="#eq-inner" class="quarto-xref">Equation&nbsp;<span>4</span></a> is precisely the dual variable appearing in the GEL first-order conditions, and the profile divergence <a href="#eq-md-profile" class="quarto-xref">Equation&nbsp;<span>5</span></a> is the GEL profile objective.</p>
+</div>
+</div>
+<p>Three practical points deserve emphasis.</p>
+<ol type="1">
+<li><strong>The inner problem is convex; the outer problem is not.</strong> For fixed <span class="math inline">\(\theta\)</span>, <a href="#eq-inner" class="quarto-xref">Equation&nbsp;<span>4</span></a> is a smooth convex minimization in <span class="math inline">\(\lambda \in \mathbb{R}^m\)</span>, and a damped or line-search Newton method typically converges rapidly when started from a feasible interior point. The outer objective <span class="math inline">\(Q_{\mathrm{MD}}(\theta)\)</span> is generally non-convex in <span class="math inline">\(\theta\)</span> even in the linear IV model, so a global optimizer or multiple starting values is advisable. This is most visible for CUE, whose criterion in <span class="quarto-unresolved-ref">?thm-cue-gel</span> is a ratio of quadratics.</li>
+<li><strong>Feasibility can fail, and how it fails depends on the member.</strong> For the positive-weight members EL, ET, and Hellinger, the inner supremum is finite only when the origin lies in the relative interior of the convex hull of <span class="math inline">\(\{U_i(\theta)\}\)</span> (the interior proper under full-dimensionality of the sample moments). With small <span class="math inline">\(n\)</span> or many moment conditions this fails for some <span class="math inline">\(\theta\)</span>, and implementations must either restrict the search region or use a penalized or “adjusted” version of the criterion. CUE is not subject to this restriction: its signed weights make the inner problem a concave quadratic, well defined whenever <span class="math inline">\(n^{-1}\sum_i U_i(\theta)U_i(\theta)^\top\)</span> is nonsingular.</li>
+<li><strong>Starting values.</strong> Two-stage least squares provides a consistent and cheap starting value for the outer loop; the corresponding starting value for <span class="math inline">\(\lambda\)</span> is <span class="math inline">\(0\)</span>, which is always feasible since <span class="math inline">\(0 \in \mathcal{V}\)</span>.</li>
+</ol>
+<p>Among the three named members of <span class="quarto-unresolved-ref">?def-gel-cases</span>, CUE is the most transparent computationally — the inner supremum has a closed form at fixed <span class="math inline">\(\theta\)</span> — but its objective is non-convex in <span class="math inline">\(\theta\)</span> and requires a global optimizer. EL is often preferred in practice for its bias properties. It also supports likelihood-ratio-type confidence regions with Wilks calibration (<span class="quarto-unresolved-ref">?thm-gel-wilks</span>); under additional smoothness and moment conditions, Bartlett correction and related refinements can improve their coverage accuracy.</p>
+</section>
+<section id="sec-w13s-higher-order" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w13s-higher-order">S13.6 Higher-Order Comparisons</h2>
+<p><span class="citation" data-cites="neweysmith2004">Newey and Smith (<a href="#ref-neweysmith2004" role="doc-biblioref">2004</a>)</span> show that, to higher asymptotic order, GEL estimators have smaller bias than standard two-step GMM in two specific respects.</p>
+<p>First, GEL eliminates the bias component that arises from estimating the Jacobian <span class="math display">\[\E\bigl[\partial U_i(\theta_0)/\partial\theta^\top\bigr].\]</span> This is an important source of finite-sample bias in overidentified IV models. It appears in GMM because the gradient term in the first-order conditions is estimated by a simple sample average rather than by an efficiently weighted one. The inner saddle-point over <span class="math inline">\(\lambda\)</span> in GEL implicitly uses an efficient estimator of the Jacobian, so this component vanishes.</p>
+<p>Second, EL additionally eliminates the bias from estimating the weighting matrix <span class="math inline">\(\Sigma\)</span>, because EL uses the re-weighted probabilities <span class="math inline">\(\hat\pi_i\)</span> as an efficient estimate of the second moment. Under symmetric disturbances — a condition satisfied in many IV settings — these bias reductions extend to the full GEL family.</p>
+<div class="callout callout-style-default callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>What the Higher-Order Results Do and Do Not Say
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>These are statements about <em>particular components</em> of a higher-order expansion, obtained under smoothness and moment conditions beyond those needed for <span class="quarto-unresolved-ref">?thm-gel-asymp</span>, and with the number of moment conditions held fixed. They do not establish a uniform finite-sample ranking of GEL over two-step GMM, and they say nothing about behavior under weak identification, where the expansions themselves are not valid. In particular, EL’s bias advantage in overidentified models is often accompanied by higher variance and by the feasibility failures described in <a href="#sec-w13s-computation" class="quarto-xref"><span>S13.5 Computation</span></a>, so the mean-squared error comparison is design-specific. The practical conclusion is that GEL estimators can be attractive in overidentified IV models with moderate sample sizes and several overidentifying restrictions, where the Jacobian bias component is a real concern — the number of moments being held fixed in the asymptotic approximation. This conclusion should not be extrapolated to many-instrument sequences in which the number of moments grows with <span class="math inline">\(n\)</span>, and it does not say that GEL dominates GMM.</p>
+</div>
+</div>
+</section>
+<section id="sec-w13s-problems" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w13s-problems">S13.7 Optional Problems</h2>
+<p><strong>S1. GEL first-order conditions and the empirical probabilities.</strong> For empirical likelihood (EL), <span class="math inline">\(G(v) = -\log(1 - v)\)</span> on <span class="math inline">\(\mathcal{V} = (-\infty, 1)\)</span>, so that <span class="math inline">\(g(v) = G'(v) = (1-v)^{-1}\)</span> satisfies the GEL normalization <span class="math inline">\(g(0) = 1\)</span>.</p>
+<ol type="a">
+<li>At fixed <span class="math inline">\(\theta\)</span>, the inner problem in <a href="chapter_13.html#eq-gel" class="quarto-xref">Equation&nbsp;<span>13.17</span></a> maximizes <span class="math inline">\(-n^{-1}\sum_i G(\lambda^\top U_i(\theta))\)</span> over <span class="math inline">\(\lambda\)</span>; its first-order condition is equivalently obtained by minimizing <span class="math inline">\(n^{-1}\sum_i G(\lambda^\top U_i(\theta))\)</span>. Write this condition, <span class="math inline">\(\partial/\partial\lambda\,[\,n^{-1}\sum_i G(\lambda^\top U_i(\theta))] = 0\)</span>, and show that it implies <span class="math inline">\(\sum_{i=1}^n \hat\pi_i U_i(\theta) = 0\)</span>, where <span class="math inline">\(\hat\pi_i \propto (1 - \hat\lambda^\top U_i(\theta))^{-1}\)</span>.</li>
+<li>Verify that the normalization in <a href="#eq-probs" class="quarto-xref">Equation&nbsp;<span>7</span></a> is consistent with <span class="math inline">\(g(v) = (1-v)^{-1}\)</span>, and explain why the conclusion of part (a) is unaffected by whether one uses the raw weights <span class="math inline">\(\hat\omega_i\)</span> or the normalized <span class="math inline">\(\hat\pi_i\)</span>, even though the value of the discrepancy objective is affected.</li>
+</ol>
+<p><strong>S2. The exactly identified case.</strong> In the exactly identified case (<span class="math inline">\(m = k\)</span>), assume in addition that <span class="math inline">\(n^{-1}\sum_i U_i(\hat\theta)U_i(\hat\theta)^\top \succ 0\)</span>, so that the inner problem is strictly concave in <span class="math inline">\(\lambda\)</span> near the solution. Show that <span class="math inline">\(\hat\lambda = 0\)</span> is then the unique solution of the inner problem at any GEL solution <span class="math inline">\(\hat\theta\)</span>. Conclude that every GEL estimator coincides with the just-identified GMM estimator, and that the empirical probabilities <a href="#eq-probs" class="quarto-xref">Equation&nbsp;<span>7</span></a> all equal <span class="math inline">\(1/n\)</span>. (<em>Hint</em>: in the exactly identified case <span class="math inline">\(\bar{U}(\hat\theta) = 0\)</span> exactly; <span class="math inline">\(\lambda = 0\)</span> solves the inner first-order condition, and the rank condition rules out other solutions. Verify that the corresponding primal weights from the conjugate relationship <a href="#eq-conjugate" class="quarto-xref">Equation&nbsp;<span>2</span></a> all equal the reference value <span class="math inline">\(\hat\omega_i = g(0) = 1\)</span>.) Relate the conclusion to <span class="quarto-unresolved-ref">?thm-gel-wilks</span>: what is <span class="math inline">\(T_{\mathrm{GEL}}\)</span> when <span class="math inline">\(m = k\)</span>?</p>
+<p><strong>S3. Deriving a conjugate pair.</strong> For exponential tilting, <span class="math inline">\(G(v) = e^v - 1\)</span> on <span class="math inline">\(\mathcal{V} = \mathbb{R}\)</span>.</p>
+<ol type="a">
+<li>Verify the normalization <a href="chapter_13.html#eq-gel-norm" class="quarto-xref">Equation&nbsp;<span>13.18</span></a>.</li>
+<li>Compute the Legendre–Fenchel conjugate <a href="#eq-conjugate" class="quarto-xref">Equation&nbsp;<span>2</span></a> directly and confirm the entry <span class="math inline">\(F(\omega) = \omega\log\omega - \omega + 1\)</span> of the table in <a href="#sec-w13s-cases" class="quarto-xref"><span>S13.4 Detailed Special Cases</span></a>.</li>
+<li>Confirm <span class="math inline">\(F(1) = 0\)</span> and <span class="math inline">\(f(1) = 0\)</span>, and identify which of the three normalizations in <a href="chapter_13.html#eq-gel-norm" class="quarto-xref">Equation&nbsp;<span>13.18</span></a> each of these two facts depends on.</li>
+</ol>
+<p><strong>S4. Why normalization is not innocuous.</strong> Let <span class="math inline">\(\hat\omega_i &gt; 0\)</span> be raw EL weights with <span class="math inline">\(c = n^{-1}\sum_i \hat\omega_i \neq 1\)</span>, and let <span class="math inline">\(\hat\pi_i = \hat\omega_i/(nc)\)</span> be the normalized weights, so that <span class="math inline">\(n\hat\pi_i = \hat\omega_i/c\)</span>.</p>
+<ol type="a">
+<li>Show that <span class="math inline">\(\sum_i \hat\pi_i U_i(\hat\theta) = 0\)</span> follows from <span class="math inline">\(\sum_i \hat\omega_i U_i(\hat\theta) = 0\)</span>.</li>
+<li>With <span class="math inline">\(F(\omega) = \omega - 1 - \log\omega\)</span>, compute <span class="math inline">\(\sum_i F(n\hat\pi_i) - \sum_i F(\hat\omega_i)\)</span> explicitly and show that it is not zero in general. Explain, in one sentence, what goes wrong if the profile identity <a href="#eq-md-profile" class="quarto-xref">Equation&nbsp;<span>5</span></a> is applied to the normalized weights without adjustment.</li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-cressieread1984" class="csl-entry" role="listitem">
+Cressie, Noel, and Timothy R. C. Read. 1984. <span>“Multinomial Goodness-of-Fit Tests.”</span> <em>Journal of the Royal Statistical Society, Series B</em> 46 (3): 440–64.
+</div>
+<div id="ref-neweysmith2004" class="csl-entry" role="listitem">
+Newey, Whitney K., and Richard J. Smith. 2004. <span>“Higher Order Properties of <span>GMM</span> and Generalized Empirical Likelihood Estimators.”</span> <em>Econometrica</em> 72 (1): 219–55.
+</div>
+<div id="ref-qin1994empirical" class="csl-entry" role="listitem">
+Qin, Jin, and Jerry Lawless. 1994. <span>“Empirical Likelihood and General Estimating Equations.”</span> <em>Annals of Statistics</em> 22 (1): 300–325.
+</div>
+<div id="ref-ragusa2011" class="csl-entry" role="listitem">
+Ragusa, Giuseppe. 2011. <span>“Minimum Divergence, Generalized Empirical Likelihoods, and Higher Order Expansions.”</span> <em>Econometric Reviews</em> 30 (4): 406–56.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_13.html" class="pagination-link" aria-label="Estimation for Instrumental Variables">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation for Instrumental Variables</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./appendix_A.html" class="pagination-link" aria-label="Graphical Intuition for Conditional Independence and $d$-Separation">
+        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
