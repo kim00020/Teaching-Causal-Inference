@@ -20,7 +20,7 @@ so that the primal optimization is taken over $\omega_i \in \mathcal{W}$. For EL
 
 The problem asks: what is the re-weighting of observations, closest to the uniform reference $\omega_i = 1$ in the $F$-divergence sense, that exactly satisfies the moment restriction?
 
-Note that @eq-md imposes *no* constraint $\sum_i \omega_i = n$. This is a modeling choice with consequences that are developed in @sec-w13s-weights; it is made here because it produces a duality in the single dual variable $\lambda$, whereas imposing the normalization explicitly introduces a second Lagrange multiplier.
+Note that @eq-md imposes *no* constraint $\sum_i \omega_i = n$. This is a modeling choice with consequences that are developed in Section S13.3; it is made here because it produces a duality in the single dual variable $\lambda$, whereas imposing the normalization explicitly introduces a second Lagrange multiplier.
 
 ### The Conjugate Relationship
 
@@ -32,8 +32,8 @@ where $f = F'$ and the second equality uses the envelope theorem. The location o
 
 ### The Duality Theorem
 
-::: {.callout-tip icon=false}
-## Theorem S13.1: Fixed-$\theta$ Fenchel Duality {#thm-gel-md}
+::: {#thm-gel-md}
+## Fixed-$\theta$ Fenchel Duality
 
 Let $G$ be proper, closed, strictly convex, differentiable, and essentially smooth on the open interval $\mathcal{V} \ni 0$, and satisfy the normalization @eq-gel-norm. Let $F = G^\ast$ be its Legendre--Fenchel conjugate @eq-conjugate, with $\mathcal{W} = \operatorname{int}\operatorname{dom} F$. Fix $\theta$, and suppose the primal problem
 $$\inf_{\omega_i \in \mathcal{W}}\Bigl\{\sum_{i=1}^n F(\omega_i) : \sum_{i=1}^n \omega_i U_i(\theta) = 0\Bigr\}$$
@@ -81,7 +81,7 @@ where the second equality follows from @eq-md-profile. This is exactly the GEL s
 ::: {.callout-warning icon=false}
 ## The Profile Identity Holds for the Raw Weights
 
-The identity @eq-md-profile is stated for the *unnormalized* weights $\hat\omega_i(\theta) = g(\hat\lambda(\theta)^\top U_i(\theta))$ produced by the unconstrained primal @eq-md. It is not, without modification, an identity for the normalized probabilities of @sec-w13s-weights. See the warning there before reusing it.
+The identity @eq-md-profile is stated for the *unnormalized* weights $\hat\omega_i(\theta) = g(\hat\lambda(\theta)^\top U_i(\theta))$ produced by the unconstrained primal @eq-md. It is not, without modification, an identity for the normalized probabilities of Section S13.3. See the warning there before reusing it.
 :::
 
 ## S13.3 Raw Dual Weights, Normalized Probabilities, and the Overidentification Statistic {#sec-w13s-weights}
@@ -114,8 +114,8 @@ For CUE, $g(v) = 1 + v$ can be negative when $\hat\lambda^\top U_i(\hat\theta) <
 
 ### The GEL Overidentification Statistic
 
-::: {.callout-tip icon=false}
-## Theorem S13.2: Wilks' Theorem for GEL [@neweysmith2004] {#thm-gel-wilks}
+::: {#thm-gel-wilks}
+## Wilks' Theorem for GEL [@neweysmith2004]
 
 Under the first-order conditions of @thm-gel-asymp, together with the additional smoothness, moment, interiority, and profile regularity conditions required for the GEL profile statistic (first-order estimator equivalence alone is not sufficient), the GEL profile divergence evaluated at the estimator satisfies
 $$T_{\mathrm{GEL}} \;\equiv\; 2\sum_{i=1}^n F\!\bigl(\hat\omega_i\bigr) \;=\; -2\sum_{i=1}^n G\!\bigl(\hat\lambda^\top U_i(\hat\theta_{\mathrm{GEL}})\bigr) \;\xrightarrow{d}\; \chi^2_{m-k},$$ {#eq-gel-wilks}
@@ -137,7 +137,7 @@ The $J$-statistic of @sec-w13-gmm equals $n\,\bar{U}(\hat\theta)^\top \hat\Sigma
 ::: {.callout-note icon=false}
 ## Remark S13.2: CUE Objective Conventions and the Factor of $\tfrac{1}{2}$
 
-The CUE objective in @thm-cue-gel is written without a leading $\tfrac{1}{2}$, while the divergence $F(\omega) = \tfrac{1}{2}(\omega - 1)^2$ in the table of @sec-w13s-cases carries one. These are two different quantities --- the CUE estimator objective minimized over $\theta$, and the per-observation MD divergence $F$ defined as the conjugate of $G$ --- so neither is "the right" one. The factor is harmless for the minimizer $\hat\theta_{\mathrm{CUE}}$ but matters when comparing $T_{\mathrm{CUE}} = 2\sum_i F(\hat\omega_i)$ to the Sargan--Hansen $J$-statistic, which is what motivates the factor of $2$ in $T_{\mathrm{CUE}}$. The convention is fixed throughout: the CUE estimator objective omits the $\tfrac{1}{2}$, the MD divergence $F$ includes it, and the Wilks statistic accounts for the factor explicitly.
+The CUE objective in @thm-cue-gel is written without a leading $\tfrac{1}{2}$, while the divergence $F(\omega) = \tfrac{1}{2}(\omega - 1)^2$ in the table of Section S13.4 carries one. These are two different quantities --- the CUE estimator objective minimized over $\theta$, and the per-observation MD divergence $F$ defined as the conjugate of $G$ --- so neither is "the right" one. The factor is harmless for the minimizer $\hat\theta_{\mathrm{CUE}}$ but matters when comparing $T_{\mathrm{CUE}} = 2\sum_i F(\hat\omega_i)$ to the Sargan--Hansen $J$-statistic, which is what motivates the factor of $2$ in $T_{\mathrm{CUE}}$. The convention is fixed throughout: the CUE estimator objective omits the $\tfrac{1}{2}$, the MD divergence $F$ includes it, and the Wilks statistic accounts for the factor explicitly.
 :::
 
 ## S13.4 Detailed Special Cases {#sec-w13s-cases}
@@ -153,7 +153,7 @@ The conjugate relationship @eq-conjugate determines the MD divergence $F$ from $
 
 : The four main GEL special cases. $G$ is the strictly convex function defining the GEL estimator @eq-gel; $g = G'$ generates the raw weights @eq-raw; $F(\omega) = \sup_{v}\,[\omega v - G(v)]$ is the Legendre--Fenchel conjugate of $G$ and defines the MD primal @eq-md. All four satisfy $G(0)=0$, $g(0)=1$, $F(1)=0$, $f(1)=0$. The last column evaluates the discrepancy at the *normalized* weights $\bar\omega_i = n\hat\pi_i$, so that $\sum_i \bar\omega_i = n$, with $\hat\pi_i$ as in @eq-probs.
 
-Two features of the table require comment. First, the symbol $\bar\omega_i$ is deliberately distinct from the raw weight $\hat\omega_i$ of @eq-raw, which need not sum to $n$; the warning in @sec-w13s-weights applies to reusing these expressions outside this normalization. Second, each entry in the last column is, up to the factor $n$, a familiar discrepancy between $\hat\pi$ and the uniform reference $P_n$, the uniform distribution on $\{1,\ldots,n\}$: EL gives $n\,D_{\mathrm{KL}}(P_n\|\hat\pi)$ (reverse KL), ET gives $n\,D_{\mathrm{KL}}(\hat\pi\|P_n)$ (forward KL), Hellinger gives $4n\,H^2(\hat\pi, P_n)$ under the standard convention $H^2(P,Q) = \tfrac{1}{2}\sum_i(\sqrt{p_i}-\sqrt{q_i})^2$, and CUE gives $\tfrac{n}{2}\,\chi^2(\hat\pi\|P_n)$ under the standard Pearson convention $\chi^2(\hat\pi\|P_n) = \sum_i (\hat\pi_i - 1/n)^2/(1/n)$. EL, Hellinger, ET, and CUE correspond to $\gamma=-1$, $\gamma=-\tfrac{1}{2}$, $\gamma=0$, and $\gamma=1$ in the Cressie--Read family, respectively. The domain of $G$ is $\mathcal{V}=(-\infty,1)$ for EL, $\mathcal{V}=(-\infty,2)$ for Hellinger, and $\mathcal{V}=\mathbb{R}$ for ET and CUE.
+Two features of the table require comment. First, the symbol $\bar\omega_i$ is deliberately distinct from the raw weight $\hat\omega_i$ of @eq-raw, which need not sum to $n$; the warning in Section S13.3 applies to reusing these expressions outside this normalization. Second, each entry in the last column is, up to the factor $n$, a familiar discrepancy between $\hat\pi$ and the uniform reference $P_n$, the uniform distribution on $\{1,\ldots,n\}$: EL gives $n\,D_{\mathrm{KL}}(P_n\|\hat\pi)$ (reverse KL), ET gives $n\,D_{\mathrm{KL}}(\hat\pi\|P_n)$ (forward KL), Hellinger gives $4n\,H^2(\hat\pi, P_n)$ under the standard convention $H^2(P,Q) = \tfrac{1}{2}\sum_i(\sqrt{p_i}-\sqrt{q_i})^2$, and CUE gives $\tfrac{n}{2}\,\chi^2(\hat\pi\|P_n)$ under the standard Pearson convention $\chi^2(\hat\pi\|P_n) = \sum_i (\hat\pi_i - 1/n)^2/(1/n)$. EL, Hellinger, ET, and CUE correspond to $\gamma=-1$, $\gamma=-\tfrac{1}{2}$, $\gamma=0$, and $\gamma=1$ in the Cressie--Read family, respectively. The domain of $G$ is $\mathcal{V}=(-\infty,1)$ for EL, $\mathcal{V}=(-\infty,2)$ for Hellinger, and $\mathcal{V}=\mathbb{R}$ for ET and CUE.
 
 These are discrepancies evaluated at the normalized weights $\bar\omega_i = n\hat\pi_i$, not at the general raw GEL weights $\hat\omega_i$. For EL, $\sum_i F(\bar\omega_i) = -\sum_i \log(n\hat\pi_i)$ is $n$ times the Kullback--Leibler divergence *from* the uniform reference $1/n$ *to* the EL probabilities $\hat\pi$ (the reverse KL); equivalently, EL maximizes $\sum_i \log\hat\pi_i$ subject to $\sum_i \hat\pi_i = 1$ and the moment restriction, which is the nonparametric maximum likelihood estimator of the observation probabilities. (For EL the distinction is immaterial at the solution: the EL first-order conditions themselves imply $\sum_i \hat\omega_i = n$, so raw and normalized weights coincide there. That automatic identity does not hold uniformly across GEL members, which is why the general expressions are stated in $\bar\omega_i$.) For ET, $\sum_i F(\bar\omega_i) = n\sum_i \hat\pi_i \log(n\hat\pi_i)$ is $n$ times the KL divergence in the opposite direction (forward KL). For CUE, the divergence is a quadratic distance from the uniform reference $1/n$.
 
@@ -165,7 +165,7 @@ The convex-conjugate duality highlights a structural contrast between GMM and GE
 
 ## S13.5 Computation {#sec-w13s-computation}
 
-The GEL saddle-point problem @eq-gel is a joint nonlinear optimization in $(\theta, \lambda)$. In practice it is solved by the two-loop scheme of @sec-w13s-profile: the outer loop iterates over $\theta$, calling the inner loop at each step to evaluate $\hat\lambda(\theta)$ from @eq-inner and the gradient of $Q_{\mathrm{MD}}(\theta)$.
+The GEL saddle-point problem @eq-gel is a joint nonlinear optimization in $(\theta, \lambda)$. In practice it is solved by the two-loop scheme of Section S13.2: the outer loop iterates over $\theta$, calling the inner loop at each step to evaluate $\hat\lambda(\theta)$ from @eq-inner and the gradient of $Q_{\mathrm{MD}}(\theta)$.
 
 ::: {.callout-note icon=false}
 ## Remark S13.4: Connection to the GEL Saddle-Point
@@ -194,7 +194,7 @@ Second, EL additionally eliminates the bias from estimating the weighting matrix
 ::: {.callout-warning icon=false}
 ## What the Higher-Order Results Do and Do Not Say
 
-These are statements about *particular components* of a higher-order expansion, obtained under smoothness and moment conditions beyond those needed for @thm-gel-asymp, and with the number of moment conditions held fixed. They do not establish a uniform finite-sample ranking of GEL over two-step GMM, and they say nothing about behavior under weak identification, where the expansions themselves are not valid. In particular, EL's bias advantage in overidentified models is often accompanied by higher variance and by the feasibility failures described in @sec-w13s-computation, so the mean-squared error comparison is design-specific. The practical conclusion is that GEL estimators can be attractive in overidentified IV models with moderate sample sizes and several overidentifying restrictions, where the Jacobian bias component is a real concern --- the number of moments being held fixed in the asymptotic approximation. This conclusion should not be extrapolated to many-instrument sequences in which the number of moments grows with $n$, and it does not say that GEL dominates GMM.
+These are statements about *particular components* of a higher-order expansion, obtained under smoothness and moment conditions beyond those needed for @thm-gel-asymp, and with the number of moment conditions held fixed. They do not establish a uniform finite-sample ranking of GEL over two-step GMM, and they say nothing about behavior under weak identification, where the expansions themselves are not valid. In particular, EL's bias advantage in overidentified models is often accompanied by higher variance and by the feasibility failures described in Section S13.5, so the mean-squared error comparison is design-specific. The practical conclusion is that GEL estimators can be attractive in overidentified IV models with moderate sample sizes and several overidentifying restrictions, where the Jacobian bias component is a real concern --- the number of moments being held fixed in the asymptotic approximation. This conclusion should not be extrapolated to many-instrument sequences in which the number of moments grows with $n$, and it does not say that GEL dominates GMM.
 :::
 
 ## S13.7 Optional Problems {#sec-w13s-problems}
@@ -209,7 +209,7 @@ These are statements about *particular components* of a higher-order expansion, 
 **S3. Deriving a conjugate pair.** For exponential tilting, $G(v) = e^v - 1$ on $\mathcal{V} = \mathbb{R}$.
 
 (a) Verify the normalization @eq-gel-norm.
-(b) Compute the Legendre--Fenchel conjugate @eq-conjugate directly and confirm the entry $F(\omega) = \omega\log\omega - \omega + 1$ of the table in @sec-w13s-cases.
+(b) Compute the Legendre--Fenchel conjugate @eq-conjugate directly and confirm the entry $F(\omega) = \omega\log\omega - \omega + 1$ of the table in Section S13.4.
 (c) Confirm $F(1) = 0$ and $f(1) = 0$, and identify which of the three normalizations in @eq-gel-norm each of these two facts depends on.
 
 **S4. Why normalization is not innocuous.** Let $\hat\omega_i > 0$ be raw EL weights with $c = n^{-1}\sum_i \hat\omega_i \neq 1$, and let $\hat\pi_i = \hat\omega_i/(nc)$ be the normalized weights, so that $n\hat\pi_i = \hat\omega_i/c$.

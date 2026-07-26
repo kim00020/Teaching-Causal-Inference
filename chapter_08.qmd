@@ -28,7 +28,7 @@ The chapter is long, and not all of it carries equal weight on a first pass.
 
 **Second pass.** The plug-in estimation recipe in @sec-w8-id-natural; the Baron--Kenny inference details (Sobel test and bootstrap) in @sec-w8-linear; the front-door numerical example; and the mediation--IV comparison in @sec-w8-mediation-vs-iv.
 
-**Optional (★).** The starred remarks on alternative causal frameworks (NPSEM-IE vs. FFRCISTG, separable and interventional effects) and on principal stratification, and the problems marked *advanced* or *second pass*.
+**Optional ($\star$).** The starred remarks on alternative causal frameworks (NPSEM-IE vs. FFRCISTG, separable and interventional effects) and on principal stratification, and the problems marked *advanced* or *second pass*.
 :::
 
 ## Motivation: Mechanisms {#sec-w8-motivation}
@@ -219,8 +219,8 @@ The CDE depends on the level $m$ at which $M$ is fixed. In general, the direct e
 
 Since the CDE involves a joint intervention $\doop(T, M)$, its identification in this chapter's baseline-covariate setting reduces to a back-door-type adjustment applied to the pair $(T, M)$ jointly.
 
-::: {.callout-tip icon=false}
-## Theorem: Baseline Adjustment for the CDE {#thm-cde}
+::: {#thm-cde}
+## Baseline Adjustment for the CDE
 
 Suppose $\mathbf{Z}$ is a set of baseline (pre-treatment) covariates satisfying, for the joint intervention $\doop(T, M)$ on $Y$: (i) $\mathbf{Z}$ contains no descendant of $T$ or $M$, and (ii) $\mathbf{Z}$ d-separates the joint exposure set $\{T, M\}$ from $Y$ in $\Gcal_{\underline{T}\,\underline{M}}$, the graph obtained by deleting all arrows out of $T$ and out of $M$. Suppose further that (iii) **joint positivity** holds at $(t, m)$:
 $$P(T{=}t,\, M{=}m \mid \mathbf{Z}{=}\mathbf{z}) > 0 \quad \text{for $P$-almost every $\mathbf{z}$ in the support of } \mathbf{Z}.$$
@@ -335,7 +335,7 @@ In the linear additive Baron--Kenny SEM of @sec-w8-linear with no $T \times M$ i
 :::
 
 ::: {.callout-note collapse=true icon=false}
-## Remark (★ Advanced/Optional): NPSEM-IE vs. FFRCISTG and Alternatives
+## Remark ($\star$ Advanced/Optional): NPSEM-IE vs. FFRCISTG and Alternatives
 
 *This remark compares causal frameworks and surveys alternatives to natural effects; it may be skipped on first reading. The main identification argument for the NDE and NIE does not depend on resolving the NPSEM-IE/FFRCISTG distinction.*
 
@@ -424,8 +424,8 @@ Unlike unmeasured $T$--$Y$ confounders, which randomization of $T$ can often eli
 
 Under the sequential ignorability assumptions, consistency and composition, and the positivity conditions (P1)--(P2), the cross-world expectation $\E[Y(t, M(t'))]$ is identified from observational data.
 
-::: {.callout-tip icon=false}
-## Theorem: Mediation Formula [@pearl2001direct] {#thm-mediation-formula}
+::: {#thm-mediation-formula}
+## Mediation Formula [@pearl2001direct]
 
 Under sequential ignorability (Assumptions 1--3), consistency and composition, positivity (P1)--(P2), and with discrete $M$ and $\mathbf{X}$:
 $$\E\!\left[Y(t, M(t'))\right] = \sum_{m}\sum_{\mathbf{x}} \E\!\left[Y \mid T{=}t,\, M{=}m,\, \mathbf{X}{=}\mathbf{x}\right] P(M{=}m \mid T{=}t',\, \mathbf{X}{=}\mathbf{x})\, P(\mathbf{X}{=}\mathbf{x}).$$ {#eq-mediation-formula}
@@ -487,7 +487,7 @@ with the Monte Carlo analogue for continuous $M$. The NDE and NIE are then diffe
 :::
 
 ::: {.callout-note collapse=true icon=false}
-## Remark (★ Advanced/Optional): Principal Stratification and SACE
+## Remark ($\star$ Advanced/Optional): Principal Stratification and SACE
 
 *This remark introduces an alternative decomposition framework used in clinical trials with truncation by death; it may be skipped on first reading.*
 
@@ -564,8 +564,8 @@ Even in a randomized experiment where $T$ is randomized, the mediator $M$ is nev
 
 ### The Product and Difference Formulas
 
-::: {.callout-tip icon=false}
-## Proposition: Mediation Decomposition in the Linear Model {#prp-decomp}
+::: {#prp-decomp}
+## Mediation Decomposition in the Linear Model
 
 Under @eq-bk1--@eq-bk3,
 $$\tau \;=\; \tau' \;+\; a b.$$ {#eq-linear-decomp}
@@ -761,8 +761,8 @@ In the front-door graph: Condition 1 holds because there is no $T \to Y$ edge. C
 @pearl1995causal states the front-door criterion for a *set* of intermediate variables $\mathbf{M} = \{M_1, \ldots, M_k\}$: the set must intercept all directed paths from $T$ to $Y$, have no unblocked back-door from $T$, and have all back-door paths to $Y$ blocked by $T$. The formula generalizes accordingly, with the inner sum running over realizations of $\mathbf{M}$. For pedagogical clarity, this chapter treats the single-mediator case throughout; the generalization is straightforward conceptually but the multivariate $\mathbf{M}$ introduces additional positivity and estimation challenges.
 :::
 
-::: {.callout-note icon=false}
-## Example: When the Front-Door Criterion Fails {#exm-frontdoorfail}
+::: {#exm-frontdoorfail}
+## When the Front-Door Criterion Fails
 
 Each of the three front-door conditions is load-bearing. We illustrate what breaks by modifying the front-door graph in two separate ways. As Case (a) shows, a single added edge can violate more than one condition at once.
 
@@ -791,8 +791,8 @@ In each case the graphical check detects the failure before any formula is writt
 
 ### Derivation of the Front-Door Formula
 
-::: {.callout-tip icon=false}
-## Theorem: Front-Door Formula [@pearl1995causal] {#thm-frontdoor}
+::: {#thm-frontdoor}
+## Front-Door Formula [@pearl1995causal]
 
 Suppose $M$ satisfies the front-door criterion for the effect of $T$ on $Y$. Assume further the positivity conditions:
 

@@ -123,8 +123,8 @@ $$D_\eta\psi(\eta_0)[h] = -\,\bigl[\partial_\psi P\phi(\,\cdot\,;\psi_0,\eta_0)\
 so vanishing of the nuisance Gateaux derivative of $P\phi$ is equivalent to vanishing of $D_\eta\psi$. The two formulations are therefore the same orthogonality condition expressed in two languages, and we use whichever is more convenient for the argument at hand.
 :::
 
-::: {.callout-note icon=false}
-## Definition: Neyman Orthogonality {#def-orthogonal}
+::: {#def-orthogonal}
+## Neyman Orthogonality
 
 The score function $\phi(O;\,\psi,\eta)$ is called *orthogonal* (or *Neyman orthogonal*) at the truth $(\psi_0, \eta_0)$ if the Gateaux derivative of the estimating equation with respect to the nuisance, evaluated at the truth, vanishes:
 $$\left.\frac{\partial}{\partial r} \E\bigl\{\phi(O;\,\psi_0,\,\eta_0 + r h)\bigr\}\right|_{r=0} = 0$$
@@ -147,8 +147,8 @@ We continue to use the average treatment effect $\tau = \E\{Y(1) - Y(0)\}$ as th
 $$\varphi_{\mathrm{eff}}(O;\,\tau,\eta) = \frac{T}{\pi(X)}\{Y - \mu_1(X)\} - \frac{1-T}{1-\pi(X)}\{Y - \mu_0(X)\} + \mu_1(X) - \mu_0(X) - \tau,$$ {#eq-orth-score-ate}
 where $\eta = (\mu_0, \mu_1, \pi)$. Chapter 11 identified this as the right score for the ATE; the role of Chapter 12 is to explain how to estimate its nuisance components safely when flexible learners are used. DML does not introduce a new causal estimand or a new ATE score; it is the cross-fitted implementation of the AIPW score, together with rate and regularity conditions that permit flexible nuisance learning. (The cross-fitted estimator is, of course, a different finite-sample object from the same-sample AIPW estimator; what is unchanged is the estimand and the orthogonal score.) We now prove that this score is Neyman orthogonal. The proof verifies @def-orthogonal separately for perturbations in each of the three nuisance components.
 
-::: {.callout-tip icon=false}
-## Lemma: Neyman Orthogonality of the ATE Score {#lem-orthogonal-ate}
+::: {#lem-orthogonal-ate}
+## Neyman Orthogonality of the ATE Score
 
 The score $\varphi_{\mathrm{eff}}(O;\,\tau,\eta)$ in @eq-orth-score-ate is Neyman orthogonal at every truth $(\tau_0, \eta_0) = (\tau_0, \mu_0, \mu_1, \pi)$ whose nuisance components are the observed-data functions defined below, provided strong overlap holds ($c \le \pi(X) \le 1-c$ for some $c>0$) and $\E|Y| < \infty$. That is, for every bounded perturbation direction $h(x)$, $g(x)$, or $\ell(x)$,
 $$\begin{aligned}
@@ -216,14 +216,14 @@ By @lem-orthogonal-ate, Neyman orthogonality eliminates the first-order term in 
 $$(\mathbb{P}_n - P)\{f_{\hat\eta} - f_{\eta_0}\} = \frac{1}{\sqrt{n}}\,\mathbb{G}_n\{f_{\hat\eta} - f_{\eta_0}\}.$$ {#eq-ep-term}
 This term depends on $\hat\eta$, which is estimated from the same sample. Whether it is $o_p(n^{-1/2})$ depends on how complex the class $\{f_\eta : \eta \in \mathcal{H}\}$ is --- a question the Donsker condition answers.
 
-### The Donsker Condition ★ {#sec-w12-donsker}
+### The Donsker Condition $\star$ {#sec-w12-donsker}
 
 *This subsection provides empirical-process background and may be treated as second-pass material. For a first reading it suffices to know: (i) what same-sample stochastic equicontinuity is supposed to accomplish; (ii) that highly adaptive learners may fall outside classical fixed-complexity regimes; and (iii) that cross-fitting supplies a different route (@sec-w12-splitting--@sec-w12-crossfit).*
 
 The Donsker condition is a technical way of asking whether the function class used by the nuisance learner is tame enough that same-sample score evaluation remains asymptotically well behaved.
 
-::: {.callout-note icon=false}
-## Definition: Donsker Class {#def-donsker}
+::: {#def-donsker}
+## Donsker Class
 
 A class of measurable functions $\mathcal{F}$ is a *Donsker class* (with respect to $P$) if the empirical process $\{\mathbb{G}_n f : f \in \mathcal{F}\}$ converges weakly in $\ell^\infty(\mathcal{F})$ to a tight Gaussian process indexed by $\mathcal{F}$. In particular, every Donsker class satisfies the uniform bound
 $$\sup_{f \in \mathcal{F}} \bigl|(\mathbb{P}_n - P) f\bigr| = O_p(n^{-1/2})$$
@@ -236,8 +236,8 @@ is the bracketing entropy. Subject to measurability and a square-integrable enve
 $$\int_0^{\delta_0} \sqrt{H_{[\,]}(\epsilon, \mathcal{F}, L_2(P))}\, d\epsilon < \infty$$
 for some $\delta_0 > 0$ (the integral is over the relevant range of bracket sizes; classes are typically bounded in $L_2(P)$ so the upper limit can be taken as the $L_2$-diameter of $\mathcal{F}$). Intuitively, the integral is finite when the class is not too large: a sufficient condition is that the bracketing entropy grow at most polynomially with exponent below two, $H_{[\,]}(\epsilon, \mathcal{F}, L_2(P)) \lesssim \epsilon^{-v}$ for some $v < 2$. Note carefully that it is the *entropy*, not the bracketing number itself, that may grow polynomially in $1/\epsilon$; the bracketing number then grows roughly exponentially in $\epsilon^{-v}$.
 
-::: {.callout-note icon=false}
-## Example: Donsker and Non-Donsker Classes {#exm-donsker}
+::: {#exm-donsker}
+## Donsker and Non-Donsker Classes
 
 - **Parametric classes** (e.g., logistic regression models indexed by a finite-dimensional parameter) are Donsker under mild moment conditions, since the bracketing entropy grows only logarithmically.
 - **Hölder-smooth function classes** on $[0,1]^d$ with smoothness index $s > d/2$ are Donsker: a bounded Hölder ball has bracketing entropy $H_{[\,]}(\epsilon, \mathcal{F}, L_2(P)) \lesssim \epsilon^{-d/s}$ for any $P$ (via the sup-norm entropy bound), so $s > d/2$ suffices for the entropy integral to converge. Under regular full-dimensional support conditions on $P$, a matching lower bound holds, making $s > d/2$ the sharp threshold for this class; for $P$ concentrated on a lower-dimensional set, the $L_2(P)$ entropy can be much smaller.
@@ -410,8 +410,8 @@ It is tempting to think that estimating any two of $\mu_0$, $\mu_1$, and $\pi$ f
 
 The main theoretical advantage of orthogonality and cross-fitting is that valid root-$n$ inference can hold even when nuisance estimators converge more slowly than $n^{-1/2}$. The following result makes this precise.
 
-::: {.callout-tip icon=false}
-## Theorem: Asymptotic Linearity Under Cross-Fitting {#thm-asymp}
+::: {#thm-asymp}
+## Asymptotic Linearity Under Cross-Fitting
 
 Let $O_1,\ldots,O_n$ be i.i.d. from $P$. Let the number of folds $K$ be fixed, with fold sizes satisfying $\min_k n_k/n$ bounded away from zero, and assume the fold partition is either deterministic or generated by randomization independent of $O_1,\ldots,O_n$. Suppose that for each fold $k$ all nuisance fitting, feature selection, preprocessing, and tuning use only observations outside $\mathcal{I}_k$. Assume $\E|Y|^{2+\delta} < \infty$ for some $\delta > 0$ and $0 < \sigma^2 = \E\{\varphi_{\mathrm{eff}}(O;\,\tau_0,\eta_0)^2\} < \infty$. (The causal identification assumptions of Chapter 5 are required if $\tau_0$ is to be interpreted as the ATE; the distributional conclusion below concerns the observed-data functional.) Suppose further:
 
@@ -632,8 +632,8 @@ A natural variance estimator is
 $$\hat{V} = \frac{1}{n(n-1)}\sum_{i=1}^n (\hat\varphi_i - \bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n \hat\varphi_i.$$ {#eq-var-est}
 The Wald confidence interval at level $1 - a$ is $\hat\tau_{\mathrm{DML}} \pm z_{1-a/2}\sqrt{\hat{V}}$. (We write $a$ for the significance level to avoid collision with other uses of $\alpha$.)
 
-::: {.callout-tip icon=false}
-## Theorem: Consistency of the Variance Estimator {#thm-var}
+::: {#thm-var}
+## Consistency of the Variance Estimator
 
 Suppose the conditions of @thm-asymp hold and, in addition, the estimated influence values converge in the sense
 $$\frac{1}{n}\sum_{i=1}^n \bigl\{\hat\varphi_i - \varphi_{\mathrm{eff}}(O_i;\,\tau_0,\eta_0)\bigr\}^2 = o_p(1).$$

@@ -74,8 +74,8 @@ Asymptotic-variance comparisons are then made in the Loewner partial order, or e
 
 To define what it means for $\Psi$ to be "smooth," we need a notion of a path through $\mathcal{P}$ that begins at $P$. The standard device is the regular parametric submodel.
 
-::: {.callout-note icon=false}
-## Definition: Regular Parametric Submodel {#def-submodel}
+::: {#def-submodel}
+## Regular Parametric Submodel
 
 A **regular parametric submodel** of $\mathcal{P}$ passing through $P$ is a one-parameter family
 $$\{P_\varepsilon : \varepsilon \in (-\delta, \delta)\} \subset \mathcal{P}, \qquad P_0 = P,$$
@@ -104,8 +104,8 @@ which reduces to $\Psi(\delta_o) - \Psi(P)$ only for linear functionals [@vander
 
 The functional $\Psi$ is differentiable along a submodel if the map $\varepsilon \mapsto \Psi(P_\varepsilon)$ is differentiable at $\varepsilon = 0$ in the ordinary sense. Pathwise differentiability asserts that this derivative can be represented as an inner product between a fixed function and the score, with the *same* representer for every regular submodel.
 
-::: {.callout-note icon=false}
-## Definition: Pathwise Differentiability and Influence Function {#def-pathwise}
+::: {#def-pathwise}
+## Pathwise Differentiability and Influence Function
 
 The functional $\Psi: \mathcal{P} \to \mathbb{R}$ is **pathwise differentiable** at $P$ if there exists a function $\varphi \in L_2^0(P)$ such that, for every regular parametric submodel $\{P_\varepsilon\}$ with score $S$,
 $$\left.\frac{\partial}{\partial \varepsilon}\Psi(P_\varepsilon)\right|_{\varepsilon=0} \;=\; \E_P[\varphi(O)\, S(O)].$$ {#eq-pathwise}
@@ -116,8 +116,8 @@ Equation @eq-pathwise is the defining identity of semiparametric theory. It says
 $$\dot\Psi_P : \mathcal{T} \to \mathbb{R}, \qquad \dot\Psi_P(g) \;=\; \E_P[\varphi(O)\, g(O)],$$
 and call $\dot\Psi_P$ the **pathwise derivative** of $\Psi$ at $P$. Note that $\dot\Psi_P$ does not depend on which gradient $\varphi$ is used to define it, since any two agree on $\mathcal{T}$.
 
-::: {.callout-note icon=false}
-## Example: Mean Functional {#exm-mean}
+::: {#exm-mean}
+## Mean Functional
 
 Let $O = Y$ with $\E_P[Y^2] < \infty$ and $\Psi(P) = \E_P[Y]$. Let $\{P_\varepsilon\}$ be a regular submodel with score $S$, and assume the local integrability condition that permits differentiating $\varepsilon \mapsto \E_{P_\varepsilon}[Y]$ under the integral sign at $\varepsilon = 0$. Then
 $$\frac{\partial}{\partial \varepsilon}\int y\, p_\varepsilon(y)\, d\mu(y)\bigg|_{0} = \int y\, S(y)\, p(y)\, d\mu(y) = \E_P[Y \cdot S(O)].$$
@@ -130,8 +130,10 @@ The example illustrates two features common to all gradient calculations. First,
 
 Not every functional of interest is pathwise differentiable, and the failure is not an edge case. The next example is the reason the hypothesis in @def-pathwise has content.
 
-::: {.callout-note collapse=true icon=false}
-## Example (second reading): A Functional with No Gradient {#exm-no-gradient}
+::: {#exm-no-gradient}
+## A Functional with No Gradient
+
+*Second reading.*
 
 Let $O = Y$ and let $\mathcal{P}$ consist of the distributions on $\mathbb{R}$ whose density admits a continuous version in a neighborhood of a fixed point $y_0$, with $p(y_0) > 0$. Evaluating that continuous version at $y_0$ defines $\Psi(P) = p(y_0)$.
 
@@ -169,8 +171,8 @@ so a generic estimating function $U$ equals the influence function $\varphi$ onl
 
 The space of admissible perturbations of $P$ within the model $\mathcal{P}$ is called the tangent space.
 
-::: {.callout-note icon=false}
-## Definition: Tangent Space {#def-tangent}
+::: {#def-tangent}
+## Tangent Space
 
 The **tangent space** of $\mathcal{P}$ at $P$, denoted $\mathcal{T}_P(\mathcal{P})$ or simply $\mathcal{T}$, is the closed linear span in $L_2^0(P)$ of all scores of regular parametric submodels of $\mathcal{P}$ passing through $P$.
 :::
@@ -187,8 +189,8 @@ It is worth resisting the habit of treating "nonparametric" and "maximal tangent
 
 Many semiparametric causal problems have a finite-dimensional target $\psi = \Psi(P)$ and infinite-dimensional nuisance. In fully nonparametric observed-data models, the tangent space is often the whole space $L_2^0(P)$; in restricted semiparametric models --- for instance, those imposing a known treatment mechanism, a known missingness mechanism, or a structural restriction on $P$ --- the tangent space $\mathcal{T}$ is a proper infinite-dimensional subspace of $L_2^0(P)$.
 
-::: {.callout-note icon=false}
-## Definition: First-Order Nuisance Tangent Space {#def-nuisance-tangent}
+::: {#def-nuisance-tangent}
+## First-Order Nuisance Tangent Space
 
 Suppose $\Psi$ is pathwise differentiable at $P$ with pathwise derivative $\dot\Psi_P : \mathcal{T} \to \mathbb{R}$. The **nuisance tangent space** of $\Psi$ at $P$ is the kernel of that derivative,
 $$\mathcal{T}_\eta \;:=\; \ker(\dot\Psi_P) \;=\; \{\, g \in \mathcal{T} \;:\; \dot\Psi_P(g) = 0 \,\}.$$
@@ -203,8 +205,8 @@ With this convention, the Hilbert-space decomposition
 $$L_2^0(P) \;=\; \mathcal{T}_\eta \;\oplus\; \mathcal{T}_\eta^\perp$$ {#eq-hilbert-decomp}
 holds automatically by the projection theorem, and provides the geometric structure underlying semiparametric efficiency.
 
-::: {.callout-tip icon=false}
-## Proposition: Every Influence Function Lies in $\mathcal{T}_\eta^\perp$ {#prp-if-in-perp}
+::: {#prp-if-in-perp}
+## Every Influence Function Lies in $\mathcal{T}_\eta^\perp$
 
 Let $\Psi$ be pathwise differentiable at $P$. Then every influence function $\varphi \in \mathrm{IF}(\Psi, P)$ satisfies $\varphi \in \mathcal{T}_\eta^\perp$.
 :::
@@ -231,8 +233,10 @@ In the nonparametric observed-data model for $O = (X, T, Y)$, $\mathcal{T} = L_2
 
 The abstract claim that gradients may be non-unique deserves a model in which one can watch it happen. The nonparametric examples above are the wrong place to look: there $\mathcal{T} = L_2^0(P)$, so $\mathcal{T}^\perp = \{0\}$ and the gradient is unique. Non-uniqueness requires a *restricted* model, and the smallest interesting one suffices.
 
-::: {.callout-note collapse=true icon=false}
-## Example (second reading): Non-Uniqueness in a Normal Location Model {#exm-normal-location}
+::: {#exm-normal-location}
+## Non-Uniqueness in a Normal Location Model
+
+*Second reading.*
 
 Let $Y \sim N(\mu, 1)$ with $\mathcal{P} = \{N(\mu,1) : \mu \in \mathbb{R}\}$ and target $\Psi(P_\mu) = \mu$. The model is one-dimensional, with score $S(Y) = Y - \mu$ and
 $$\mathcal{T} \;=\; \mathrm{span}\{Y - \mu\} \;\subsetneq\; L_2^0(P).$$
@@ -259,8 +263,8 @@ Two lessons generalize. First, non-uniqueness is a statement about the *model*, 
 
 @prp-if-in-perp showed that every influence function lies in $\mathcal{T}_\eta^\perp$. What distinguishes a single influence function within this set? The answer is orthogonality to $\mathcal{T}^\perp$, equivalently membership in the full tangent space $\mathcal{T}$: among all influence functions, there is a unique one lying in $\mathcal{T}$, and it is the one with smallest variance.
 
-::: {.callout-tip icon=false}
-## Theorem: Canonical Gradient {#thm-canonical}
+::: {#thm-canonical}
+## Canonical Gradient
 
 Let $\Psi$ be pathwise differentiable at $P$, so that the set $\mathrm{IF}(\Psi, P)$ of gradients is non-empty. Then:
 
@@ -312,8 +316,8 @@ The figure below summarizes the geometry of the theorem in a single picture, and
 ```
 :::
 
-::: {.callout-note icon=false}
-## Definition: Efficient Influence Function and Efficiency Bound {#def-appC-eif}
+::: {#def-appC-eif}
+## Efficient Influence Function and Efficiency Bound
 
 The unique element $\varphi^* \in \mathrm{IF}(\Psi, P) \cap \mathcal{T}$ is called the **efficient influence function** (EIF), or **canonical gradient**, of $\Psi$ at $P$. Its variance, $V^*(\Psi, P) = \E_P[\varphi^*(O)^2]$, is the **semiparametric efficiency bound** for estimating $\Psi(P)$ in the model $\mathcal{P}$.
 :::
@@ -346,8 +350,8 @@ It is tempting to summarize both constructions as "take an unbiased estimating f
 
 The efficiency bound has the following interpretation, which is the formal version of the heuristic statement in Chapter 10.
 
-::: {.callout-tip icon=false}
-## Theorem: Asymptotic Efficiency Bound {#thm-appC-convolution}
+::: {#thm-appC-convolution}
+## Asymptotic Efficiency Bound
 
 Let $O_1, \ldots, O_n$ be i.i.d. from $P$, and let $\hat\psi_n$ be a regular asymptotically linear estimator of $\Psi(P)$ in the model $\mathcal{P}$. Then its asymptotic variance satisfies
 $$\mathrm{AVar}(\sqrt{n}(\hat\psi_n - \psi)) \;\geq\; V^*(\Psi, P),$$
@@ -495,8 +499,9 @@ the classical semiparametric variance bound for the ATE [@hahn1998role; @robins1
 
 It remains to say what this does and does not establish. Equation @eq-ate-bound is a **parameter-side** result: it is a property of $\tau$ and $P$, computed before any estimator is proposed, and by @thm-appC-convolution no regular asymptotically linear estimator of $\tau$ can have smaller asymptotic variance. It does not follow that every procedure labeled AIPW attains it. A feasible AIPW estimator attains the bound when the estimator-side conditions developed in Chapters 11 and 12 hold: consistent nuisance estimation, a product-rate condition controlling the second-order remainder, empirical-process control or cross-fitting to license the linearization, and a consistent variance estimator for inference. The EIF calculation supplies the target; those chapters supply the argument that a particular estimator hits it.
 
-::: {.callout-note collapse=true icon=false}
-## Remark (second reading): IPW versus AIPW --- The Same Function in Two Models {#sec-appC-ipw-aipw}
+### IPW versus AIPW: The Same Function in Two Models {#sec-appC-ipw-aipw}
+
+*Second reading.*
 
 Now that $\mathcal{H}_X$, $\mathcal{H}_T$, $\mathcal{H}_Y$ and $\varphi^*$ are all in hand, the status of the IPW estimating function
 $$U_{\mathrm{IPW}}(O) \;=\; \frac{T\, Y}{\pi(X)} \;-\; \frac{(1-T)\, Y}{1-\pi(X)} \;-\; \tau$$
@@ -519,7 +524,6 @@ So $U_{\mathrm{IPW}}$ is orthogonal to $\mathcal{H}_T$ if and only if $q = 0$ in
 *Known treatment mechanism.* If $\pi$ is known, no submodel may perturb $p_{T \mid X}$, so treatment-score directions drop out of the tangent space: $\mathcal{T} = \mathcal{H}_X \oplus \mathcal{H}_Y$ and $\mathcal{H}_T \subset \mathcal{T}^\perp$. The second term of @eq-ipw-aipw now lies in $\mathcal{T}^\perp$, so by @thm-canonical (i) $U_{\mathrm{IPW}}$ is a perfectly valid gradient of $\tau$ --- just not the canonical one. Projecting it onto $\mathcal{T}$ deletes the $\mathcal{H}_T$ component and returns $\varphi^*$.
 
 The efficiency bound is the same in both models, since $\varphi^*$ is unchanged; knowing $\pi$ does not help one estimate $\tau$ more precisely. What changes is which functions count as gradients, and hence which estimators are regular. This is the cleanest illustration in the appendix of the fact that "efficient" is always efficient *relative to a model*, and it explains the otherwise puzzling result of Chapter 10 that estimating $\pi$ can reduce the variance of the unaugmented Horvitz--Thompson IPW estimator relative to using the true $\pi$.
-:::
 
 ## Synthesis {#sec-appC-synthesis}
 

@@ -86,8 +86,8 @@ The estimator in @eq-aipw is the *augmented inverse probability weighted (AIPW) 
 
 The AIPW estimator enjoys two important properties: double robustness and optimality within the augmented estimator class. We establish double robustness here; the optimality property is developed in @sec-w11-class.
 
-::: {.callout-tip icon=false}
-## Theorem: Double Robustness {#thm-dr}
+::: {#thm-dr}
+## Double Robustness
 
 Let $\phi(O;\tau,\eta)$ be the estimating function in @eq-dr-score. Suppose consistency, conditional exchangeability, and positivity hold, so that $\tau = \E\{\mu_1^*(X)-\mu_0^*(X)\}$. Assume the working functions are admissible: $0 < \pi(x) < 1$ on the support of $X$, and the expectations displayed in @eq-dr-score exist. Then $\E\{\phi(O;\tau,\eta)\} = 0$ if either:
 
@@ -112,8 +112,8 @@ where the second line uses $\E[T\mid X] = \pi^*(X) = \pi(X)$ (so the $\mu_1$ ter
 The key cancellation in Case 2 is that the working outcome function $\mu_1(X)$ enters the bracket twice --- once multiplied by $T/\pi(X)$ and once as a standalone term --- and the two instances have equal and opposite conditional expectations because $\E[T/\pi(X)\mid X] = 1$ when $\pi$ is correct. The bracket thus "forgets" $\mu_1$ entirely, even though it appeared there twice, and converges to $\mu_1^*(X)$. This is exactly what makes the augmentation doubly robust: a wrong $\mu_t$ is subtracted out by the correct $\pi$.
 :::
 
-::: {.callout-tip icon=false}
-## Theorem: The Exact Double-Robustness Remainder {#thm-dr-remainder}
+::: {#thm-dr-remainder}
+## The Exact Double-Robustness Remainder
 
 Under the assumptions of @thm-dr, for any admissible working pair $(\pi, \mu_0, \mu_1)$,
 $$\E\{\phi(O;\tau,\eta)\} = \E\!\left[\{\pi^*(X)-\pi(X)\}\left\{\frac{\mu_1^*(X)-\mu_1(X)}{\pi(X)} + \frac{\mu_0^*(X)-\mu_0(X)}{1-\pi(X)}\right\}\right].$$ {#eq-dr-remainder}
@@ -141,8 +141,8 @@ with $\|\cdot\|$ the $L^2(P)$ norm --- exactly the product structure behind the 
 @thm-dr is a *population moment identity*: it says that the estimating function has mean zero at the true $\tau$ when either working model is correct. It does not by itself assert anything about the fitted estimator, and it does not protect against misspecification of both models simultaneously. Consistency of $\hat\tau_{\mathrm{AIPW}}$ additionally requires convergence of the fitted nuisances, admissible denominators, and a law of large numbers for the estimated score, as the following result records.
 :::
 
-::: {.callout-tip icon=false}
-## Theorem: Double-Robust Consistency {#thm-dr-consistency}
+::: {#thm-dr-consistency}
+## Double-Robust Consistency
 
 Write $\hat\tau_{\mathrm{AIPW}} = \mathbb{P}_n\,\psi(O;\hat\eta)$ for the sample average in @eq-aipw, where $\psi(O;\eta) = \phi(O;\tau,\eta) + \tau$ does not involve $\tau$. Suppose (i) $\hat\mu_t \to \mu_t^\dagger$ and $\hat\pi \to \pi^\dagger$ in $L^2(P_X)$-probability, with $\varepsilon \leq \hat\pi(x),\, \pi^\dagger(x) \leq 1-\varepsilon$ for some $\varepsilon > 0$ and $\E(Y^2) < \infty$; and (ii) $(\mathbb{P}_n - P)\,\psi(O;\hat\eta) = o_p(1)$. If either $\mu_t^\dagger = \mu_t^*$ for both $t$ or $\pi^\dagger = \pi^*$, then $\hat\tau_{\mathrm{AIPW}} \overset{p}{\to} \tau$.
 :::
@@ -176,8 +176,8 @@ The estimator $\hat\mu_{1,b}$ in @eq-mu1b and $\hat\mu_{1,\mathrm{dr}}$ in @eq-m
 
 The following theorem shows that every estimator in this class is unbiased for $\tau$ under a correctly specified propensity score, regardless of the choice of $b_t$, and provides an explicit formula for its total variance.
 
-::: {.callout-tip icon=false}
-## Theorem: Unbiasedness and Variance of the AIPW Class {#thm-cond-unbiased}
+::: {#thm-cond-unbiased}
+## Unbiasedness and Variance of the AIPW Class
 
 Under joint conditional exchangeability $\{Y(0), Y(1)\} \indep T \mid X$ (the form used in the variance calculation below; Chapter 4 discusses its relation to the weaker per-arm form), SUTVA, and positivity strengthened to strict overlap ($\varepsilon \leq \pi^*(x) \leq 1-\varepsilon$ for some $\varepsilon > 0$), with the true propensity score used as $\pi(x)$ in the estimator, for any $b_0, b_1 \in \mathcal{L}^2$ and $\E\{Y(t)^2\} < \infty$:
 
@@ -210,8 +210,8 @@ Taking expectations over $(X, Y(1), Y(0))$ and adding the between-group term $\m
 
 Every member of the class is unbiased for $\tau$, for any choice of $b_t$. The first term of @eq-var-b depends on $b_t$; the second, $n^{-1}\mathrm{Var}\{Y(1)-Y(0)\}$, does not.
 
-::: {.callout-tip icon=false}
-## Theorem: Optimal Control Functions {#thm-opt-b}
+::: {#thm-opt-b}
+## Optimal Control Functions
 
 The control functions $b_1^*(X) = \E\{Y(1)\mid X\}$ and $b_0^*(X) = \E\{Y(0)\mid X\}$ form a minimizing pair for the total variance in @eq-var-b; the full set of minimizing pairs, and the uniqueness of the resulting estimator, are described in the remark below. The resulting AIPW estimator coincides with the bias-corrected prediction estimator in @eq-aipw-biascorr.
 :::
@@ -264,7 +264,7 @@ in which every ingredient is a functional of the observed-data distribution. Ant
 @thm-opt-b shows that among the augmented estimators $\{\hat\tau_b : b_t \in \mathcal{L}^2\}$, the choice $b_t^*(X) = \E\{Y(t)\mid X\}$ minimizes asymptotic variance. Thus AIPW is optimal within this estimator class when both nuisance components are correctly specified. This is a class-specific optimality result; the broader semiparametric efficiency interpretation --- showing that no regular asymptotically linear estimator, inside or outside this class, can improve upon AIPW --- will be developed in @sec-w11-eif. When either model is misspecified, the AIPW estimator retains consistency by double robustness but no longer necessarily achieves the minimum variance within the class.
 :::
 
-## The Projection Interpretation ★ {#sec-w11-projection}
+## The Projection Interpretation $\star$ {#sec-w11-projection}
 
 The class-specific optimality of AIPW within the augmented IPW family (@thm-opt-b) has an elegant interpretation in terms of projections in a Hilbert space of estimators. This framing is a working analogy: the collection of square-integrable random variables, quotiented by a.s. equality, is a genuine Hilbert space $L^2(P)$ under the inner product $\langle X, Y\rangle = \E(XY)$, which coincides with $\mathrm{Cov}(X, Y)$ whenever either argument has mean zero. @thm-projection is an instance of the $L^2$ projection theorem in that space, applied to the closed subspace $\Lambda$ of mean-zero elements; see @tsiatis2006semiparametric (Chapter 2) for the careful construction.
 
@@ -274,8 +274,8 @@ This projection view does not define a new estimator; rather, it explains why th
 
 Let $\hat\theta_0$ be an unbiased estimator of $\theta$. Define the *augmentation space* $\Lambda$ as a pre-specified closed linear subspace of mean-zero square-integrable random variables that are *computable from the observed data without knowledge of $\theta$*. Elements of $\Lambda$ are called *admissible augmentation terms*. The observability restriction is essential: if $\Lambda$ were taken to be all mean-zero square-integrable random variables, the true parameter error $\hat\theta_0-\theta$ itself would be in $\Lambda$, and the "projection" would yield the degenerate estimator $\theta$ with zero variance --- a construction that requires knowing the very quantity we are trying to estimate. Restricting $\Lambda$ to observable corrections removes this degeneracy. For any $\hat b \in \Lambda$ the estimator $\hat\theta_b = \hat\theta_0 - \hat b$ remains unbiased for $\theta$. We seek the $\hat b^* \in \Lambda$ that minimizes $\mathrm{Var}(\hat\theta_b)$.
 
-::: {.callout-tip icon=false}
-## Theorem: Optimal Projection {#thm-projection}
+::: {#thm-projection}
+## Optimal Projection
 
 The optimal correction is $\hat b^* = \Pi(\hat\theta_0\mid\Lambda)$, the $L^2$ projection of $\hat\theta_0$ onto $\Lambda$. It is characterized by: (1) $\hat b^* \in \Lambda$; (2) $\mathrm{Cov}(\hat\theta_0-\hat b^*,\;\hat b) = 0$ for all $\hat b \in \Lambda$. The optimal estimator is
 $$\hat\theta_{\mathrm{opt}} = \hat\theta_0 - \hat b^* = \Pi(\hat\theta_0 \mid \Lambda^\perp),$$
@@ -326,7 +326,7 @@ The Pythagorean identity shows that the variance of the initial estimator decomp
 The Horvitz--Thompson expression, for its part, is an influence function only in the restricted model with $\pi$ known; in the full model it is an unbiased estimating function whose orthogonalization against the treatment-mechanism score directions (@sec-w11-proj-causal) produces AIPW. Here we project a realized estimator $\hat\theta_0$ onto the orthogonal complement of an augmentation space $\Lambda$ of observable corrections. The two constructions share a common Hilbert-space template, and --- as @sec-w11-proj-causal and @sec-w11-eif together verify --- they yield the same correction in the ATE problem. Readers should not, however, take @thm-projection as a substitute for the tangent-space derivation: it is a self-contained variance-reduction result for a class of unbiased estimators, not a derivation of the semiparametric efficiency bound itself.
 :::
 
-## Projection in the Causal Inference Setting ★ {#sec-w11-proj-causal}
+## Projection in the Causal Inference Setting $\star$ {#sec-w11-proj-causal}
 
 We now specialize the projection framework to the ATE, assuming $\pi(X)$ is known. To align with the arm-by-arm structure of @sec-w11-class, we decompose the Horvitz--Thompson estimator as $\hat\tau_{\mathrm{HT}} = \hat\mu_{1,\mathrm{HT}} - \hat\mu_{0,\mathrm{HT}}$, where
 $$\hat\mu_{1,\mathrm{HT}} = \frac{1}{n}\sum_{i=1}^n \frac{T_i Y_i}{\pi_i}, \qquad \hat\mu_{0,\mathrm{HT}} = \frac{1}{n}\sum_{i=1}^n \frac{(1-T_i)Y_i}{1-\pi_i},$$
@@ -351,8 +351,8 @@ The estimator $\hat\mu_{1,b}$ in @eq-mu1b is exactly $\hat\mu_{1,\mathrm{HT}}$ a
 
 ### Computing the Projections
 
-::: {.callout-tip icon=false}
-## Theorem: Arm-wise Projections onto the Augmentation Spaces {#thm-proj-causal}
+::: {#thm-proj-causal}
+## Arm-wise Projections onto the Augmentation Spaces
 
 Assume the setting of @thm-cond-unbiased: $\pi$ known and bounded away from $0$ and $1$, and $\E\{Y(t)^2\} < \infty$. The optimal corrections are
 $$\Pi(\hat\mu_{1,\mathrm{HT}} \mid \Lambda_1) = n^{-1}\sum_{i=1}^n\!\left(\frac{T_i}{\pi_i}-1\right) b_1^*(X_i), \qquad b_1^*(x) = \E\{Y(1)\mid x\},$$
@@ -402,8 +402,8 @@ To state the bound precisely, define the observed-data functional
 $$\Psi(P) = \E_P\{\mu_{1,P}(X) - \mu_{0,P}(X)\}, \qquad \mu_{t,P}(x) = \E_P(Y \mid T=t, X=x),$$
 on the nonparametric model for $O=(X,T,Y)$ satisfying positivity and $\E_P\{\varphi_{\mathrm{eff}}(O)^2\} < \infty$. The functional $\Psi(P)$ is defined for every such $P$ without causal assumptions; under consistency, conditional exchangeability, and positivity (Chapters 4--6), it equals the causal ATE $\tau$. The efficiency theory below concerns estimation of $\Psi(P)$; the causal interpretation rides on the identification assumptions.
 
-::: {.callout-tip icon=false}
-## Theorem: Semiparametric Efficiency Bound for the ATE {#thm-bound}
+::: {#thm-bound}
+## Semiparametric Efficiency Bound for the ATE
 
 Under the nonparametric model for $O=(X,T,Y)$, every regular asymptotically linear estimator $\hat\tau$ of $\Psi(P)$ (equivalently, of the ATE under the identification assumptions) satisfies
 $$\mathrm{Avar}(\sqrt{n}(\hat\tau - \tau)) \;\geq\; \E\{\varphi_{\mathrm{eff}}(O)^2\},$$
@@ -424,7 +424,7 @@ The efficient influence function plays the same role in semiparametric theory th
 The three derivations in this chapter --- bias correction (@sec-w11-prediction), optimal augmentation (@sec-w11-class), and the present semiparametric identification --- converge on the same estimating function, which is the deepest explanation of why AIPW occupies a central place in the causal inference toolkit.
 :::
 
-## Doubly Robust Regression: Weighted and Augmented Approaches ★ {#sec-w11-ibc}
+## Doubly Robust Regression: Weighted and Augmented Approaches $\star$ {#sec-w11-ibc}
 
 The AIPW estimator achieves double robustness by adding an explicit bias-correction term to the prediction estimator. An equally important question is how to build double robustness *directly into the outcome model fit*, so that the prediction estimator is itself doubly robust without any separate augmentation step. The unifying concept behind this section is the *internal bias calibration* (IBC) condition: a simple algebraic identity that, when enforced by the fitting procedure, forces the prediction estimator to coincide with AIPW. The two constructions below --- IPW-weighted least squares and regression on a clever covariate --- are distinct ways of ensuring IBC holds, and the second is the targeting step that underlies TMLE.
 
@@ -514,19 +514,19 @@ Repeat the simulation $B = 2000$ times and record bias, variance, MSE, and empir
 
 | Scenario | Metric | $\hat\tau_{\mathrm{HT}}$ | $\hat\tau_{\mathrm{AIPW}}$ | $\hat\tau_{\mathrm{aug}}$ | $\hat\tau_{\mathrm{aug}^+}$ |
 |---|---|---|---|---|---|
-| **S1**: OR ✓, PS ✓ | Bias $\times 10^3$ | $0.55$ | $-0.44$ | $-0.45$ | $-0.45$ |
+| **S1**: OR $\checkmark$, PS $\checkmark$ | Bias $\times 10^3$ | $0.55$ | $-0.44$ | $-0.45$ | $-0.45$ |
 | | Var $\times 10^3$ | $6.82$ | $4.25$ | $4.25$ | $4.30$ |
 | | MSE $\times 10^3$ | $6.82$ | $4.25$ | $4.25$ | $4.30$ |
 | | Cov (%) | $99.9$ | $95.0$ | $94.9$ | $94.5$ |
-| **S2**: OR ✓, PS ✗ | Bias $\times 10^3$ | $188.56$ | $0.62$ | $0.62$ | $0.62$ |
+| **S2**: OR $\checkmark$, PS $\times$ | Bias $\times 10^3$ | $188.56$ | $0.62$ | $0.62$ | $0.62$ |
 | | Var $\times 10^3$ | $6.32$ | $4.33$ | $4.33$ | $4.33$ |
 | | MSE $\times 10^3$ | $41.87$ | $4.32$ | $4.32$ | $4.32$ |
 | | Cov (%) | $67.4$ | $94.2$ | $94.2$ | $94.2$ |
-| **S3**: OR ✗, PS ✓ | Bias $\times 10^3$ | $1.46$ | $2.02$ | $2.25$ | $-25.26$ |
+| **S3**: OR $\times$, PS $\checkmark$ | Bias $\times 10^3$ | $1.46$ | $2.02$ | $2.25$ | $-25.26$ |
 | | Var $\times 10^3$ | $5.74$ | $4.71$ | $4.41$ | $8.02$ |
 | | MSE $\times 10^3$ | $5.74$ | $4.71$ | $4.41$ | $8.66$ |
 | | Cov (%) | $99.9$ | $98.4$ | $98.2$ | $93.2$ |
-| **S4**: OR ✗, PS ✗ | Bias $\times 10^3$ | $188.42$ | $188.77$ | $188.62$ | $-5.42$ |
+| **S4**: OR $\times$, PS $\times$ | Bias $\times 10^3$ | $188.42$ | $188.77$ | $188.62$ | $-5.42$ |
 | | Var $\times 10^3$ | $6.28$ | $6.30$ | $6.29$ | $4.26$ |
 | | MSE $\times 10^3$ | $41.78$ | $41.93$ | $41.87$ | $4.29$ |
 | | Cov (%) | $67.5$ | $33.1$ | $33.1$ | $94.7$ |
@@ -602,8 +602,8 @@ and set
 $$\hat V = \frac{1}{n(n-1)}\sum_{i=1}^n(\hat\varphi_i-\bar\varphi)^2, \qquad \bar\varphi = \frac{1}{n}\sum_{i=1}^n\hat\varphi_i.$$ {#eq-var-aipw}
 The Wald confidence interval is $\hat\tau_{\mathrm{AIPW}} \pm z_{1-a/2}\sqrt{\hat V}$.
 
-::: {.callout-tip icon=false}
-## Theorem: Consistency of the Variance Estimator {#thm-var-consistency}
+::: {#thm-var-consistency}
+## Consistency of the Variance Estimator
 
 Suppose $\sqrt{n}(\hat\tau_{\mathrm{AIPW}}-\tau) = n^{-1/2}\sum_i\varphi_{\mathrm{eff}}(O_i)+o_p(1)$ with $\E\{\varphi_{\mathrm{eff}}(O)^2\} < \infty$, and that the estimated influence values @eq-ifhat satisfy
 $$\frac{1}{n}\sum_{i=1}^n \bigl\{\hat\varphi_i - \varphi_{\mathrm{eff}}(O_i)\bigr\}^2 = o_p(1).$$

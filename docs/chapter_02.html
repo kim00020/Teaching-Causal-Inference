@@ -536,17 +536,8 @@ window.Quarto = {
 <p>The Markov factorization is <span class="math inline">\(p(n,b,e,y) = p(n)\,p(b)\,p(e\mid n,b)\,p(y\mid e,b)\)</span>. Reading off structural relationships: <span class="math inline">\(\Pa(E) = \{N,B\}\)</span>, <span class="math inline">\(\Pa(Y) = \{E,B\}\)</span>, <span class="math inline">\(\Pa(N)=\Pa(B)=\varnothing\)</span>. The descendants of <span class="math inline">\(N\)</span> are <span class="math inline">\(\{E,Y\}\)</span>; <span class="math inline">\(B\)</span> and <span class="math inline">\(N\)</span> are non-descendants of each other.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: The IV DAG
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The canonical instrumental variable model involves four nodes: <span class="math inline">\(Z\)</span> (instrument), <span class="math inline">\(T\)</span> (treatment), <span class="math inline">\(Y\)</span> (outcome), and <span class="math inline">\(U\)</span> (unobserved confounder).</p>
+<div id="exm-ivdag-intro" class="theorem example">
+<p><span class="theorem-title"><strong>Example 2.1 (The IV DAG)</strong></span> The canonical instrumental variable model involves four nodes: <span class="math inline">\(Z\)</span> (instrument), <span class="math inline">\(T\)</span> (treatment), <span class="math inline">\(Y\)</span> (outcome), and <span class="math inline">\(U\)</span> (unobserved confounder).</p>
 <div style="text-align:center;margin:1em auto;">
 <svg viewbox="0 0 300 130" width="100%" style="max-width:300px;font-family:sans-serif;font-size:12px;">
   <defs>
@@ -568,7 +559,6 @@ window.Quarto = {
 </svg>
 </div>
 <p><span class="math inline">\(\Pa(T) = \{Z,U\}\)</span>, <span class="math inline">\(\Pa(Y) = \{T,U\}\)</span>, <span class="math inline">\(\Pa(Z) = \Pa(U) = \varnothing\)</span>. The descendants of <span class="math inline">\(Z\)</span> are <span class="math inline">\(\{T, Y\}\)</span>; <span class="math inline">\(U\)</span> and <span class="math inline">\(Z\)</span> are non-descendants of each other.</p>
-</div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -757,18 +747,8 @@ window.Quarto = {
 </div>
 </div>
 <p>The blocking rules need not be taken on faith. The next example derives the chain rule directly from the Markov factorization stated in <a href="#sec-w2-dags" class="quarto-xref"><span>Section 2.1</span></a>; the remark that follows explains how the remaining rules are obtained by the same kind of computation.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: A Direct Probability Proof for the Chain
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Consider the chain <span class="math inline">\(X_1 \to X_2 \to X_3\)</span>. By the Markov factorization, <span class="math display">\[p(x_1, x_2, x_3) = p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2).\]</span> Conditioning on <span class="math inline">\(X_2 = x_2\)</span>, for any <span class="math inline">\(x_2\)</span> with <span class="math inline">\(p(x_2) &gt; 0\)</span>: <span class="math display">\[p(x_1, x_3 \mid x_2) = \frac{p(x_1, x_2, x_3)}{p(x_2)} = \frac{p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2)}{p(x_2)}.\]</span> Rearranging, <span class="math display">\[p(x_1, x_3 \mid x_2) = \frac{p(x_1)\,p(x_2 \mid x_1)}{p(x_2)}\,p(x_3 \mid x_2) = p(x_1 \mid x_2)\,p(x_3 \mid x_2).\]</span> Hence <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>. This derivation shows concretely how a graphical blocking statement becomes an ordinary conditional-independence identity in the distribution. The corresponding fork case <span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span> can be verified similarly and is left as an exercise.</p>
-</div>
+<div id="exm-chainproof" class="theorem example">
+<p><span class="theorem-title"><strong>Example 2.2 (A Direct Probability Proof for the Chain)</strong></span> Consider the chain <span class="math inline">\(X_1 \to X_2 \to X_3\)</span>. By the Markov factorization, <span class="math display">\[p(x_1, x_2, x_3) = p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2).\]</span> Conditioning on <span class="math inline">\(X_2 = x_2\)</span>, for any <span class="math inline">\(x_2\)</span> with <span class="math inline">\(p(x_2) &gt; 0\)</span>: <span class="math display">\[p(x_1, x_3 \mid x_2) = \frac{p(x_1, x_2, x_3)}{p(x_2)} = \frac{p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2)}{p(x_2)}.\]</span> Rearranging, <span class="math display">\[p(x_1, x_3 \mid x_2) = \frac{p(x_1)\,p(x_2 \mid x_1)}{p(x_2)}\,p(x_3 \mid x_2) = p(x_1 \mid x_2)\,p(x_3 \mid x_2).\]</span> Hence <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>. This derivation shows concretely how a graphical blocking statement becomes an ordinary conditional-independence identity in the distribution. The corresponding fork case <span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span> can be verified similarly and is left as an exercise.</p>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -781,7 +761,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <p>Each rule is a small theorem about any distribution that is Markov with respect to the corresponding three-node graph. The chain rule is exactly the example above, and the fork case is identical after rewriting the factorization (Problem 8). For the collider, the factorization <span class="math inline">\(p(a, b, m) = p(a)\,p(b)\,p(m \mid a, b)\)</span> integrates over <span class="math inline">\(m\)</span> to <span class="math inline">\(p(a, b) = p(a)\,p(b)\)</span> — closed by default — and conditioning on <span class="math inline">\(M\)</span> generically destroys the product (Problem 5). The descendant clause is the same computation one step removed: for a child <span class="math inline">\(D\)</span> of <span class="math inline">\(M\)</span>, <span class="math display">\[p(a, b \mid d) \;\propto\; p(a)\,p(b) \int p(m \mid a, b)\,p(d \mid m)\,\mathrm{d}m,\]</span> which generically does not factorize in <span class="math inline">\((a, b)\)</span>: observing <span class="math inline">\(D\)</span> is observing a noisy proxy of the collider.</p>
-<p>Two qualifications: an open path <em>licenses</em> dependence but does not force it (the generic-parameter reading of <a href="#sec-w2-dsep" class="quarto-xref"><span>Section 2.3</span></a>), and the three-node computations are only base cases — <span class="quarto-unresolved-ref">?thm-dsep</span> extends the correspondence to every path in every DAG. In short, the blocking rules are definitions <em>engineered</em> so that graphical blocking matches conditional independence under the Markov property, and <em>verified</em> here by elementary computation.</p>
+<p>Two qualifications: an open path <em>licenses</em> dependence but does not force it (the generic-parameter reading of <a href="#sec-w2-dsep" class="quarto-xref"><span>Section 2.3</span></a>), and the three-node computations are only base cases — <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a> extends the correspondence to every path in every DAG. In short, the blocking rules are definitions <em>engineered</em> so that graphical blocking matches conditional independence under the Markov property, and <em>verified</em> here by elementary computation.</p>
 </div>
 </div>
 </section>
@@ -789,39 +769,20 @@ window.Quarto = {
 <section id="sec-w2-dsep" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="sec-w2-dsep"><span class="header-section-number">2.3</span> d-Separation</h2>
 <p>The blocking rules of <a href="#sec-w2-motifs" class="quarto-xref"><span>Section 2.2</span></a> settle the status of a <em>single</em> path. In any realistic DAG, however, two variables are typically joined by several paths at once, and association can flow along any one of them: a statistical relationship is ruled out by the graph only when <em>every</em> route is shut. <em>d-Separation</em> — the “d” stands for <em>directional</em>, because the rules depend on the orientation of the arrows along each path — is the criterion that performs exactly this aggregation. Given two nodes and a conditioning set <span class="math inline">\(\mathbf{S}\)</span>, it examines each path in turn and declares the nodes <em>separated</em> precisely when <span class="math inline">\(\mathbf{S}\)</span> blocks all of the paths. It is a purely graphical computation: it can be carried out from the arrows alone, without reference to any probability distribution.</p>
-<p>Why does this bookkeeping deserve a section of its own? Because d-separation is the bridge over which the graph speaks about data. The soundness theorem below (<span class="quarto-unresolved-ref">?thm-dsep</span>) shows that, for any distribution that is Markov with respect to the DAG, every d-separation statement translates into a genuine conditional independence of that distribution. The criterion thereby converts qualitative causal assumptions — arrows — into concrete probabilistic restrictions, and it is the engine behind the identification criteria of later chapters: the back-door criterion of Chapter 3 is, at bottom, a d-separation requirement in a modified graph.</p>
+<p>Why does this bookkeeping deserve a section of its own? Because d-separation is the bridge over which the graph speaks about data. The soundness theorem below (<a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a>) shows that, for any distribution that is Markov with respect to the DAG, every d-separation statement translates into a genuine conditional independence of that distribution. The criterion thereby converts qualitative causal assumptions — arrows — into concrete probabilistic restrictions, and it is the engine behind the identification criteria of later chapters: the back-door criterion of Chapter 3 is, at bottom, a d-separation requirement in a modified graph.</p>
 <section id="sec-w2-dsepcrit" class="level3" data-number="2.3.1">
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="sec-w2-dsepcrit"><span class="header-section-number">2.3.1</span> The d-Separation Criterion</h3>
 <p>Before stating the formal criterion, it is useful to summarize the intuition: a path stays active unless we block a non-collider on it, or unless it contains a collider that has not been conditioned on (and has no conditioned-on descendant). The definition below simply turns this intuition into a rule that applies to any path in any DAG.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: d-Blocking and d-Separation
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A path <span class="math inline">\(\pi\)</span> is <em>d-blocked</em> by a set <span class="math inline">\(\mathbf{S}\)</span> if:</p>
+<div id="def-dsep" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2.1 (d-Blocking and d-Separation)</strong></span> A path <span class="math inline">\(\pi\)</span> is <em>d-blocked</em> by a set <span class="math inline">\(\mathbf{S}\)</span> if:</p>
 <ol type="1">
 <li><span class="math inline">\(\pi\)</span> contains a non-collider <span class="math inline">\(M\)</span> (a chain or fork node) with <span class="math inline">\(M \in \mathbf{S}\)</span>; or</li>
 <li><span class="math inline">\(\pi\)</span> contains a collider <span class="math inline">\(A \to C \leftarrow B\)</span> with <span class="math inline">\(C \notin \mathbf{S}\)</span> and no descendant of <span class="math inline">\(C\)</span> is in <span class="math inline">\(\mathbf{S}\)</span>.</li>
 </ol>
 <p>Nodes <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are <em>d-separated</em> by <span class="math inline">\(\mathbf{S}\)</span>, written <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span>, if every path between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> in <span class="math inline">\(\Gcal\)</span> is d-blocked by <span class="math inline">\(\mathbf{S}\)</span>. If some path is not d-blocked, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are <em>d-connected</em> given <span class="math inline">\(\mathbf{S}\)</span>, written <span class="math inline">\((X \nindep Y \mid \mathbf{S})_{\Gcal}\)</span>. The subscript <span class="math inline">\(\Gcal\)</span> always marks a statement about the graph; unsubscripted statements such as <span class="math inline">\(X \indep Y \mid \mathbf{S}\)</span> refer to the distribution <span class="math inline">\(P\)</span>.</p>
 </div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Applying the Criterion to the Three Toy Settings
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>We revisit the three motif stories of <a href="#sec-w2-motifsub" class="quarto-xref"><span>Section 2.2.1</span></a> and verify each blocking claim of <a href="#sec-w2-blocking" class="quarto-xref"><span>Section 2.2.2</span></a> directly using the definition.</p>
+<div id="exm-threesettings" class="theorem example">
+<p><span class="theorem-title"><strong>Example 2.3 (Applying the Criterion to the Three Toy Settings)</strong></span> We revisit the three motif stories of <a href="#sec-w2-motifsub" class="quarto-xref"><span>Section 2.2.1</span></a> and verify each blocking claim of <a href="#sec-w2-blocking" class="quarto-xref"><span>Section 2.2.2</span></a> directly using the definition.</p>
 <p><strong>(i) Chain — Smoking <span class="math inline">\(\to\)</span> Tar <span class="math inline">\(\to\)</span> Cancer.</strong> Let <span class="math inline">\(A\)</span> = smoking, <span class="math inline">\(M\)</span> = tar, <span class="math inline">\(B\)</span> = cancer. The only path between <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> is the chain <span class="math inline">\(A \to M \to B\)</span>.</p>
 <ul>
 <li><span class="math inline">\(\mathbf{S} = \varnothing\)</span>: the path contains no conditioned-on non-collider, so clause (1) does not apply. The collider clause (2) is also irrelevant (there is no collider). The path is <em>not</em> d-blocked. <span class="math inline">\(\Rightarrow (A \nindep B)_{\Gcal}\)</span> (generically, smokers have higher cancer rates).</li>
@@ -838,20 +799,9 @@ window.Quarto = {
 <li><span class="math inline">\(\mathbf{S} = \{M\}\)</span>: now <span class="math inline">\(M \in \mathbf{S}\)</span>, so clause (2) no longer blocks the path. No other clause applies, so the path is <em>open</em>. <span class="math inline">\(\Rightarrow (A \nindep B \mid M)_{\Gcal}\)</span> (generically, among hospitalized patients, ruling out an accident raises the probability of cancer — Berkson’s bias).</li>
 </ul>
 </div>
-</div>
 <p>The following theorem is what gives d-separation its statistical force: it guarantees that every d-separation statement in the graph corresponds to a genuine conditional independence in the joint distribution.</p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem: Soundness of d-Separation <span class="citation" data-cites="pearl2009causality">(<a href="#ref-pearl2009causality" role="doc-biblioref">Pearl 2009</a>, Theorem 1.2.4)</span>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>If <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span>, then <span class="math inline">\(X \indep Y \mid \mathbf{S}\)</span> in every distribution that is Markov with respect to <span class="math inline">\(\Gcal\)</span>.</p>
-</div>
+<div id="thm-dsep" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 2.1 (Soundness of d-Separation <span class="citation" data-cites="pearl2009causality">(<a href="#ref-pearl2009causality" role="doc-biblioref">Pearl 2009</a>, Theorem 1.2.4)</span>)</strong></span> If <span class="math inline">\((X \indep Y \mid \mathbf{S})_{\Gcal}\)</span>, then <span class="math inline">\(X \indep Y \mid \mathbf{S}\)</span> in every distribution that is Markov with respect to <span class="math inline">\(\Gcal\)</span>.</p>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -863,7 +813,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="quarto-unresolved-ref">?thm-dsep</span> states that d-separation implies conditional independence for every distribution Markov with respect to <span class="math inline">\(\Gcal\)</span>. The converse need not hold without additional assumptions such as <em>faithfulness</em>: a conditional independence may occur in the data because of special parameter values even when the corresponding nodes are not d-separated in the graph.</p>
+<p><a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a> states that d-separation implies conditional independence for every distribution Markov with respect to <span class="math inline">\(\Gcal\)</span>. The converse need not hold without additional assumptions such as <em>faithfulness</em>: a conditional independence may occur in the data because of special parameter values even when the corresponding nodes are not d-separated in the graph.</p>
 <p>For the same reason, the dependence conclusions drawn in our examples — statements of the form “the path is open, hence <span class="math inline">\(A \nindep B\)</span>” — are not consequences of the Markov property alone. An open path licenses dependence but does not force it; the dependence holds generically, i.e., except for special parameter cancellations, and is guaranteed under faithfulness. We adopt this generic reading throughout the examples in this chapter.</p>
 </div>
 </div>
@@ -902,17 +852,8 @@ window.Quarto = {
 </ol>
 <p><span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are d-separated by <span class="math inline">\(\mathbf{S}\)</span> in <span class="math inline">\(\Gcal\)</span> <em>if and only if</em> they are disconnected in the resulting undirected graph. The moralization step is what makes the collider rule visible in the undirected representation: without adding the <span class="math inline">\(A\)</span>–<span class="math inline">\(B\)</span> edge, the path through <span class="math inline">\(C\)</span> would appear disconnected even when <span class="math inline">\(C\)</span> is conditioned upon, which would give the wrong answer. A full treatment is in <span class="citation" data-cites="lauritzen1996graphical">Lauritzen (<a href="#ref-lauritzen1996graphical" role="doc-biblioref">1996</a>, Ch. 3)</span>.</p>
 <p>These two viewpoints — active-path tracing and moral-graph separation — are equivalent algorithmic ways of evaluating the d-separation criterion. Students are encouraged to use whichever they find most natural, and to cross-check with the other when in doubt.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Checking d-Separation in a Four-Node DAG
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Consider the DAG with edges <span class="math inline">\(Z \to T\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U \to Y\)</span>.</p>
+<div id="exm-fournode" class="theorem example">
+<p><span class="theorem-title"><strong>Example 2.4 (Checking d-Separation in a Four-Node DAG)</strong></span> Consider the DAG with edges <span class="math inline">\(Z \to T\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U \to Y\)</span>.</p>
 <div style="text-align:center;margin:1em auto;">
 <svg viewbox="0 0 300 130" width="100%" style="max-width:300px;font-family:sans-serif;font-size:12px;">
   <defs><marker id="a2e4" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path></marker></defs>
@@ -934,18 +875,8 @@ window.Quarto = {
 <p><em>Moral graph.</em> (1) Ancestral set of <span class="math inline">\(\{Z, U\} \cup \mathbf{S} = \{Z, U, T\}\)</span>: the parents of <span class="math inline">\(T\)</span> are <span class="math inline">\(Z\)</span> and <span class="math inline">\(U\)</span>, both already in the set; node <span class="math inline">\(Y\)</span> is discarded. (2) Moralize: the subgraph contains the collider <span class="math inline">\(Z \to T \leftarrow U\)</span>, so add the moral edge <span class="math inline">\(Z - U\)</span>. (3) Undirected graph: edges <span class="math inline">\(Z - T\)</span>, <span class="math inline">\(U - T\)</span>, <span class="math inline">\(Z - U\)</span>. (4) Delete <span class="math inline">\(\mathbf{S} = \{T\}\)</span> and its incident edges. Remaining graph: single edge <span class="math inline">\(Z - U\)</span>. <span class="math inline">\(Z\)</span> and <span class="math inline">\(U\)</span> are connected <span class="math inline">\(\Rightarrow (Z \nindep U \mid T)_{\Gcal}\)</span>. The moralization step is decisive: it adds the edge <span class="math inline">\(Z - U\)</span> <em>before</em> <span class="math inline">\(T\)</span> is deleted, ensuring the dependence induced by conditioning on the collider is visible in the undirected graph.</p>
 <p>Comparing the two queries: <span class="math inline">\(Z\)</span> and <span class="math inline">\(U\)</span> are marginally independent (the instrument is exogenous) but become dependent once we condition on <span class="math inline">\(T\)</span>. This is collider bias — of which Berkson’s bias is the classic instance — treated in full in <a href="#sec-w2-ivdag" class="quarto-xref"><span>Section 2.5</span></a>.</p>
 </div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Example: Practice DAG — Eight-Node Graph
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Consider the DAG below with nodes <span class="math inline">\(W\)</span>, <span class="math inline">\(X_1\)</span>, <span class="math inline">\(T\)</span>, <span class="math inline">\(M_1\)</span>, <span class="math inline">\(M_2\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(C\)</span>, and <span class="math inline">\(D\)</span>.</p>
+<div id="exm-practicedag" class="theorem example">
+<p><span class="theorem-title"><strong>Example 2.5 (Practice DAG — Eight-Node Graph)</strong></span> Consider the DAG below with nodes <span class="math inline">\(W\)</span>, <span class="math inline">\(X_1\)</span>, <span class="math inline">\(T\)</span>, <span class="math inline">\(M_1\)</span>, <span class="math inline">\(M_2\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(C\)</span>, and <span class="math inline">\(D\)</span>.</p>
 <div style="text-align:center;margin:1em auto;">
 <svg viewbox="0 0 380 260" width="100%" style="max-width:380px;font-family:sans-serif;font-size:12px;">
   <defs><marker id="a2e5" markerwidth="7" markerheight="7" refx="5" refy="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2E74B6"></path></marker></defs>
@@ -974,7 +905,6 @@ window.Quarto = {
 <p><strong>(3) Is <span class="math inline">\(T \indep M_2 \mid M_1\)</span>?</strong> <em>Yes.</em> There are four paths between <span class="math inline">\(T\)</span> and <span class="math inline">\(M_2\)</span>. The direct path <span class="math inline">\(T \to M_1 \to M_2\)</span> is a chain with <span class="math inline">\(M_1 \in \{M_1\}\)</span> — blocked. The path <span class="math inline">\(T \leftarrow W \to X_1 \to C \leftarrow M_2\)</span> has a collider at <span class="math inline">\(C\)</span> with <span class="math inline">\(C \notin \{M_1\}\)</span> — blocked. The path <span class="math inline">\(T \leftarrow W \to Y \leftarrow M_1 \to M_2\)</span> has a collider at <span class="math inline">\(Y\)</span> (<span class="math inline">\(W \to Y \leftarrow M_1\)</span>) with <span class="math inline">\(Y \notin \{M_1\}\)</span> — blocked (and also blocked at the fork node <span class="math inline">\(M_1 \in \{M_1\}\)</span>). Finally, the path <span class="math inline">\(T \to M_1 \to Y \leftarrow W \to X_1 \to C \leftarrow M_2\)</span> is blocked at the chain node <span class="math inline">\(M_1 \in \{M_1\}\)</span> (and also at the colliders <span class="math inline">\(Y\)</span> and <span class="math inline">\(C\)</span>). All paths blocked <span class="math inline">\(\Rightarrow (T \indep M_2 \mid M_1)_{\Gcal}\)</span>.</p>
 <p><strong>(4) Does conditioning on <span class="math inline">\(C\)</span> open a collider path between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span>?</strong> <em>Yes.</em> <span class="math inline">\(C\)</span> is a collider on the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>, which is blocked marginally and is opened by conditioning on <span class="math inline">\(C\)</span>. Note, however, that <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span> are <em>not</em> marginally d-separated: the path <span class="math inline">\(X_1 \leftarrow W \to T \to M_1 \to M_2\)</span> is open even without any conditioning. A cleaner comparison conditions on <span class="math inline">\(W\)</span> throughout. First, <span class="math inline">\((X_1 \indep M_2 \mid W)_{\Gcal}\)</span>: conditioning on <span class="math inline">\(W\)</span> blocks the fork path above, and the two collider paths remain blocked. Second, <span class="math inline">\((X_1 \nindep M_2 \mid \{W, C\})_{\Gcal}\)</span>: adding <span class="math inline">\(C\)</span> to the conditioning set opens <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>. Conditioning on the collider thus introduces a new, non-causal source of association — it does not create the only connection between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(M_2\)</span>, but it destroys an independence that held given <span class="math inline">\(W\)</span> alone.</p>
 <p><strong>(5) Does conditioning on <span class="math inline">\(D\)</span> open the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span>?</strong> <em>Yes.</em> <span class="math inline">\(D\)</span> is a descendant of <span class="math inline">\(C\)</span>. By clause (2) of the d-separation definition, a collider path is unblocked whenever the collider <em>or any of its descendants</em> is in the conditioning set. Since <span class="math inline">\(D \in \{D\}\)</span>, the collider at <span class="math inline">\(C\)</span> is activated, opening the path <span class="math inline">\(X_1 \to C \leftarrow M_2\)</span> even though <span class="math inline">\(C\)</span> itself is not conditioned on.</p>
-</div>
 </div>
 </section>
 </section>
@@ -1019,22 +949,12 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A distribution <span class="math inline">\(P\)</span> satisfies the <em>global Markov property</em> with respect to <span class="math inline">\(\Gcal\)</span> if every d-separation in <span class="math inline">\(\Gcal\)</span> corresponds to a conditional independence in <span class="math inline">\(P\)</span>. <span class="quarto-unresolved-ref">?thm-dsep</span> establishes one arrow of the picture: the factorization implies the global property. The remaining arrows are elementary: the local property is the special case of the global one obtained by separating each node from its non-descendants given its parents, and the local property yields the factorization by applying the chain rule along a topological ordering. For DAG models with densities, under the regularity conditions recorded in Appendix A, the three formulations are therefore equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Theorem 3.27)</span>: the Markov factorization <a href="#eq-markov" class="quarto-xref">Equation&nbsp;<span>2.1</span></a>, the local Markov property, and the global Markov property each imply the other two. Any one of the three can therefore serve as the definition of “<span class="math inline">\(P\)</span> is Markov with respect to <span class="math inline">\(\Gcal\)</span>”; the factorization is what is most often used directly in identification arguments.</p>
+<p>A distribution <span class="math inline">\(P\)</span> satisfies the <em>global Markov property</em> with respect to <span class="math inline">\(\Gcal\)</span> if every d-separation in <span class="math inline">\(\Gcal\)</span> corresponds to a conditional independence in <span class="math inline">\(P\)</span>. <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a> establishes one arrow of the picture: the factorization implies the global property. The remaining arrows are elementary: the local property is the special case of the global one obtained by separating each node from its non-descendants given its parents, and the local property yields the factorization by applying the chain rule along a topological ordering. For DAG models with densities, under the regularity conditions recorded in Appendix A, the three formulations are therefore equivalent <span class="citation" data-cites="lauritzen1996graphical">(<a href="#ref-lauritzen1996graphical" role="doc-biblioref">Lauritzen 1996</a>, Theorem 3.27)</span>: the Markov factorization <a href="#eq-markov" class="quarto-xref">Equation&nbsp;<span>2.1</span></a>, the local Markov property, and the global Markov property each imply the other two. Any one of the three can therefore serve as the definition of “<span class="math inline">\(P\)</span> is Markov with respect to <span class="math inline">\(\Gcal\)</span>”; the factorization is what is most often used directly in identification arguments.</p>
 </div>
 </div>
-<p>What does the equivalence buy in the smallest possible case? For the three-node chain, the global property contains exactly one substantive statement, <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span> — and the factorization delivers it in the two lines already carried out above. We record the result for reference: it is the miniature version of <span class="quarto-unresolved-ref">?thm-dsep</span> that the reader has proved by hand.</p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Proposition: Conditional Independence in the Three-Node Chain
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(X_1 \to X_2 \to X_3\)</span> be a chain with Markov factorization <span class="math inline">\(p(x_1, x_2, x_3) = p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2)\)</span>. Then <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>. The analogous result for the fork <span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span> is left as an exercise.</p>
-</div>
+<p>What does the equivalence buy in the smallest possible case? For the three-node chain, the global property contains exactly one substantive statement, <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span> — and the factorization delivers it in the two lines already carried out above. We record the result for reference: it is the miniature version of <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a> that the reader has proved by hand.</p>
+<div id="prp-chain" class="theorem proposition">
+<p><span class="theorem-title"><strong>Proposition 2.1 (Conditional Independence in the Three-Node Chain)</strong></span> Let <span class="math inline">\(X_1 \to X_2 \to X_3\)</span> be a chain with Markov factorization <span class="math inline">\(p(x_1, x_2, x_3) = p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2)\)</span>. Then <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>. The analogous result for the fork <span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span> is left as an exercise.</p>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1117,7 +1037,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In the IV DAG, <span class="math inline">\(T\)</span> is a collider on the path <span class="math inline">\(Z \to T \leftarrow U\)</span>. Marginally, <span class="math inline">\((Z \indep U)_{\Gcal}\)</span> (the instrument is exogenous). However, <span class="math display">\[(Z \indep U)_{\Gcal} \qquad \text{but} \qquad (Z \nindep U \mid T)_{\Gcal}\]</span> (established graphically in <span class="quarto-unresolved-ref">?exm-fournode</span>). Conditioning on <span class="math inline">\(T\)</span> — for example, analyzing within a stratum <span class="math inline">\(T = t\)</span> — makes the instrument <span class="math inline">\(Z\)</span> appear associated with <span class="math inline">\(U\)</span>, invalidating the IV argument within that stratum.</p>
+<p>In the IV DAG, <span class="math inline">\(T\)</span> is a collider on the path <span class="math inline">\(Z \to T \leftarrow U\)</span>. Marginally, <span class="math inline">\((Z \indep U)_{\Gcal}\)</span> (the instrument is exogenous). However, <span class="math display">\[(Z \indep U)_{\Gcal} \qquad \text{but} \qquad (Z \nindep U \mid T)_{\Gcal}\]</span> (established graphically in <a href="#exm-fournode" class="quarto-xref">Example&nbsp;<span>2.4</span></a>). Conditioning on <span class="math inline">\(T\)</span> — for example, analyzing within a stratum <span class="math inline">\(T = t\)</span> — makes the instrument <span class="math inline">\(Z\)</span> appear associated with <span class="math inline">\(U\)</span>, invalidating the IV argument within that stratum.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -1147,7 +1067,7 @@ window.Quarto = {
 </section>
 <section id="full-d-separation-analysis-of-the-iv-dag" class="level3" data-number="2.5.2">
 <h3 data-number="2.5.2" class="anchored" data-anchor-id="full-d-separation-analysis-of-the-iv-dag"><span class="header-section-number">2.5.2</span> Full d-Separation Analysis of the IV DAG</h3>
-<p>We work through the IV DAG with edges <span class="math inline">\(Z \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. This is the same graph as in <span class="quarto-unresolved-ref">?exm-fournode</span>, but now <span class="math inline">\(U\)</span> is treated as <em>unobserved</em>. That assumption is precisely what earns the name “IV DAG”: because <span class="math inline">\(U\)</span> cannot be conditioned on, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> cannot be blocked by adjustment, and the instrument <span class="math inline">\(Z\)</span> motivates an alternative identification strategy. The graph alone does not nonparametrically identify <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span>; Chapter 7 introduces the additional assumptions — such as linearity or monotonicity — under which particular IV estimands are identified.</p>
+<p>We work through the IV DAG with edges <span class="math inline">\(Z \to T\)</span>, <span class="math inline">\(T \to Y\)</span>, <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. This is the same graph as in <a href="#exm-fournode" class="quarto-xref">Example&nbsp;<span>2.4</span></a>, but now <span class="math inline">\(U\)</span> is treated as <em>unobserved</em>. That assumption is precisely what earns the name “IV DAG”: because <span class="math inline">\(U\)</span> cannot be conditioned on, the back-door path <span class="math inline">\(T \leftarrow U \to Y\)</span> cannot be blocked by adjustment, and the instrument <span class="math inline">\(Z\)</span> motivates an alternative identification strategy. The graph alone does not nonparametrically identify <span class="math inline">\(P(y \mid \doop(T{=}t))\)</span>; Chapter 7 introduces the additional assumptions — such as linearity or monotonicity — under which particular IV estimands are identified.</p>
 <p>Before listing the paths, it is worth classifying them by <em>type</em>, since students often conflate causal and non-causal sources of dependence.</p>
 <table class="caption-top table">
 <colgroup>
@@ -1207,7 +1127,7 @@ window.Quarto = {
 <section id="sec-w2-education" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="sec-w2-education"><span class="header-section-number">2.6</span> Worked Example: The Education–Earnings DAG</h2>
 <p>This section is the template for how we will use DAGs throughout the course. Starting from a single causal graph, we move step by step through the full pipeline: first specify the DAG, then read off the factorization, then use d-separation to identify the implied conditional independences, and finally interpret the result in causal terms. Later chapters will follow the same pattern, but with richer identification questions.</p>
-<p><strong>Practice: d-separation workflow.</strong> Before working through the example below, return to <span class="quarto-unresolved-ref">?exm-practicedag</span> and rework each of the five queries from scratch, without looking at the answers. For each query, follow the same three steps: (1) list every path between the two nodes of interest; (2) classify every intermediate node on each path as a chain, fork, or collider; and (3) determine which paths are blocked or open after conditioning on the given set. This is exactly the procedure that d-separation always requires, in graphs of any size.</p>
+<p><strong>Practice: d-separation workflow.</strong> Before working through the example below, return to <a href="#exm-practicedag" class="quarto-xref">Example&nbsp;<span>2.5</span></a> and rework each of the five queries from scratch, without looking at the answers. For each query, follow the same three steps: (1) list every path between the two nodes of interest; (2) classify every intermediate node on each path as a chain, fork, or collider; and (3) determine which paths are blocked or open after conditioning on the given set. This is exactly the procedure that d-separation always requires, in graphs of any size.</p>
 <p><strong>The causal story.</strong> Education (<span class="math inline">\(E\)</span>) affects earnings (<span class="math inline">\(Y\)</span>); family background (<span class="math inline">\(B\)</span>) is a common cause of both education and earnings; neighborhood (<span class="math inline">\(N\)</span>) affects education but has no direct effect on earnings. All four displayed variables are observed. In addition, we assume <em>causal sufficiency</em> relative to these variables: no common cause of any pair among <span class="math inline">\(N\)</span>, <span class="math inline">\(B\)</span>, <span class="math inline">\(E\)</span>, and <span class="math inline">\(Y\)</span> has been omitted. This is a substantive simplifying assumption, not a consequence of observing the displayed variables — in reality, neighborhood and family background are often associated through broader socioeconomic factors, which would constitute exactly such an omitted common cause; we exclude it to keep the d-separation analysis tractable.</p>
 <div style="text-align:center;margin:1em auto;">
 <svg viewbox="0 0 300 130" width="100%" style="max-width:300px;font-family:sans-serif;font-size:12px;">
@@ -1228,7 +1148,7 @@ window.Quarto = {
 <p><em>Query (ii): Is <span class="math inline">\((N \indep Y \mid E)_{\Gcal}\)</span>?</em> Path 1 is a chain, and conditioning on <span class="math inline">\(E\)</span> blocks it. Path 2 has a collider at <span class="math inline">\(E\)</span>, and conditioning on <span class="math inline">\(E\)</span> opens it. The activated path <span class="math inline">\(N \to E \leftarrow B \to Y\)</span> continues through <span class="math inline">\(B\)</span>, which is not conditioned on, so the path is open. Hence <span class="math inline">\((N \nindep Y \mid E)_{\Gcal}\)</span>. This is precisely the collider bias of <a href="#sec-w2-ivdag" class="quarto-xref"><span>Section 2.5</span></a>: conditioning on <span class="math inline">\(E\)</span> opens the path <span class="math inline">\(N \to E \leftarrow B \to Y\)</span>, thereby inducing a spurious association between <span class="math inline">\(N\)</span> and <span class="math inline">\(Y\)</span> through <span class="math inline">\(B\)</span>.</p>
 <p><em>Query (iii): Is <span class="math inline">\((N \indep Y \mid \{E, B\})_{\Gcal}\)</span>?</em> Path 1 is blocked by conditioning on <span class="math inline">\(E\)</span>. Path 2 is opened at the collider <span class="math inline">\(E\)</span>, but then blocked at <span class="math inline">\(B\)</span> because <span class="math inline">\(B\)</span> is also conditioned on. Both paths are blocked: <span class="math inline">\((N \indep Y \mid E, B)_{\Gcal}\)</span>.</p>
 <p><em>Query (iv): Is <span class="math inline">\((N \indep B)_{\Gcal}\)</span>?</em> The only path is <span class="math inline">\(N \to E \leftarrow B\)</span>, which has a collider at <span class="math inline">\(E\)</span>. Since <span class="math inline">\(E\)</span> is not conditioned on, the path is blocked. Therefore <span class="math inline">\((N \indep B)_{\Gcal}\)</span>.</p>
-<p><strong>Step 3 — Conditional Independence.</strong> We now move from the graphical analysis to the probabilistic implications, being careful about the direction of the inference. By <span class="quarto-unresolved-ref">?thm-dsep</span>, the graph <em>entails</em> the two independence statements <span class="math display">\[N \indep B, \qquad N \indep Y \mid E, B.\]</span> The two remaining graphical conclusions are d-<em>connections</em>: <span class="math inline">\(N\)</span> and <span class="math inline">\(Y\)</span> are d-connected marginally, and also given <span class="math inline">\(E\)</span>. These mean only that the graph does not imply the corresponding independences; they become dependence predictions, <span class="math display">\[N \nindep Y, \qquad N \nindep Y \mid E,\]</span> under the additional faithfulness (or generic-parameter) reading discussed in the soundness remark of <a href="#sec-w2-dsepcrit" class="quarto-xref"><span>Section 2.3.1</span></a>.</p>
+<p><strong>Step 3 — Conditional Independence.</strong> We now move from the graphical analysis to the probabilistic implications, being careful about the direction of the inference. By <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a>, the graph <em>entails</em> the two independence statements <span class="math display">\[N \indep B, \qquad N \indep Y \mid E, B.\]</span> The two remaining graphical conclusions are d-<em>connections</em>: <span class="math inline">\(N\)</span> and <span class="math inline">\(Y\)</span> are d-connected marginally, and also given <span class="math inline">\(E\)</span>. These mean only that the graph does not imply the corresponding independences; they become dependence predictions, <span class="math display">\[N \nindep Y, \qquad N \nindep Y \mid E,\]</span> under the additional faithfulness (or generic-parameter) reading discussed in the soundness remark of <a href="#sec-w2-dsepcrit" class="quarto-xref"><span>Section 2.3.1</span></a>.</p>
 <p>Because all four variables are observed, all four empirical relationships can in principle be investigated. Under the Markov assumption alone, however, only violations of the two entailed conditional independences contradict the graphical model — and agreement with those restrictions does not by itself verify the causal graph. The d-connection given <span class="math inline">\(E\)</span> is especially important as a warning to practitioners. If the target is the total causal effect of neighborhood <span class="math inline">\(N\)</span> on earnings <span class="math inline">\(Y\)</span>, conditioning on education <span class="math inline">\(E\)</span> blocks the mediated causal path <span class="math inline">\(N \to E \to Y\)</span> and opens the collider path <span class="math inline">\(N \to E \leftarrow B \to Y\)</span>: the adjustment distorts the very quantity being estimated rather than removing bias.</p>
 <p><strong>Step 4 — Identification.</strong> We wish to identify <span class="math inline">\(P(y \mid \doop(E{=}e))\)</span>, the distribution of earnings under an intervention that sets education to <span class="math inline">\(e\)</span>. The back-door criterion (Chapter 3) requires an adjustment set <span class="math inline">\(\mathbf{S}\)</span> that (i) blocks every back-door path from <span class="math inline">\(E\)</span> to <span class="math inline">\(Y\)</span> and (ii) contains no descendant of <span class="math inline">\(E\)</span>.</p>
 <p>The only back-door path is <span class="math inline">\(E \leftarrow B \to Y\)</span>, a fork at <span class="math inline">\(B\)</span>. Consider two candidate adjustment sets:</p>
@@ -1325,9 +1245,9 @@ window.Quarto = {
 </ol>
 <p><strong>5. Soundness of d-separation for the collider.</strong> Consider the collider <span class="math inline">\(A \to M \leftarrow B\)</span> with Markov factorization <span class="math inline">\(p(a, m, b) = p(a)\,p(b)\,p(m \mid a, b)\)</span>.</p>
 <ol type="a">
-<li>By marginalizing over <span class="math inline">\(M\)</span>, show that <span class="math inline">\(A \indep B\)</span> in the joint distribution (i.e., <span class="math inline">\(p(a,b) = p(a)\,p(b)\)</span>). This verifies <span class="quarto-unresolved-ref">?thm-dsep</span> for the case <span class="math inline">\(\mathbf{S} = \varnothing\)</span>, where <span class="quarto-unresolved-ref">?exm-threesettings</span> established d-separation graphically.</li>
+<li>By marginalizing over <span class="math inline">\(M\)</span>, show that <span class="math inline">\(A \indep B\)</span> in the joint distribution (i.e., <span class="math inline">\(p(a,b) = p(a)\,p(b)\)</span>). This verifies <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a> for the case <span class="math inline">\(\mathbf{S} = \varnothing\)</span>, where <a href="#exm-threesettings" class="quarto-xref">Example&nbsp;<span>2.3</span></a> established d-separation graphically.</li>
 <li>Show that conditioning on <span class="math inline">\(M\)</span> <em>need not</em> preserve the marginal independence: write out <span class="math inline">\(p(a, b \mid m)\)</span> and explain why it generally does not factorize into <span class="math inline">\(p(a \mid m)\,p(b \mid m)\)</span>. Under what special parameterizations could conditional independence nevertheless occur? What does this imply, generically, about <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> among hospitalized patients in the accident–hospitalization–cancer example?</li>
-<li>Explain in one sentence why parts (a) and (b) together are consistent with <span class="quarto-unresolved-ref">?thm-dsep</span>. (<em>Hint</em>: <span class="quarto-unresolved-ref">?thm-dsep</span> is a one-directional statement.)</li>
+<li>Explain in one sentence why parts (a) and (b) together are consistent with <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a>. (<em>Hint</em>: <a href="#thm-dsep" class="quarto-xref">Theorem&nbsp;<span>2.1</span></a> is a one-directional statement.)</li>
 </ol>
 <p><strong>6. Terminology check.</strong> Consider the DAG with edges <span class="math inline">\(U \to X\)</span>, <span class="math inline">\(U \to Z\)</span>, <span class="math inline">\(X \to W\)</span>, <span class="math inline">\(Z \to W\)</span>, <span class="math inline">\(W \to Y\)</span>.</p>
 <ol type="a">
@@ -1344,11 +1264,11 @@ window.Quarto = {
 </ol>
 <p><strong>8. Toy proof: conditional independence in the fork.</strong> Consider the fork <span class="math inline">\(X_1 \leftarrow X_2 \to X_3\)</span> with Markov factorization <span class="math inline">\(p(x_1, x_2, x_3) = p(x_2)\,p(x_1 \mid x_2)\,p(x_3 \mid x_2)\)</span>.</p>
 <ol type="a">
-<li>Show directly, by conditioning on <span class="math inline">\(X_2 = x_2\)</span>, that <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>. Follow the same three steps used in <span class="quarto-unresolved-ref">?exm-chainproof</span> for the chain.</li>
+<li>Show directly, by conditioning on <span class="math inline">\(X_2 = x_2\)</span>, that <span class="math inline">\(X_1 \indep X_3 \mid X_2\)</span>. Follow the same three steps used in <a href="#exm-chainproof" class="quarto-xref">Example&nbsp;<span>2.2</span></a> for the chain.</li>
 <li>Does the DAG imply <span class="math inline">\(X_1 \indep X_3\)</span> marginally? Justify your answer graphically (using d-separation) and algebraically: show that <span class="math inline">\(p(x_1, x_3) = \int p(x_2)\,p(x_1 \mid x_2)\,p(x_3 \mid x_2)\,\mathrm{d}x_2\)</span> generally does not factorize into <span class="math inline">\(p(x_1)\,p(x_3)\)</span>, although special parameterizations can make it do so.</li>
 <li>Explain in one sentence what the fork represents substantively and why conditioning on the common cause <span class="math inline">\(X_2\)</span> removes the association between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_3\)</span>.</li>
 </ol>
-<p><strong>9. d-Separation in the practice DAG.</strong> Refer to the eight-node DAG in <span class="quarto-unresolved-ref">?exm-practicedag</span> (nodes <span class="math inline">\(W\)</span>, <span class="math inline">\(X_1\)</span>, <span class="math inline">\(T\)</span>, <span class="math inline">\(M_1\)</span>, <span class="math inline">\(M_2\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(C\)</span>, <span class="math inline">\(D\)</span>; edges <span class="math inline">\(W \to X_1\)</span>, <span class="math inline">\(W \to T\)</span>, <span class="math inline">\(W \to Y\)</span>, <span class="math inline">\(T \to M_1\)</span>, <span class="math inline">\(M_1 \to Y\)</span>, <span class="math inline">\(M_1 \to M_2\)</span>, <span class="math inline">\(X_1 \to C\)</span>, <span class="math inline">\(M_2 \to C\)</span>, <span class="math inline">\(C \to D\)</span>). For each query below, state whether it is true or false and justify your answer by listing all relevant paths and determining whether each is blocked or open. This problem is intended as retrieval practice: do not refer to the worked solutions until you have written your own answer.</p>
+<p><strong>9. d-Separation in the practice DAG.</strong> Refer to the eight-node DAG in <a href="#exm-practicedag" class="quarto-xref">Example&nbsp;<span>2.5</span></a> (nodes <span class="math inline">\(W\)</span>, <span class="math inline">\(X_1\)</span>, <span class="math inline">\(T\)</span>, <span class="math inline">\(M_1\)</span>, <span class="math inline">\(M_2\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(C\)</span>, <span class="math inline">\(D\)</span>; edges <span class="math inline">\(W \to X_1\)</span>, <span class="math inline">\(W \to T\)</span>, <span class="math inline">\(W \to Y\)</span>, <span class="math inline">\(T \to M_1\)</span>, <span class="math inline">\(M_1 \to Y\)</span>, <span class="math inline">\(M_1 \to M_2\)</span>, <span class="math inline">\(X_1 \to C\)</span>, <span class="math inline">\(M_2 \to C\)</span>, <span class="math inline">\(C \to D\)</span>). For each query below, state whether it is true or false and justify your answer by listing all relevant paths and determining whether each is blocked or open. This problem is intended as retrieval practice: do not refer to the worked solutions until you have written your own answer.</p>
 <ol type="a">
 <li><span class="math inline">\(X_1 \indep Y\)</span></li>
 <li><span class="math inline">\(X_1 \indep Y \mid W\)</span></li>

@@ -91,8 +91,8 @@ A related notational point concerns the two capital lambdas. We write $\mathcal{
 
 The symbol $\alpha$ appears elsewhere in this chapter in two unrelated roles: as a regression intercept in the linear outcome and IV models, and, in the lab, as the subscripted parameter $\alpha_U$ denoting the strength of $U$ in the treatment mechanism. Similarly, in @sec-w9-iv-late the symbols $\pi_c$ and $\pi_d$ denote complier and defier population shares; they are unrelated to the propensity score $\pi(x)$.
 
-::: {.callout-note icon=false}
-## Definition: Sensitivity Model {#def-sens-model}
+::: {#def-sens-model}
+## Sensitivity Model
 
 A *sensitivity model* for the causal estimand $\psi$ and baseline identifying assumption $A_0$ is a triple $(\{A_\lambda\}_{\lambda \in \mathcal{L}},\, \lambda_0,\, \Psi(\cdot;\cdot))$ such that (i) $\lambda_0 \in \mathcal{L}$ is a *neutral value* at which $A_{\lambda_0} = A_0$, recovering the original identifying assumption; and (ii) under $A_\lambda$ and the observable restrictions imposed by the data, $\psi = \Psi(P;\lambda)$. The parameter $\lambda$ may be scalar- or vector-valued.
 :::
@@ -148,8 +148,8 @@ text(1.05, 0.25, expression(hat(psi)(lambda)), col = "#2E74B6", cex = 0.85)
 text(0.62, 1.9, "95% band", col = "#2E74B6", cex = 0.85)
 ```
 
-::: {.callout-note icon=false}
-## Example: Tipping-Point Reading {#exm-tipping-reading}
+::: {#exm-tipping-reading}
+## Tipping-Point Reading
 
 Suppose $\hat\psi(0) = 1.8$ with 95% CI $[1.1, 2.5]$, and the sensitivity model produces $\hat\psi(\lambda) = 1.8 - 2.0\lambda$. Then:
 
@@ -180,8 +180,8 @@ Let
 $$\Delta_{\mathrm{obs}} = \E\{\E(Y \mid T=1, X) - \E(Y \mid T=0, X)\}$$ {#eq-delta-obs}
 denote the *observed adjusted contrast* --- the quantity that a back-door analysis actually computes when only $X$ is adjusted for. Under ignorability conditional on $X$ alone, $\Delta_{\mathrm{obs}} = \tau$. Under the relaxed condition @eq-ignor-given-U, the observed adjusted contrast departs from $\tau$ by a quantity that depends on how $U$ is distributed conditional on $(T, X)$.
 
-::: {.callout-tip icon=false}
-## Theorem: Bias Decomposition under Unmeasured Confounding {#thm-bias-decomp}
+::: {#thm-bias-decomp}
+## Bias Decomposition under Unmeasured Confounding
 
 Suppose @eq-ignor-given-U holds along with consistency and positivity *given $(X, U)$*, that is $P(T=t \mid X, U) > 0$ almost surely for $t \in \{0,1\}$ --- the stronger requirement needed for $m_t$ below to be well defined, and not implied by positivity given $X$ alone. Let $f(u \mid \cdot)$ denote the conditional density (or mass function) of $U$, define
 $$m_t(x, u) = \E(Y \mid T=t, X=x, U=u),$$
@@ -208,8 +208,8 @@ A closed-form version of @eq-B-general is available in a fully linear model, whi
 $$Y = \alpha + \tau T + \gamma^\top X + \delta U + \varepsilon, \qquad \E(\varepsilon \mid T, X, U) = 0,$$ {#eq-linear-y}
 and the treatment assignment depends on $(X, U)$ through $T = h(X, U, \eta)$ with $\eta \indep (U, \varepsilon)$.
 
-::: {.callout-tip icon=false}
-## Lemma: Linear Sensitivity Bias {#lem-linear-bias}
+::: {#lem-linear-bias}
+## Linear Sensitivity Bias
 
 Under the model above and conditional exchangeability given $(X, U)$,
 $$B = \delta \cdot \E\!\left\{\E(U \mid T=1, X) - \E(U \mid T=0, X)\right\}.$$ {#eq-linear-B}
@@ -226,8 +226,8 @@ Both factors are sensitivity parameters because neither is identified: $U$ is un
 
 A useful concrete case arises when $U \in \{0, 1\}$. Define $p_1(x) = P(U=1 \mid T=1, X=x)$, $p_0(x) = P(U=1 \mid T=0, X=x)$, and $\delta(t, x) = m_t(x, 1) - m_t(x, 0)$, the $U$-outcome contrast within the cell defined by $(T, X)$.
 
-::: {.callout-tip icon=false}
-## Lemma: Binary-Confounder Bias {#lem-binary-bias}
+::: {#lem-binary-bias}
+## Binary-Confounder Bias
 
 If $U \in \{0,1\}$ and the $U$-outcome contrast is constant across $(t, x)$ at value $\delta$, then
 $$B = \delta \cdot \E\{p_1(X) - p_0(X)\}.$$ {#eq-binary-B}
@@ -299,8 +299,8 @@ The force of the Ding--VanderWeele result is that with the parameters defined th
 Let $\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x)$ denote the observed risk ratio within stratum $X = x$, and $\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x)$ the corresponding causal risk ratio. Define the *bias factor*
 $$B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY}) = \frac{\mathrm{RR}_{TU}\, \mathrm{RR}_{UY}}{\mathrm{RR}_{TU} + \mathrm{RR}_{UY} - 1}.$$ {#eq-bias-factor}
 
-::: {.callout-tip icon=false}
-## Theorem: VanderWeele--Ding Bound {#thm-vd-bound}
+::: {#thm-vd-bound}
+## VanderWeele--Ding Bound
 
 Assume consistency; conditional exchangeability given the full confounder set, $\{Y(0), Y(1)\} \indep T \mid X, U$; positivity of $P(T=t \mid X, U)$; and the binary-outcome risk-ratio setup above, with $P(U \mid T{=}1, X{=}x)$ absolutely continuous with respect to $P(U \mid T{=}0, X{=}x)$ so that @eq-rrtu-gen is finite. Then for every $x$,
 $$\mathrm{RR}_{TY \mid X}^{\mathrm{true}}(x) \;\geq\; \frac{\mathrm{RR}_{TY \mid X}^{\mathrm{obs}}(x)}{B(\mathrm{RR}_{TU}, \mathrm{RR}_{UY})}.$$ {#eq-vd-bound}
@@ -326,8 +326,8 @@ It is a common and consequential misreading to say that an association can be ex
 @thm-vd-bound is a *stratum-specific* statement: it bounds the ratio of observed to causal risk ratios within each level of $X$. It does not follow that the same bound applies to the standardized (marginal) risk ratios obtained by averaging $\E\{Y(t) \mid X\}$ over the distribution of $X$. A ratio of $X$-averaged risks is not obtained by simply averaging the $X$-specific risk ratios, and the relevant weights can differ between the observed and causal quantities, so a separate argument is required; numerical counterexamples satisfying the stratum-wise bound at every $x$ while violating the standardized version are easy to construct. In applications the E-value is therefore most defensible when read at the level at which the risk ratio was estimated --- typically a covariate-adjusted model-based risk ratio taken as approximately constant in $X$.
 :::
 
-::: {.callout-note icon=false}
-## Example: An E-Value Calculation {#exm-evalue}
+::: {#exm-evalue}
+## An E-Value Calculation
 
 An observational study reports an adjusted risk ratio of $2.5$ with 95% CI $[1.7, 3.7]$. The E-value for the point estimate is
 $$\mathrm{EV} = 2.5 + \sqrt{2.5 \cdot 1.5} = 2.5 + \sqrt{3.75} \approx 4.44.$$
@@ -388,8 +388,8 @@ The constraint is symmetric: because both endpoints of the bound are imposed, th
 
 The parameter $\Lambda$ bounds, on the odds scale, how far the covariate-conditional propensity can depart from the true propensity once $U$ is marginalized. Read literally, $\Lambda = 1$ says only that the represented $U$ does not alter the treatment odds within levels of $X$; under the maintained latent exchangeability of @thm-msm-bounds below, this eliminates the additional treatment-selection dependence on $U$ and thereby recovers conditional exchangeability given $X$ alone.
 
-::: {.callout-tip icon=false}
-## Theorem: MSM Sensitivity Interval for the ATE {#thm-msm-bounds}
+::: {#thm-msm-bounds}
+## MSM Sensitivity Interval for the ATE
 
 Assume consistency; latent conditional exchangeability $\{Y(0), Y(1)\} \indep T \mid X, U$; positivity of the true propensity; suitable integrability conditions; and the marginal sensitivity model @eq-msm-bound at level $\Lambda$. Then the average treatment effect satisfies $\tau_L(\Lambda) \leq \tau \leq \tau_U(\Lambda)$, where $(\tau_L, \tau_U)$ are functionals of the observed-data distribution obtained by optimizing the weighting estimand over a valid outer envelope of weight perturbations implied by @eq-msm-bound. The interval is *valid* in the sense of @def-sharp-conservative: it contains $\tau$ whenever the model holds. It is not claimed to be sharp.
 :::
@@ -516,8 +516,8 @@ where $\mathcal{Q}_A$ is the collection of joint distributions consistent with $
 
 The identified set is sharp in the sense that every value in it is consistent with some admissible $Q$, and every value outside is not. Refining $A$ (adding assumptions) shrinks $\Psi_A(P)$; weakening $A$ expands it.
 
-::: {.callout-note icon=false}
-## Definition: Sharp Endpoint Bounds and Conservative Bounds {#def-sharp-conservative}
+::: {#def-sharp-conservative}
+## Sharp Endpoint Bounds and Conservative Bounds
 
 The bounds $(\psi_L, \psi_U)$ are *sharp endpoint bounds* under assumption set $A$ if $\psi_L = \inf \Psi_A(P)$ and $\psi_U = \sup \Psi_A(P)$. If $\Psi_A(P)$ is an interval, then $\Psi_A(P) = [\psi_L, \psi_U]$ and this interval is the *sharp identified set*; if $\Psi_A(P)$ is nonconvex, $[\psi_L, \psi_U]$ is only its convex hull, which contains values attainable under no admissible $Q$, and full sharpness requires reporting $\Psi_A(P)$ itself. A bound is *conservative* (or merely *valid*) if $\psi_L \leq \inf \Psi_A(P)$ and $\psi_U \geq \sup \Psi_A(P)$: it contains the identified set but may be wider than $A$ and $P$ require.
 :::
@@ -528,8 +528,8 @@ Sharp endpoint bounds cannot be improved without adding assumptions; conservativ
 
 The widest identified set is obtained by imposing no identifying assumption at all beyond what the observed data mechanically reveal. The label "no-assumption" is conventional shorthand and slightly overstates the case: the result below still requires consistency, a binary treatment, and known bounds on the support of *both potential outcomes* --- not merely of the observed outcome, since the proof bounds the unobserved counterfactual means. What it dispenses with is any assumption about the treatment-assignment mechanism.
 
-::: {.callout-tip icon=false}
-## Theorem: Manski's No-Assumption Bound on the ATE {#thm-manski}
+::: {#thm-manski}
+## Manski's No-Assumption Bound on the ATE
 
 Assume consistency, $Y = T\,Y(1) + (1-T)\,Y(0)$, and suppose both potential outcomes are bounded: $Y(t) \in [y_L, y_U]$ almost surely for $t \in \{0, 1\}$. Let $p = P(T=1)$. Then $\tau = \E\{Y(1) - Y(0)\}$ satisfies $\tau \in [\tau_L, \tau_U]$ with
 $$\tau_L = \big[\E(Y \mid T=1)\,p + y_L\,(1 - p)\big] - \big[\E(Y \mid T=0)\,(1 - p) + y_U\,p\big],$$ {#eq-manski-lower}
@@ -546,8 +546,8 @@ and similarly for $\E\{Y(0)\}$. The identified set for $\tau$ is the Minkowski d
 
 The width $y_U - y_L$ is the immediate and striking consequence: the no-assumption bound is as wide as the support of the outcome. If $Y$ is a $[0,1]$-valued indicator, the width is $1$; if $Y$ is a continuous health score on $[0, 100]$, the width is $100$. In either case the bound is typically too wide to resolve the sign of $\tau$.
 
-::: {.callout-note icon=false}
-## Example: Manski Bound in a Binary Outcome {#exm-manski-binary}
+::: {#exm-manski-binary}
+## Manski Bound in a Binary Outcome
 
 Suppose $Y \in \{0,1\}$, $P(T=1) = 0.4$, $\E(Y \mid T=1) = 0.6$, and $\E(Y \mid T=0) = 0.3$. The observed association is $0.3$. Applying @thm-manski with $y_L = 0$, $y_U = 1$:
 $$\tau_L = (0.6)(0.4) + (0)(0.6) - [(0.3)(0.6) + (1)(0.4)] = 0.24 - 0.58 = -0.34,$$
@@ -601,8 +601,8 @@ Define the *trimmed average treatment effect*
 $$\tau_\alpha = \E\{Y(1) - Y(0) \mid \alpha \leq \pi(X) \leq 1 - \alpha\}$$ {#eq-trimmed-ate}
 for $\alpha \in [0, 0.5)$. The choice $\alpha = 0$ recovers the full-population ATE; $\alpha > 0$ restricts attention to a *subpopulation with adequate overlap*.
 
-::: {.callout-tip icon=false}
-## Lemma: Trimmed Estimand Identity {#lem-trimmed}
+::: {#lem-trimmed}
+## Trimmed Estimand Identity
 
 Let $\alpha \in (0, 1/2)$, let $S_\alpha = \{X : \alpha \leq \pi(X) \leq 1 - \alpha\}$, and suppose $q_\alpha = P(X \in S_\alpha) > 0$. Under consistency and conditional exchangeability,
 $$\tau_\alpha = \frac{1}{q_\alpha}\,\E\!\left\{\big[\mu_1(X) - \mu_0(X)\big]\,\mathbf{1}\{X \in S_\alpha\}\right\}.$$ {#eq-trimmed-id}
@@ -644,8 +644,8 @@ Consider the canonical scalar-IV model of Chapter 7 with a direct effect $\delta
 $$Y = \alpha + \beta\, T + \delta\, Z + \varepsilon, \qquad \E(\varepsilon \mid Z) = 0.$$ {#eq-iv-direct}
 The condition $\E(\varepsilon \mid Z) = 0$ *maintains* instrument exogeneity; the sensitivity parameter $\delta$ relaxes only the exclusion restriction, which is the condition $\delta = 0$. What follows is therefore an exclusion-only sensitivity analysis conditional on maintained exogeneity. A two-parameter analysis covering both assumptions would add a second term $\mathrm{Cov}(Z, \varepsilon)/\mathrm{Cov}(T, Z)$ to the bias formula; we do not pursue it here.
 
-::: {.callout-tip icon=false}
-## Theorem: IV Bias under Exclusion Violation {#thm-iv-bias}
+::: {#thm-iv-bias}
+## IV Bias under Exclusion Violation
 
 Under @eq-iv-direct and the standard IV regularity conditions (relevance $\mathrm{Cov}(T, Z) \neq 0$ and orthogonality of $Z$ and $\varepsilon$),
 $$\frac{\mathrm{Cov}(Y, Z)}{\mathrm{Cov}(T, Z)} = \beta + \delta\,\frac{\mathrm{Var}(Z)}{\mathrm{Cov}(T, Z)}.$$ {#eq-iv-bias}
@@ -659,8 +659,8 @@ and $\mathrm{Cov}(\varepsilon, Z) = 0$ by orthogonality. Dividing by $\mathrm{Co
 
 Formula @eq-iv-bias has a striking pedagogical consequence: the bias term is proportional to $\mathrm{Var}(Z)/\mathrm{Cov}(T, Z)$, which is the inverse of the first-stage slope. A *weak* first stage therefore *amplifies* the bias from any exclusion violation: the same $\delta$ causes more damage in a weak-IV analysis than in a strong-IV analysis. This is the opposite of the intuition that weak instruments can at least be "rescued" by being exogenous.
 
-::: {.callout-note icon=false}
-## Example: IV Sensitivity Curve {#exm-iv-curve}
+::: {#exm-iv-curve}
+## IV Sensitivity Curve
 
 A study has $\mathrm{Cov}(Y, Z) = 3$, $\mathrm{Cov}(T, Z) = 1.5$, and $\mathrm{Var}(Z) = 1$. The Wald point estimate is $\hat\beta(0) = 3/1.5 = 2.0$. Applying @eq-beta-delta,
 $$\hat\beta(\delta) = \frac{3 - \delta}{1.5}, \qquad \hat\beta(0.5) = 1.67,\ \hat\beta(1.0) = 1.33,\ \hat\beta(2.0) = 0.67,\ \hat\beta(3.0) = 0.$$

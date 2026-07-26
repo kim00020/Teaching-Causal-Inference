@@ -24,8 +24,8 @@ $$\begin{aligned}
 
 Throughout, test Fisher's sharp null of no treatment effect, $Y_i(1) = Y_i(0)$ for every unit $i$ (or, equivalently, outcomes adjusted by subtracting a specified constant additive effect); condition on the matched outcomes and covariates; and assume treatment assignments are independent across matched pairs, with exactly one treated unit per pair.
 
-::: {.callout-tip icon=false}
-## Theorem S.1: $\Gamma$-Bounds on the Rank Statistic {#thm-gamma-bounds}
+::: {#thm-gamma-bounds}
+## $\Gamma$-Bounds on the Rank Statistic
 
 For a matched-pair design, the worst-case null distribution of a signed-score statistic under the $\Gamma$-model is obtained by letting each pair-specific treatment probability range over the interval $[1/(1+\Gamma),\, \Gamma/(1+\Gamma)]$ permitted by @eq-gamma-bound. For the *sign test* the resulting bounding distributions are binomial with success probabilities $\Gamma/(1+\Gamma)$ and $1/(1+\Gamma)$. For *Wilcoxon's signed-rank statistic* they are not binomial: the bounds are distributions of weighted sums $\sum_k c_k B_k$ of independent Bernoulli variables $B_k$, where the $c_k$ are the rank scores and each success probability is set to the corresponding endpoint.
 :::
@@ -125,7 +125,7 @@ The table below reports the sensitivity-adjusted estimate $\hat\tau_{\mathrm{sen
 | $0.5$ | $3.049$ | $2.936$ | $2.837$ | $2.756$ | $2.638$ |
 | $1.0$ | $2.925$ | $2.699$ | $2.502$ | $2.340$ | $2.104$ |
 | $1.5$ | $2.802$ | $2.463$ | $2.167$ | $1.924$ | $1.570$ |
-| $2.0$ | $2.678$ | $2.226$ | $1.832$ | **1.508** ✓ | $1.036$ |
+| $2.0$ | $2.678$ | $2.226$ | $1.832$ | **1.508** $\checkmark$ | $1.036$ |
 | $3.0$ | $2.431$ | $1.753$ | $1.162$ | $0.676$ | $-0.032$ |
 
 : Sensitivity-adjusted ATE estimate for Lab 9, at $\hat\tau_X = 3.172$. Each cell is $\hat\tau_{\mathrm{sens}} = \hat\tau_X - \delta \cdot \theta_U(\alpha_U)$. The true configuration is $(\alpha_U = 1.00,\, \delta = 2.0)$, with sensitivity-adjusted value $1.508 \approx \tau = 1.5$ (checkmark).

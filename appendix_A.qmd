@@ -14,8 +14,8 @@ The key pedagogical idea of this appendix is simple: before learning the full $d
 
 Before introducing graphs, we first recall the probabilistic notion that graphs are designed to encode.
 
-::: {.callout-note icon=false}
-## Definition: Conditional Independence {#def-appA-ci}
+::: {#def-appA-ci}
+## Conditional Independence
 
 Let $X$, $Y$, and $Z$ be random variables. We say that $X$ and $Y$ are *conditionally independent given $Z$*, written $X \indep Y \mid Z$, if
 $$p(x, y \mid z) = p(x \mid z)\,p(y \mid z) \qquad \text{for } P_Z\text{-almost every } z.$$
@@ -27,8 +27,8 @@ In terms of densities (with respect to a dominating measure on $(X, Y, Z)$), con
 $$X \indep Y \mid Z \;\iff\; f(x,y,z)\,f(z) = f(x,z)\,f(y,z) \;\iff\; \exists\, a, b \colon f(x,y,z) = a(x,z)\,b(y,z).$$
 The last form is especially useful: it says that the joint density factors into one piece depending on $(x,z)$ and another depending on $(y,z)$, with no cross-term in $x$ and $y$.
 
-::: {.callout-tip icon=false}
-## Proposition: Fundamental Properties of Conditional Independence {#prp-appA-ci-axioms}
+::: {#prp-appA-ci-axioms}
+## Fundamental Properties of Conditional Independence
 
 For random variables $X$, $Y$, $Z$, and $W$, the following hold:
 
@@ -45,8 +45,8 @@ Properties (C1)--(C4) hold for any probability distribution and are known as the
 
 Conditional independence is not the same as marginal independence. Two variables may be dependent marginally but independent after conditioning on a third variable. Conversely, two variables may be independent marginally but become dependent after conditioning. Both phenomena occur repeatedly in causal inference.
 
-::: {.callout-note icon=false}
-## Example: Ice Cream, Drowning, and Season {#exm-appA-icecream}
+::: {#exm-appA-icecream}
+## Ice Cream, Drowning, and Season
 
 Let $X = \text{ice cream sales}$, $Y = \text{drowning incidents}$, and $Z = \text{season}$. Marginally, $X$ and $Y$ are positively associated because both tend to be higher in summer. This does not mean that ice cream sales cause drowning. A more plausible explanation is that season is a common cause of both variables. Once season is fixed, the association largely disappears: $X \indep Y \mid Z$.
 :::
@@ -100,8 +100,8 @@ Every path in a DAG is built from local three-node configurations. There are thr
 
 Consider the pattern $X_1 \to X_2 \to X_3$, where the middle node $X_2$ lies on a directed pathway from $X_1$ to $X_3$.
 
-::: {.callout-note icon=false}
-## Example: Exercise, Body Weight, and Blood Pressure {#exm-appA-chain}
+::: {#exm-appA-chain}
+## Exercise, Body Weight, and Blood Pressure
 
 Let $X_1 = \text{exercise}$, $X_2 = \text{body weight}$, and $X_3 = \text{blood pressure}$. Exercise may affect blood pressure partly through its effect on body weight, so the path $X_1 \to X_2 \to X_3$ transmits association from $X_1$ to $X_3$. Marginally, exercise and blood pressure are associated; conditioning on body weight blocks this particular pathway. In the isolated three-node DAG as drawn, this is the only pathway, so $X_1 \indep X_3 \mid X_2$.
 :::
@@ -112,8 +112,8 @@ Once the middle variable is fixed, the chain no longer transmits additional info
 
 Consider the pattern $X_1 \leftarrow X_2 \to X_3$, where the middle node $X_2$ is a common cause of $X_1$ and $X_3$.
 
-::: {.callout-note icon=false}
-## Example: Ice Cream, Season, and Drowning {#exm-appA-fork}
+::: {#exm-appA-fork}
+## Ice Cream, Season, and Drowning
 
 With $X_1 = \text{ice cream sales}$, $X_2 = \text{season}$, and $X_3 = \text{drowning incidents}$, season affects both variables, so $X_1$ and $X_3$ are associated even though neither causes the other. Conditioning on season blocks this path: $X_1 \indep X_3 \mid X_2$.
 :::
@@ -124,8 +124,8 @@ A fork is the simplest graphical form of confounding: the middle node creates as
 
 Consider the pattern $X_1 \to X_2 \leftarrow X_3$, where the middle node $X_2$ is a common effect of $X_1$ and $X_3$.
 
-::: {.callout-note icon=false}
-## Example: Talent, Legacy Status, and College Admission {#exm-appA-collider}
+::: {#exm-appA-collider}
+## Talent, Legacy Status, and College Admission
 
 Let $X_1 = \text{academic talent}$, $X_3 = \text{legacy status}$, and $X_2 = \text{admission to an elite university}$. Talent and legacy status may be unrelated in the general applicant pool. But among admitted students they can become statistically associated: low legacy status makes unusually high talent more likely among admitted applicants, and vice versa. Symbolically, $X_1 \indep X_3$, but conditioning on $X_2$ opens the path between them, so $X_1$ and $X_3$ are typically dependent given $X_2$.
 :::
@@ -154,14 +154,14 @@ None of these behaviors needs to be taken on faith: each is provable from the DA
 
 The three-node motifs explain what happens locally on a path. The next step is to extend this logic to a general DAG, where two variables may be connected by many paths.
 
-::: {.callout-note icon=false}
-## Definition: Path {#def-appA-path}
+::: {#def-appA-path}
+## Path
 
 A *path* between two nodes is a sequence of distinct nodes such that each consecutive pair is connected by an edge, regardless of edge direction.
 :::
 
-::: {.callout-note icon=false}
-## Definition: Blocked Path {#def-appA-blocked}
+::: {#def-appA-blocked}
+## Blocked Path
 
 A path is *blocked* by a conditioning set $S$ if at least one of the following holds:
 
@@ -171,8 +171,8 @@ A path is *blocked* by a conditioning set $S$ if at least one of the following h
 A path is *open* given $S$ if it is not blocked.
 :::
 
-::: {.callout-note icon=false}
-## Definition: $d$-Separation {#def-appA-dsep}
+::: {#def-appA-dsep}
+## $d$-Separation
 
 Two nodes $X$ and $Y$ are *$d$-separated* by a set $S$ if every path between $X$ and $Y$ is blocked by $S$. More generally, two disjoint sets of nodes $\mathbf{X}$ and $\mathbf{Y}$, each disjoint from $S$, are $d$-separated by $S$ if every $X \in \mathbf{X}$ is $d$-separated from every $Y \in \mathbf{Y}$ by $S$.
 :::
@@ -251,8 +251,8 @@ So far the graph has served purely qualitative purposes: classifying paths as op
 
 Any joint distribution can be written by conditioning each variable on all of its predecessors, but that generic decomposition involves high-dimensional conditional distributions and reveals little. The graphical model earns its keep by replacing the generic decomposition with a sparse one, in which each variable is conditioned only on its parents.
 
-::: {.callout-note icon=false}
-## Definition: DAG Factorization {#def-appA-factorization}
+::: {#def-appA-factorization}
+## DAG Factorization
 
 Let $\Gcal$ be a DAG with nodes $V_1, \ldots, V_p$. A joint distribution $p(v_1, \ldots, v_p)$ is said to *factorize according to $\Gcal$* if
 $$p(v_1, \ldots, v_p) = \prod_{j=1}^{p} p\!\left(v_j \mid \Pa(V_j)\right),$$
@@ -261,16 +261,16 @@ where $\Pa(V_j)$ denotes the set of parents of $V_j$ in $\Gcal$.
 
 This factorization implies the local Markov property, defined below: once its parents are known, a node is conditionally independent of all variables that are neither its descendants nor its parents. In a causal DAG, drawing a parent arrow is an additional substantive claim that the parent is a direct causal input; this informally rules out exact cancellations or redundant arrows, and is connected to the notions of minimality and faithfulness discussed in Chapter 2.
 
-::: {.callout-note icon=false}
-## Example: A Simple Confounding Graph {#exm-appA-factorization}
+::: {#exm-appA-factorization}
+## A Simple Confounding Graph
 
 For the DAG with edges $X \to T$, $T \to Y$, and $X \to Y$, the joint density factorizes as
 $$p(x, t, y) = p(x)\,p(t \mid x)\,p(y \mid t, x).$$
 Thus the graph determines which local conditional distributions appear in the factorization.
 :::
 
-::: {.callout-note icon=false}
-## Definition: Local Markov Property {#def-appA-local-markov}
+::: {#def-appA-local-markov}
+## Local Markov Property
 
 Let $\Nd(V_i) = V \setminus \bigl(\{V_i\} \cup \De(V_i)\bigr)$ denote the set of *non-descendants* of $V_i$, where $\De(V_i)$ is the set of descendants of $V_i$ in $\Gcal$. A distribution $P$ satisfies the *local Markov property* with respect to $\Gcal$ if, for every node $V_i \in V$,
 $$V_i \indep \bigl(\Nd(V_i) \setminus \Pa(V_i)\bigr) \mid \Pa(V_i).$$
@@ -283,8 +283,8 @@ That is, once we condition on the direct causes of a node, that node is independ
 The global Markov property is the statement that every $d$-separation in $\Gcal$ implies a conditional independence in $P$. Thus, if two sets of variables are $d$-separated by a set $S$ in the graph, then they are conditionally independent given $S$ in the distribution. This is studied in detail in Chapter 2.
 :::
 
-::: {.callout-tip icon=false}
-## Theorem: Equivalence of the Three Markov Properties [@lauritzen1996graphical, Theorem 3.27] {#thm-appA-markov-equiv}
+::: {#thm-appA-markov-equiv}
+## Equivalence of the Three Markov Properties [@lauritzen1996graphical, Theorem 3.27]
 
 Let $\Gcal$ be a DAG and let $P$ admit a joint density with respect to a product dominating measure, with regular conditional distributions. Then the following are equivalent:
 
@@ -330,8 +330,8 @@ Once the density has product form, which marginalizations and conditionings pres
 ```
 :::
 
-::: {.callout-note icon=false}
-## Example: Education--Earnings Graph {#exm-appA-education}
+::: {#exm-appA-education}
+## Education--Earnings Graph
 
 Consider the DAG above, with edges $N \to E$, $B \to E$, $E \to Y$, and $B \to Y$. The corresponding factorization is
 $$p(n,b,e,y) = p(n)\,p(b)\,p(e \mid n,b)\,p(y \mid e,b).$$
@@ -364,8 +364,8 @@ There is an alternative graph-theoretic way to check $d$-separation based on con
 
 To check whether $X \indep Y \mid S$, the procedure is as follows. First, take the induced subgraph on $\An(X \cup Y \cup S)$, the ancestors of all variables under consideration, including those in the conditioning set $S$. Second, connect any two parents of a common child by an undirected edge. Third, drop all arrow directions. Finally, check whether $S$ separates $X$ and $Y$ in the resulting undirected graph; equivalently, whether $X$ and $Y$ become disconnected once the nodes in $S$ and their incident edges are removed. This procedure yields a criterion equivalent to $d$-separation.
 
-::: {.callout-note icon=false}
-## Example: Moral Graph of a Collider {#exm-appA-moral}
+::: {#exm-appA-moral}
+## Moral Graph of a Collider
 
 Consider the DAG $A \to C \leftarrow B$. For the conditional query $A \indep B \mid C$, the ancestral set is $\An(\{A, B, C\}) = \{A, B, C\}$, so $C$ is retained. Moralization connects the two parents $A$ and $B$, and after deleting the conditioned node $C$ the edge $A - B$ remains; therefore $A$ and $B$ are not separated, matching the fact that conditioning on a collider opens the path. By contrast, for the marginal query $A \indep B$, the ancestral set is $\An(\{A, B\}) = \{A, B\}$, so $C$ is discarded before moralization and no moral edge is added; $A$ and $B$ are separated, as expected.
 :::

@@ -274,9 +274,9 @@ $$\E[T \mid Z{=}1] - \E[T \mid Z{=}0] = 0.2 \quad \text{(first stage)},$$
 $$\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] = 0.1 \quad \text{(reduced form)},$$
 giving a Wald ratio of $0.1/0.2 = 0.5$. Both DGPs share the same compliance structure --- under monotonicity, $P(\mathrm{co}) = 0.2$, $P(\mathrm{at}) = 0.4$, $P(\mathrm{nt}) = 0.4$ --- though under DGP A the compliance types are simply a convenient labeling; what drives identification there is the constant-effect restriction.
 
-**DGP A: constant treatment effects.** Every unit has the same effect $\tau_i = 0.5$. Then the reduced form is $P(\mathrm{co}) \cdot \tau_{\mathrm{co}} = 0.2 \times 0.5 = 0.1$ ✓, and $\mathrm{ATE} = 0.5$.
+**DGP A: constant treatment effects.** Every unit has the same effect $\tau_i = 0.5$. Then the reduced form is $P(\mathrm{co}) \cdot \tau_{\mathrm{co}} = 0.2 \times 0.5 = 0.1$ $\checkmark$, and $\mathrm{ATE} = 0.5$.
 
-**DGP B: heterogeneous effects with monotonicity.** Effects differ by type: $\tau_{\mathrm{co}} = 0.5$, $\tau_{\mathrm{at}} = 0$, $\tau_{\mathrm{nt}} = 0$. The reduced form is again $0.2 \times 0.5 = 0.1$ ✓, but
+**DGP B: heterogeneous effects with monotonicity.** Effects differ by type: $\tau_{\mathrm{co}} = 0.5$, $\tau_{\mathrm{at}} = 0$, $\tau_{\mathrm{nt}} = 0$. The reduced form is again $0.2 \times 0.5 = 0.1$ $\checkmark$, but
 $$\mathrm{ATE} = 0.2 \times 0.5 + 0.4 \times 0 + 0.4 \times 0 = 0.1.$$
 
 **What this shows.** Both DGPs produce the same first stage, the same reduced form, and therefore the same Wald ratio of $0.5$. Yet the ATE is $0.5$ under DGP A and $0.1$ under DGP B --- a fivefold difference. The *fourth* assumption is what resolves the ambiguity: under DGP A, constant effects makes the Wald ratio equal the ATE; under DGP B, monotonicity makes it equal the LATE ($=0.5$) for compliers, a different quantity from the ATE ($=0.1$). Committing to one fourth assumption or the other changes not the estimator but what it estimates.
@@ -534,8 +534,8 @@ The treatment assignment is **monotone in** $Z$ if $T_i(1) \geq T_i(0)$ for all 
 
 Under the three core IV assumptions, heterogeneous treatment effects, and monotonicity, the Wald ratio no longer identifies the ATE. Instead it recovers the average treatment effect for the units whose treatment status is actually changed by the instrument --- the compliers. The effect is local not because it is estimated with nearby observations, but because it pertains to a local margin of behavioral response defined by the instrument itself.
 
-::: {.callout-tip icon=false}
-## Theorem: LATE Theorem [@imbens1994identification] {#thm-late}
+::: {#thm-late}
+## LATE Theorem [@imbens1994identification]
 
 Suppose the following hold:
 
@@ -584,7 +584,7 @@ The two frameworks --- linear homogeneous effects and the LATE framework --- giv
 |---|---|---|
 | Key assumption | $\tau_i = \beta$ for all $i$ | Monotonicity; no defiers |
 | What IV identifies | $\beta = \mathrm{ATE} = \mathrm{ATT} = \mathrm{LATE}$ | $\tau_{\mathrm{LATE}} = \E[\tau_i \mid \text{complier}]$ |
-| Estimand depends on instrument? | No (same $\beta$ regardless of $Z$) | Yes (different $Z$ ⟹ different compliers ⟹ different LATE) |
+| Estimand depends on instrument? | No (same $\beta$ regardless of $Z$) | Yes (different $Z$ $\Longrightarrow$ different compliers $\Longrightarrow$ different LATE) |
 | Identifies the ATE? | Yes, automatically | Only if all units are compliers or effects homogeneous |
 
 Framework 1 is a special case of Framework 2: when $\tau_i = \beta$ for all $i$, the LATE equals the ATE equals $\beta$, and the instrument does not affect the estimand --- only identification. Framework 2 is the more general and realistic setting. In applied work, the default interpretation of the Wald estimand is the LATE; the ATE interpretation requires the additional homogeneity argument of Framework 1.
@@ -788,9 +788,9 @@ The KIPP example ties together the main lessons of this chapter. All three IV as
 
 2. **Three assumptions, ordered by testability.** Relevance can be assessed with the first-stage $F$-statistic, though the $F$-statistic is a sample diagnostic, not the assumption itself. Exogeneity and exclusion are primarily substantive and must be defended by institutional knowledge, design logic, and causal structure. Each violated assumption produces a distinct, quantifiable bias in the Wald estimand, amplified by weak instruments (@sec-w7-why-matter).
 
-3. **Framework 1: homogeneous-effect SEM ⟹ Wald identifies $\beta$.** Under constant treatment effects and the linear structural model, the Wald estimand identifies the single causal parameter $\beta$, which equals the ATE, ATT, and LATE simultaneously. The identification follows from a three-step argument using the reduced form and first stage (@sec-w7-linear).
+3. **Framework 1: homogeneous-effect SEM $\Longrightarrow$ Wald identifies $\beta$.** Under constant treatment effects and the linear structural model, the Wald estimand identifies the single causal parameter $\beta$, which equals the ATE, ATT, and LATE simultaneously. The identification follows from a three-step argument using the reduced form and first stage (@sec-w7-linear).
 
-4. **Framework 2: heterogeneity + monotonicity ⟹ Wald identifies LATE.** Under heterogeneous treatment effects and monotonicity, the Wald estimand identifies the average treatment effect for *compliers* only --- those whose treatment status changes with the instrument, a latent subgroup defined by potential treatment statuses $(T(0), T(1))$, not by observable characteristics (@sec-w7-late).
+4. **Framework 2: heterogeneity + monotonicity $\Longrightarrow$ Wald identifies LATE.** Under heterogeneous treatment effects and monotonicity, the Wald estimand identifies the average treatment effect for *compliers* only --- those whose treatment status changes with the instrument, a latent subgroup defined by potential treatment statuses $(T(0), T(1))$, not by observable characteristics (@sec-w7-late).
 
 5. **Different instruments identify different effects.** The LATE depends on the instrument through the complier population it selects. Different instruments can legitimately identify different causal effects because they shift treatment for different margins of the population. LATE equals ATE only under additional structure, most notably treatment-effect homogeneity (@sec-w7-interpret).
 

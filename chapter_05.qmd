@@ -99,8 +99,8 @@ The potential outcomes are independent of assignment *unconditionally* --- no co
 
 ### Estimation of the ATE in a Randomized Experiment
 
-::: {.callout-tip icon=false}
-## Lemma: Identification under Complete Randomization {#lem-rct-id}
+::: {#lem-rct-id}
+## Identification under Complete Randomization
 
 Under complete randomization,
 $$\E\bigl[Y(t)\bigr] \;=\; \E\bigl[Y \mid T{=}t\bigr], \qquad t \in \{0,1\}.$$ {#eq-rct-id}
@@ -118,8 +118,8 @@ where $n_1$ and $n_0$ are the numbers of treated and control units.
 $$\bar\tau_n \;=\; \frac{1}{n}\sum_{i=1}^n \bigl\{Y_i(1) - Y_i(0)\bigr\},$$
 and derives all randomness from the assignment mechanism alone. Randomization by itself licenses design-based inference for $\bar\tau_n$ --- the effect among the units actually randomized (internal validity). Extending conclusions to a wider population requires an additional random sampling or transportability argument (external validity).
 
-::: {.callout-tip icon=false}
-## Theorem: Neyman's Theorem for the Difference-in-Means Estimator {#thm-dim}
+::: {#thm-dim}
+## Neyman's Theorem for the Difference-in-Means Estimator
 
 Under complete randomization, let $\mathcal{F}_n = \{(Y_i(0), Y_i(1)) : i = 1, \ldots, n\}$ denote the set of potential outcomes, treated as fixed, and let the expectations and variances below be taken with respect to the randomization distribution of the assignment vector. Set $f_1 = n_1/n$ and let
 $$\bar Y(t) = \frac{1}{n}\sum_{i=1}^n Y_i(t), \qquad S_t^2 = \frac{1}{n-1}\sum_{i=1}^n \bigl(Y_i(t) - \bar Y(t)\bigr)^2,$$
@@ -270,8 +270,8 @@ From the observed law of $(Y, T, X)$ alone, without additional structure, condit
 
 Chapter 4 established the back-door adjustment formula from consistency, weak conditional exchangeability, positivity, and integrability. We restate the result here as a lemma, with each step of the proof traced back to the assumption it invokes. The explicit tracing makes the failure mode of each assumption transparent: a positivity failure may be visible empirically and may motivate re-targeting to a supported subpopulation, but it prevents nonparametric identification of the original target; weak ignorability and consistency can fail without an equally direct empirical signature.
 
-::: {.callout-tip icon=false}
-## Lemma: Identification of $\E[Y(t)]$ {#lem-ident-pot}
+::: {#lem-ident-pot}
+## Identification of $\E\{Y(t)\}$
 
 Suppose: (i) *weak ignorability*: $Y(t) \indep T \mid X$; (ii) *overlap*: $P(T{=}t \mid X{=}x) > 0$ for $P_X$-almost every $x$; (iii) *consistency*: $Y = Y(T)$; (iv) *integrability*: $\E|Y(t)| < \infty$. Then:
 $$\E\bigl[Y(t)\bigr] = \E\Bigl[\E\bigl[Y \mid T{=}t,\, X\bigr]\Bigr] = \int \E\bigl[Y \mid T{=}t,\, X{=}x\bigr]\, p(x)\, dx.$$ {#eq-ident-pot}
@@ -299,8 +299,8 @@ The step labeled "weak ignorability" uses $Y(t) \indep T \mid X$, which gives $\
 
 The ATE and ATT follow immediately as corollaries.
 
-::: {.callout-tip icon=false}
-## Theorem: Identification of the ATE and ATT {#thm-ident-ate}
+::: {#thm-ident-ate}
+## Identification of the ATE and ATT
 
 Under the conditions of @lem-ident-pot, imposed for both treatment levels $t \in \{0,1\}$:
 $$\tau_{\mathrm{ATE}} = \int \bigl[\E(Y \mid T{=}1, X{=}x) - \E(Y \mid T{=}0, X{=}x)\bigr]\, p(x)\, dx,$$ {#eq-w5-backdoor}
@@ -322,7 +322,7 @@ where control-arm positivity ensures the conditional expectation in the second l
 ::: {.callout-note icon=false}
 ## Remark: The ATT Needs Less than the ATE
 
-The proof reveals that the ATT is identified under a strictly weaker package than the ATE. Because $\E[Y(1) \mid T{=}1] = \E[Y \mid T{=}1]$ by consistency alone, only the counterfactual mean $\E[Y(0) \mid T{=}1]$ requires adjustment. It therefore suffices to assume: (i′) exchangeability for the *control* potential outcome only, $Y(0) \indep T \mid X$; (ii′) *control-arm* positivity on the treated support; and (iii)--(iv) as before. No assumption about $Y(1)$'s assignment mechanism, and no positivity for the treated arm, is needed. Matching the assumptions to the estimand can substantially weaken what must be defended.
+The proof reveals that the ATT is identified under a strictly weaker package than the ATE. Because $\E[Y(1) \mid T{=}1] = \E[Y \mid T{=}1]$ by consistency alone, only the counterfactual mean $\E[Y(0) \mid T{=}1]$ requires adjustment. It therefore suffices to assume: (i') exchangeability for the *control* potential outcome only, $Y(0) \indep T \mid X$; (ii') *control-arm* positivity on the treated support; and (iii)--(iv) as before. No assumption about $Y(1)$'s assignment mechanism, and no positivity for the treated arm, is needed. Matching the assumptions to the estimand can substantially weaken what must be defended.
 :::
 
 **What the proof uses and where it can fail.** The table below traces each step back to the assumption it invokes.
@@ -503,8 +503,8 @@ $$\hat\beta \;=\; \hat\tau_{\mathrm{reg}}.$$ {#eq-beta-equals-tau}
 
 The Lin estimator is therefore not a separate method: it is the three-step outcome-regression estimator with linear within-arm models, recast as a single regression. The interacted representation makes *computation* of the estimator and of its Huber--White sandwich standard error immediate in standard software; the asymptotic validity of that variance estimator under the randomization distribution is not an algebraic consequence of the recasting but part of Lin's theoretical result.
 
-::: {.callout-tip icon=false}
-## Theorem: Design-Consistency of the Regression-Adjusted Estimator [@lin2013agnostic] {#thm-lin}
+::: {#thm-lin}
+## Design-Consistency of the Regression-Adjusted Estimator [@lin2013agnostic]
 
 Consider a sequence of finite populations with fixed covariate dimension in which $n_1/n \to \rho \in (0,1)$, the population Gram matrices converge to a nonsingular limit, and the covariates and potential outcomes satisfy moment and leverage conditions sufficient for the arm-specific OLS coefficients to be root-$n$ consistent for their finite-population projection coefficients. Under complete randomization,
 $$\hat\beta \;-\; \bar\tau_n \;\overset{p}{\to}\; 0$$

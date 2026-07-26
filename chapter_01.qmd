@@ -37,7 +37,7 @@ These two distributions coincide when the treatment assignment is *unconfounded*
 
 Does a new drug ($T=1$) reduce blood pressure ($Y$)? Suppose sicker patients are more likely to take the drug, so that unmeasured severity $U$ is a common cause of $T$ and $Y$. Then:
 
-- *Observational study*: $\E[Y \mid T{=}1] > \E[Y \mid T{=}0]$. Drug users have higher blood pressure on average. A naïve analyst concludes the drug is harmful.
+- *Observational study*: $\E[Y \mid T{=}1] > \E[Y \mid T{=}0]$. Drug users have higher blood pressure on average. A naive analyst concludes the drug is harmful.
 - *Randomized trial*: $\E[Y \mid \doop(T{=}1)] < \E[Y \mid \doop(T{=}0)]$. Forcing everyone to take the drug reduces blood pressure. The drug is beneficial.
 
 Same population. Different questions. Opposite answers. The entire discrepancy is caused by the back-door path $T \leftarrow U \to Y$, which the observational quantity $\E[Y \mid T{=}1]$ cannot remove.
@@ -427,8 +427,8 @@ $$\text{bias} = \frac{1 \times 1 \times 1}{1^2 \times 1 + 1} = \frac{1}{2} = 0.5
 
 The decomposition just derived is an instance of a completely general regression identity that involves no causal assumptions --- only second moments. Consider three population least-squares regressions of centered random variables, in notation mirroring the running model: the *full model*, regressing $Y$ on $(T, X)$ with coefficients $(\beta, \gamma)$; the *reduced model*, regressing $Y$ on $T$ alone with coefficient $\tilde{\beta}$; and the *auxiliary model*, regressing the omitted variable $X$ on $T$ with coefficient $\tilde{\alpha} = \mathrm{Cov}(X, T)/\mathrm{Var}(T)$. (Tilded coefficients come from regressions on $T$ alone.)
 
-::: {.callout-tip icon=false}
-## Theorem: Omitted-Variable Bias {#thm-ovb}
+::: {#thm-ovb}
+## Omitted-Variable Bias
 
 Let $(T, X, Y)$ be centered random variables with finite second moments, $\mathrm{Var}(T) > 0$, and $(T, X)$ not perfectly collinear. Then
 $$\tilde{\beta} = \beta + \gamma\,\tilde{\alpha}, \qquad\text{i.e.,}\qquad \underbrace{\tilde{\beta} - \beta}_{\text{omitted-variable bias}} = \gamma\,\tilde{\alpha}.$$
@@ -655,7 +655,7 @@ $$\hat{P}(Y{=}1 \mid \doop(T{=}1)) = 0.30 \times 0.4 + 0.05 \times 0.6 = 0.15,$$
 $$\hat{P}(Y{=}1 \mid \doop(T{=}0)) = 0.50 \times 0.4 + 0.10 \times 0.6 = 0.26.$$
 The estimated causal risk difference is $\hat{\Delta}_{\mathrm{causal}} = 0.15 - 0.26 = -0.11$: under the assumed causal DAG, consistency, and positivity, the standardized estimate indicates an 11-percentage-point reduction in infection risk. This is a plug-in point estimate; quantifying its uncertainty is deferred to later chapters.
 
-**Why the naïve comparison fails.** The raw difference $0.264 - 0.128 = +0.136$ is precisely the aggregate row of the Simpson table above: it mixes strata in treatment-dependent proportions, importing the high elderly infection rate into the vaccinated group. Under the assumed causal model, the standardized estimate $-0.11$ is the correct target because it re-weights each stratum by $P(X{=}x)$, the population share, not by $P(X{=}x \mid T{=}t)$.
+**Why the naive comparison fails.** The raw difference $0.264 - 0.128 = +0.136$ is precisely the aggregate row of the Simpson table above: it mixes strata in treatment-dependent proportions, importing the high elderly infection rate into the vaccinated group. Under the assumed causal model, the standardized estimate $-0.11$ is the correct target because it re-weights each stratum by $P(X{=}x)$, the population share, not by $P(X{=}x \mid T{=}t)$.
 
 ::: {.callout-note icon=false}
 ## The Two Steps, Concretely

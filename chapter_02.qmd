@@ -92,8 +92,8 @@ Consider the causal story: education ($E$) affects earnings ($Y$); family backgr
 The Markov factorization is $p(n,b,e,y) = p(n)\,p(b)\,p(e\mid n,b)\,p(y\mid e,b)$. Reading off structural relationships: $\Pa(E) = \{N,B\}$, $\Pa(Y) = \{E,B\}$, $\Pa(N)=\Pa(B)=\varnothing$. The descendants of $N$ are $\{E,Y\}$; $B$ and $N$ are non-descendants of each other.
 :::
 
-::: {.callout-note icon=false}
-## Example: The IV DAG {#exm-ivdag-intro}
+::: {#exm-ivdag-intro}
+## The IV DAG
 
 The canonical instrumental variable model involves four nodes: $Z$ (instrument), $T$ (treatment), $Y$ (outcome), and $U$ (unobserved confounder).
 
@@ -278,8 +278,8 @@ The three basic path structures behave differently under conditioning. In a *cha
 
 The blocking rules need not be taken on faith. The next example derives the chain rule directly from the Markov factorization stated in @sec-w2-dags; the remark that follows explains how the remaining rules are obtained by the same kind of computation.
 
-::: {.callout-note icon=false}
-## Example: A Direct Probability Proof for the Chain {#exm-chainproof}
+::: {#exm-chainproof}
+## A Direct Probability Proof for the Chain
 
 Consider the chain $X_1 \to X_2 \to X_3$. By the Markov factorization,
 $$p(x_1, x_2, x_3) = p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2).$$
@@ -310,8 +310,8 @@ Why does this bookkeeping deserve a section of its own? Because d-separation is 
 
 Before stating the formal criterion, it is useful to summarize the intuition: a path stays active unless we block a non-collider on it, or unless it contains a collider that has not been conditioned on (and has no conditioned-on descendant). The definition below simply turns this intuition into a rule that applies to any path in any DAG.
 
-::: {.callout-note icon=false}
-## Definition: d-Blocking and d-Separation {#def-dsep}
+::: {#def-dsep}
+## d-Blocking and d-Separation
 
 A path $\pi$ is *d-blocked* by a set $\mathbf{S}$ if:
 
@@ -321,8 +321,8 @@ A path $\pi$ is *d-blocked* by a set $\mathbf{S}$ if:
 Nodes $X$ and $Y$ are *d-separated* by $\mathbf{S}$, written $(X \indep Y \mid \mathbf{S})_{\Gcal}$, if every path between $X$ and $Y$ in $\Gcal$ is d-blocked by $\mathbf{S}$. If some path is not d-blocked, $X$ and $Y$ are *d-connected* given $\mathbf{S}$, written $(X \nindep Y \mid \mathbf{S})_{\Gcal}$. The subscript $\Gcal$ always marks a statement about the graph; unsubscripted statements such as $X \indep Y \mid \mathbf{S}$ refer to the distribution $P$.
 :::
 
-::: {.callout-note icon=false}
-## Example: Applying the Criterion to the Three Toy Settings {#exm-threesettings}
+::: {#exm-threesettings}
+## Applying the Criterion to the Three Toy Settings
 
 We revisit the three motif stories of @sec-w2-motifsub and verify each blocking claim of @sec-w2-blocking directly using the definition.
 
@@ -344,8 +344,8 @@ We revisit the three motif stories of @sec-w2-motifsub and verify each blocking 
 
 The following theorem is what gives d-separation its statistical force: it guarantees that every d-separation statement in the graph corresponds to a genuine conditional independence in the joint distribution.
 
-::: {.callout-tip icon=false}
-## Theorem: Soundness of d-Separation [@pearl2009causality, Theorem 1.2.4] {#thm-dsep}
+::: {#thm-dsep}
+## Soundness of d-Separation [@pearl2009causality, Theorem 1.2.4]
 
 If $(X \indep Y \mid \mathbf{S})_{\Gcal}$, then $X \indep Y \mid \mathbf{S}$ in every distribution that is Markov with respect to $\Gcal$.
 :::
@@ -394,8 +394,8 @@ $X$ and $Y$ are d-separated by $\mathbf{S}$ in $\Gcal$ *if and only if* they are
 
 These two viewpoints --- active-path tracing and moral-graph separation --- are equivalent algorithmic ways of evaluating the d-separation criterion. Students are encouraged to use whichever they find most natural, and to cross-check with the other when in doubt.
 
-::: {.callout-note icon=false}
-## Example: Checking d-Separation in a Four-Node DAG {#exm-fournode}
+::: {#exm-fournode}
+## Checking d-Separation in a Four-Node DAG
 
 Consider the DAG with edges $Z \to T$, $U \to T$, $T \to Y$, $U \to Y$.
 
@@ -430,8 +430,8 @@ Consider the DAG with edges $Z \to T$, $U \to T$, $T \to Y$, $U \to Y$.
 Comparing the two queries: $Z$ and $U$ are marginally independent (the instrument is exogenous) but become dependent once we condition on $T$. This is collider bias --- of which Berkson's bias is the classic instance --- treated in full in @sec-w2-ivdag.
 :::
 
-::: {.callout-note icon=false}
-## Example: Practice DAG --- Eight-Node Graph {#exm-practicedag}
+::: {#exm-practicedag}
+## Practice DAG --- Eight-Node Graph
 
 Consider the DAG below with nodes $W$, $X_1$, $T$, $M_1$, $M_2$, $Y$, $C$, and $D$.
 
@@ -506,8 +506,8 @@ Any one of the three can therefore serve as the definition of "$P$ is Markov wit
 
 What does the equivalence buy in the smallest possible case? For the three-node chain, the global property contains exactly one substantive statement, $X_1 \indep X_3 \mid X_2$ --- and the factorization delivers it in the two lines already carried out above. We record the result for reference: it is the miniature version of @thm-dsep that the reader has proved by hand.
 
-::: {.callout-tip icon=false}
-## Proposition: Conditional Independence in the Three-Node Chain {#prp-chain}
+::: {#prp-chain}
+## Conditional Independence in the Three-Node Chain
 
 Let $X_1 \to X_2 \to X_3$ be a chain with Markov factorization $p(x_1, x_2, x_3) = p(x_1)\,p(x_2 \mid x_1)\,p(x_3 \mid x_2)$. Then $X_1 \indep X_3 \mid X_2$. The analogous result for the fork $X_1 \leftarrow X_2 \to X_3$ is left as an exercise.
 :::

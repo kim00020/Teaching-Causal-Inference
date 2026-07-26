@@ -584,18 +584,8 @@ window.Quarto = {
 <h3 data-number="4.2.3" class="anchored" data-anchor-id="connection-to-the-do-operator"><span class="header-section-number">4.2.3</span> Connection to the Do-Operator</h3>
 <p>The notation <span class="math inline">\(Y(t)\)</span> and the expression <span class="math inline">\(P(Y \mid \doop(T{=}t))\)</span> refer to the same causal idea viewed from two complementary angles. The potential outcome <span class="math inline">\(Y(t)\)</span> denotes the outcome that would be realized for a unit if the treatment were set to <span class="math inline">\(t\)</span>. The do-operator, by contrast, describes an intervention at the level of the data-generating mechanism: it replaces the original treatment assignment rule by the constant value <span class="math inline">\(t\)</span>.</p>
 <p>When <span class="math inline">\(Y(t)\)</span> is constructed by applying the same structural intervention that defines <span class="math inline">\(\doop(T{=}t)\)</span>, equality of the resulting laws holds by construction: intervening to set <span class="math inline">\(T = t\)</span> in the underlying structural equation model produces an outcome variable with the same distribution as <span class="math inline">\(Y(t)\)</span>. No interference makes the scalar unit-level notation <span class="math inline">\(Y_i(t)\)</span> adequate. The separate consistency assumption links these counterfactual variables to observed outcomes when the realized treatment equals <span class="math inline">\(t\)</span>. Thus the potential-outcomes notation and the interventional distribution are two ways of encoding the same manipulated world.</p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Proposition: Potential Outcomes and the Do-Operator
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Consider the structural causal model of Chapters 1–3, and construct <span class="math inline">\(Y(t)\)</span> by replacing the structural equation for <span class="math inline">\(T\)</span> with the constant assignment <span class="math inline">\(T := t\)</span> — the same intervention that defines <span class="math inline">\(\doop(T{=}t)\)</span>. Under no interference (SUTVA), the potential outcome has the interventional distribution: <span id="eq-po-do"><span class="math display">\[P\{Y(t) \le y\} \;=\; P\{Y \le y \mid \doop(T{=}t)\} \qquad \text{for every } y; \tag{4.2}\]</span></span> in particular, <span class="math inline">\(\E[Y(t)] = \E[Y \mid \doop(T{=}t)]\)</span>.</p>
-</div>
+<div id="prp-po-do" class="theorem proposition">
+<p><span class="theorem-title"><strong>Proposition 4.1 (Potential Outcomes and the Do-Operator)</strong></span> Consider the structural causal model of Chapters 1–3, and construct <span class="math inline">\(Y(t)\)</span> by replacing the structural equation for <span class="math inline">\(T\)</span> with the constant assignment <span class="math inline">\(T := t\)</span> — the same intervention that defines <span class="math inline">\(\doop(T{=}t)\)</span>. Under no interference (SUTVA), the potential outcome has the interventional distribution: <span id="eq-po-do"><span class="math display">\[P\{Y(t) \le y\} \;=\; P\{Y \le y \mid \doop(T{=}t)\} \qquad \text{for every } y; \tag{4.2}\]</span></span> in particular, <span class="math inline">\(\E[Y(t)] = \E[Y \mid \doop(T{=}t)]\)</span>.</p>
 </div>
 <p><em>Proof sketch.</em> In the intervened SCM, whose graph is <span class="math inline">\(\Gcal_{\overline{T}}\)</span>, the structural equation for <span class="math inline">\(T\)</span> is replaced by <span class="math inline">\(T := t\)</span> for every unit. The structural model then determines the value of <span class="math inline">\(Y\)</span> for unit <span class="math inline">\(i\)</span> from <span class="math inline">\(t\)</span> and unit <span class="math inline">\(i\)</span>’s own background variables — which is precisely what the potential outcomes framework defines as <span class="math inline">\(Y_i(t)\)</span>. SUTVA’s no-interference condition ensures <span class="math inline">\(Y_i(t)\)</span> does not depend on other units’ treatment values, so the marginal distribution of <span class="math inline">\(Y\)</span> in the intervened model equals the marginal distribution of <span class="math inline">\(Y(t)\)</span>. By definition of the do-operator, the former is <span class="math inline">\(f(y \mid \doop(T{=}t))\)</span>. <span class="math inline">\(\square\)</span></p>
 <p>This proposition should be interpreted carefully. Consistency alone does not create the link between <span class="math inline">\(Y(t)\)</span> and the do-operator; the link comes from the underlying causal model that assigns meaning to the intervention <span class="math inline">\(\doop(T{=}t)\)</span>. Consistency and no interference ensure that the <em>observed</em> outcome agrees with the appropriate potential outcome at the realized treatment, while the structural model explains how the intervention generates the counterfactual world.</p>
@@ -666,44 +656,25 @@ window.Quarto = {
 <section id="sec-w4-exchangeability" class="level3" data-number="4.4.1">
 <h3 data-number="4.4.1" class="anchored" data-anchor-id="sec-w4-exchangeability"><span class="header-section-number">4.4.1</span> Exchangeability: Mean, Weak, and Strong Forms</h3>
 <p>The central identifying assumption in observational studies is that treatment assignment is as good as random after conditioning on observed covariates <span class="math inline">\(X\)</span>.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Strong Ignorability <span class="citation" data-cites="rosenbaum1983central">(<a href="#ref-rosenbaum1983central" role="doc-biblioref">Rosenbaum and Rubin 1983</a>)</span>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The treatment assignment <span class="math inline">\(T\)</span> is <em>strongly ignorable</em> given <span class="math inline">\(X\)</span> if:</p>
+<div id="def-ignorability" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4.1 (Strong Ignorability <span class="citation" data-cites="rosenbaum1983central">(<a href="#ref-rosenbaum1983central" role="doc-biblioref">Rosenbaum and Rubin 1983</a>)</span>)</strong></span> The treatment assignment <span class="math inline">\(T\)</span> is <em>strongly ignorable</em> given <span class="math inline">\(X\)</span> if:</p>
 <ol type="1">
 <li><strong>Unconfoundedness:</strong> <span class="math inline">\(\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X\)</span>.</li>
 <li><strong>Overlap (positivity):</strong> <span class="math inline">\(0 &lt; P(T{=}1 \mid X) &lt; 1\)</span>, <span class="math inline">\(P_X\)</span>-almost surely (see the positivity taxonomy remark in <a href="#sec-w4-overlap" class="quarto-xref"><span>Section 4.4.4</span></a> for why the almost-sure formulation is the natural one).</li>
 </ol>
 </div>
-</div>
-<p><span class="quarto-unresolved-ref">?def-ignorability</span> states the <em>joint</em>, or <em>strong</em>, form of the exchangeability condition. For identifying the ATE, strictly weaker conditions suffice, and the hierarchy is worth recording explicitly:</p>
+<p><a href="#def-ignorability" class="quarto-xref">Definition&nbsp;<span>4.1</span></a> states the <em>joint</em>, or <em>strong</em>, form of the exchangeability condition. For identifying the ATE, strictly weaker conditions suffice, and the hierarchy is worth recording explicitly:</p>
 <ul>
 <li><strong>Mean exchangeability:</strong> <span class="math inline">\(\E[Y(t) \mid T, X] = \E[Y(t) \mid X]\)</span>. Together with consistency, positivity, and the relevant moment condition, this suffices to identify the mean <span class="math inline">\(\E[Y(t)]\)</span>.</li>
 <li><strong>Weak (single-world) exchangeability:</strong> <span class="math inline">\(Y(t) \indep T \mid X\)</span> for each <span class="math inline">\(t\)</span> separately. Together with consistency and positivity, this identifies the entire marginal distribution of each <span class="math inline">\(Y(t)\)</span>.</li>
-<li><strong>Strong (joint) exchangeability:</strong> <span class="math inline">\(\bigl(Y(0), Y(1)\bigr) \indep T \mid X\)</span>. This constrains the joint counterfactual pair and is the condition stated in <span class="quarto-unresolved-ref">?def-ignorability</span>.</li>
+<li><strong>Strong (joint) exchangeability:</strong> <span class="math inline">\(\bigl(Y(0), Y(1)\bigr) \indep T \mid X\)</span>. This constrains the joint counterfactual pair and is the condition stated in <a href="#def-ignorability" class="quarto-xref">Definition&nbsp;<span>4.1</span></a>.</li>
 </ul>
 <p>Each condition in the list implies those above it, and none of the implications reverses in general. The adjustment argument below uses only weak exchangeability, one treatment level at a time; the joint form becomes relevant for functionals of the joint law of <span class="math inline">\((Y(0), Y(1))\)</span>, such as the variance of the unit-level effect. Even the joint form, however, is not generally sufficient to identify such functionals: adjustment identifies the two marginal laws, but the observed data do not determine the cross-world dependence between <span class="math inline">\(Y(0)\)</span> and <span class="math inline">\(Y(1)\)</span>; the covariance term in <span class="math inline">\(\mathrm{Var}\{Y(1) - Y(0)\}\)</span> requires additional cross-world restrictions, such as rank invariance, for point identification; in the absence of such restrictions one may instead derive partial-identification bounds for the joint counterfactual functional (Appendix B).</p>
 </section>
 <section id="sec-w4-adjustment" class="level3" data-number="4.4.2">
 <h3 data-number="4.4.2" class="anchored" data-anchor-id="sec-w4-adjustment"><span class="header-section-number">4.4.2</span> Adjustment Formula under Ignorability</h3>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Proposition: Adjustment under Conditional Exchangeability
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Fix <span class="math inline">\(t \in \{0,1\}\)</span> and assume:</p>
+<div id="prp-adjustment" class="theorem proposition">
+<p><span class="theorem-title"><strong>Proposition 4.2 (Adjustment under Conditional Exchangeability)</strong></span> Fix <span class="math inline">\(t \in \{0,1\}\)</span> and assume:</p>
 <ol type="1">
 <li><strong>Consistency:</strong> <span class="math inline">\(T = t\)</span> implies <span class="math inline">\(Y = Y(t)\)</span>;</li>
 <li><strong>Weak conditional exchangeability:</strong> <span class="math inline">\(Y(t) \indep T \mid X\)</span>;</li>
@@ -712,8 +683,7 @@ window.Quarto = {
 </ol>
 <p>Then <span class="math inline">\(\E[Y(t)] = \E_X\!\left[\E(Y \mid T{=}t,\, X)\right]\)</span>. If the assumptions hold for both <span class="math inline">\(t = 0\)</span> and <span class="math inline">\(t = 1\)</span>, the ATE is identified by the standardization formula <span id="eq-ate-id"><span class="math display">\[\tau_{\mathrm{ATE}} \;=\; \E_X\!\left[\E[Y \mid T{=}1, X] - \E[Y \mid T{=}0, X]\right]. \tag{4.10}\]</span></span></p>
 </div>
-</div>
-<p>Strong ignorability (<span class="quarto-unresolved-ref">?def-ignorability</span>) implies assumptions 2–3 for both treatment levels, so it is sufficient but not necessary; note also that consistency, which the argument uses explicitly, is not part of <span class="quarto-unresolved-ref">?def-ignorability</span> and must be assumed alongside it. Equation <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.10</span></a> is the back-door adjustment formula of Chapter 3 written in potential-outcome notation.</p>
+<p>Strong ignorability (<a href="#def-ignorability" class="quarto-xref">Definition&nbsp;<span>4.1</span></a>) implies assumptions 2–3 for both treatment levels, so it is sufficient but not necessary; note also that consistency, which the argument uses explicitly, is not part of <a href="#def-ignorability" class="quarto-xref">Definition&nbsp;<span>4.1</span></a> and must be assumed alongside it. Equation <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.10</span></a> is the back-door adjustment formula of Chapter 3 written in potential-outcome notation.</p>
 <p><em>Proof.</em> For the fixed treatment level <span class="math inline">\(t\)</span>, <span class="math display">\[\begin{aligned}
 \E[Y(t)] &amp;= \E_X\!\bigl[\E\{Y(t) \mid X\}\bigr] &amp;&amp; \text{(iterated expectations)} \\
 &amp;= \E_X\!\bigl[\E\{Y(t) \mid T{=}t,\, X\}\bigr] &amp;&amp; \text{(weak exchangeability)} \\
@@ -740,25 +710,15 @@ window.Quarto = {
 </section>
 <section id="back-door-interpretation" class="level3" data-number="4.4.3">
 <h3 data-number="4.4.3" class="anchored" data-anchor-id="back-door-interpretation"><span class="header-section-number">4.4.3</span> Back-Door Interpretation</h3>
-<p>For a fixed treatment level <span class="math inline">\(t\)</span>, the weak conditional-exchangeability condition <span class="math display">\[Y(t) \;\indep\; T \mid X\]</span> states that, after conditioning on <span class="math inline">\(X\)</span>, treatment assignment carries no residual information about the outcome that would be observed under the intervention <span class="math inline">\(T{=}t\)</span>. The joint condition <span class="math inline">\(\bigl(Y(0), Y(1)\bigr) \indep T \mid X\)</span> of <span class="quarto-unresolved-ref">?def-ignorability</span> is a stronger cross-world package; the adjustment formula requires only the single-world condition for each treatment level separately. In the language of DAGs, the closely related idea is that <span class="math inline">\(X\)</span> blocks all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</p>
+<p>For a fixed treatment level <span class="math inline">\(t\)</span>, the weak conditional-exchangeability condition <span class="math display">\[Y(t) \;\indep\; T \mid X\]</span> states that, after conditioning on <span class="math inline">\(X\)</span>, treatment assignment carries no residual information about the outcome that would be observed under the intervention <span class="math inline">\(T{=}t\)</span>. The joint condition <span class="math inline">\(\bigl(Y(0), Y(1)\bigr) \indep T \mid X\)</span> of <a href="#def-ignorability" class="quarto-xref">Definition&nbsp;<span>4.1</span></a> is a stronger cross-world package; the adjustment formula requires only the single-world condition for each treatment level separately. In the language of DAGs, the closely related idea is that <span class="math inline">\(X\)</span> blocks all back-door paths from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span>.</p>
 <p>The graphical criterion is especially useful because it makes the source of ignorability visible. If <span class="math inline">\(X\)</span> satisfies the back-door criterion relative to <span class="math inline">\((T, Y)\)</span>, then, under the structural causal model semantics adopted in these notes, treatment assignment is conditionally exchangeable given <span class="math inline">\(X\)</span>, which justifies standardization, regression adjustment, and related methods. In that case the observed conditional distribution within levels of <span class="math inline">\(X\)</span> can be used to recover the interventional distribution, leading to the adjustment formula <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.10</span></a> developed above.</p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Proposition: Back-Door Criterion Implies Ignorability
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Under the NPSEM/SWIG semantics adopted in these notes, if <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> — that is,</p>
+<div id="prp-ign-bd" class="theorem proposition">
+<p><span class="theorem-title"><strong>Proposition 4.3 (Back-Door Criterion Implies Ignorability)</strong></span> Under the NPSEM/SWIG semantics adopted in these notes, if <span class="math inline">\(X\)</span> satisfies the back-door criterion for the effect of <span class="math inline">\(T\)</span> on <span class="math inline">\(Y\)</span> — that is,</p>
 <ol type="1">
 <li>no node in <span class="math inline">\(X\)</span> is a descendant of <span class="math inline">\(T\)</span>, and</li>
 <li><span class="math inline">\(X\)</span> blocks every back-door path from <span class="math inline">\(T\)</span> to <span class="math inline">\(Y\)</span> —</li>
 </ol>
 <p>then weak (single-world) unconfoundedness <span class="math inline">\(Y(t) \indep T \mid X\)</span> holds for all <span class="math inline">\(t\)</span>.</p>
-</div>
 </div>
 <p><em>Proof sketch.</em> The target statement <span class="math inline">\(Y(t) \indep T \mid X\)</span> is a <em>single-world</em> counterfactual independence: it is not an ordinary d-separation statement in <span class="math inline">\(\Gcal\)</span> itself, but it is represented as a d-separation statement in the single-world intervention graph <span class="math inline">\(\Gcal(t)\)</span> (Appendix B). The rigorous translation can be carried out directly in the SWIG <span class="math inline">\(\Gcal(t)\)</span>. A stronger sufficient construction is the NPSEM-IE representation <span class="math display">\[Y(t) \;=\; g\!\bigl(t,\, \Pa(Y)\!\setminus\!\{T\},\, U_Y\bigr), \qquad T \;=\; f_T\!\bigl(\Pa(T),\, U_T\bigr),\]</span> with mutually independent exogenous errors (writing, for simplicity, the case in which the non-treatment parents of <span class="math inline">\(Y\)</span> are non-descendants of <span class="math inline">\(T\)</span>; in general <span class="math inline">\(Y(t)\)</span> is defined by recursive substitution, with any mediating parents replaced by their own counterfactual values). Under this semantics, <span class="math inline">\(Y(t)\)</span> and <span class="math inline">\(T\)</span> depend on disjoint exogenous errors together with their own ancestors, and the back-door criterion implies the d-separation condition on <span class="math inline">\(\Gcal(t)\)</span> that makes these two sets of inputs conditionally independent given <span class="math inline">\(X\)</span>. Functional independence of inputs then transfers to the outputs, yielding <span class="math inline">\(Y(t) \indep T \mid X\)</span> for every <span class="math inline">\(t\)</span>. See Appendix B for the explicit SWIG derivation, and <span class="citation" data-cites="wang2026tale">Wang et al. (<a href="#ref-wang2026tale" role="doc-biblioref">2026</a>)</span> for a discussion of the extra cross-world constraints that NPSEM-IE imposes beyond what is strictly required to identify the ATE. <span class="math inline">\(\square\)</span></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -784,8 +744,8 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The additional independent-error assumption used in the NPSEM-IE construction — mentioned as one sufficient route in <span class="quarto-unresolved-ref">?prp-ign-bd</span>, whose conclusion can also be established directly in the SWIG — deserves careful emphasis, because its strength is easy to underestimate.</p>
-<p>Consider the causally sufficient triangle <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(T \to Y\)</span> written as an NPSEM, <span class="math display">\[X = U_X, \qquad T = f_T(X, U_T), \qquad Y = f_Y(X, T, U_Y),\]</span> with <span class="math inline">\(U_X \indep U_T \indep U_Y\)</span> mutually independent. Two lines suffice to show that error independence <em>implies</em> the unconfoundedness half of strong ignorability (<span class="quarto-unresolved-ref">?def-ignorability</span>). Given <span class="math inline">\(X\)</span>, the treatment <span class="math inline">\(T = f_T(X, U_T)\)</span> is a function of <span class="math inline">\(U_T\)</span> alone, while the entire collection <span class="math inline">\(\{Y(t) = f_Y(X, t, U_Y) : t \in \{0,1\}\}\)</span> is a function of <span class="math inline">\(U_Y\)</span> alone; since <span class="math inline">\(U_T \indep U_Y\)</span> conditional on <span class="math inline">\(X\)</span> (itself a function of <span class="math inline">\(U_X\)</span>), independence of the inputs transfers to the outputs: <span class="math display">\[\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X.\]</span> In this causally sufficient model — where <span class="math inline">\(X\)</span> contains every common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> — an analyst who writes down a system of regression equations with mutually independent errors and reads it structurally has therefore already assumed conditional ignorability given <span class="math inline">\(X\)</span>: the assumption commonly regarded as heroic follows from the one commonly regarded as routine <span class="citation" data-cites="wang2026tale">(<a href="#ref-wang2026tale" role="doc-biblioref">Wang et al. 2026</a>)</span>. Independent equation-specific errors alone do not remove confounding by a shared background cause omitted from <span class="math inline">\(X\)</span>: the model of Chapter 1, with <span class="math inline">\(T = f_T(U, \delta)\)</span>, <span class="math inline">\(Y = f_Y(T, U, \varepsilon)\)</span>, and <span class="math inline">\((U, \delta, \varepsilon)\)</span> mutually independent, remains confounded by the shared <span class="math inline">\(U\)</span>.</p>
+<p>The additional independent-error assumption used in the NPSEM-IE construction — mentioned as one sufficient route in <a href="#prp-ign-bd" class="quarto-xref">Proposition&nbsp;<span>4.3</span></a>, whose conclusion can also be established directly in the SWIG — deserves careful emphasis, because its strength is easy to underestimate.</p>
+<p>Consider the causally sufficient triangle <span class="math inline">\(X \to T\)</span>, <span class="math inline">\(X \to Y\)</span>, <span class="math inline">\(T \to Y\)</span> written as an NPSEM, <span class="math display">\[X = U_X, \qquad T = f_T(X, U_T), \qquad Y = f_Y(X, T, U_Y),\]</span> with <span class="math inline">\(U_X \indep U_T \indep U_Y\)</span> mutually independent. Two lines suffice to show that error independence <em>implies</em> the unconfoundedness half of strong ignorability (<a href="#def-ignorability" class="quarto-xref">Definition&nbsp;<span>4.1</span></a>). Given <span class="math inline">\(X\)</span>, the treatment <span class="math inline">\(T = f_T(X, U_T)\)</span> is a function of <span class="math inline">\(U_T\)</span> alone, while the entire collection <span class="math inline">\(\{Y(t) = f_Y(X, t, U_Y) : t \in \{0,1\}\}\)</span> is a function of <span class="math inline">\(U_Y\)</span> alone; since <span class="math inline">\(U_T \indep U_Y\)</span> conditional on <span class="math inline">\(X\)</span> (itself a function of <span class="math inline">\(U_X\)</span>), independence of the inputs transfers to the outputs: <span class="math display">\[\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \mid X.\]</span> In this causally sufficient model — where <span class="math inline">\(X\)</span> contains every common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> — an analyst who writes down a system of regression equations with mutually independent errors and reads it structurally has therefore already assumed conditional ignorability given <span class="math inline">\(X\)</span>: the assumption commonly regarded as heroic follows from the one commonly regarded as routine <span class="citation" data-cites="wang2026tale">(<a href="#ref-wang2026tale" role="doc-biblioref">Wang et al. 2026</a>)</span>. Independent equation-specific errors alone do not remove confounding by a shared background cause omitted from <span class="math inline">\(X\)</span>: the model of Chapter 1, with <span class="math inline">\(T = f_T(U, \delta)\)</span>, <span class="math inline">\(Y = f_Y(T, U, \varepsilon)\)</span>, and <span class="math inline">\((U, \delta, \varepsilon)\)</span> mutually independent, remains confounded by the shared <span class="math inline">\(U\)</span>.</p>
 <p>The implication is strict, because error independence says far more. A single error term <span class="math inline">\(U_Y\)</span> generates the <em>entire array</em> of counterfactuals <span class="math inline">\(\{Y(x,t) : \text{all } x, t\}\)</span> simultaneously, and <span class="math inline">\(U_T\)</span> generates the entire vector <span class="math inline">\(\{T(x) : \text{all } x\}\)</span>, where <span class="math inline">\(T(x) = f_T(x, U_T)\)</span> denotes the potential treatment under <span class="math inline">\(X\)</span> set to <span class="math inline">\(x\)</span>. Mutual independence of the errors therefore implies the <em>cross-world</em> statement <span class="math display">\[X \;\indep\; \bigl(T(x),\ \forall x\bigr) \;\indep\; \bigl(Y(x,t),\ \forall x, t\bigr)\]</span> (and under the canonical representation, in which the errors are the counterfactual arrays themselves, the two statements are equivalent). This ties together counterfactuals from mutually exclusive interventions — for example, <span class="math inline">\(Y(x{=}0, t{=}1)\)</span> and <span class="math inline">\(Y(x{=}1, t{=}0)\)</span> jointly — yet no unit ever inhabits two worlds, so no experiment, not even one randomizing both <span class="math inline">\(X\)</span> and <span class="math inline">\(T\)</span>, can test these joint constraints. Weak, single-world ignorability, by contrast, restricts one world at a time, and it can be <em>guaranteed by design</em>: randomizing <span class="math inline">\(T\)</span> within levels of <span class="math inline">\(X\)</span> enforces it. Even then it is not empirically verified from the observed outcomes of a single experiment; its credibility comes from the known assignment mechanism. Indeed, there exist counterfactual models — the FFRCISTGs of <span class="citation" data-cites="robins1986new">Robins (<a href="#ref-robins1986new" role="doc-biblioref">1986</a>)</span>; see <span class="citation" data-cites="richardson2014ace">Richardson and Robins (<a href="#ref-richardson2014ace" role="doc-biblioref">2014</a>)</span> — in which every single-world independence holds, so that ignorability is satisfied for each <span class="math inline">\(t\)</span>, while cross-world dependence remains; such models are observationally and experimentally indistinguishable from an NPSEM-IE.</p>
 <p>Why, then, does error independence <em>feel</em> mild? Because in ordinary regression practice it is a statement about the observational joint distribution only, where it is close to a bookkeeping convention. What converts it into a strong assumption is autonomy: the structural reading insists that the same equations and the same error distributions persist across interventional worlds, so that <span class="math inline">\(U_Y\)</span> is no longer “whatever residual makes the regression fit” but the unit’s latent response type, held fixed across all hypothetical treatments. The extra cross-world strength is not vacuous: it supplies one ingredient in the standard identification of the natural direct and indirect effects — quantities that the weaker FFRCISTG model leaves unidentified. The mediation formula additionally requires consistency, appropriate positivity, and the relevant treatment–mediator and mediator–outcome exchangeability conditions; these are developed in Chapter 8.</p>
 </div>
@@ -894,26 +854,26 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td>Define causal estimands (ATE, ATT)</td>
-<td>✓ Especially natural notation</td>
+<td><span class="math inline">\(\checkmark\)</span> Especially natural notation</td>
 <td>ATE via <span class="math inline">\(\E[Y \mid \doop(t)]\)</span>; ATT requires counterfactual augmentation (Appendix B)</td>
 <td>Via structural equations</td>
 </tr>
 <tr class="even">
 <td>Encode causal assumptions</td>
 <td>Formal counterfactual restrictions; a causal graph may be added but is not implicit in the notation</td>
-<td>✓ Explicit directed edges</td>
-<td>✓ Structural equations</td>
+<td><span class="math inline">\(\checkmark\)</span> Explicit directed edges</td>
+<td><span class="math inline">\(\checkmark\)</span> Structural equations</td>
 </tr>
 <tr class="odd">
 <td>Read conditional independence</td>
 <td>Requires auxiliary graph or model to read off</td>
-<td>✓ d-separation</td>
+<td><span class="math inline">\(\checkmark\)</span> d-separation</td>
 <td>Read from the induced graph under dependence restrictions on the exogenous inputs</td>
 </tr>
 <tr class="even">
 <td>Identification from observational data</td>
 <td>Via assignment and counterfactual assumptions plus probability algebra</td>
-<td>✓ Back-door, front-door, do-calculus</td>
+<td><span class="math inline">\(\checkmark\)</span> Back-door, front-door, do-calculus</td>
 <td>Via functional, exclusion, rank, and background-input restrictions</td>
 </tr>
 <tr class="odd">
@@ -924,13 +884,13 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>Cross-world assumptions (e.g.&nbsp;monotonicity)</td>
-<td>✓ Natural to state</td>
+<td><span class="math inline">\(\checkmark\)</span> Natural to state</td>
 <td>Not expressible in single-world graphs; see Appendix B</td>
 <td>Joint counterfactuals are defined, but restrictions such as monotonicity must be imposed separately</td>
 </tr>
 <tr class="odd">
 <td>Standard in statistics/epidemiology</td>
-<td>✓ Dominant</td>
+<td><span class="math inline">\(\checkmark\)</span> Dominant</td>
 <td>Growing rapidly</td>
 <td>Econometrics</td>
 </tr>
@@ -957,7 +917,7 @@ window.Quarto = {
 <ol type="1">
 <li><p>The potential outcome <span class="math inline">\(Y(t)\)</span> is the outcome that would be observed under the intervention <span class="math inline">\(T = t\)</span>. Under the structural causal semantics adopted in these notes (with no interference), <span class="math inline">\(Y(t)\)</span> has the same distribution as the outcome under the intervention <span class="math inline">\(\doop(T{=}t)\)</span>; the separate consistency assumption links counterfactuals to data through <span class="math inline">\(Y_i = Y_i(T_i)\)</span>.</p></li>
 <li><p>The ATE and ATT are averages of the unit-level causal effect <span class="math inline">\(Y_i(1) - Y_i(0) = g(1, \mathbf{X}_i, U_{Y,i}) - g(0, \mathbf{X}_i, U_{Y,i})\)</span> over the full population and the treated subpopulation respectively. In the linear SEM, both equal the structural coefficient <span class="math inline">\(\beta\)</span>. They diverge under heterogeneous effects when treatment selection correlates with individual effect size.</p></li>
-<li><p>Consistency, weak conditional exchangeability <span class="math inline">\(Y(t) \indep T \mid X\)</span>, and positivity identify the ATE via <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.10</span></a> (<span class="quarto-unresolved-ref">?prp-adjustment</span>); strong ignorability (<span class="quarto-unresolved-ref">?def-ignorability</span>) is a sufficient package. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption used in adjustment formulas.</p></li>
+<li><p>Consistency, weak conditional exchangeability <span class="math inline">\(Y(t) \indep T \mid X\)</span>, and positivity identify the ATE via <a href="#eq-ate-id" class="quarto-xref">Equation&nbsp;<span>4.10</span></a> (<a href="#prp-adjustment" class="quarto-xref">Proposition&nbsp;<span>4.2</span></a>); strong ignorability (<a href="#def-ignorability" class="quarto-xref">Definition&nbsp;<span>4.1</span></a>) is a sufficient package. The back-door criterion provides a sufficient graphical condition for the conditional exchangeability assumption used in adjustment formulas.</p></li>
 <li><p>Single-world intervention graphs (SWIGs) <span class="citation" data-cites="richardson2014ace">(<a href="#ref-richardson2014ace" role="doc-biblioref">Richardson and Robins 2014</a>)</span> provide a formal graphical representation of counterfactual variables, making the single-world independence <span class="math inline">\(Y(t) \indep T \mid X\)</span>, for one fixed <span class="math inline">\(t\)</span>, a d-separation statement in a single diagram that hosts both the potential outcome and the natural treatment. The joint strong-ignorability condition involves counterfactuals from two different worlds and is not represented by any single SWIG. This material is developed in Appendix B and is not required for a first-pass understanding of adjustment.</p></li>
 <li><p>The frameworks are complementary: potential outcomes define estimands; the do-calculus identifies them. The back-door criterion connects the two by providing the graphical condition under which adjustment recovers the causal effect.</p></li>
 </ol>
@@ -1018,7 +978,7 @@ window.Quarto = {
 <ol type="a">
 <li>Construct the SWIG <span class="math inline">\(\Gcal(t)\)</span> by splitting <span class="math inline">\(T\)</span> into its random and fixed halves. Draw the result, labeling the random half, fixed half, and the potential outcome <span class="math inline">\(Y(t)\)</span>.</li>
 <li>In <span class="math inline">\(\Gcal(t)\)</span>, identify all paths between the random half <span class="math inline">\(T\)</span> and <span class="math inline">\(Y(t)\)</span>. Apply the SWIG d-separation rules to determine which paths are blocked and which are open before conditioning.</li>
-<li>First verify, in the original DAG, that <span class="math inline">\(X\)</span> satisfies the back-door criterion for <span class="math inline">\((T, Y)\)</span>. Then use d-separation in <span class="math inline">\(\Gcal(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\Gcal(t)}\)</span> holds, illustrating the direction of <span class="quarto-unresolved-ref">?prp-ign-bd</span>.</li>
+<li>First verify, in the original DAG, that <span class="math inline">\(X\)</span> satisfies the back-door criterion for <span class="math inline">\((T, Y)\)</span>. Then use d-separation in <span class="math inline">\(\Gcal(t)\)</span> to verify that <span class="math inline">\((Y(t) \indep T \mid X)_{\Gcal(t)}\)</span> holds, illustrating the direction of <a href="#prp-ign-bd" class="quarto-xref">Proposition&nbsp;<span>4.3</span></a>.</li>
 <li>Now add a hidden common cause <span class="math inline">\(U \to T\)</span>, <span class="math inline">\(U \to Y\)</span>. Draw the revised SWIG. Does the ignorability argument still hold? State the correct conclusion and identify what additional structure (if any) would be needed for identification.</li>
 </ol>
 <p><strong>5. Positivity and target populations.</strong> Let <span class="math inline">\(X \in \{0,1\}\)</span> with <span class="math inline">\(P(X{=}1) &gt; 0\)</span>, and suppose <span class="math inline">\(P(T{=}1 \mid X{=}1) = 1\)</span>.</p>

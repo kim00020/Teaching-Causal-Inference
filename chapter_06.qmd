@@ -58,8 +58,8 @@ In a randomized experiment, $\pi(X)$ is a known constant for all units --- equal
 $$P\bigl(T{=}1 \mid X,\, Y(0),\, Y(1)\bigr) = P(T{=}1 \mid X) = \pi(X).$$
 This equality is a *consequence* of the ignorability assumption, not part of the definition of $\pi(X)$. What unconfoundedness rules out is precisely any residual dependence of treatment on the potential outcomes after conditioning on $X$.
 
-::: {.callout-tip icon=false}
-## Theorem: The Propensity Score Is a Balancing Score [@rosenbaum1983central] {#thm-balance}
+::: {#thm-balance}
+## The Propensity Score Is a Balancing Score [@rosenbaum1983central]
 
 $T \indep X \mid \pi(X)$.
 :::
@@ -88,8 +88,8 @@ Stratifying on a discretized $\hat\pi(X)$ and comparing covariate distributions 
 
 The balancing property has a fundamental identification consequence: unconfoundedness at $X$ implies unconfoundedness at *any* balancing score of $X$, and in particular at the scalar $\pi(X)$. Before stating that result we record a structural fact about balancing scores: among all of them, the propensity score is the coarsest.
 
-::: {.callout-tip icon=false}
-## Lemma: The Propensity Score Is the Coarsest Balancing Score [@rosenbaum1983central] {#lem-coarsest}
+::: {#lem-coarsest}
+## The Propensity Score Is the Coarsest Balancing Score [@rosenbaum1983central]
 
 If $b(X)$ is any balancing score --- that is, $T \indep X \mid b(X)$ --- then $\pi(X)$ is a function of $b(X)$: $\pi(X) = g(b(X))$ for some measurable function $g$.
 :::
@@ -100,8 +100,8 @@ Hence $\pi(X)$ is a measurable function of $b(X)$ alone. $\square$
 
 The lemma is the precise statement of the *Rosenbaum--Rubin coarsest-balancing-score property*: the propensity score is a measurable function of every balancing score, or equivalently $\sigma\{\pi(X)\} \subseteq \sigma\{b(X)\}$. Every balancing score is therefore at least as fine as $\pi(X)$, which is what makes $\pi(X)$ the coarsest balancing score and the maximally parsimonious adjustment variable. The reverse factorization need *not* hold: a general balancing score --- $X$ itself, for example --- need not be a function of $\pi(X)$. (By analogy with classical sufficiency, $\pi(X)$ plays the role of a minimal sufficient reduction of $X$ for the treatment indicator, although no parametric model is involved here.)
 
-::: {.callout-tip icon=false}
-## Theorem: Propensity Score Theorem [@rosenbaum1983central] {#thm-ps}
+::: {#thm-ps}
+## Propensity Score Theorem [@rosenbaum1983central]
 
 Suppose joint conditional exchangeability holds: $(Y(0), Y(1)) \indep T \mid X$. Then for any balancing score $b(X)$,
 $$\bigl(Y(0),\, Y(1)\bigr) \;\indep\; T \;\Big|\; b(X);$$
@@ -372,8 +372,8 @@ Matching estimators with a fixed number of matches are not classical sample aver
 
 The ATE admits an alternative representation as an *inverse probability weighting* (IPW) formula, in which each observed outcome is weighted by the inverse probability of the treatment actually received.
 
-::: {.callout-tip icon=false}
-## Theorem: IPW Identification {#thm-ipw}
+::: {#thm-ipw}
+## IPW Identification
 
 Fix $t \in \{0, 1\}$ and assume: (i) *consistency*: $T = t$ implies $Y = Y(t)$; (ii) *weak conditional exchangeability*: $Y(t) \indep T \mid X$; (iii) *positivity*: $P(T{=}t \mid X) > 0$ almost surely; and (iv) *integrability*: $\E|Y(t)| < \infty$. Then
 $$\E\!\left[\frac{T \cdot Y}{\pi(X)}\right] = \E[Y(1)], \qquad \E\!\left[\frac{(1-T) \cdot Y}{1 - \pi(X)}\right] = \E[Y(0)].$$
@@ -405,8 +405,8 @@ The efficient doubly robust estimator (AIPW) of Chapter 11 combines the outcome 
 
 The balancing theorem and the IPW formula are two faces of the same mechanism, and the connection can be made algebraic: inverse-probability weights re-create, inside each treatment arm, the covariate distribution of the target population.
 
-::: {.callout-tip icon=false}
-## Lemma: Weighted-Balance Identities {#lem-weighted-balance}
+::: {#lem-weighted-balance}
+## Weighted-Balance Identities
 
 Let $h(X)$ be any integrable function of the covariates and suppose $0 < \pi(X) < 1$ almost surely. Then
 $$\E\!\left[\frac{T\, h(X)}{\pi(X)}\right] = \E[h(X)] \qquad\text{and}\qquad \E\!\left[\frac{(1-T)\, h(X)}{1-\pi(X)}\right] = \E[h(X)].$$

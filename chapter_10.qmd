@@ -71,16 +71,16 @@ An estimating-equation estimator $\hat\theta$ is any solution to the sample mome
 Let $\theta = \E(Y)$. The sample mean $\hat\theta = \bar Y$ solves $\mathbb{P}_n(Y-\theta) = 0$. The estimating function is $U(O;\theta) = Y - \theta$.
 :::
 
-::: {.callout-note icon=false}
-## Example: Ordinary Least Squares {#exm-ols}
+::: {#exm-ols}
+## Ordinary Least Squares
 
 Let $O = (X,Y)$ with $\E\|X\|^2 < \infty$, $\E(Y^2) < \infty$, and $\E(XX^\top)$ nonsingular, and suppose $\beta$ is defined by the linear moment condition $\E[X\{Y - X^\top\beta\}] = 0$; the nonsingularity makes $\beta$ unique. If an intercept is intended, $X$ is understood to include a constant component. Then the OLS estimator solves
 $$\mathbb{P}_n\bigl[X\{Y - X^\top\beta\}\bigr] = 0,$$
 which has a unique solution once the sample matrix $\mathbb{P}_n(XX^\top)$ is invertible, an event of probability tending to one. For the central limit theorem applied to this estimating function we additionally require $\E\|X(Y - X^\top\beta)\|^2 < \infty$.
 :::
 
-::: {.callout-note icon=false}
-## Example: A Simple IPW Estimating Equation {#exm-ipw-ee}
+::: {#exm-ipw-ee}
+## A Simple IPW Estimating Equation
 
 Suppose the propensity score $\pi(X)$ is known. Under the identification assumptions of consistency, conditional exchangeability, and positivity (Chapter 5), the ATE $\tau = \E\{Y(1) - Y(0)\}$ admits the inverse-probability representation
 $$\tau = \E\left\{\frac{TY}{\pi(X)} - \frac{(1-T)Y}{1-\pi(X)}\right\}.$$
@@ -101,8 +101,8 @@ Estimating equations are useful not only because they define estimators, but als
 $$\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1)$$
 for some mean-zero function $\varphi(O)$.
 
-::: {.callout-note icon=false}
-## Definition: Asymptotic Linearity and Influence Function {#def-asymlin}
+::: {#def-asymlin}
+## Asymptotic Linearity and Influence Function
 
 An estimator $\hat\theta$ is **asymptotically linear** with **influence function** $\varphi(O)$ if
 $$\sqrt{n}(\hat\theta - \theta_0) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1), \qquad \E\{\varphi(O)\} = 0,$$
@@ -115,8 +115,8 @@ This representation is fundamental because it immediately implies asymptotic nor
 $$\sqrt{n}(\hat\theta - \theta_0) \overset{d}{\longrightarrow} N\!\left(\mathbf{0},\; \Sigma\right), \qquad \Sigma = \E\bigl[\varphi(O)\varphi(O)^\top\bigr],$$
 where $\Sigma$ is the $p \times p$ asymptotic covariance matrix. In the scalar case $p = 1$ this reduces to $\Sigma = \E[\varphi(O)^2]$. Once the influence function is identified, we obtain both the asymptotic distribution and a principled basis for variance estimation and confidence intervals.
 
-::: {.callout-tip icon=false}
-## Proposition: Generic First-Order Expansion {#prp-expansion}
+::: {#prp-expansion}
+## Generic First-Order Expansion
 
 Under smoothness and regularity conditions, an estimator $\hat\theta$ solving $\mathbb{P}_n\{U(O;\theta)\}=0$ admits a first-order expansion
 $$\sqrt{n}(\hat\theta - \theta_0) = -A^{-1}\,\frac{1}{\sqrt{n}}\sum_{i=1}^n U(O_i;\theta_0) + o_p(1),$$
@@ -175,8 +175,8 @@ Both objects called "influence function" formalize the same intuition: the first
 
 But *whose* first-order expansion is left open by that sentence, and the two available answers are not interchangeable. One attaches to an *estimator*, describing how $\hat\psi$ responds to perturbing the sample; the other attaches to a *functional together with a model*, describing how $\Psi(P)$ responds to perturbing the distribution. Conflating them is the most common source of confusion in this material, so we define them separately and then state exactly how they are related.
 
-::: {.callout-note icon=false}
-## Definition: Influence Function of an Estimator (informal) {#def-if}
+::: {#def-if}
+## Influence Function of an Estimator (informal)
 
 Let $\psi = \Psi(P)$ be a scalar parameter and let $\hat\psi$ be an estimator of $\psi$. A mean-zero function $\varphi \in L_2(P)$ is called the **influence function of the estimator** $\hat\psi$ if $\hat\psi$ is asymptotically linear at $P$, that is,
 $$\sqrt{n}(\hat\psi - \psi) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \varphi(O_i) + o_p(1), \qquad \E\{\varphi(O)\} = 0.$$
@@ -185,8 +185,8 @@ This is a property of the *estimator* $\hat\psi$.
 
 This is the same expansion as in @def-asymlin; the unscaled form $\hat\psi - \psi = n^{-1}\sum_i\varphi(O_i) + o_p(n^{-1/2})$ is equivalent and is also commonly used.
 
-::: {.callout-note icon=false}
-## Definition: Pathwise Gradient of a Functional (informal) {#def-gradient}
+::: {#def-gradient}
+## Pathwise Gradient of a Functional (informal)
 
 Let $\Psi$ be a functional defined on a statistical model $\mathcal{P}$. A mean-zero function $\varphi \in L_2(P)$ is called a **gradient** of $\Psi$ at $P$ relative to $\mathcal{P}$ if, for every regular parametric submodel $\{P_\epsilon\} \subset \mathcal{P}$ passing through $P$ at $\epsilon = 0$ with score $S$,
 $$\left.\frac{d}{d\epsilon}\Psi(P_\epsilon)\right|_{\epsilon=0} = \E_P\{\varphi(O)\,S(O)\}.$$
@@ -277,8 +277,10 @@ It is not, however, the formal definition. When $P$ is continuous, $\delta_O$ is
 
 The following calculation carries out the contamination heuristic in full for the OLS coefficient. On a first reading, the point to extract is the *conclusion* --- the two routes agree here, and the paragraph headed "What this does and does not establish" explains why that agreement is special to the nonparametric model. The intervening matrix-derivative algebra can be deferred.
 
-::: {.callout-note collapse=true icon=false}
-## Example (second reading): OLS Slope by Contamination Derivative {#exm-if-ols}
+::: {#exm-if-ols}
+## OLS Slope by Contamination Derivative
+
+*Second reading.*
 
 Let $O = (X, Y) \in \mathbb{R}^{p+1}$, under the moment and nonsingularity conditions of @exm-ols, and consider the population linear regression coefficient
 $$\beta = \Psi(P) = \bigl[\E(XX^\top)\bigr]^{-1}\E(XY),$$
@@ -396,8 +398,8 @@ Write $\theta = (\psi^\top, \alpha^\top)^\top \in \mathbb{R}^{p+q}$ and let
 $$U(O;\theta) = \begin{pmatrix} U_1(O;\psi,\alpha) \\ U_2(O;\alpha) \end{pmatrix}$$
 be the stacked estimating function. The joint estimator $\hat\theta = (\hat\psi^\top, \hat\alpha^\top)^\top$ solves $\mathbb{P}_n\{U(O;\hat\theta)\} = 0$.
 
-::: {.callout-tip icon=false}
-## Theorem: Z-Estimation Theorem (Stacked Equations) {#thm-zest}
+::: {#thm-zest}
+## Z-Estimation Theorem (Stacked Equations)
 
 Suppose the true parameter value is $\theta_0 = (\psi_0^\top,\alpha_0^\top)^\top$ and the following regularity conditions hold:
 
@@ -453,8 +455,8 @@ Second, orthogonality should not be identified with double robustness. They are 
 
 Before applying @eq-if-corrected to the propensity-score problem, it is worth seeing the block correction operate in a setting with no causal structure and no matrix algebra, where every quantity can be computed in one line.
 
-::: {.callout-note icon=false}
-## Example: Ratio of Means {#exm-ratio}
+::: {#exm-ratio}
+## Ratio of Means
 
 Let $O = (Y, Z)$ with $\E(Z) \neq 0$ and finite second moments, and let the target be the ratio $\psi = \E(Y)/\E(Z)$. Treat $\alpha = \E(Z)$ as a nuisance parameter and estimate $(\psi,\alpha)$ jointly from the stacked system
 $$U_1(O;\psi,\alpha) = Y - \psi\alpha, \qquad U_2(O;\alpha) = Z - \alpha .$$
@@ -504,8 +506,10 @@ The first term is the naive IPW influence function from @sec-w10-if-ipw. The sec
 
 The next example works out the consequence of this correction for the asymptotic variance. It is the most technically demanding passage in the chapter, requiring the stacked expansion, the likelihood score, the information equality, and differentiation of an expectation whose law depends on $\alpha$. On a first reading it is enough to take away the conclusion: estimating a correctly specified parametric propensity score by maximum likelihood can only lower the asymptotic variance of the IPW estimator.
 
-::: {.callout-note collapse=true icon=false}
-## Example (advanced): Variance of IPW with Estimated Propensity Score {#exm-ipw-var}
+::: {#exm-ipw-var}
+## Variance of IPW with Estimated Propensity Score
+
+*Advanced.*
 
 We show that estimating $\alpha$ by maximum likelihood (ML) can only *reduce* the asymptotic variance of $\hat\tau_{\mathrm{IPW}}$ relative to using the true $\alpha_0$. Two Bartlett-type identities are the key.
 
@@ -574,8 +578,8 @@ The asymptotically equivalent uncentered form $\hat V = n^{-2}\sum_i \hat\varphi
 $$\hat\psi \pm z_{1-a/2}\,\sqrt{\hat V}.$$
 We use $a$ rather than the more conventional $\alpha$ for the significance level here and below to avoid collision with the nuisance parameter $\alpha$ of @sec-w10-nuisance.
 
-::: {.callout-tip icon=false}
-## Proposition: Variance from the Influence Function {#prp-variance}
+::: {#prp-variance}
+## Variance from the Influence Function
 
 If $\sqrt{n}(\hat\psi - \psi) = n^{-1/2}\sum_{i=1}^n \varphi(O_i) + o_p(1)$ with $\E\{\varphi(O)\} = 0$ and $\E\{\varphi(O)^2\} < \infty$, then
 $$\sqrt{n}(\hat\psi - \psi) \overset{d}{\longrightarrow} N\!\left(0,\, \E[\varphi(O)^2]\right).$$
@@ -655,16 +659,16 @@ The central result of semiparametric efficiency theory is the convolution theore
 
 @def-eif and the ATE formula that follows from it are needed throughout Chapters 11 and 12 and should be read now. The theorem's regularity hypotheses and its vector-valued refinement are second-reading material: on a first pass it is enough to take from @thm-convolution that $V^*$ is a floor no regular estimator can beat, and that a regular asymptotically linear estimator sits exactly on that floor precisely when its influence function is $\varphi^*$.
 
-::: {.callout-note icon=false}
-## Definition: Efficient Influence Function (canonical gradient) {#def-eif}
+::: {#def-eif}
+## Efficient Influence Function (canonical gradient)
 
 Let $\Psi$ be pathwise differentiable at $P_0$ relative to $\mathcal{P}$, with gradient set $\mathrm{IF}(\Psi, P_0)$ and tangent space $\mathcal{T}$. The **efficient influence function** (EIF), or **canonical gradient**, is the unique element
 $$\varphi^* \in \mathrm{IF}(\Psi, P_0) \cap \mathcal{T},$$
 obtained by projecting any gradient orthogonally onto $\mathcal{T}$. Its covariance $V^* = \E_{P_0}[\varphi^*(O)\varphi^*(O)^\top]$ is the **semiparametric efficiency bound**. Existence, uniqueness, and the variance-minimizing property are proved in @sec-canonical.
 :::
 
-::: {.callout-tip icon=false}
-## Theorem: Semiparametric Convolution Theorem {#thm-convolution}
+::: {#thm-convolution}
+## Semiparametric Convolution Theorem
 
 Suppose $\Psi$ is pathwise differentiable at $P_0$ relative to $\mathcal{P}$ with canonical gradient $\varphi^*$ and bound $V^* = \E_{P_0}[\varphi^*\varphi^{*\top}]$, and suppose the model satisfies the local asymptotic normality and regularity conditions required by the Hájek--Le Cam convolution theorem. Then for any regular estimator $\hat\psi$ of $\psi_0 \in \mathbb{R}^p$,
 $$\sqrt{n}(\hat\psi - \psi_0) \overset{d}{\longrightarrow} N(0, V^*) * M$$

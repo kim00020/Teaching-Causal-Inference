@@ -123,8 +123,8 @@ The notation $Y(t)$ and the expression $P(Y \mid \doop(T{=}t))$ refer to the sam
 
 When $Y(t)$ is constructed by applying the same structural intervention that defines $\doop(T{=}t)$, equality of the resulting laws holds by construction: intervening to set $T = t$ in the underlying structural equation model produces an outcome variable with the same distribution as $Y(t)$. No interference makes the scalar unit-level notation $Y_i(t)$ adequate. The separate consistency assumption links these counterfactual variables to observed outcomes when the realized treatment equals $t$. Thus the potential-outcomes notation and the interventional distribution are two ways of encoding the same manipulated world.
 
-::: {.callout-tip icon=false}
-## Proposition: Potential Outcomes and the Do-Operator {#prp-po-do}
+::: {#prp-po-do}
+## Potential Outcomes and the Do-Operator
 
 Consider the structural causal model of Chapters 1--3, and construct $Y(t)$ by replacing the structural equation for $T$ with the constant assignment $T := t$ --- the same intervention that defines $\doop(T{=}t)$. Under no interference (SUTVA), the potential outcome has the interventional distribution:
 $$P\{Y(t) \le y\} \;=\; P\{Y \le y \mid \doop(T{=}t)\} \qquad \text{for every } y;$$ {#eq-po-do}
@@ -199,8 +199,8 @@ The SEM representation @eq-po-from-sem clarifies why the potential outcomes fram
 
 The central identifying assumption in observational studies is that treatment assignment is as good as random after conditioning on observed covariates $X$.
 
-::: {.callout-note icon=false}
-## Definition: Strong Ignorability [@rosenbaum1983central] {#def-ignorability}
+::: {#def-ignorability}
+## Strong Ignorability [@rosenbaum1983central]
 
 The treatment assignment $T$ is *strongly ignorable* given $X$ if:
 
@@ -218,8 +218,8 @@ Each condition in the list implies those above it, and none of the implications 
 
 ### Adjustment Formula under Ignorability {#sec-w4-adjustment}
 
-::: {.callout-tip icon=false}
-## Proposition: Adjustment under Conditional Exchangeability {#prp-adjustment}
+::: {#prp-adjustment}
+## Adjustment under Conditional Exchangeability
 
 Fix $t \in \{0,1\}$ and assume:
 
@@ -266,8 +266,8 @@ states that, after conditioning on $X$, treatment assignment carries no residual
 
 The graphical criterion is especially useful because it makes the source of ignorability visible. If $X$ satisfies the back-door criterion relative to $(T, Y)$, then, under the structural causal model semantics adopted in these notes, treatment assignment is conditionally exchangeable given $X$, which justifies standardization, regression adjustment, and related methods. In that case the observed conditional distribution within levels of $X$ can be used to recover the interventional distribution, leading to the adjustment formula @eq-ate-id developed above.
 
-::: {.callout-tip icon=false}
-## Proposition: Back-Door Criterion Implies Ignorability {#prp-ign-bd}
+::: {#prp-ign-bd}
+## Back-Door Criterion Implies Ignorability
 
 Under the NPSEM/SWIG semantics adopted in these notes, if $X$ satisfies the back-door criterion for the effect of $T$ on $Y$ --- that is,
 
@@ -372,13 +372,13 @@ For continuous $T$, the standardization formula is understood for $P_T$-almost e
 
 | **Task** | **Potential Outcomes** | **Do-Calculus / DAG** | **SEM** |
 |---|---|---|---|
-| Define causal estimands (ATE, ATT) | ✓ Especially natural notation | ATE via $\E[Y \mid \doop(t)]$; ATT requires counterfactual augmentation (Appendix B) | Via structural equations |
-| Encode causal assumptions | Formal counterfactual restrictions; a causal graph may be added but is not implicit in the notation | ✓ Explicit directed edges | ✓ Structural equations |
-| Read conditional independence | Requires auxiliary graph or model to read off | ✓ d-separation | Read from the induced graph under dependence restrictions on the exogenous inputs |
-| Identification from observational data | Via assignment and counterfactual assumptions plus probability algebra | ✓ Back-door, front-door, do-calculus | Via functional, exclusion, rank, and background-input restrictions |
+| Define causal estimands (ATE, ATT) | $\checkmark$ Especially natural notation | ATE via $\E[Y \mid \doop(t)]$; ATT requires counterfactual augmentation (Appendix B) | Via structural equations |
+| Encode causal assumptions | Formal counterfactual restrictions; a causal graph may be added but is not implicit in the notation | $\checkmark$ Explicit directed edges | $\checkmark$ Structural equations |
+| Read conditional independence | Requires auxiliary graph or model to read off | $\checkmark$ d-separation | Read from the induced graph under dependence restrictions on the exogenous inputs |
+| Identification from observational data | Via assignment and counterfactual assumptions plus probability algebra | $\checkmark$ Back-door, front-door, do-calculus | Via functional, exclusion, rank, and background-input restrictions |
 | Likelihood construction | Typically paired with estimating equations or semiparametric models | Identifies observed-data functionals; a likelihood requires an additional statistical model | Induced once the structural functions and error laws are sufficiently specified |
-| Cross-world assumptions (e.g. monotonicity) | ✓ Natural to state | Not expressible in single-world graphs; see Appendix B | Joint counterfactuals are defined, but restrictions such as monotonicity must be imposed separately |
-| Standard in statistics/epidemiology | ✓ Dominant | Growing rapidly | Econometrics |
+| Cross-world assumptions (e.g. monotonicity) | $\checkmark$ Natural to state | Not expressible in single-world graphs; see Appendix B | Joint counterfactuals are defined, but restrictions such as monotonicity must be imposed separately |
+| Standard in statistics/epidemiology | $\checkmark$ Dominant | Growing rapidly | Econometrics |
 
 ::: {.callout-note icon=false}
 ## Our Position in This Course

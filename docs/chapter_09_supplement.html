@@ -399,10 +399,10 @@ window.Quarto = {
 </header>
 
 
-<p>This supplement collects material referenced as <em>optional</em> in Chapter 9: full proofs, the special-case E-value derivation, computational details for the marginal sensitivity model, the extended lab, a worked reporting example, and additional problems. References of the form <span class="quarto-unresolved-ref">?thm-bias-decomp</span> or <a href="chapter_09.html#eq-evalue" class="quarto-xref">Equation&nbsp;<span>9.20</span></a> point back into the main chapter.</p>
+<p>This supplement collects material referenced as <em>optional</em> in Chapter 9: full proofs, the special-case E-value derivation, computational details for the marginal sensitivity model, the extended lab, a worked reporting example, and additional problems. References of the form <a href="chapter_09.html#thm-bias-decomp" class="quarto-xref">Theorem&nbsp;<span>9.1</span></a> or <a href="chapter_09.html#eq-evalue" class="quarto-xref">Equation&nbsp;<span>9.20</span></a> point back into the main chapter.</p>
 <section id="sec-w9s-bias-proof" class="level2">
 <h2 class="anchored" data-anchor-id="sec-w9s-bias-proof">S.1 Proof of the Bias Decomposition</h2>
-<p><em>Proof of <span class="quarto-unresolved-ref">?thm-bias-decomp</span>.</em> Under conditional exchangeability given <span class="math inline">\((X, U)\)</span> and consistency, <span class="math display">\[\E[Y(t) \mid X=x] = \int \E(Y \mid T=t, X=x, U=u)\, f(u \mid X=x)\, du = \int m_t(x, u)\, f(u \mid X=x)\, du.\]</span> Iterating expectation over <span class="math inline">\(X\)</span>, <span class="math display">\[\E\{Y(t)\} = \E\!\left\{\int m_t(X, u)\, f(u \mid X)\, du\right\}, \qquad t \in \{0, 1\}.\]</span> In contrast, the conditional mean given <span class="math inline">\((T, X)\)</span> marginalizes <span class="math inline">\(U\)</span> over its distribution <em>conditional on</em> <span class="math inline">\(T\)</span>: <span class="math display">\[\E(Y \mid T=t, X) = \int m_t(X, u)\, f(u \mid T=t, X)\, du.\]</span> Taking expectations over <span class="math inline">\(X\)</span> and subtracting, <span class="math display">\[\begin{aligned}
+<p><em>Proof of <a href="chapter_09.html#thm-bias-decomp" class="quarto-xref">Theorem&nbsp;<span>9.1</span></a>.</em> Under conditional exchangeability given <span class="math inline">\((X, U)\)</span> and consistency, <span class="math display">\[\E[Y(t) \mid X=x] = \int \E(Y \mid T=t, X=x, U=u)\, f(u \mid X=x)\, du = \int m_t(x, u)\, f(u \mid X=x)\, du.\]</span> Iterating expectation over <span class="math inline">\(X\)</span>, <span class="math display">\[\E\{Y(t)\} = \E\!\left\{\int m_t(X, u)\, f(u \mid X)\, du\right\}, \qquad t \in \{0, 1\}.\]</span> In contrast, the conditional mean given <span class="math inline">\((T, X)\)</span> marginalizes <span class="math inline">\(U\)</span> over its distribution <em>conditional on</em> <span class="math inline">\(T\)</span>: <span class="math display">\[\E(Y \mid T=t, X) = \int m_t(X, u)\, f(u \mid T=t, X)\, du.\]</span> Taking expectations over <span class="math inline">\(X\)</span> and subtracting, <span class="math display">\[\begin{aligned}
 \Delta_{\mathrm{obs}} - \tau &amp;= \E\!\left\{\int m_1(X, u)\,[f(u \mid T=1, X) - f(u \mid X)]\, du\right\} \\
 &amp;\quad - \E\!\left\{\int m_0(X, u)\,[f(u \mid T=0, X) - f(u \mid X)]\, du\right\} = B. \qquad\square
 \end{aligned}\]</span></p>
@@ -410,18 +410,8 @@ window.Quarto = {
 <section id="sec-w9s-rosenbaum" class="level2">
 <h2 class="anchored" data-anchor-id="sec-w9s-rosenbaum">S.2 Rosenbaum Reference Distributions</h2>
 <p>Throughout, test Fisher’s sharp null of no treatment effect, <span class="math inline">\(Y_i(1) = Y_i(0)\)</span> for every unit <span class="math inline">\(i\)</span> (or, equivalently, outcomes adjusted by subtracting a specified constant additive effect); condition on the matched outcomes and covariates; and assume treatment assignments are independent across matched pairs, with exactly one treated unit per pair.</p>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Theorem S.1: <span class="math inline">\(\Gamma\)</span>-Bounds on the Rank Statistic
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For a matched-pair design, the worst-case null distribution of a signed-score statistic under the <span class="math inline">\(\Gamma\)</span>-model is obtained by letting each pair-specific treatment probability range over the interval <span class="math inline">\([1/(1+\Gamma),\, \Gamma/(1+\Gamma)]\)</span> permitted by <a href="chapter_09.html#eq-gamma-bound" class="quarto-xref">Equation&nbsp;<span>9.15</span></a>. For the <em>sign test</em> the resulting bounding distributions are binomial with success probabilities <span class="math inline">\(\Gamma/(1+\Gamma)\)</span> and <span class="math inline">\(1/(1+\Gamma)\)</span>. For <em>Wilcoxon’s signed-rank statistic</em> they are not binomial: the bounds are distributions of weighted sums <span class="math inline">\(\sum_k c_k B_k\)</span> of independent Bernoulli variables <span class="math inline">\(B_k\)</span>, where the <span class="math inline">\(c_k\)</span> are the rank scores and each success probability is set to the corresponding endpoint.</p>
-</div>
+<div id="thm-gamma-bounds" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 (<span class="math inline">\(\Gamma\)</span>-Bounds on the Rank Statistic)</strong></span> For a matched-pair design, the worst-case null distribution of a signed-score statistic under the <span class="math inline">\(\Gamma\)</span>-model is obtained by letting each pair-specific treatment probability range over the interval <span class="math inline">\([1/(1+\Gamma),\, \Gamma/(1+\Gamma)]\)</span> permitted by <a href="chapter_09.html#eq-gamma-bound" class="quarto-xref">Equation&nbsp;<span>9.15</span></a>. For the <em>sign test</em> the resulting bounding distributions are binomial with success probabilities <span class="math inline">\(\Gamma/(1+\Gamma)\)</span> and <span class="math inline">\(1/(1+\Gamma)\)</span>. For <em>Wilcoxon’s signed-rank statistic</em> they are not binomial: the bounds are distributions of weighted sums <span class="math inline">\(\sum_k c_k B_k\)</span> of independent Bernoulli variables <span class="math inline">\(B_k\)</span>, where the <span class="math inline">\(c_k\)</span> are the rank scores and each success probability is set to the corresponding endpoint.</p>
 </div>
 <p><em>Proof sketch.</em> Under matching on <span class="math inline">\(X\)</span>, the two units in a pair have identical observed covariates, so which member of the pair receives treatment depends only on <span class="math inline">\(U\)</span>, through <a href="chapter_09.html#eq-gamma-bound" class="quarto-xref">Equation&nbsp;<span>9.15</span></a>. That constraint confines each pair-specific treatment probability to <span class="math inline">\([1/(1+\Gamma),\, \Gamma/(1+\Gamma)]\)</span>. Because a signed-score statistic is a sum of independent pair contributions that is stochastically monotone in those probabilities, setting every probability to a common endpoint yields stochastic bounds on its null distribution. A full development is in <span class="citation" data-cites="rosenbaum2002observational">Rosenbaum (<a href="#ref-rosenbaum2002observational" role="doc-biblioref">2002</a>)</span>. <span class="math inline">\(\square\)</span></p>
 </section>
@@ -535,7 +525,7 @@ window.Quarto = {
 <td><span class="math inline">\(2.678\)</span></td>
 <td><span class="math inline">\(2.226\)</span></td>
 <td><span class="math inline">\(1.832\)</span></td>
-<td><strong>1.508</strong> ✓</td>
+<td><strong>1.508</strong> <span class="math inline">\(\checkmark\)</span></td>
 <td><span class="math inline">\(1.036\)</span></td>
 </tr>
 <tr class="odd">

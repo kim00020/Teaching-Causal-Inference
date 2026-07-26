@@ -93,8 +93,8 @@ We begin with the simplest setting: a binary instrument $Z \in \{0,1\}$, a scala
 $$\beta = \frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}{\E[T \mid Z{=}1] - \E[T \mid Z{=}0]}.$$
 Each expectation in this ratio is a population mean conditional on instrument status. Replacing each with its sample analog yields the Wald estimator.
 
-::: {.callout-note icon=false}
-## Definition: Wald Estimator {#def-wald}
+::: {#def-wald}
+## Wald Estimator
 
 Let $n_z = \sum_{i=1}^n \mathbf{1}(Z_i = z)$ for $z \in \{0,1\}$, and define the within-group sample means
 $$\bar{Y}_z = \frac{1}{n_z}\sum_{i:\,Z_i=z} Y_i, \qquad \bar{T}_z = \frac{1}{n_z}\sum_{i:\,Z_i=z} T_i.$$
@@ -152,8 +152,8 @@ We therefore solve the $(p+2)$-dimensional system (S-X), (S-Z). From (S-X):
 $$\hat{\bar\gamma} = (\bar{\mathbf{X}}^\top\bar{\mathbf{X}})^{-1}(\bar{\mathbf{X}}^\top\mathbf{Y} - \bar{\mathbf{X}}^\top\mathbf{T}\beta).$$
 Substituting into (S-Z) and simplifying using $M_X$ gives $\mathbf{Z}^\top M_X \mathbf{T}\,\beta = \mathbf{Z}^\top M_X \mathbf{Y}$. Provided $\mathbf{Z}^\top M_X \mathbf{T} \neq 0$ (the relevance condition after partialling out the intercept and $X$), this has a unique solution.
 
-::: {.callout-note icon=false}
-## Definition: IV Regression Estimator {#def-iv-reg}
+::: {#def-iv-reg}
+## IV Regression Estimator
 
 The *IV regression estimator* in the linear IV model with scalar instrument $Z$ and covariates $X$ is
 $$\hat\beta_{\mathrm{IV}} = \frac{\mathbf{Z}^\top M_X \mathbf{Y}}{\mathbf{Z}^\top M_X \mathbf{T}} = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}{\widehat{\mathrm{Cov}}(\tilde{Z},\, T)},$$ {#eq-iv-reg}
@@ -186,8 +186,8 @@ Because the exclusion restriction rules out any direct path $Z \to Y$, the full 
 
 **The reduced form regression.** The reduced form regression is simply OLS applied to the reduced form equation @eq-reduced-form. Its purpose is to estimate the reduced-form coefficient $\phi$.
 
-::: {.callout-note icon=false}
-## Definition: Reduced Form Regression Estimator {#def-reduced-form}
+::: {#def-reduced-form}
+## Reduced Form Regression Estimator
 
 The **reduced form regression estimator** is the OLS estimator of $\phi$ in the reduced form equation @eq-reduced-form:
 $$\hat\phi_{\mathrm{RF}} = \frac{\widehat{\mathrm{Cov}}(\tilde{Z},\, Y)}{\widehat{\mathrm{Var}}(\tilde{Z})},$$ {#eq-rf-est}
@@ -233,8 +233,8 @@ Regress $T$ on $Z$ and $X$ by OLS using the first-stage model $T = a_T + \pi^\to
 
 Regress $Y$ on $\hat{T}$ and $X$ by OLS: $Y = \alpha + \beta \hat{T} + \gamma^\top X + \text{error}$.
 
-::: {.callout-note icon=false}
-## Definition: 2SLS Estimator {#def-2sls}
+::: {#def-2sls}
+## 2SLS Estimator
 
 The *two-stage least squares estimator* $\hat\beta_{\mathrm{2SLS}}$ is the OLS coefficient on $\hat{T}$ in the second-stage regression.
 :::
@@ -255,8 +255,8 @@ A common error is to report the standard errors from the second-stage OLS regres
 
 The IV regression estimator @eq-iv-reg and the 2SLS estimator look like different procedures: one computes a ratio of partialled-out covariances directly, while the other constructs first-stage fitted values and runs a second regression. In the single-instrument case they are in fact numerically identical for any covariate vector $X$. This theorem is not just algebraic housekeeping: it shows that the ratio-of-covariances view and the staged-regression view are two computational faces of the same IV estimator. Knowing both is useful --- the ratio form exposes the logic of IV estimation while the staged-regression form generalizes to multiple instruments and connects naturally to GMM.
 
-::: {.callout-tip icon=false}
-## Theorem: IV Regression--2SLS Equivalence {#thm-equiv}
+::: {#thm-equiv}
+## IV Regression--2SLS Equivalence
 
 In the linear IV model with a scalar instrument $Z$ and covariates $X \in \mathbb{R}^p$, the IV regression estimator and the 2SLS estimator coincide: $\hat\beta_{\mathrm{2SLS}} = \hat\beta_{\mathrm{IV}}$.
 :::
@@ -303,8 +303,8 @@ Stack the constant, the covariates, and the instrument into the $(p+1+q)$-dimens
 $$\E\bigl[W\,\bigl(Y - \alpha - \beta T - \gamma^\top X\bigr)\bigr] = 0.$$
 Setting $\theta = (\alpha, \beta, \gamma^\top)^\top \in \mathbb{R}^{p+2}$ and defining the moment function $U(O;\,\theta) = W\,(Y - \alpha - \beta T - \gamma^\top X)$, the identifying condition is $\E\{U(O;\,\theta_0)\} = 0$, which is exactly an estimating equation in the sense of Chapter 10. The number of moment conditions is $p+1+q$ and the number of parameters is $p+2$; the model is exactly identified when $q = 1$ and overidentified when $q > 1$.
 
-::: {.callout-tip icon=false}
-## Theorem: 2SLS as a Method-of-Moments Estimator {#thm-mm}
+::: {#thm-mm}
+## 2SLS as a Method-of-Moments Estimator
 
 In the exactly identified linear IV model ($q = 1$), suppose the sample rank condition holds: $n^{-1}\sum_i W_i D_i^\top$ is nonsingular. (Equality of the number of equations and the number of parameters is only the order condition; it does not by itself guarantee a unique solution.) Then the 2SLS estimator $\hat\theta_{\mathrm{2SLS}} = (\hat\alpha,\,\hat\beta_{\mathrm{2SLS}},\,\hat\gamma^\top)^\top$ is the unique solution to the sample moment system
 $$\frac{1}{n}\sum_{i=1}^n W_i\,\bigl(Y_i - \hat\alpha - \hat\beta_{\mathrm{2SLS}}\,T_i - \hat\gamma^\top X_i\bigr) = 0, \qquad W_i = (1,\,X_i^\top,\,Z_i)^\top \in \mathbb{R}^{p+2}.$$
@@ -334,8 +334,8 @@ These comparisons have content only when $m > k$. In an exactly identified model
 An overidentified model imposes more moment conditions than are needed for point identification. If all instruments are valid, the sample moments should be jointly near zero. The Sargan--Hansen $J$-statistic [@sargan1958estimation; @hansen1982large] tests this restriction: under the null that all moment conditions hold, $J \xrightarrow{d} \chi^2_{q-1}$. A rejection indicates that the full set of maintained moment conditions is incompatible with the data. This may reflect an exclusion failure, an exogeneity failure, or other model misspecification; the test does not identify which assumption failed or which instrument is responsible. Overidentification therefore allows us to check whether the full set of moment restrictions is jointly compatible with the data, but a failure to reject is consistent with all instruments being valid, or with violations that happen to cancel in the joint test.
 :::
 
-::: {.callout-note icon=false}
-## Example: GMM with Two Instruments {#exm-gmm-toy}
+::: {#exm-gmm-toy}
+## GMM with Two Instruments
 
 We illustrate the GMM procedure in the simplest overidentified setting: one endogenous regressor, two instruments, no additional covariates.
 
@@ -391,8 +391,8 @@ The large-sample logic is the same as for any method-of-moments estimator: sampl
 
 Recall that the GMM estimator minimizes $[\mathbb{P}_n U(O;\theta)]^\top \hat\Omega_n [\mathbb{P}_n U(O;\theta)]$ for some positive-definite weighting matrix $\hat\Omega_n \xrightarrow{p} \Omega$.
 
-::: {.callout-tip icon=false}
-## Theorem: Asymptotic Distribution of the GMM Estimator {#thm-asym}
+::: {#thm-asym}
+## Asymptotic Distribution of the GMM Estimator
 
 Suppose the standard GMM regularity conditions hold: the IV moment condition is satisfied at a unique population minimizer $\theta_0$ lying in the interior of a compact parameter space of fixed finite dimension; $O_i = (Y_i, T_i, X_i, Z_i)$ are i.i.d. with finite fourth moments; the number of moment conditions $m$ is fixed; $\hat\Omega_n \xrightarrow{p} \Omega$ positive definite; $\hat\theta_{\mathrm{GMM}} \xrightarrow{p} \theta_0$; $A$ has full column rank; and $\Sigma$ is positive definite. Then
 $$\sqrt{n}\,\bigl(\hat\theta_{\mathrm{GMM}} - \theta_0\bigr) \;\xrightarrow{d}\; N\bigl(0,\; V_{\mathrm{GMM}}(\Omega)\bigr),$$
@@ -559,8 +559,8 @@ If $\beta_0 = \beta$, the composite error reduces to $\varepsilon$ and is uncorr
 
 The decisive feature of this construction is that the tested restriction is linear in the observables once $\beta_0$ is fixed: the null hypothesis has been converted into a statement about a reduced-form coefficient, and no division by an estimated first stage occurs anywhere. Under the classical homoskedastic Gaussian linear model the resulting $F$-statistic has an *exact* finite-sample $F$ distribution regardless of instrument strength; without normality the same statistic has an asymptotic $\chi^2_q/q$ distribution under homoskedasticity, and heteroskedasticity- and cluster-robust versions remain asymptotically valid more generally. In all cases the size of the test does not depend on $\pi$.
 
-::: {.callout-note icon=false}
-## Definition: Anderson--Rubin Confidence Set {#def-ar-set}
+::: {#def-ar-set}
+## Anderson--Rubin Confidence Set
 
 For a nominal level $1 - a$, the Anderson--Rubin confidence set is obtained by *test inversion*:
 $$\mathcal{C}_{1-a} = \bigl\{\beta_0 : \text{the AR test of } H_0\colon\beta = \beta_0 \text{ is not rejected at level } a \bigr\}.$$
@@ -666,8 +666,8 @@ At the solution, the quantities $\hat\omega_i = g(\hat\lambda^\top U_i(\hat\thet
 
 Different choices of $G$ give different members of the family. Three are standard.
 
-::: {.callout-note icon=false}
-## Definition: Representative Members of the GEL Family {#def-gel-cases}
+::: {#def-gel-cases}
+## Representative Members of the GEL Family
 
 1. **Empirical likelihood (EL):** $G(v) = -\log(1 - v)$, $\mathcal{V} = (-\infty, 1)$.
 2. **Exponential tilting (ET):** $G(v) = e^v - 1$, $\mathcal{V} = \mathbb{R}$.
@@ -678,8 +678,8 @@ Each satisfies the normalization @eq-gel-norm.
 
 The third case connects the GEL family directly back to GMM.
 
-::: {.callout-tip icon=false}
-## Theorem: CUE as a GEL Estimator [@neweysmith2004] {#thm-cue-gel}
+::: {#thm-cue-gel}
+## CUE as a GEL Estimator [@neweysmith2004]
 
 If $G(v)$ is quadratic (i.e. $G(v) = v + v^2/2$ up to rescaling), then $\hat\theta_{\mathrm{GEL}} = \hat\theta_{\mathrm{CUE}}$, where the continuous updating estimator solves
 $$\hat\theta_{\mathrm{CUE}} = \arg\min_\theta\;\bar{U}(\theta)^\top\Bigl[n^{-1}{\textstyle\sum_i} U_i(\theta)U_i(\theta)^\top\Bigr]^{-1}\bar{U}(\theta).$$
@@ -691,8 +691,8 @@ Unlike two-step efficient GMM, CUE uses a weighting matrix that is continuously 
 
 The central asymptotic result is that the choice within the family, and the choice between the family and efficient GMM, is asymptotically immaterial.
 
-::: {.callout-tip icon=false}
-## Theorem: First-Order Asymptotic Equivalence [@neweysmith2004] {#thm-gel-asymp}
+::: {#thm-gel-asymp}
+## First-Order Asymptotic Equivalence [@neweysmith2004]
 
 Suppose the moment condition $\E[U(O;\theta_0)] = 0$ holds with $\theta_0$ in the interior of a compact parameter space of fixed finite dimension, $O_i$ are i.i.d. with sufficient moments, the rank condition holds so that identification is strong in the sense required at the start of @sec-w13-weak, and $G$ satisfies the regularity conditions of @neweysmith2004. Then for any GEL estimator,
 $$\sqrt{n}\,\bigl(\hat\theta_{\mathrm{GEL}} - \theta_0\bigr) \;\xrightarrow{d}\; N\!\left(0,\; (A^\top\Sigma^{-1}A)^{-1}\right),$$
