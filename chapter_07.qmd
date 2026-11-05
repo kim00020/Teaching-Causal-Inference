@@ -22,15 +22,17 @@ Chapter 6 showed how causal effects can be identified when all confounders are o
 
 ### The Endogeneity Problem
 
-Chapter 6 established that the propensity score provides a powerful surrogate for randomization, but only under *unconfoundedness*: $(Y(0), Y(1)) \indep T \mid X$. This assumption requires that every variable affecting both treatment and outcome is observed and included in $X$. In many empirical settings this is implausible:
+Chapter 6 established that the propensity score provides a powerful surrogate for randomization, but only under *unconfoundedness*:
+$$\bigl(Y(0),\, Y(1)\bigr) \indep T \;\big|\; X.$$
+This assumption requires $X$ to be a sufficient adjustment set: every back-door path from $T$ to $Y$ must be blocked by observed covariates. In many empirical settings this is implausible:
 
 - In labor economics, unobserved ability or motivation affects both schooling decisions and wages.
 - In epidemiology, unobserved health behaviors affect both treatment uptake and outcomes.
 - In survey sampling, voluntary participation is driven by factors that also affect the variables of interest.
 
-Whenever an unobserved confounder $U$ creates a back-door path $T \leftarrow U \rightarrow Y$, the adjustment formula fails:
-$$\int f(y \mid t, x)\, p(x)\, dx \;\neq\; f\!\bigl(y \mid \doop(T{=}t)\bigr).$$
-The gap is the *endogeneity bias*. We need a different identification strategy.
+When an unobserved confounder $U$ creates a back-door path $T \leftarrow U \rightarrow Y$ that no observed set blocks, the adjustment formula
+$$\int f(y \mid t, x)\, p(x)\, dx$$
+is no longer justified as an expression for $f\!\bigl(y \mid \doop(T{=}t)\bigr)$. The two can differ, and their difference is a *confounding bias* that more data do not remove. (Econometricians call such a treatment *endogenous*.) We need a different identification strategy.
 
 ### The IV Idea
 
@@ -40,16 +42,15 @@ An *instrumental variable* $Z$ is an observed variable that:
 2. *Does so exogenously* --- $Z$ is unrelated to the unobserved confounder $U$ (exogeneity).
 3. *Affects $Y$ only through $T$* --- $Z$ has no direct path to $Y$ (exclusion).
 
-Under these three conditions, the variation in $T$ induced by $Z$ is free of confounding by $U$, so the ratio of the $Z$-induced variation in $Y$ to the $Z$-induced variation in $T$ becomes a meaningful target for identification. Which causal estimand it identifies --- the ATE, the ATT, or the LATE for compliers --- depends on a fourth structural restriction on treatment-effect heterogeneity, taken up in @sec-w7-linear and @sec-w7-late.
+Under these three conditions, the variation in $T$ induced by $Z$ is free of confounding by $U$, so the ratio of the $Z$-induced variation in $Y$ to the $Z$-induced variation in $T$ becomes a meaningful target for identification. Which familiar average effect it equals --- the ATE, the ATT, or the LATE for compliers --- depends on a fourth structural restriction on treatment-effect heterogeneity, taken up in @sec-w7-linear and @sec-w7-late. Note that condition 2 concerns how $Z$ is assigned. How a unit's treatment responds to $Z$ may still depend on $U$; this is why compliance types appear in @sec-w7-late.
 
 Instrumental variables do not eliminate the confounding path $T \leftarrow U \rightarrow Y$, nor do they make treatment as-if randomly assigned for the full population. Instead, IV identifies causal effects by isolating a component of treatment variation that is induced by $Z$ and is therefore exogenous under the IV assumptions. In that sense, IV *avoids* confounding rather than controlling for it --- a distinction that matters both for interpreting what is identified (the LATE for compliers, not the ATE) and for understanding which assumption does the heaviest lifting (exclusion, not unconfoundedness).
 
-::: {.callout-note icon=false}
-## Example: Returns to Schooling as Motivation
+::: {#exm-schooling-motivation}
+## Returns to Schooling as Motivation
 
-A researcher wants to estimate the causal effect of years of schooling $T$ on log wages $Y$. Unobserved ability $U$ raises both schooling and wages, so $\mathrm{Cov}(T, \varepsilon) > 0$ and OLS is biased upward. No set of observed covariates $X$ fully captures ability. An instrumental variable $Z$ that shifts schooling for reasons unrelated to ability --- such as proximity to a school or a policy change in compulsory attendance laws --- provides a way to isolate the causal effect of schooling on wages.
+A researcher wants to estimate the causal effect of years of schooling $T$ on log wages $Y$. In a model in which unobserved ability $U$ raises both schooling (after adjusting for demographics) and wages, $\mathrm{Cov}(T, \varepsilon) > 0$ and OLS is biased upward. No set of observed covariates $X$ fully captures ability. An instrumental variable $Z$ that shifts schooling for reasons unrelated to ability --- such as growing up near a college or the timing of birth relative to compulsory attendance laws --- provides a way to isolate the causal effect of schooling on wages.
 :::
-
 ::: {.content-visible when-format="html"}
 ```{=html}
 <figure style="text-align:center;margin:1.5em auto;">
@@ -90,14 +91,13 @@ A researcher wants to estimate the causal effect of years of schooling $T$ on lo
 
 ## Graphical Setup and Core Assumptions {#sec-w7-assumptions}
 
-This section is the conceptual foundation of the IV chapter. We fix the causal graph for the IV design and state the three core assumptions in the three causal languages used throughout these notes: DAGs and do-calculus, structural equations, and potential outcomes. The purpose is not merely stylistic. Each language highlights a different aspect of the design: the DAG makes the causal pathways visible, the do-calculus formalizes what those pathways imply about interventional distributions, the structural model supplies the moment conditions used in the Wald derivation, and the potential-outcomes formulation prepares the ground for the LATE framework in @sec-w7-late.
+This section is the conceptual foundation of the IV chapter. We fix the causal graph for the IV design and state the three core assumptions in the three causal languages used throughout these notes: DAGs and do-calculus, structural equations, and potential outcomes. The purpose is not merely stylistic. Each language highlights a different aspect of the design: the DAG makes the causal pathways visible, the do-calculus formalizes what those pathways imply about interventional distributions, the structural model supplies the moment conditions used in the Wald derivation, and the potential-outcomes formulation prepares the ground for the LATE framework in @sec-w7-late. The potential-outcomes language dominates biostatistics and program evaluation, the structural language is standard in econometrics, and the do-calculus is the course's preferred vehicle for identification proofs.
 
-Before proceeding, it is important to separate two questions that are often conflated. The first is: when is an instrument valid? Validity requires the three core IV assumptions --- relevance, exogeneity, and exclusion --- which are the subject of this section. The second is: what does a valid instrument identify? That answer depends on a fourth structural assumption. Under linearity and homogeneous treatment effects (@sec-w7-linear), the Wald ratio identifies a single parameter $\beta$ equal to the ATE. Under heterogeneous effects with monotonicity (@sec-w7-late), the same Wald ratio identifies the LATE for compliers. The three IV assumptions determine whether the design is valid; the fourth assumption determines what causal quantity it recovers.
+Before proceeding, it is important to separate two questions that are often conflated. The first is: when is an instrument valid? Validity requires the three core IV assumptions --- relevance, exogeneity, and exclusion --- which are the subject of this section. The second is: what does the Wald ratio of a valid instrument estimate? With binary $Z$ and $T$, the three assumptions already give the ratio a causal representation (see the remark on instrument validity below), but in general that representation is not the ATE, the ATT, or the average effect among compliers. Which familiar average effect the ratio equals depends on a fourth structural assumption. Under linearity and homogeneous treatment effects (@sec-w7-linear), the Wald ratio identifies a single parameter $\beta$ equal to the ATE. Under heterogeneous effects with monotonicity (@sec-w7-late), the same Wald ratio identifies the LATE for compliers. The three IV assumptions determine whether the design is valid; the fourth assumption determines which familiar average effect the ratio recovers.
 
 ### The IV DAG
 
 The causal structure for a basic IV model with covariates $X$ is:
-
 ```{=html}
 <div style="text-align:center;margin:1em auto;">
 <svg viewBox="0 0 400 175" width="100%" style="max-width:400px;font-family:sans-serif;font-size:12px;">
@@ -125,11 +125,12 @@ The causal structure for a basic IV model with covariates $X$ is:
 The three IV assumptions correspond to three distinct features of this DAG:
 
 1. **Relevance**: there is a directed path $Z \to T$ (edge labeled (1) above), so the instrument shifts treatment.
-2. **Exogeneity**: conditional on observed covariates $X$, the instrument is free of open back-door paths to the latent determinants of the outcome --- the DAG implies $Z \indep U \mid X$ by d-separation. Intuitively, $Z$ is as-if randomized with respect to the unobserved factors that confound $T$ and $Y$.
+2. **Exogeneity**: given the observed covariates $X$, every back-door path from $Z$ to $Y$ is blocked. In this graph the condition reads $Z \indep U \mid X$ by d-separation. Intuitively, $Z$ is as-if randomized with respect to the unobserved factors that confound $T$ and $Y$.
 3. **Exclusion**: every directed path from $Z$ to $Y$ in $\Gcal$ passes through $T$. In the simple IV DAG above this rules out the direct edge $Z \to Y$; in richer graphs it also rules out indirect channels $Z \to M \to Y$ that bypass $T$ through any unmodeled mediator $M$.
 
-The distinction between exogeneity and exclusion is fundamental. Exogeneity says that the instrument is not confounded with the latent causes of the outcome. Exclusion says that the instrument has no causal channel to the outcome except through treatment. An instrument can satisfy one and fail the other. For example, a randomized encouragement may be exogenous by design, yet still violate exclusion if the encouragement changes outcomes through information, motivation, stigma, or administrative treatment apart from the treatment itself.
+Throughout the chapter we also maintain consistency ($T = T(Z)$ and $Y = Y(T, Z)$) and, for a binary instrument, instrument positivity: $0 < P(Z = 1 \mid X = x) < 1$ for every $x$ in the support of $X$.
 
+The distinction between exogeneity and exclusion is fundamental. Exogeneity says that the instrument is not confounded with the latent causes of the outcome. Exclusion says that the instrument has no causal channel to the outcome except through treatment. An instrument can satisfy one and fail the other. For example, a randomized encouragement may be exogenous by design, yet still violate exclusion if the encouragement changes outcomes through information, motivation, stigma, or administrative treatment apart from the treatment itself. The figure below displays both failure modes side by side.
 ::: {.content-visible when-format="html"}
 ```{=html}
 <figure style="text-align:center;margin:1.5em auto;">
@@ -174,13 +175,15 @@ The distinction between exogeneity and exclusion is fundamental. Exogeneity says
 
 ### The Three Assumptions in Three Languages
 
-The same three assumptions can be expressed in three causal languages. These are parallel formulations, not literally identical statements: each language highlights a different aspect of the underlying design. The graphical formulation is most useful for causal design, because it makes confounding paths and forbidden arrows explicit. The structural formulation is most useful for deriving moment restrictions such as $\E[Z\varepsilon \mid X] = 0$. The potential-outcomes formulation is most useful when we later introduce compliance types and the LATE theorem. The assumptions are ordered *relevance → exogeneity → exclusion*, reflecting the natural sequence in which a researcher assesses them.
+The same three assumptions can be expressed in three causal languages. These are parallel formulations, not literally identical statements: each language highlights a different aspect of the underlying design. The graphical formulation is most useful for causal design, because it makes confounding paths and forbidden arrows explicit. The structural formulation is most useful for deriving moment restrictions such as $\mathrm{Cov}(Z, \varepsilon \mid X) = 0$. The potential-outcomes formulation is most useful when we later introduce compliance types and the LATE theorem (@sec-w7-late). Across all three, the do-calculus remains the course's preferred vehicle for identification proofs. The assumptions are ordered *relevance $\to$ exogeneity $\to$ exclusion*, reflecting the natural sequence in which a researcher assesses them: first check that the instrument actually moves treatment, then verify it is exogenously assigned, and finally --- most subtly --- verify it has no direct effect on the outcome.
 
-| **Assumption** | **Potential outcomes** | **Structural / econometric** | **Do-calculus / DAG** |
+| **Assumption** | **Potential outcomes** | **Structural** | **Do-calculus / DAG** |
 |---|---|---|---|
-| **Relevance** | $\Pr\bigl(T_i(1) \neq T_i(0)\bigr) > 0$ | $\pi \neq 0$ in $T = \pi Z + \delta^\top X + \eta$ | $Z \to T$ in $\Gcal$ (no d-separation) |
-| **Exogeneity** | $Z \indep (Y(0), Y(1), T(0), T(1)) \mid X$ | $\E[\varepsilon \mid Z, X] = 0$ | $Z \indep U \mid X$ |
-| **Exclusion** | $Y_i(t, z) = Y_i(t, z')$ for all $z, z'$ | $Z$ absent from structural equation for $Y$ | $f(y \mid x, \doop(T{=}t), z) = f(y \mid x, \doop(T{=}t))$ |
+| **Relevance** | $\E\{T(1) - T(0) \mid X\} \neq 0$ | $\pi \neq 0$ in $T = \pi Z + \kappa^\top X + \eta$ | a directed path from $Z$ to $T$ in $\Gcal$ |
+| **Exogeneity** | for each $z$, $Z \indep \{T(z),\ Y(T(z), z)\} \mid X$ | $\E(\varepsilon \mid Z, X) = \E(\varepsilon \mid X)$ | given $X$, back-door paths from $Z$ to $Y$ blocked (here $Z \indep U \mid X$) |
+| **Exclusion** | $Y_i(t, z) = Y_i(t, z')$ for all $z, z'$ | $Z$ absent from structural equation for $Y$ | $f(y \mid x, \doop(t), \doop(z)) = f(y \mid x, \doop(t))$ |
+
+The potential-outcomes entries are written for binary $Z$ and $T$. The structural exogeneity entry assumes no normalization of $\E(\varepsilon \mid X)$: absorbing $\E(\varepsilon \mid X)$ into the outcome equation need not keep that equation linear in $X$. In a structural model that contains mediators, exclusion also rules out any path $Z \to M \to Y$ that bypasses $T$. The relevance entry in the potential-outcomes column is a nonzero average first stage: a positive share of units moved by $Z$ is not enough, because units moved in opposite directions can cancel.
 
 ::: {.callout-note icon=false}
 ## Remark: Three Languages, One Identification Argument
@@ -191,95 +194,85 @@ Substantively: *relevance* is about the $Z \to T$ link --- $Z$ must genuinely mo
 :::
 
 **Why the do-calculus column is preferred.** The exclusion restriction in the do-calculus column reads
-$$f\!\bigl(y \mid x,\, \doop(T{=}t),\, z\bigr) \;=\; f\!\bigl(y \mid x,\, \doop(T{=}t)\bigr).$$
-This is a statement about the *interventional* density --- the distribution of $Y$ after we have *set* $T = t$ by do-surgery. It says that once $T$ is fixed by intervention, $Z$ carries no additional information about $Y$. The do-operator makes it impossible to confuse the exclusion restriction with the observational statement $f(y \mid x, T{=}t, z) = f(y \mid x, T{=}t)$, which is a much weaker condition.
+$$f\!\bigl(y \mid x,\, \doop(T{=}t),\, \doop(Z{=}z)\bigr) \;=\; f\!\bigl(y \mid x,\, \doop(T{=}t)\bigr).$$
+It is a statement about *interventional* densities: once $T$ is set by intervention, setting $Z$ as well leaves the distribution of $Y$ unchanged. By Rule 3 of the do-calculus it holds when $(Y \indep Z \mid T, X)$ in $\Gcal_{\overline{T}\,\overline{Z}}$, the graph with all arrows into $T$ and into $Z$ removed. In that graph only the outgoing edges of $Z$ remain, so the condition fails exactly when a directed path from $Z$ to $Y$ avoids $T$: it isolates exclusion. The related Rule 1 statement $f(y \mid x, \doop(T{=}t), z) = f(y \mid x, \doop(T{=}t))$, checked in $\Gcal_{\overline{T}}$, also fails when an arrow $U \to Z$ opens $Z \leftarrow U \rightarrow Y$; it follows from exclusion and exogeneity together, and it is the form used in the Wald derivation of @sec-w7-linear. Neither statement should be confused with the observational independence $f(y \mid x, T{=}t, z) = f(y \mid x, T{=}t)$, which the valid IV graph does not imply: conditioning on $T$ opens the collider path $Z \to T \leftarrow U \to Y$.
 
 ### Relevance
 
-::: {.callout-note icon=false}
-## Definition: Relevance
+::: {#def-relevance}
+## Relevance
 
-The instrument $Z$ is **relevant** if it has a non-zero causal effect on the treatment $T$ within at least some stratum of covariates $X$. Formally, $P\bigl(T \mid \doop(Z{=}z),\, X{=}x\bigr)$ varies with $z$ for some $x$ in the support; in the linear first-stage model $T = \pi Z + \delta^\top X + \eta$, this reduces to $\pi \neq 0$.
+The instrument $Z$ is **relevant** if it has a non-zero causal effect on the treatment $T$ within at least some stratum of covariates $X$. Formally, $P\bigl(T \mid \doop(Z{=}z),\, X{=}x\bigr)$ varies with $z$ for some $x$ in the support; in the linear first-stage model $T = \pi Z + \kappa^\top X + \eta$, this reduces to $\pi \neq 0$.
 :::
 
-The graphical analogue of relevance is that $Z$ and $T$ are not d-separated in $\Gcal$. Under faithfulness, a directed path $Z \to T$ implies an observable association between $Z$ and $T$; without faithfulness, non-d-separation does not by itself guarantee a non-zero conditional covariance, and an exact cancellation between alternative paths is mathematically possible. Conversely, an observable association between $Z$ and $T$ can arise without a causal $Z \to T$ effect when $Z$ and $T$ share a common cause. Graphical non-d-separation, observable association, and a non-zero causal effect are therefore three related but not identical conditions. The conditional covariance $\mathrm{Cov}(Z, T \mid X)$ and the first-stage $F$-statistic are empirical diagnostics for the observable association; the causal claim that $Z$ shifts $T$ is design-based.
+The graphical analogue of relevance is that $Z$ and $T$ are not d-separated in $\Gcal$. Under faithfulness, a directed path $Z \to T$ implies an observable association between $Z$ and $T$; without faithfulness, non-d-separation does not by itself guarantee a non-zero conditional covariance, and an exact cancellation between alternative paths is mathematically possible. Conversely, an observable association between $Z$ and $T$ can arise without a causal $Z \to T$ effect when $Z$ and $T$ share a common cause. Graphical non-d-separation, observable association, and a non-zero causal effect are therefore three related but not identical conditions. Dependence also need not show up as a covariance: if $Z$ is symmetric about zero and $T = Z^2 + \eta$, then $Z$ shifts $T$, yet $\mathrm{Cov}(Z, T) = 0$, so a linear first stage would miss it. The conditional covariance $\mathrm{Cov}(Z, T \mid X)$ and the first-stage $F$-statistic are empirical diagnostics for the linear first-stage association; the causal claim that $Z$ shifts $T$ is design-based. What happens when relevance holds only weakly --- or fails entirely --- is analyzed in @sec-w7-why-matter and @sec-w7-overid.
 
 ### Exogeneity
 
-::: {.callout-note icon=false}
-## Definition: Exogeneity (Graphical Assumption)
+::: {#def-exogeneity}
+## Exogeneity (Graphical Assumption)
 
-The instrument $Z$ is **exogenous** given covariates $X$ if there is no open back-door path from $Z$ to $Y$ through unobserved causes. In DAG terms: $Z \indep U \mid X$ in $\Gcal$ by d-separation.
+The instrument $Z$ is **exogenous** given covariates $X$ if, given $X$, every back-door path from $Z$ to $Y$ is blocked. In the canonical IV graph this is $Z \indep U \mid X$ in $\Gcal$ by d-separation.
 :::
 
-Exogeneity means that the instrument carries no information about latent determinants of the outcome other than through treatment. In the structural linear model, the same requirement appears as the moment orthogonality condition $\E[Z\varepsilon \mid X] = 0$, because the structural residual $\varepsilon$ is a function of $U$. In potential-outcomes language, $Z$ must be independent of the counterfactual quantities that the IV argument requires --- outcomes $Y(0), Y(1)$ and treatment indicators $T(0), T(1)$ --- given $X$. These are related manifestations of the same identification requirement, but they live in different formal languages and are not literally the same statement.
+Exogeneity means that the instrument carries no information about latent determinants of the outcome other than through treatment. In the DAG language, there is no open back-door path from $Z$ to $Y$ through unobserved causes $U$: the graphical condition $Z \indep U \mid X$ in $\Gcal$ captures this directly. In the structural linear model, the same requirement appears as the moment orthogonality condition $\E[\{Z - \E(Z \mid X)\}\varepsilon \mid X] = 0$, because the structural residual $\varepsilon$ is a function of $U$. In potential-outcomes language, $Z$ must be independent, given $X$, of the potential treatment $T(z)$ and of the outcome that results when $Z$ is set to $z$, for each $z$. These are related manifestations of the same identification requirement, but they live in different formal languages and are not literally the same statement.
 
-**Econometric implication.** The moment condition $\E[\varepsilon Z \mid X] = 0$ is a *consequence* of the graphical assumption, not a definition of exogeneity. This distinction matters: a researcher who adopts the moment condition as a primitive has no guarantee that $Z$ is free of back-door paths to the outcome, only that a particular linear projection is zero.
+**Econometric implication.** Write $\tilde Z = Z - \E(Z \mid X)$. If $\varepsilon$ is a function of $U$ and of noise independent of everything else, the graphical assumption gives $\E(\varepsilon \mid Z, X) = \E(\varepsilon \mid X)$, and hence
+$$\E(\tilde Z \varepsilon \mid X) = \E\{\tilde Z\, \E(\varepsilon \mid Z, X) \mid X\} = \E(\varepsilon \mid X)\, \E(\tilde Z \mid X) = 0.$$
+The centering matters: without it, $\E(Z\varepsilon \mid X) = 0$ requires the further normalization $\E(\varepsilon \mid X) = 0$. The moment condition is a *consequence* of the graphical assumption, not a definition of exogeneity. This distinction matters: a researcher who adopts the moment condition as a primitive has no guarantee that $Z$ is free of back-door paths to the outcome, only that a particular linear projection is zero. The condition enters the Wald derivation in @sec-w7-linear specifically because it follows from the graphical assumption.
 
-**Potential-outcomes analogue.** In the potential-outcomes language, exogeneity is expressed as the full independence of the instrument from all counterfactual outcomes and counterfactual treatments:
-$$Z \indep \bigl(Y(0),\, Y(1),\, T(0),\, T(1)\bigr) \;\big|\; X.$$
-This is a stronger statement than the moment condition alone: it also covers the joint independence of $Z$ with the treatment potential outcomes $T(0), T(1)$, which the LATE proof in @sec-w7-late requires in addition to $\E[\varepsilon Z \mid X] = 0$.
+**Potential-outcomes analogue.** For binary $Z$ and $T$, let $T(z)$ be the treatment a unit would take if $Z$ were set to $z$, and let $Y(t, z)$ be its outcome when $T = t$ and $Z = z$; consistency gives $T = T(Z)$ and $Y = Y(T, Z)$. Then $Y(T(z), z)$ is the outcome when only $Z$ is set to $z$. The graphical assumption implies, for each $z$,
+$$Z \indep \bigl\{T(z),\, Y(T(z), z)\bigr\} \;\big|\; X.$$ {#eq-w7-po-exog}
+The argument is that of @prp-ign-bd, with $Z$ in the role of the treatment. In the single-world intervention graph $\Gcal(z)$, the random half of $Z$ has no children, so every path from $Z$ to $T(z)$ or $Y(T(z), z)$ is a back-door path of $\Gcal$. A back-door path from $Z$ to $T$ extends through $T \to Y$ to a back-door path from $Z$ to $Y$, and $T$ is not in $X$ because $X$ contains no descendants of $Z$. So $X$ blocks every such path, and @eq-w7-po-exog follows. Statement @eq-w7-po-exog does not use exclusion, and it covers the potential treatment $T(z)$ as well as the outcome; the LATE proof in @sec-w7-late uses both.
 
-::: {.callout-note icon=false}
-## Example: Quarter of Birth as an Instrument
+The stronger joint statement
+$$Z \indep \bigl(T(0),\, T(1),\, Y(0,0),\, Y(1,0),\, Y(0,1),\, Y(1,1)\bigr) \;\big|\; X,$$
+the random-assignment assumption of @angrist1996identification, follows from the graphical assumption only if the structural errors are also mutually independent (Chapter 4). It holds by design when $Z$ is randomized. The IV arguments of this chapter need only the single-world form @eq-w7-po-exog.
 
-@angrist1991does used quarter of birth as an instrument for schooling to estimate the return to education. In graphical terms, exogeneity requires no open back-door path from quarter of birth to wages through unobserved variables such as ability or family background; in potential-outcomes terms, it requires that birth timing is independent of what wages a student would earn under any schooling level. Both are plausible because birth timing is largely outside parental control. @bound1995problems later raised concerns about weak first stages in some specifications, illustrating that even a well-motivated instrument can fail the relevance requirement in certain samples.
+::: {#exm-qob}
+## Quarter of Birth as an Instrument
+
+@angrist1991does used quarter of birth as an instrument for schooling to estimate the return to education. In graphical terms, exogeneity requires no open back-door path from quarter of birth to wages through unobserved variables such as ability or family background; in potential-outcomes terms, it requires that birth timing is independent of what wages a student would earn under any schooling level. Both are plausible because birth timing is largely outside parental control, although season of birth is associated with family background [@buckles2013season], so even this instrument needs a defense. @bound1995problems later raised concerns about weak first stages in some specifications, illustrating that even a well-motivated instrument can fail the relevance requirement in certain samples.
 :::
 
-**Key point.** All three versions of exogeneity are untestable: the unobserved confounder $U$ is, by definition, unobserved, and counterfactual potential outcomes are never jointly observed. The assumption must be justified by institutional knowledge or the design of the study. See @sec-w7-overid for the limited consistency check that overidentification provides.
+**Key point.** No version of exogeneity can be tested on its own: the unobserved confounder $U$ is, by definition, unobserved, and counterfactual potential outcomes are never jointly observed. The assumption must be justified by institutional knowledge or the design of the study. Together with exclusion, however, it restricts the observed distribution, so the data can sometimes reject the IV model, but never confirm it [@pearl1995testability; @kitagawa2015test]. With binary $Z$, $T$, and $Y$ and no covariates, for example, exogeneity and exclusion imply the *instrumental inequality*
+$$P(Y{=}0, T{=}t \mid Z{=}1) + P(Y{=}1, T{=}t \mid Z{=}0) \le 1, \qquad t = 0, 1,$$
+and the same with $Z{=}0$ and $Z{=}1$ exchanged; monotonicity is not needed. Data that violate it reject the model, but many ways the assumptions can fail leave it satisfied. See @sec-w7-overid for the limited consistency check that overidentification provides.
 
 ### Exclusion
 
-::: {.callout-note icon=false}
-## Definition: Exclusion Restriction
+::: {#def-exclusion}
+## Exclusion Restriction
 
-The instrument $Z$ satisfies the **exclusion restriction** if it affects the outcome $Y$ *only* through its effect on the treatment $T$. In do-calculus terms:
-$$f\!\bigl(y \mid x,\, \doop(T{=}t),\, z\bigr) \;=\; f\!\bigl(y \mid x,\, \doop(T{=}t)\bigr) \quad \text{for all } z.$$
-In potential outcomes terms: $Y_i(t, z) = Y_i(t, z')$ for all $z \neq z'$.
+The instrument $Z$ satisfies the **exclusion restriction** if it affects the outcome $Y$ *only* through its effect on the treatment $T$: every directed path from $Z$ to $Y$ passes through $T$. Exclusion implies the do-calculus statement
+$$f\!\bigl(y \mid x,\, \doop(T{=}t),\, \doop(Z{=}z)\bigr) \;=\; f\!\bigl(y \mid x,\, \doop(T{=}t)\bigr) \quad \text{for all } z.$$
+In potential-outcomes terms, exclusion is the unit-level restriction $Y_i(t, z) = Y_i(t, z')$ for all $z \neq z'$. The unit-level restriction implies the equality above; the equality, a statement about distributions, does not imply it.
 :::
 
-Exclusion is a *causal* restriction, not a conditional-correlation restriction. It is emphatically *not* the observational statement $Y \indep Z \mid T, X$, which can hold in the data even when $Z$ has a direct structural effect on $Y$. What exclusion requires is that changing $Z$ while holding treatment fixed --- that is, intervening to set $T = t$ --- would leave $Y$ unchanged. In graphical terms, every directed path from $Z$ to $Y$ must pass through $T$. In the structural linear model, this means no $Z$ term appears in the outcome equation for $Y$.
+Exclusion is a *causal* restriction, not a conditional-correlation restriction. It is emphatically *not* the observational statement $Y \indep Z \mid T, X$. That statement can hold in the data even when $Z$ has a direct structural effect on $Y$ (through a cancellation), and it is not implied when exclusion holds: conditioning on $T$ opens the collider path $Z \to T \leftarrow U \to Y$, so $Z$ and $Y$ can be associated given $T, X$ in a valid design. What exclusion requires is that changing $Z$ while holding treatment fixed --- that is, intervening to set $T = t$ --- would leave $Y$ unchanged. In graphical terms, every directed path from $Z$ to $Y$ must pass through $T$: exclusion rules out a direct edge $Z \to Y$ and any indirect channel $Z \to M \to Y$ that bypasses $T$. In the structural linear model, this means no $Z$ term appears in the outcome equation for $Y$, and no mediator other than $T$ carries an effect of $Z$.
 
 ::: {.callout-warning icon=false}
 ## Why Exclusion Is the Hardest Assumption
 
 Relevance can be tested. Exogeneity can sometimes be defended by design (e.g., randomized encouragement). But the exclusion restriction --- that $Z$ has *no direct effect* on $Y$ whatsoever --- is:
 
-- **Untestable** in just-identified models (one instrument, one treatment).
+- **Not separately testable.** No observed conditional independence expresses it. With one instrument, only the joint implications of the IV model can be checked; they can refute the model but never confirm it.
 - **Easy to violate in practice.** An instrument that "moves treatment" often also moves other inputs. For example: if $Z$ is distance to a hospital (instrument for treatment uptake), it may also directly affect health outcomes through travel time in emergencies.
-- **Consequential.** Even a small direct effect of $Z$ on $Y$ --- if correlated with the instrument --- can cause substantial bias in the Wald estimand, especially when the first stage is weak. This bias is derived explicitly in @sec-w7-why-matter.
+- **Consequential.** A small direct effect $\delta$ of $Z$ on $Y$ shifts the Wald ratio by $\delta/\pi$, which is large when the first stage $\pi$ is weak (@sec-w7-why-matter).
 :::
 
-**The do-calculus makes the violation visible.** Adding a direct arrow $Z \to Y$ to the DAG is exactly the formal counterpart of exclusion failing: the arrow represents a structural effect of $Z$ on $Y$ that bypasses $T$. In the mutilated graph $\Gcal_{\overline{T}}$ (where we have removed all arrows into $T$), the path $Z \to Y$ remains open. Rule 1 of the do-calculus, which would allow us to remove $Z$ from the density of $Y$ given $\doop(T{=}t)$, no longer applies. The exclusion restriction is therefore visibly a statement about the structure of $\Gcal_{\overline{T}}$, not of $\Gcal$ itself.
+**The do-calculus makes the violation visible.** Adding a direct arrow $Z \to Y$ to the DAG is exactly the formal counterpart of exclusion failing. In $\Gcal_{\overline{T}\,\overline{Z}}$, where all arrows into $T$ and into $Z$ have been removed, the edge $Z \to Y$ survives, so Rule 3 no longer removes $\doop(Z{=}z)$ from the interventional density of $Y$. An arrow $U \to Z$, by contrast, is deleted in $\Gcal_{\overline{T}\,\overline{Z}}$: exclusion is a statement about the paths *out of* $Z$, exogeneity about the paths *into* $Z$.
 
 ::: {.callout-note icon=false}
-## Remark: Three Assumptions Are Necessary but Not Sufficient for Point Identification
+## Remark: Instrument Validity Does Not Fix the Interpretation
 
-The three IV assumptions are necessary but not sufficient for *point* identification of any causal estimand. Under these three assumptions alone, the observed data restrict the distribution of potential outcomes but do not pin it down to a single value; the Wald ratio is a well-defined function of observable quantities, but it does not equal any specific causal parameter without additional structure [@hernan2006instruments; @levis2024nonparametric]. A fourth *structural assumption* on the counterfactual distribution of treatment response or treatment effect heterogeneity is required.
+Take $Z$ and $T$ binary, and suppose the IV assumptions hold without conditioning on covariates. Exogeneity in the form @eq-w7-po-exog without $X$, exclusion, and consistency already give the Wald ratio a causal representation:
+$$\frac{\E(Y \mid Z{=}1) - \E(Y \mid Z{=}0)}{\E(T \mid Z{=}1) - \E(T \mid Z{=}0)} = \frac{\E[Y\{T(1)\} - Y\{T(0)\}]}{\E\{T(1) - T(0)\}} = \frac{p_{\mathrm{co}}\,\tau_{\mathrm{co}} - p_{\mathrm{de}}\,\tau_{\mathrm{de}}}{p_{\mathrm{co}} - p_{\mathrm{de}}},$$
+where $p_{\mathrm{co}}$ and $p_{\mathrm{de}}$ are the shares of compliers and defiers (@def-compliance) and $\tau_{\mathrm{co}}$ and $\tau_{\mathrm{de}}$ are their average effects. This representation is causal, but the two weights have opposite signs, so it is not in general the ATE, the ATT, or the average effect in any subpopulation [@hernan2006instruments; @levis2024nonparametric]. A fourth *structural assumption* on treatment response or effect heterogeneity decides which familiar average effect, if any, the ratio equals. With covariates the same holds at each value of $X$, and a marginal estimand requires averaging over the appropriate population.
 
-The choice of fourth assumption determines which causal quantity the Wald estimand identifies. Two leading choices appear in this chapter: constant treatment effects (Framework 1, @sec-w7-linear), under which the Wald estimand identifies the ATE; and monotonicity (Framework 2, @sec-w7-late), under which it identifies the LATE for compliers. A third important family relies on *structural mean model* (SMM) restrictions. Under an additive SMM that rules out direct effect modification of $Y$ by $Z$ among the treated, the Wald ratio identifies the ATT --- the average effect of treatment among those who actually received it --- without requiring either constant effects or monotonicity [@hernan2006instruments; @levis2024nonparametric]. Moving further to identify the population ATE from the ATT requires an additional step: that the average effect among the treated equals the average effect among the untreated.
+The choice of fourth assumption determines which familiar average effect the Wald estimand identifies. Two leading choices appear in this chapter: constant treatment effects (Framework 1, @sec-w7-linear), under which the Wald estimand identifies the ATE; and monotonicity (Framework 2, @sec-w7-late), under which it identifies the LATE for compliers. (A third route, optional reading: under an additive *structural mean model* that rules out effect modification by $Z$ among the treated, the same ratio identifies the ATT, without constant effects or monotonicity [@hernan2006instruments; @levis2024nonparametric].) The remark on one formula and several estimands in @sec-w7-interpret returns to the point that one formula can carry several causal targets.
 
-Strikingly, across these different identification schemes the same conditional Wald formula $\mathrm{Cov}(Z, Y \mid X)/\mathrm{Cov}(Z, T \mid X)$ appears as the identifying expression in many cases. The qualification "many" is precise: when identification relies on a *multiplicative* SMM instead of an additive one, the identifying formula for the ATE takes a different form entirely and the Wald ratio is no longer consistent for the target estimand [@hernan2006instruments]. What changes in the additive cases is not the observed-data formula but its causal target: the same estimator can consistently estimate the ATE, the LATE, or the ATT depending on which structural assumption is maintained.
-
-A further consequence deserves emphasis: the three core IV assumptions are all expressible within the graphical language of this course. Relevance is the directed edge $Z \to T$; exogeneity is the absence of an open back-door path from $Z$ to $Y$ via $U$; exclusion is the absence of a direct edge $Z \to Y$ in the mutilated graph $\Gcal_{\overline{T}}$. The fourth assumption, by contrast, lies *outside* the graphical language in every case. Monotonicity ($T_i(1) \geq T_i(0)$ for all $i$) is a restriction on the joint distribution of potential treatments across two intervention values simultaneously --- a cross-world statement that cannot be encoded by the presence or absence of any arrow in the DAG. Constant treatment effects similarly constrains the covariance structure of the potential outcome pair, which the DAG does not represent. This is a genuine scope limitation of the graphical approach: a DAG specifies the causal structure of a single world, but the fourth assumption always reaches across worlds.
-:::
-
-::: {.callout-note icon=false}
-## Example: Same Observables, Different ATEs
-
-Two distinct data-generating processes satisfy all three IV assumptions and produce identical observable statistics, yet imply different ATEs. No amount of data can distinguish them without a fourth structural assumption.
-
-**Observable statistics.** Let $Z, T \in \{0,1\}$ and let $Y$ be a continuous outcome. Suppose
-$$\E[T \mid Z{=}1] - \E[T \mid Z{=}0] = 0.2 \quad \text{(first stage)},$$
-$$\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] = 0.1 \quad \text{(reduced form)},$$
-giving a Wald ratio of $0.1/0.2 = 0.5$. Both DGPs share the same compliance structure --- under monotonicity, $P(\mathrm{co}) = 0.2$, $P(\mathrm{at}) = 0.4$, $P(\mathrm{nt}) = 0.4$ --- though under DGP A the compliance types are simply a convenient labeling; what drives identification there is the constant-effect restriction.
-
-**DGP A: constant treatment effects.** Every unit has the same effect $\tau_i = 0.5$. Then the reduced form is $P(\mathrm{co}) \cdot \tau_{\mathrm{co}} = 0.2 \times 0.5 = 0.1$ $\checkmark$, and $\mathrm{ATE} = 0.5$.
-
-**DGP B: heterogeneous effects with monotonicity.** Effects differ by type: $\tau_{\mathrm{co}} = 0.5$, $\tau_{\mathrm{at}} = 0$, $\tau_{\mathrm{nt}} = 0$. The reduced form is again $0.2 \times 0.5 = 0.1$ $\checkmark$, but
-$$\mathrm{ATE} = 0.2 \times 0.5 + 0.4 \times 0 + 0.4 \times 0 = 0.1.$$
-
-**What this shows.** Both DGPs produce the same first stage, the same reduced form, and therefore the same Wald ratio of $0.5$. Yet the ATE is $0.5$ under DGP A and $0.1$ under DGP B --- a fivefold difference. The *fourth* assumption is what resolves the ambiguity: under DGP A, constant effects makes the Wald ratio equal the ATE; under DGP B, monotonicity makes it equal the LATE ($=0.5$) for compliers, a different quantity from the ATE ($=0.1$). Committing to one fourth assumption or the other changes not the estimator but what it estimates.
+A further consequence deserves emphasis: the three core IV assumptions are all expressible within the graphical language of this course. Relevance is the directed edge $Z \to T$; exogeneity is the absence of an open back-door path from $Z$ to $Y$ via $U$; exclusion is the absence of a direct edge $Z \to Y$ in the mutilated graph $\Gcal_{\overline{T}}$. The fourth assumption, by contrast, is not imposed by the topology of an ordinary DAG. Monotonicity ($T_i(1) \geq T_i(0)$ for all $i$) is a restriction on the joint distribution of potential treatments across two intervention values simultaneously --- a cross-world statement that cannot be encoded by the presence or absence of any arrow in the DAG. Constant treatment effects ($Y_i(1) - Y_i(0) = \beta$) similarly restricts the joint distribution of $(Y_i(0), Y_i(1))$, which the arrows of the DAG do not constrain. (Richer graphical objects, such as twin networks, can represent cross-world statements; the point is that the arrows of $\Gcal$ do not fix them.) The practical implication is that IV identification cannot be completed by causal graph analysis alone; the fourth assumption must be supplied from substantive knowledge about the mechanism, and defended on those grounds.
 :::
 
 ## Identification in the Linear Homogeneous-Effect Model {#sec-w7-linear}
@@ -289,185 +282,235 @@ $$\mathrm{ATE} = 0.2 \times 0.5 + 0.4 \times 0 + 0.4 \times 0 = 0.1.$$
 
 This section works entirely within a linear structural model in which the treatment effect is the *same* for every unit and every treatment contrast:
 $$Y_i(t) - Y_i(t') = \beta(t - t') \quad \text{for all } i,\, t,\, t'.$$
-Under this assumption, IV identifies the single parameter $\beta$, which equals the ATE, the ATT, and the LATE simultaneously. This section should therefore be read as a special-case identification result. In @sec-w7-late we drop homogeneity, allow treatment effects to vary across units, and reinterpret the same Wald ratio as the LATE for compliers. The estimator does not change; what changes is the estimand.
+Under this assumption, IV identifies the single parameter $\beta$, which equals the ATE, the ATT, and the LATE simultaneously:
+$$\beta = \mathrm{ATE} = \mathrm{ATT} = \mathrm{LATE}.$$
+Here $\beta$ is the effect of a one-unit increase in $T$, the same for every unit; for a contrast $t$ versus $t'$, every average effect equals $\beta(t - t')$. Because the restriction concerns individual effects, it cannot hold for a binary outcome unless $\beta \in \{-1, 0, 1\}$; for binary outcomes, Framework 2 is the relevant one. This section should therefore be read as a special-case identification result. In @sec-w7-late we drop homogeneity, allow treatment effects to vary across units, and reinterpret the same Wald ratio as the LATE for compliers. The estimator does not change; what changes is the estimand.
 
 **Note on assumption strength.** Constant treatment effects is the strongest form of the homogeneity family of fourth assumptions: it requires not only that unobserved confounders $U$ do not modify the effect of $T$ on $Y$, but that the effect is exactly the same for every unit within each stratum of $X$. Weaker homogeneity conditions --- such as requiring only that $U$ not act as an additive effect modifier on $Y$ --- can also identify the ATE under IV [@wang2018bounded].
 :::
 
 ### The Linear Structural Model
 
+We begin with the homogeneous-effect linear SEM because it makes the IV logic transparent; @sec-w7-late then relaxes homogeneity and reinterprets the same Wald ratio as a LATE.
+
 Consider the linear structural model:
 $$Y = \alpha + \beta T + \gamma^\top X + \varepsilon,$$ {#eq-outcome}
-$$T = \pi Z + \delta^\top X + \eta,$$ {#eq-firststage}
-where $\varepsilon$ and $\eta$ are structural errors with standard deviations $\sigma_\varepsilon$ and $\sigma_\eta$ and $\mathrm{Cov}(\varepsilon, \eta) = \rho\sigma_\varepsilon\sigma_\eta \neq 0$. The non-zero covariance is the source of endogeneity: OLS applied to @eq-outcome gives a biased estimator of $\beta$.
+$$T = \pi Z + \kappa^\top X + \eta,$$ {#eq-firststage}
+where $\varepsilon$ and $\eta$ are structural errors with standard deviations $\sigma_\varepsilon$ and $\sigma_\eta$. We assume $\mathrm{Cov}(Z, \varepsilon \mid X) = \mathrm{Cov}(Z, \eta \mid X) = 0$, which exogeneity implies when both errors are functions of $U$ and of independent noise, and $\mathrm{Cov}(\varepsilon, \eta) = \rho\sigma_\varepsilon\sigma_\eta \neq 0$. A shared latent cause makes $\rho \neq 0$ typical but does not force it, so $\rho \neq 0$ is an assumption. The nonzero covariance is the source of endogeneity: OLS applied to @eq-outcome gives a biased estimator of $\beta$.
+
+Equation @eq-outcome is the potential outcome $Y(t) = \alpha + \beta t + \gamma^\top X + \varepsilon$ evaluated at $t = T$; the error $\varepsilon$ collects everything else that determines $Y$, including $U$. It looks like a regression equation but is not one: a regression of $Y$ on $(T, X)$ would carry $\E(\varepsilon \mid T, X) = 0$, whereas here $\mathrm{Cov}(T, \varepsilon \mid X) = \mathrm{Cov}(\eta, \varepsilon) \neq 0$, so $\beta$ is not the regression slope of $Y$ on $T$. The reduced form below, by contrast, is a regression: $Z$ is uncorrelated with its error $\beta\eta + \varepsilon$ given $X$.
 
 The parameter of interest is $\beta$, the causal effect of $T$ on $Y$:
 $$\beta = \E\!\bigl[Y \mid \doop(T{=}t+1)\bigr] - \E\!\bigl[Y \mid \doop(T{=}t)\bigr].$$
 Equation @eq-outcome is the *outcome equation* (or second stage); @eq-firststage is the *first-stage* equation. The *reduced form* is obtained by substituting @eq-firststage into @eq-outcome:
-$$Y = \alpha + \beta\pi Z + (\beta\delta + \gamma)^\top X + (\beta\eta + \varepsilon).$$
+$$Y = \alpha + \beta(\pi Z + \kappa^\top X + \eta) + \gamma^\top X + \varepsilon = \alpha + \beta\pi Z + (\beta\kappa + \gamma)^\top X + (\beta\eta + \varepsilon).$$
 The reduced-form coefficient on $Z$ is $\beta\pi$: the total effect of the instrument on the outcome. Dividing by the first-stage coefficient $\pi$ recovers $\beta$, provided $\pi \neq 0$.
 
 ### The OLS Bias
 
-To see why OLS fails, apply OLS to @eq-outcome. The probability limit of the OLS estimator is
+To see why OLS fails, take the case without covariates and apply OLS to @eq-outcome. Since $\mathrm{Cov}(Z, \varepsilon) = \mathrm{Cov}(Z, \eta) = 0$, the probability limit of the OLS estimator is
 $$\mathrm{plim}\; \hat\beta_{\mathrm{OLS}} = \beta + \frac{\mathrm{Cov}(T, \varepsilon)}{\mathrm{Var}(T)} = \beta + \frac{\rho\sigma_\varepsilon\sigma_\eta}{\pi^2 \mathrm{Var}(Z) + \sigma_\eta^2}.$$ {#eq-ols-bias}
-The second term is the endogeneity bias. It is zero only if $\rho = 0$ (no unobserved confounding) or if the instrument perfectly determines $T$ (infeasible in practice). The direction of the bias depends on the sign of $\rho$.
+The second term is the endogeneity bias. It is zero only if $\rho = 0$ (the two errors are uncorrelated) or if $\sigma_\eta = 0$ (the instrument determines $T$, infeasible in practice). The direction of the bias depends on the sign of $\rho$. The bias shrinks as $|\pi|$ grows, but it does not shrink with the sample size.
 
 The point of IV is not that OLS is always wrong, but that when $T$ is endogenous, IV can recover a causal parameter from the exogenous variation in $T$ that $Z$ induces --- variation that OLS mixes indiscriminately with the confounded component.
 
 ### Derivation of the Wald Estimand
 
-The derivation has three ingredients: the **first stage**, which measures how much the instrument moves treatment; the **reduced form**, which measures how much the instrument moves the outcome; and the **exclusion restriction**, which implies that any effect of $Z$ on $Y$ must operate through $T$. Under the homogeneous-effect linear model, these three ingredients imply that the reduced-form effect of $Z$ on $Y$ is exactly $\beta$ times the first-stage effect of $Z$ on $T$.
+The derivation has three ingredients:
+
+1. the **first stage**, which measures how much the instrument moves treatment;
+2. the **reduced form**, which measures how much the instrument moves the outcome;
+3. the **exclusion restriction**, which implies that any effect of $Z$ on $Y$ must operate through $T$.
+
+Under the homogeneous-effect linear model, these three ingredients imply that the reduced-form effect of $Z$ on $Y$ is exactly $\beta$ times the first-stage effect of $Z$ on $T$. Dividing the reduced form by the first stage therefore recovers $\beta$.
 
 ::: {.callout-warning icon=false}
 ## Assumptions Active in This Derivation
 
 1. **Linear homogeneous-effect model:** $Y_i(t) - Y_i(t') = \beta(t - t')$ for all $i$, $t$, $t'$, and the structural equations are linear.
-2. **Relevance:** $\mathrm{Cov}(Z, T \mid X) \neq 0$.
+2. **Relevance:** $\E\{\mathrm{Cov}(Z, T \mid X)\} \neq 0$.
 3. **Exogeneity:** $\mathrm{Cov}(Z, \varepsilon \mid X) = 0$.
 4. **Exclusion:** $Z$ has no direct effect on $Y$; it does not appear in the structural equation for $Y$.
 
 Assumptions 2--4 are the three core IV assumptions; Assumption 1 is the homogeneity restriction specific to this section. Under heterogeneous effects the same Wald ratio identifies a different quantity; see @sec-w7-late.
 :::
 
-We derive the identification of $\beta$ step by step, using the structural model as the vehicle and the do-calculus to interpret the exclusion step.
+We derive the identification of $\beta$ step by step, using the structural model as the vehicle and the do-calculus to interpret the exclusion step. Write $\tilde Z = Z - \E(Z \mid X)$, and note that $\E\{\tilde Z\, g(X)\} = 0$ for every function $g$.
 
-1. **Exogeneity** ($Z \indep U \mid X$ in $\Gcal$) implies, for the structural residual $\varepsilon$, that $\E[\varepsilon \mid Z, X] = \E[\varepsilon \mid X]$. With the normalization $\E[\varepsilon \mid X] = 0$ (absorbed into $\alpha$), we obtain $\E[\varepsilon \mid Z, X] = 0$.
+1. **Exogeneity** (given $X$, no open back-door path from $Z$ to $Y$; in the IV graph, $Z \indep U \mid X$) implies, for the structural residual $\varepsilon$,
+$$\E[\varepsilon \mid Z, X] = \E[\varepsilon \mid X].$$
+No normalization of $\E[\varepsilon \mid X]$ is needed. (An arbitrary function of $X$ could not, in general, be absorbed into the linear term $\gamma^\top X$ anyway.)
 
-2. **Exclusion** ($Z$ absent from the structural equation for $Y$) is what permits writing @eq-outcome without a $Z$ term in the first place: under exclusion, the structural residual $\varepsilon$ depends on $U$ but does not absorb a direct effect of $Z$ on $Y$. Combined with exogeneity, $\E[\varepsilon \mid Z, X] = 0$ immediately yields the moment condition $\E[\varepsilon \cdot Z \mid X] = 0$. The graphical counterpart is in $\Gcal_{\overline{T}}$: exclusion means there is no direct edge $Z \to Y$, so $Y \indep Z \mid T, X$ holds in the mutilated graph and Rule 1 of the do-calculus removes $Z$ from $f(y \mid x, \doop(T{=}t), z)$.
+2. **Exclusion** ($Z$ absent from the structural equation for $Y$) is what permits writing the outcome equation @eq-outcome without a $Z$ term in the first place: under exclusion, the structural residual $\varepsilon$ depends on $U$ but does not absorb a direct effect of $Z$ on $Y$. Combined with step 1,
+$$\E(\tilde Z \varepsilon \mid X) = \E\{\tilde Z\, \E(\varepsilon \mid Z, X) \mid X\} = \E(\varepsilon \mid X)\, \E(\tilde Z \mid X) = 0 .$$
+The graphical counterpart uses both assumptions: with exogeneity and exclusion, $Y \indep Z \mid T, X$ holds in $\Gcal_{\overline{T}}$, and Rule 1 of the do-calculus removes $Z$ from $f(y \mid x, \doop(T{=}t), z)$.
 
-3. Multiplying @eq-outcome through by $(Z - \E[Z \mid X])$ and taking expectations, the residual term $\E[\varepsilon (Z - \E[Z\mid X])]$ vanishes by step 2, leaving
-$$\E\!\bigl[(Y - \alpha - \gamma^\top X)(Z - \E[Z\mid X])\bigr] = \beta\, \E\!\bigl[(T - \E[T\mid X])(Z - \E[Z\mid X])\bigr].$$
-In the simpler case with no covariates $X$, this collapses to the **reduced-form decomposition** $\mathrm{Cov}(Y, Z) = \beta\, \mathrm{Cov}(T, Z)$, which shows that the $Z$--$Y$ covariance is entirely attributable to the causal path $Z \to T \to Y$ (by exclusion), and equals $\beta$ times the first-stage covariance.
+3. Multiply @eq-outcome by $\tilde Z$ and take expectations. The terms $\alpha$ and $\gamma^\top X$ drop out, and step 2 removes the error term:
+$$\E(\tilde Z Y) = \beta\, \E(\tilde Z T) + \E(\tilde Z \varepsilon) = \beta\, \E(\tilde Z T).$$
+In the simpler case with no covariates $X$, this is the **reduced-form decomposition**
+$$\mathrm{Cov}(Y, Z) = \beta\, \mathrm{Cov}(T, Z),$$
+which shows that the $Z$--$Y$ covariance is entirely attributable to the causal path $Z \to T \to Y$ (by exclusion), and equals $\beta$ times the first-stage covariance. Constant effects enter at this step: a single $\beta$ multiplies every unit's $T$.
 
-4. **Relevance** ($\mathrm{Cov}(Z, T \mid X) \neq 0$) ensures the denominator is non-zero, so we can solve:
-$$\beta = \frac{\mathrm{Cov}(Y,\, Z \mid X)}{\mathrm{Cov}(T,\, Z \mid X)}.$$ {#eq-wald-cov}
+4. **Relevance**, $\E(\tilde Z T) = \E\{\mathrm{Cov}(Z, T \mid X)\} \neq 0$, allows the division:
+$$\beta = \frac{\E(\tilde Z Y)}{\E(\tilde Z T)} = \frac{\E\{\mathrm{Cov}(Y,\, Z \mid X)\}}{\E\{\mathrm{Cov}(T,\, Z \mid X)\}}.$$ {#eq-wald-cov}
+Taking expectations given $X = x$ in step 3 instead gives the pointwise version $\beta = \mathrm{Cov}(Y, Z \mid X{=}x)/\mathrm{Cov}(T, Z \mid X{=}x)$ at every $x$ with a nonzero denominator. Under the linear model every such ratio, and every average of numerator and denominator, equals $\beta$.
 
 ::: {.callout-note icon=false}
 ## The Wald Estimand
 
-In the binary instrument case ($Z \in \{0,1\}$) without additional covariates, @eq-wald-cov simplifies to
+In the binary instrument case ($Z \in \{0,1\}$) without additional covariates $X$, this simplifies to the **Wald estimand**:
 $$\beta \;=\; \frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}{\E[T \mid Z{=}1] - \E[T \mid Z{=}0]}.$$ {#eq-wald}
 The numerator is the *reduced form*: the total effect of $Z$ on $Y$. The denominator is the *first stage*: the effect of $Z$ on $T$. The exclusion restriction is what guarantees that the entire reduced form operates through $T$, with no parallel channel; dividing by the first stage then strips out the $Z \to T$ piece and leaves $\beta$.
 :::
 
-The key lesson is that the Wald ratio identifies $\beta$ in this section only because treatment effects are assumed to be constant across units. The observed formula @eq-wald-cov is an identifying expression, not an estimand by itself. Its causal meaning depends on the structural assumptions maintained around it. In @sec-w7-late, the same ratio will survive, but its interpretation will change from a common causal effect to a complier-specific average effect.
+The key lesson is that the Wald ratio identifies $\beta$ in this section only because treatment effects are assumed to be constant across units. The observed formula
+$$\frac{\E\{\mathrm{Cov}(Z, Y \mid X)\}}{\E\{\mathrm{Cov}(Z, T \mid X)\}}$$
+is a statistical estimand, a feature of the observed distribution. Which causal estimand it equals depends on the structural assumptions maintained around it. In @sec-w7-late, the same ratio will survive, but its interpretation will change from a common causal effect to a complier-specific average effect.
 
 ::: {.callout-note icon=false}
-## Remark: Estimation of the Wald Estimand
+## Remark: From the Estimand to an Estimator
 
-The Wald estimand above is an identification result: it expresses the causal parameter $\beta$ as a ratio of observable quantities. Estimation --- that is, how to consistently estimate this ratio from a finite sample, including the correct treatment of standard errors --- is taken up in Chapter 13.
+The Wald estimand above is an identification result: it expresses the causal parameter $\beta$ as a ratio of observable quantities. Replacing population covariances by sample covariances gives an estimator, and with one instrument and no covariates three familiar recipes give the same number: (i) the ratio of the two regression slopes, of $Y$ on $Z$ and of $T$ on $Z$ (indirect least squares); (ii) the instrumental-variable estimator $\hat\beta_{\mathrm{IV}} = \widehat{\mathrm{Cov}}(Y, Z) / \widehat{\mathrm{Cov}}(T, Z)$; and (iii) two-stage least squares (2SLS): regress $T$ on $Z$, keep the fitted values $\hat T = \hat\pi_0 + \hat\pi Z$, and regress $Y$ on $\hat T$. They coincide because $\hat\pi = \widehat{\mathrm{Cov}}(T, Z)/\widehat{\mathrm{Var}}(Z)$:
+$$\frac{\widehat{\mathrm{Cov}}(Y, Z)/\widehat{\mathrm{Var}}(Z)}{\widehat{\mathrm{Cov}}(T, Z)/\widehat{\mathrm{Var}}(Z)} = \frac{\widehat{\mathrm{Cov}}(Y, Z)}{\widehat{\mathrm{Cov}}(T, Z)} = \frac{\hat\pi\,\widehat{\mathrm{Cov}}(Y, Z)}{\hat\pi^2\,\widehat{\mathrm{Var}}(Z)} = \frac{\widehat{\mathrm{Cov}}(Y, \hat T)}{\widehat{\mathrm{Var}}(\hat T)} .$$
+With binary $Z$ each slope is a difference in means, so the sample Wald ratio is the same number again. With covariates, 2SLS regresses $T$ on $(1, Z, X)$ in the first stage and $Y$ on $(1, \hat T, X)$ in the second, with the same $X$ in both stages; under $\E(\varepsilon \mid Z, X) = \E(\varepsilon \mid X) = 0$ this solves the sample versions of the moment conditions $\E(\varepsilon) = \E(Z\varepsilon) = \E(X\varepsilon) = 0$, and by the Frisch--Waugh--Lovell theorem it equals $\widehat{\mathrm{Cov}}(\tilde Y, \tilde Z)/\widehat{\mathrm{Cov}}(\tilde T, \tilde Z)$ computed from the residuals of $Y$, $T$, and $Z$ after linear regression on $(1, X)$. Standard errors, and 2SLS with more instruments than endogenous variables, are taken up in Chapter 13.
 :::
 
-::: {.callout-note icon=false}
-## Example: Returns to Schooling
+::: {#exm-returns}
+## Returns to Schooling
 
-In the Mincer earnings equation $\log W = \alpha + \beta S + \gamma^\top X + \varepsilon$, where $S$ is years of schooling, the OLS estimator of $\beta$ is biased upward because unobserved ability $U$ raises both $S$ and $W$ ($\rho > 0$). @angrist1991does use quarter of birth as $Z$: proximity to mandatory school-leaving age at different birth quarters generates exogenous variation in completed schooling. The IV estimate of the return to schooling is approximately $0.08$--$0.10$ per year, similar to the OLS estimate in this case, suggesting the ability bias is modest.
+In the Mincer earnings equation $\log W = \alpha + \beta S + \gamma^\top X + \varepsilon$, where $S$ is years of schooling, $W$ is wages, and $X$ are demographics, the OLS estimator of $\beta$ is biased upward because unobserved ability $U$ raises both $S$ and $W$ ($\rho > 0$). @angrist1991does use quarter of birth. In the simplest contrast, $Z = 1$ for men born in the first quarter and $Z = 0$ for men born in the other three quarters. Because compulsory attendance laws bind by birth date, first-quarter births can leave school at an earlier grade: the contrast lowers completed schooling by about a tenth of a year, and lowers log wages slightly, so the Wald ratio is a ratio of two negative numbers. Using all four quarters, or their interactions with other variables, is a case of multiple instruments (@sec-w7-overid). The IV estimate of the return to schooling is approximately $0.08$--$0.10$ per year, similar to the OLS estimate in this case, suggesting the ability bias is modest.
 :::
 
 ## Why the IV Assumptions Matter {#sec-w7-why-matter}
 
 The three IV assumptions are not merely technical conditions: each one is load-bearing, and each failure mode produces a distinct, quantifiable distortion of the Wald estimand. Violating exogeneity or exclusion contaminates the reduced form, and dividing by a weak first stage magnifies that contamination. A weak instrument is therefore not merely inefficient; it makes any small violation of the identifying assumptions more consequential.
 
-**When relevance fails.** If $\pi = 0$, the Wald estimand is undefined: its denominator is zero and there is no exogenous variation to exploit. When $\pi$ is small but nonzero, the instrument is *weak*. The estimator's variance diverges as $\pi \to 0$ because the denominator amplifies noise, and finite-sample bias pulls the IV estimate toward the OLS estimate at a rate proportional to $1/F$, where $F$ is the first-stage $F$-statistic.
+**When relevance fails.** If $\pi = 0$, the Wald estimand is undefined: its denominator is zero and there is no exogenous variation to exploit. When $\pi$ is small but nonzero, the instrument is *weak*. The Wald ratio still identifies $\beta$, but its sample analog becomes unstable: the estimated first stage is often close to zero, and the estimator has very heavy tails. In the Gaussian design of @sec-w7-lab, the just-identified IV estimator has no finite mean, so mean bias is undefined. Its distribution is nevertheless pulled toward the OLS probability limit (median bias), and at $\pi = 0$ it is exactly a Cauchy distribution centered there [@bound1995problems; @andrews2017unbiased].
 
-**When exclusion fails.** If the outcome equation contains a direct effect $Y = \alpha + \beta T + \delta Z + \gamma^\top X + \varepsilon$ with $\delta \neq 0$, the reduced form picks up both the indirect path $\beta\pi$ and the direct path $\delta$, so the Wald estimand converges to $\beta + \delta/\pi$. The bias $\delta/\pi$ is amplified by a weak first stage: a small direct effect combined with a weak instrument can produce large bias. This is why a weak instrument with a plausible exclusion violation is not "nearly valid" --- it may be severely misleading.
+**When exclusion fails.** If the outcome equation contains a direct effect $Y = \alpha + \beta T + \delta Z + \gamma^\top X + \varepsilon$ with $\delta \neq 0$, the reduced form picks up both the indirect path $\beta\pi$ and the direct path $\delta$, so the Wald ratio equals $\beta + \delta/\pi$. The bias $\delta/\pi$ is amplified by a weak first stage: a small direct effect combined with a weak instrument can produce large bias. This is why a weak instrument with a plausible exclusion violation is not "nearly valid" --- it may be severely misleading. In the reminder-letter example of @exm-letter, the first stage is $0.20$ and the reduced form $-0.02$; if the letter itself lowered hospitalization risk by one percentage point, say by prompting hand-washing, the reduced form would become $-0.03$ and the ratio would move from $-0.10$ to $-0.15$. A one-point side effect shifts the estimate by five points.
 
-**When exogeneity fails.** If $\mathrm{Cov}(Z, \varepsilon \mid X) \neq 0$, the IV moment condition fails and the Wald estimand converges to $\beta + \mathrm{Cov}(\varepsilon, Z)/\mathrm{Cov}(T, Z)$. This is the IV analogue of OLS omitted-variable bias: IV fails when the instrument itself is endogenous, just as OLS fails when the treatment is endogenous. Again the bias is amplified when the first stage is weak.
+**When exogeneity fails.** If $\mathrm{Cov}(Z, \varepsilon \mid X) \neq 0$, the IV moment condition fails and the Wald ratio equals $\beta + \mathrm{Cov}(\varepsilon, Z)/\mathrm{Cov}(T, Z)$. This is the IV analogue of OLS omitted-variable bias: IV fails when the instrument itself is endogenous, just as OLS fails when the treatment is endogenous. Again the bias is amplified when the first stage is weak.
+
+@tbl-w7-testability summarizes the testability status of the three assumptions. The key asymmetry is that the hardest work in defending an IV design --- the institutional arguments for exogeneity and exclusion --- is precisely the work that the data cannot do for the researcher.
 
 | **Assumption** | **Directly testable?** | **Basis for assessment** |
 |---|---|---|
 | Relevance | Association testable; causal claim design-based | First-stage $F$-statistic and $\mathrm{Cov}(Z,T \mid X)$ test the observable association; the causal $Z \to T$ link rests on the design |
-| Exogeneity | No | Institutional knowledge; randomization (if available); placebo regressions on pre-determined outcomes |
-| Exclusion | No in just-identified case; partially in overidentified case | Institutional argument; overidentification test ($J$-test, Chapter 13) checks mutual consistency of instruments but cannot confirm all are valid |
+| Exogeneity | Not separately | Institutional knowledge; randomization (if available); placebo regressions on pre-determined outcomes |
+| Exclusion | Not separately | Institutional argument. With several instruments the $J$-test (Chapter 13) checks the joint moment restrictions, not exclusion by itself, and cannot confirm that all instruments are valid; with binary variables the instrumental inequality of @sec-w7-assumptions is a further check |
 
-: Testability of the three IV assumptions. Although exogeneity and exclusion are not directly testable, they are not entirely beyond empirical scrutiny. The IV model imposes inequality restrictions on the observable data distribution; when these are violated, falsification tests can detect the violation [@kitagawa2015test; @hernan2006instruments]. Importantly, such tests are not consistent against all alternatives: for most data distributions under which the assumptions fail, the tests will not reject even in large samples.
-
-The key asymmetry is that the hardest work in defending an IV design --- the institutional arguments for exogeneity and exclusion --- is precisely the work that the data cannot do for the researcher.
+: Testability of the three IV assumptions. Although exogeneity and exclusion are not directly testable --- no finite dataset can confirm them --- they are not entirely beyond empirical scrutiny. The IV model imposes inequality restrictions on the observable data distribution; when these are violated, falsification tests can detect the violation [@kitagawa2015test; @hernan2006instruments]. Importantly, however, such tests are not consistent against all alternatives: for most data distributions under which the assumptions fail, the tests will not reject even in large samples. The distinction between "directly testable," "falsifiable in some cases," and "requires institutional argument" captures the practical hierarchy for IV assumption assessment. {#tbl-w7-testability}
 
 ## Lab: OLS vs. IV Across Instrument Strengths {#sec-w7-lab}
 
-The analytic results of @sec-w7-linear and @sec-w7-why-matter established two facts: OLS is biased by a precise, computable amount whenever $\rho \neq 0$; and IV is consistent but its variance diverges as $\pi \to 0$. What the analytics do not immediately reveal is the *finite-sample consequence*: for weak instruments, the IV variance penalty is so severe that the biased OLS estimator can have lower mean squared error. This simulation studies estimator behavior conditional on the IV assumptions being true; it does not address the separate and fundamentally substantive question of whether a proposed instrument is valid in an applied study.
+The analytic results of @sec-w7-linear and @sec-w7-why-matter established two facts: OLS is biased by a precise, computable amount whenever $\rho \neq 0$; and IV is consistent for every fixed $\pi \neq 0$, but its sampling distribution spreads out and acquires heavy tails as $\pi \to 0$. What the analytics do not immediately reveal is the *finite-sample consequence*: with a weak instrument the IV estimate is usually close and occasionally far off, to the point that the biased OLS estimator can have a lower Monte Carlo root mean squared error. This lab verifies the bias formulas numerically and traces the behavior of both estimators across the full range of instrument strength, from $\pi = 0$ (no instrument) to $\pi = 2$ (very strong instrument). This simulation studies estimator behavior conditional on the IV assumptions being true; it does not address the separate and fundamentally substantive question of whether a proposed instrument is valid in an applied study.
 
 ::: {.callout-note icon=false}
 ## DGP for Lab 7
 
-The simulation implements the linear structural model of @sec-w7-linear with no covariates. Each replication draws $n = 500$ observations from
+The simulation implements the linear structural model of @sec-w7-linear with no covariates $X$. Each replication draws $n = 500$ observations from
 $$Y_i = \beta T_i + \varepsilon_i, \qquad T_i = \pi Z_i + \eta_i,$$
 with $Z_i \overset{\mathrm{i.i.d.}}{\sim} \mathrm{N}(0,1)$ and the structural errors generated as
 $$\eta_i = U_i, \qquad \varepsilon_i = \rho U_i + \sqrt{1 - \rho^2}\,\xi_i, \qquad U_i,\, \xi_i \overset{\mathrm{i.i.d.}}{\sim} \mathrm{N}(0,1).$$
-Here $U_i$ is the unobserved confounder shared by both equations, and $\xi_i$ is the idiosyncratic component of $\varepsilon_i$. This gives $\mathrm{Var}(\varepsilon_i) = \mathrm{Var}(\eta_i) = 1$ and $\mathrm{Cov}(\varepsilon_i, \eta_i) = \rho$. The fixed parameter values are $\beta = 1$ (true causal effect) and $\rho = 0.8$ (strong positive endogeneity). The first-stage coefficient $\pi$ is varied across eight values:
+Here $U_i$ is the unobserved confounder shared by both equations, and $\xi_i$ is the idiosyncratic component of $\varepsilon_i$ that is independent of everything else. This gives $\mathrm{Var}(\varepsilon_i) = \mathrm{Var}(\eta_i) = 1$ and $\mathrm{Cov}(\varepsilon_i, \eta_i) = \rho$, matching the notation $\rho\sigma_\varepsilon\sigma_\eta$ from @sec-w7-linear with $\sigma_\varepsilon = \sigma_\eta = 1$. The fixed parameter values are
+$$\beta = 1 \text{ (true causal effect)}, \qquad \rho = 0.8 \text{ (strong positive endogeneity)}.$$
+The first-stage coefficient $\pi$ is varied across eight values to sweep from a completely uninformative instrument to a very strong one:
 $$\pi \;\in\; \{0,\; 0.10,\; 0.15,\; 0.20,\; 0.30,\; 0.50,\; 1.00,\; 2.00\}.$$
-The expected first-stage $F$-statistic is approximately $n\pi^2 = 500\pi^2$. The Wald estimand is undefined at $\pi = 0$; the Staiger--Stock rule of thumb $F \geq 10$ corresponds to $\pi \geq 0.141$ in this design.
+The expected first-stage $F$-statistic is approximately $1 + n\pi^2 = 1 + 500\pi^2$ (since $Z \sim \mathrm{N}(0,1)$ and $\mathrm{Var}(\eta) = 1$); $n\pi^2$ approximates the noncentrality parameter, and the extra $1$ matters for weak instruments. (Exactly, with an intercept in the first stage, $F = t^2$ for a noncentral $t$ with $n - 2$ degrees of freedom, so $\E(F) = \tfrac{n-2}{n-4}\{1 + (n-1)\pi^2\}$, which is $1 + n\pi^2$ to the accuracy of the tables.) The Wald estimand is undefined at $\pi = 0$, although the sample ratio can always be computed. Identification holds for every fixed $\pi \neq 0$; it does not guarantee stable estimation with $n = 500$.
 :::
 
 ::: {.callout-note icon=false}
 ## Potential Outcomes Interpretation of the DGP
 
-The structural DGP has an exact translation into the potential outcomes language of Chapter 4, which makes explicit *why* OLS fails and *why* IV succeeds.
+The structural DGP above has an exact translation into the potential outcomes language of Chapter 4, which makes explicit *why* OLS fails and *why* IV succeeds.
 
 **Potential outcomes.** The latent background factor $\varepsilon_i$ is fixed for each unit across all counterfactual worlds. The potential outcome under treatment value $t$ is therefore
 $$Y_i(t) \;=\; \beta t + \varepsilon_i.$$ {#eq-w7-lab-po}
-The observed outcome satisfies $Y_i = Y_i(T_i)$, which is consistency. Because $\varepsilon_i$ does not depend on $t$, the individual treatment effect is constant: $Y_i(t) - Y_i(t') = \beta(t - t')$ for all $i$. This is exactly Framework 1: $\beta$ is simultaneously the ATE, the ATT, and the LATE.
+The observed outcome satisfies $Y_i = Y_i(T_i) = \beta T_i + \varepsilon_i$, which is the consistency assumption. Because $\varepsilon_i$ does not depend on $t$, the individual treatment effect is constant:
+$$Y_i(t) - Y_i(t') \;=\; \beta(t - t') \quad \text{for all } i.$$
+This is exactly Framework 1 from @sec-w7-linear: $\beta$ is simultaneously the ATE, the ATT, and the LATE.
 
-**The unobserved confounder.** The shared factor $U_i$ enters both the treatment assignment and the background outcome. Because $\varepsilon_i$ depends on $U_i$ and $\eta_i = U_i$, units with large $T_i$ (driven by large $U_i$) also tend to have large $\varepsilon_i$, and hence large $Y_i$, *even if $\beta = 0$*. Formally,
-$$\mathrm{Cov}\!\bigl(Y_i(t),\, T_i\bigr) = \mathrm{Cov}(\varepsilon_i,\, \eta_i) = \rho \;\neq\; 0,$$
-so unconfoundedness fails. The parameter $\rho$ is precisely the *degree of violation*.
+**The unobserved confounder.** The shared factor $U_i$ is the unobserved confounder (plotted as the dashed node in the DAG of @sec-w7-assumptions). It enters both the treatment assignment and the background outcome:
+$$T_i = \pi Z_i + U_i, \qquad \varepsilon_i = \rho U_i + \sqrt{1-\rho^2}\,\xi_i.$$
+Because $\varepsilon_i$ depends on $U_i$ and $\eta_i = U_i$, units with large $T_i$ (driven by large $U_i$) also tend to have large $\varepsilon_i$, and hence large $Y_i$, *even if $\beta = 0$*. Formally,
+$$\mathrm{Cov}\!\bigl(Y_i(t),\, T_i\bigr) = \mathrm{Cov}(\varepsilon_i,\, \eta_i) = \mathrm{Cov}(\rho U_i,\, U_i) = \rho \;\neq\; 0,$$
+so the unconfoundedness condition $(Y_i(t) \indep T_i)$ fails. The parameter $\rho$ is precisely the *degree of violation*: when $\rho = 0$ the errors are uncorrelated and OLS is consistent; when $\rho = 0.8$ the structural errors are strongly correlated (correlation $0.8$, since both have unit variance), and all of the co-movement between $T$ and $Y$ not due to $\beta$ flows through the shared confounder $U_i$.
 
-**Why IV restores identification.** The instrument $Z_i$ is drawn independently of $U_i$ and $\xi_i$, so $Z_i \indep U_i$ implies $Z_i \indep \varepsilon_i$ --- exogeneity, satisfied by construction. The instrument does not appear in $Y_i(t)$ (@eq-w7-lab-po), which is the exclusion restriction: $Y_i(t, z) = Y_i(t)$ for all $z$. And $Z_i$ moves $T_i$ through $\pi$, which is relevance. All three IV assumptions hold exactly by construction.
+**Why IV restores identification.** The instrument $Z_i$ is drawn independently of $U_i$ (and of $\xi_i$), so it is independent of both the unobserved confounder and the background outcome:
+$$Z_i \indep U_i \quad\Longrightarrow\quad Z_i \indep \varepsilon_i.$$
+This is exogeneity, satisfied by construction. The instrument $Z_i$ does not appear in $Y_i(t)$ (@eq-w7-lab-po), which is the exclusion restriction: $Y_i(t, z) = Y_i(t)$ for all $z$. And $Z_i$ moves $T_i$ through the first-stage coefficient $\pi$, which is relevance. All three IV assumptions hold exactly by construction, confirming that the Wald estimator targets the true $\beta$ for any $\pi \neq 0$.
 
-**What varies across the grid.** The potential outcomes $Y_i(t)$ are *the same* for every value of $\pi$ --- the parameter $\pi$ governs only how strongly the instrument shifts treatment. All that changes for OLS as $\pi$ grows is that more of $T_i$'s variance comes from the clean source $Z_i$ rather than from the confounded source $U_i$, which partially dilutes the endogeneity bias. But because the potential outcomes themselves are unchanged, $\beta = 1$ remains the target at every row of the table.
+**What varies across the grid.** The potential outcomes $Y_i(t)$ are *the same* for every value of $\pi$ --- the parameter $\pi$ governs only how strongly the instrument shifts treatment. Varying $\pi$ changes the *first-stage signal* but not the counterfactual surfaces. All that changes for OLS as $\pi$ grows is that more of $T_i$'s variance comes from the clean source $Z_i$ rather than from the confounded source $U_i$, which partially dilutes the endogeneity bias. But because the potential outcomes themselves are unchanged, $\beta = 1$ remains the target at every row of @tbl-w7-lab.
 :::
 
-**Estimators.** *OLS* regresses $Y$ on $T$; from @eq-ols-bias it converges to $\beta + \rho/(\pi^2 + 1) = 1 + 0.8/(\pi^2+1)$. The bias is always positive (since $\rho > 0$), decreasing in $|\pi|$, but never zero for finite $\pi$. *IV (Wald)* uses $Z$ as the instrument; it is consistent for $\beta$ for any $\pi \neq 0$, with finite-sample variance approximately $\sigma^2/(n\pi^2)$, diverging as $\pi \to 0$.
+**Estimators.** Two estimators of $\beta$ are compared at each value of $\pi$.
 
-**Results** ($n = 500$, $B = 2{,}000$ replications, seed 2024; true $\beta = 1.000$):
+*OLS* regresses $Y$ on $T$: $\hat\beta_{\mathrm{OLS}} = \mathrm{Cov}(Y, T)/\mathrm{Var}(T)$. From @sec-w7-linear, this converges in probability to $\beta + \rho/(\pi^2 + 1) = 1 + 0.8/(\pi^2 + 1)$. The bias is always positive (since $\rho > 0$), decreasing in $|\pi|$, but never zero for finite $\pi$.
+
+*IV (Wald estimator)* uses $Z$ as the instrument: $\hat\beta_{\mathrm{IV}} = \mathrm{Cov}(Y, Z)/\mathrm{Cov}(T, Z)$. This estimator is consistent for $\beta$ for any fixed $\pi \neq 0$, and for a strong instrument its distribution is approximately normal with variance $\sigma_\varepsilon^2/(n\pi^2)$ in this design, a variance that grows without bound as $\pi \to 0$. This is the variance of the normal approximation, not of the estimator: in finite samples the just-identified IV estimator has no finite moments in this Gaussian design, whatever the value of $\pi$, so its mean, variance, and mean squared error do not exist at any $n$.
+
+**Results.** @tbl-w7-lab reports Monte Carlo mean, bias, standard deviation, and RMSE across $B = 2{,}000$ replications at $n = 500$, seed `2024`, alongside the theoretical OLS bias from @sec-w7-linear and the mean first-stage $F$-statistic. For OLS these columns estimate population quantities. For IV they do not: because the IV estimator has no finite moments in this design, the IV mean, SD, and RMSE summarize these 2,000 draws only and change from seed to seed. @tbl-w7-labq therefore adds quantile-based summaries, which do have population counterparts.
 
 | $\pi$ | $F$ | Theory bias | OLS mean | OLS bias | OLS SD | OLS RMSE | IV mean | IV bias | IV SD | IV RMSE |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 0.00 | 1 | +0.800 | 1.801 | +0.801 | 0.026 | 0.802 | — | — | — | — |
-| 0.10 | 6 | +0.792 | 1.791 | +0.791 | 0.027 | 0.792 | 0.872 | −0.128 | 4.391 | 4.393 |
-| 0.15 | 13 | +0.782 | 1.782 | +0.782 | 0.027 | 0.783 | 0.764 | −0.236 | 6.487 | 6.491 |
-| 0.20 | 21 | +0.769 | 1.769 | +0.769 | 0.027 | 0.770 | 0.940 | −0.060 | 0.380 | 0.385 |
-| 0.30 | 46 | +0.734 | 1.735 | +0.735 | 0.028 | 0.735 | 0.975 | −0.025 | 0.163 | 0.165 |
-| 0.50 | 127 | +0.640 | 1.639 | +0.639 | 0.028 | 0.640 | 0.996 | −0.004 | 0.091 | 0.091 |
-| 1.00 | 500 | +0.400 | 1.401 | +0.401 | 0.027 | 0.402 | 0.999 | −0.001 | 0.045 | 0.045 |
-| 2.00 | 2006 | +0.160 | 1.160 | +0.160 | 0.019 | 0.161 | 1.000 | 0.000 | 0.022 | 0.022 |
+| 0.00 | 1 | $+0.800$ | 1.801 | $+0.801$ | 0.026 | 0.802 | 0.756 | $-0.244$ | 32.2 | 32.2 |
+| 0.10 | 6 | $+0.792$ | 1.791 | $+0.791$ | 0.027 | 0.792 | 0.872 | $-0.128$ | 4.391 | 4.393 |
+| 0.15 | 13 | $+0.782$ | 1.782 | $+0.782$ | 0.027 | 0.783 | 0.764 | $-0.236$ | 6.487 | 6.491 |
+| 0.20 | 21 | $+0.769$ | 1.769 | $+0.769$ | 0.027 | 0.770 | 0.940 | $-0.060$ | 0.380 | 0.385 |
+| 0.30 | 46 | $+0.734$ | 1.735 | $+0.735$ | 0.028 | 0.735 | 0.975 | $-0.025$ | 0.163 | 0.165 |
+| 0.50 | 127 | $+0.640$ | 1.639 | $+0.639$ | 0.028 | 0.640 | 0.996 | $-0.004$ | 0.091 | 0.091 |
+| 1.00 | 500 | $+0.400$ | 1.401 | $+0.401$ | 0.027 | 0.402 | 0.999 | $-0.001$ | 0.045 | 0.045 |
+| 2.00 | 2006 | $+0.160$ | 1.160 | $+0.160$ | 0.019 | 0.161 | 1.000 | $0.000$ | 0.022 | 0.022 |
 
-: Monte Carlo performance of OLS and IV across instrument strengths. Theoretical OLS bias $= 0.8/(\pi^2+1)$. "—" denotes $\pi = 0$, where IV is not defined. IV mean and SD at $\pi = 0.10$ and $0.15$ are dominated by extreme outliers; the IV median is $\approx 1.01$ at both values.
+: Monte Carlo performance of OLS and IV across instrument strengths. True $\beta = 1.000$. Theoretical OLS bias $= 0.8/(\pi^2 + 1)$. $n = 500$, $B = 2{,}000$ replications, seed `2024`. RMSE is reported as $\sqrt{\text{bias}^2 + \text{sd}^2}$. At $\pi = 0$ the Wald estimand is undefined, but the sample ratio is still computable and its row is reported. IV mean and SD at $\pi \le 0.15$ are set by a few extreme replications; the IV median is $\approx 1.01$ at $\pi = 0.10$ and $0.15$. {#tbl-w7-lab}
 
-**1. The OLS bias formula is exact.** The theory-bias column matches the simulated OLS bias to within Monte Carlo error across all eight values of $\pi$. OLS is biased in the direction of $\rho$ at every value of $\pi$, including $\pi = 0$ where there is no instrument at all. Crucially, the OLS bias *decreases* as $\pi$ grows, because a stronger first stage means more of $T$'s variance comes from the exogenous source $Z$. At $\pi = 2$ the bias is only $0.160$, yet this still produces RMSE $= 0.161$, which is $7\times$ larger than the IV RMSE of $0.022$ at the same $\pi$.
+| $\pi$ | $F$ | OLS limit | OLS median | OLS MdAE | IV median | IV 5% | IV 95% | IV MdAE | Far off |
+|---|---|---|---|---|---|---|---|---|---|
+| 0.00 | 1 | 1.800 | 1.801 | 0.801 | 1.796 | $-1.670$ | 5.676 | 0.987 | 49.4% |
+| 0.10 | 6 | 1.792 | 1.791 | 0.791 | 1.013 | $-0.720$ | 1.537 | 0.295 | 11.5% |
+| 0.15 | 13 | 1.782 | 1.782 | 0.782 | 1.011 | 0.131 | 1.370 | 0.200 | 3.8% |
+| 0.20 | 21 | 1.769 | 1.769 | 0.769 | 0.995 | 0.415 | 1.293 | 0.154 | 1.1% |
+| 0.30 | 46 | 1.734 | 1.734 | 0.734 | 0.993 | 0.677 | 1.199 | 0.106 | 0.0% |
+| 0.50 | 127 | 1.640 | 1.639 | 0.639 | 1.001 | 0.839 | 1.131 | 0.061 | 0.0% |
+| 1.00 | 500 | 1.400 | 1.401 | 0.401 | 1.000 | 0.923 | 1.069 | 0.031 | 0.0% |
+| 2.00 | 2006 | 1.160 | 1.161 | 0.161 | 1.000 | 0.962 | 1.036 | 0.015 | 0.0% |
 
-**2. IV is consistent but has catastrophically heavy tails when the instrument is weak.** At $\pi = 0.10$ ($F \approx 6$) and $\pi = 0.15$ ($F \approx 13$) the IV *mean* is far from the true value, suggesting bias. This is misleading: the IV *median* is $\approx 1.01$ at both values, confirming that the estimator is consistent and the *typical* replication recovers $\beta = 1$. The mean is dragged off by a small fraction of replications in which the first stage happens to be near zero, making the Wald ratio explode. Indeed, the just-identified IV estimator possesses *no finite moments*, so the mean and SD entries at $\pi = 0.10$ and $0.15$ have no population counterparts: they are determined by the few most extreme replications and vary substantially across seeds. The take-away is that the weak instrument problem is not inconsistency; it is uncontrolled tail behavior.
+: Quantile-based summaries of the same 2,000 replications. True $\beta = 1$. "OLS limit" is the OLS probability limit $1 + 0.8/(1 + \pi^2)$. MdAE is the median of $|\hat\beta - 1|$. The 5% and 95% columns are quantiles of $\hat\beta_{\mathrm{IV}}$; the OLS 5%--95% range is never wider than $0.1$. "Far off" is the share of IV estimates with $|\hat\beta - 1| > 1$. Same run as @tbl-w7-lab (seed `2024`). {#tbl-w7-labq}
 
-**3. The RMSE crossover occurs near $F \approx 20$.** OLS RMSE ranges from $0.802$ down to $0.161$, while IV RMSE starts infinite, is catastrophic at $\pi = 0.10$--$0.15$, then drops sharply to $0.385$ at $\pi = 0.20$ ($F \approx 21$) and to $0.165$ at $\pi = 0.30$. IV first beats OLS on RMSE at $\pi = 0.20$: this is the crossover. Below this threshold, the variance penalty of IV exceeds the bias penalty of OLS and the biased estimator is *preferable* in mean squared error terms. The Staiger--Stock rule of thumb ($F \geq 10$) is therefore slightly *too lenient*: at $F \approx 13$ the IV RMSE in this run is still an order of magnitude above OLS. A more conservative threshold of $F \geq 20$--$25$ is needed before IV dominates OLS in this DGP.
+Four lessons stand out.
 
-**4. A strong instrument eliminates both problems.** At $\pi = 1.00$ ($F \approx 500$), IV is virtually unbiased with RMSE $= 0.045$, while OLS still carries a bias of $0.401$, giving RMSE $= 0.402$ --- a **9-fold** improvement from IV. With a strong instrument, IV is simultaneously unbiased *and* more efficient than OLS in MSE terms, because OLS efficiency is illusory: its small variance is offset by a large, persistent bias.
+**1. The OLS bias formula is exact.** The "Theory bias" column of @tbl-w7-lab ($0.8/(\pi^2 + 1)$) matches the simulated OLS bias to within Monte Carlo error at all eight values of $\pi$. OLS is biased in the direction of $\rho$ at every value of $\pi$, including $\pi = 0$. The bias *decreases* as $\pi$ grows, because more of $T$'s variance then comes from the exogenous source $Z$, but it never vanishes: at $\pi = 2$ the OLS estimates still sit near $1.16$, and the OLS 5%--95% range never comes within $0.1$ of $\beta$, while 90% of the IV estimates lie in $[0.962, 1.036]$. OLS is precise around the wrong value.
+
+**2. IV is consistent, but a weak instrument makes it unstable and can bias its median.** At $\pi = 0.10$ (mean $F \approx 6$) and $\pi = 0.15$ (mean $F \approx 13$) the IV *means* in @tbl-w7-lab are $0.87$ and $0.76$, while the IV *medians* in @tbl-w7-labq are $1.013$ and $1.011$. The middle 90% of the estimates runs from $-0.72$ to $1.54$ at $\pi = 0.10$, and $11.5\%$ of the estimates miss $\beta$ by more than 1. Since the estimator has no finite moments, the mean and SD entries have no population counterparts: they are set by a few replications whose estimated first stage is near zero, and they vary across seeds. Mean bias is undefined here. For the nonzero values of $\pi$ in the tables the IV median is close to $\beta = 1$, but weaker instruments also produce substantial median bias toward the OLS limit: with the same design and $20{,}000$ draws, the IV median is about $1.23$ at $\pi = 0.05$ and $1.49$ at $\pi = 0.03$, and at $\pi = 0$ it is $1.8$ [@andrews2017unbiased]. The weak-instrument problem is not inconsistency: IV is consistent for each fixed $\pi \neq 0$, but weak instruments produce unstable and median-biased estimates in finite samples.
+
+**3. Monte Carlo RMSE and median error disagree.** By the Monte Carlo RMSE of these draws, OLS looks better than IV in the rows with $\pi \le 0.15$ (for example $4.39$ against $0.79$ at $\pi = 0.10$); this is a fact about these draws, not a population crossover, since the population RMSE of IV is infinite in every row. By the median absolute error, IV is closer to $\beta$ than OLS in every row with $\pi \neq 0$ (for example $0.295$ against $0.791$ at $\pi = 0.10$). The two criteria disagree because of the tails: a weak instrument is usually close and occasionally far off. Even a design with mean $F \approx 13$ produced $3.8\%$ of estimates off by more than 1. This describes the design, not what to expect in one data set with an observed $F$ of 13 (see the remark on the $F$-statistic below).
+
+**4. A strong instrument removes the dilemma.** At $\pi = 1.00$ (mean $F \approx 500$) the middle 90% of the IV estimates lies in $[0.923, 1.069]$ and none is far off, while OLS concentrates near $1.40$. With a strong instrument, IV is accurate by every criterion in @tbl-w7-labq.
 
 ::: {.callout-warning icon=false}
 ## RMSE Cannot Be the Only Criterion
 
-The table shows that OLS has lower RMSE than IV for $\pi < 0.20$ in this DGP. This does not vindicate OLS. An estimator with RMSE $= 0.78$ because it is biased by $0.80$ is useless for causal inference: the bias is systematic and does not shrink with sample size. As $n \to \infty$, IV RMSE shrinks to zero while OLS RMSE stays at $0.80$. The RMSE comparison is only meaningful in *finite samples*. For a fixed $n$, it quantifies when a weak instrument is so unreliable that IV is not yet practically useful --- but that is an argument for finding a stronger instrument, not for using OLS.
+@tbl-w7-lab shows that OLS has a lower Monte Carlo RMSE than IV for $\pi < 0.20$ in this run. This does not vindicate OLS. An estimator whose error is a bias of about $0.8$ is useless for causal inference: the bias is systematic and does not shrink with sample size. For each fixed $\pi \neq 0$, IV converges in probability to $\beta$, while OLS converges to $\beta + 0.8/(1 + \pi^2)$. The RMSE comparison describes these finite samples only. It says when a weak instrument is not yet useful; that is an argument for finding a stronger instrument, or for inference that remains valid with weak instruments (Chapter 13), not for using OLS.
 :::
 
 ::: {.callout-note icon=false}
 ## Remark: The First-Stage $F$-Statistic as a Diagnostic
 
-The approximate formula $F \approx n\pi^2$ gives first-stage $F$-statistics of $6$, $13$, $21$, $46$, $127$, $500$, and $2006$ for the seven non-zero $\pi$ values. The Staiger--Stock threshold of $F \geq 10$ is widely used in practice and corresponds to IV RMSE within a factor of roughly two of the strong-instrument limit; the weak-instrument problem it addresses was documented forcefully by @bound1995problems. The simulation here suggests this threshold may understate the problem when endogeneity is strong ($\rho = 0.8$): at $F = 13$ the IV RMSE in this run is still far above any useful threshold. A researcher should report the first-stage $F$ alongside any IV estimate, and treat values below $20$--$25$ with particular caution.
+The approximation $\E(F) \approx 1 + n\pi^2$ matches the mean first-stage $F$-statistics in @tbl-w7-lab: $6$, $13$, $21$, $46$, $127$, $500$, and $2006$ for the seven nonzero values of $\pi$. @staiger1997instrumental proposed treating $F < 10$ as a sign of a weak instrument, and @stockyogo2005 supplied formal critical values. Those values depend on the number of instruments and on the criterion (the bias of 2SLS relative to OLS, defined only with three or more instruments, or the size of a nominal 5% Wald test), so 10 is not a universal constant (Chapter 13). The weak-instrument problem was documented forcefully by @bound1995problems. Two cautions apply. First, the tables report the *average* $F$ of a design; they do not describe what to expect after observing a particular $F$ in one data set, and the extreme estimates come mostly from replications with unusually small estimated first stages. Second, screening on the observed $F$ itself changes the properties of the reported estimates [@angrist2024one]. A researcher should report the first stage and the reduced form alongside any IV estimate and, when $F$ is small, use inference that remains valid with weak instruments (Chapter 13).
 :::
 
 ## Multiple Instruments and Overidentification {#sec-w7-overid}
 
 This section gives only the identification-level intuition for using more than one instrument. The computational details of 2SLS with multiple instruments, GMM weighting, and the Sargan--Hansen $J$-test are deferred to Chapter 13.
 
-When there are exactly as many instruments as endogenous variables ($q = p$), the model is *just-identified*: the IV assumptions pin down the causal parameter exactly, leaving no surplus identifying variation. When $q > p$, the model is *overidentified*: the extra instruments impose additional moment restrictions beyond those needed for identification. Under the homogeneous-effect linear model, every valid instrument must imply the same structural coefficient $\beta$, so those extra restrictions are testable. Under heterogeneous treatment effects, valid instruments can legitimately identify *different* LATEs because they shift treatment for different complier populations; the overidentification test then targets equality of probability limits across instruments, and a rejection admits more interpretations than instrument invalidity. In both cases, the Sargan--Hansen $J$-test [@sargan1958estimation; @hansen1982large] formalizes the mutual-consistency check; rejection indicates that at least one of the instruments either violates exogeneity or exclusion or identifies a different LATE, but does not localize which.
+When there are exactly as many instruments as endogenous variables ($q = p$), the model is *just-identified*: the IV assumptions pin down the causal parameter exactly, leaving no surplus identifying variation. When $q > p$, the model is *overidentified*: the extra instruments impose additional moment restrictions beyond those needed for identification. Under the homogeneous-effect linear model of @sec-w7-linear, every valid instrument must imply the same structural coefficient $\beta$, so those extra restrictions are testable. Under heterogeneous treatment effects (@sec-w7-late), valid instruments can legitimately identify *different* LATEs because they shift treatment for different complier populations; the overidentification test then targets equality of probability limits across instruments, and a rejection admits more interpretations than instrument invalidity. In both cases, the Sargan--Hansen $J$-test [@sargan1958estimation; @hansen1982large] formalizes the mutual-consistency check; rejection indicates that at least one of the instruments either violates exogeneity or exclusion or identifies a different LATE, but does not localize which. The test statistic and its asymptotic distribution are derived in Chapter 13.
 
-The terminology distinguishes the *order condition* --- a counting requirement that $q \geq p$ --- from the *rank condition*, which requires the instruments to be linearly independent in the first stage. Both are necessary for identification. The order condition is met by inspection; the rank condition is testable from the first-stage coefficient matrix.
+The terminology distinguishes the *order condition* --- a counting requirement that $q \geq p$ --- from the *rank condition*, $\operatorname{rank}\{\E(\tilde Z \tilde T^\top)\} = p$, where $\tilde Z$ and $\tilde T$ are the excluded instruments and the endogenous treatments after adjusting for $X$. In words, the instruments must move the treatments in $p$ linearly independent directions. Both conditions are necessary for identification, and counting alone is not enough: $q$ irrelevant instruments satisfy the order condition. The order condition is checked by inspection; the rank condition can be assessed from the first-stage coefficient matrix. Both notions are developed formally in Chapter 13.
 
 ::: {.callout-warning icon=false}
 ## What Overidentification Does Not Do
 
-Passing the $J$-test does not confirm that any instrument is valid. It only shows that the sample moment conditions are mutually compatible --- a weaker conclusion than validity. In the just-identified case the test has no power at all. Multiple invalid instruments can agree with one another if they share the same violation, so a consistent set of instruments is not necessarily a valid one. Heterogeneous treatment effects or model misspecification can also affect the test's behavior. Overidentification is an opportunity for a consistency check, not a substitute for the institutional argument that makes a design credible.
+Failing to reject in a $J$-test does not confirm that any instrument is valid. It means only that the test did not detect incompatibility among the moment conditions. This may reflect low power, and it establishes neither their equality in the population nor validity. In the just-identified case there are no overidentifying restrictions for the $J$-test to check, although a binary IV model may still have the inequality restrictions noted in @tbl-w7-testability. Multiple invalid instruments can agree with one another if they share the same violation, so a consistent set of instruments is not necessarily a valid one. Heterogeneous treatment effects or model misspecification can also affect the test's behavior. Overidentification is an opportunity for a consistency check, not a substitute for the institutional argument that makes a design credible.
 :::
 
 ::: {.callout-note icon=false}
@@ -481,7 +524,9 @@ In the overidentified case, the surplus moment conditions can also be exploited 
 ::: {.callout-note icon=false}
 ## Framework 2: Heterogeneous Treatment Effects
 
-@sec-w7-linear imposed a common treatment effect $\beta$ for every unit. That assumption is often too strong for applied work. We now drop homogeneity and allow $\tau_i = Y_i(1) - Y_i(0)$ to vary across units. Throughout this section we work in the binary instrument, binary treatment setting ($Z, T \in \{0,1\}$).
+@sec-w7-linear imposed a common treatment effect $\beta$ for every unit. That assumption is often too strong for applied work. We now drop homogeneity and allow
+$$\tau_i = Y_i(1) - Y_i(0)$$
+to vary across units. Throughout this section we work in the binary instrument, binary treatment setting ($Z, T \in \{0,1\}$).
 
 In this more realistic setting, the Wald ratio generally no longer identifies the ATE. Instead, under an additional assumption of monotonicity, it identifies the *Local Average Treatment Effect* (LATE): the average treatment effect for the subpopulation whose treatment status is changed by the instrument. The contrast with Framework 1 should be kept explicit:
 
@@ -501,12 +546,12 @@ The failure is not a defect of the Wald ratio: under relevance, exogeneity, excl
 
 In the binary-instrument, binary-treatment setting, each unit's response to the instrument is fully described by the pair of potential treatment decisions $(T_i(0), T_i(1))$: the treatment the unit would take under each value of $Z$. This pair defines the unit's *compliance type* --- a latent causal classification, because $(T_i(0), T_i(1))$ is never jointly observed in data.
 
-::: {.callout-note icon=false}
-## Definition: Compliance Types [@angrist1996identification]
+::: {#def-compliance}
+## Compliance Types [@angrist1996identification]
 
 For binary $Z, T \in \{0,1\}$, define the potential treatment $T_i(z)$ as the treatment unit $i$ would take under instrument value $z$. The four compliance types are:
 
-| **Compliance type** | $T_i(0)$ | $T_i(1)$ |
+| Compliance type | $T_i(0)$ | $T_i(1)$ |
 |---|---|---|
 | Complier | 0 | 1 |
 | Always-taker | 1 | 1 |
@@ -516,57 +561,100 @@ For binary $Z, T \in \{0,1\}$, define the potential treatment $T_i(z)$ as the tr
 A **complier** takes treatment if and only if the instrument is switched on. An **always-taker** takes treatment regardless of $Z$. A **never-taker** never takes treatment regardless of $Z$. A **defier** does the opposite of what the instrument suggests.
 :::
 
-The instrument $Z$ only shifts treatment for *compliers*: always-takers and never-takers have the same treatment status regardless of $Z$, so they contribute nothing to the denominator $\E[T \mid Z{=}1] - \E[T \mid Z{=}0]$. This is the first indication that the Wald ratio will be driven by the complier subgroup rather than by the full population.
+The instrument $Z$ shifts treatment only for *compliers and defiers*: always-takers and never-takers have the same treatment status regardless of $Z$, so they contribute nothing to the denominator $\E[T \mid Z{=}1] - \E[T \mid Z{=}0]$. This is the first indication that the Wald ratio will be driven by the units the instrument moves rather than by the full population.
 
 ### The Monotonicity Assumption
 
 The three core IV assumptions alone do not yield a clean causal interpretation for the Wald ratio when effects are heterogeneous. The difficulty is that the instrument may push some units toward treatment and others away from it: in the presence of defiers, the numerator and denominator of the Wald ratio conflate effects in opposite directions. A fourth assumption rules out this ambiguity.
 
-::: {.callout-note icon=false}
-## Definition: Monotonicity [@imbens1994identification]
+::: {#def-monotonicity}
+## Monotonicity [@imbens1994identification]
 
-The treatment assignment is **monotone in** $Z$ if $T_i(1) \geq T_i(0)$ for all $i$. Equivalently: there are no defiers in the population.
+The treatment assignment is **monotone in** $Z$ if
+$$T_i(1) \;\geq\; T_i(0) \quad \text{for all } i.$$
+Equivalently: there are no defiers in the population.
 :::
 
-**Interpretation.** Monotonicity is not a generic law of causal inference. It is a design-specific claim about how this particular instrument changes treatment behavior. Switching the instrument from $0$ to $1$ may induce some units to take treatment (compliers) and leave others unaffected (always-takers or never-takers), but it should not reverse anyone's treatment decision. This is most plausible when the instrument is a randomized encouragement, access rule, or administrative assignment mechanism. In many observational IV settings the no-defiers assumption is substantively harder to defend and requires explicit justification.
+**Interpretation.** Monotonicity is not a generic law of causal inference. It is a design-specific claim about how this particular instrument changes treatment behavior. Switching the instrument from $0$ to $1$ may induce some units to take treatment (compliers) and leave others unaffected (always-takers or never-takers), but it should not reverse anyone's treatment decision. This is most plausible when the instrument is a randomized encouragement, access rule, or administrative assignment mechanism. In many observational IV settings the no-defiers assumption is substantively harder to defend and requires explicit justification. Because it compares $T_i(1)$ and $T_i(0)$ for the same unit, no data set can confirm it; it can be contradicted, however. Under exogeneity the first stage equals $P(\text{complier}) - P(\text{defier})$, so monotonicity implies $P(T{=}1 \mid Z{=}1) \ge P(T{=}1 \mid Z{=}0)$, and a negative first stage rules it out. @exm-letter gives a sharper check.
 
 ### The LATE Theorem
 
-Under the three core IV assumptions, heterogeneous treatment effects, and monotonicity, the Wald ratio no longer identifies the ATE. Instead it recovers the average treatment effect for the units whose treatment status is actually changed by the instrument --- the compliers. The effect is local not because it is estimated with nearby observations, but because it pertains to a local margin of behavioral response defined by the instrument itself.
+Under the three core IV assumptions, heterogeneous treatment effects, and monotonicity, the Wald ratio derived in @sec-w7-linear no longer identifies the ATE. Instead it recovers the average treatment effect for the units whose treatment status is actually changed by the instrument --- the compliers. This is the *Local Average Treatment Effect* (LATE).
+
+The effect is local not because it is estimated with nearby observations, but because it pertains to a local margin of behavioral response defined by the instrument itself: it is the average effect precisely for the subpopulation that the instrument moves.
 
 ::: {#thm-late}
 ## LATE Theorem [@imbens1994identification]
 
-Suppose the following hold:
+Let $Z$ and $T$ be binary, with $0 < P(Z = 1) < 1$, and suppose the following hold:
 
-1. **Exogeneity (PO form):** $Z \indep \bigl(Y(0),\, Y(1),\, T(0),\, T(1)\bigr)$;
-2. **Exclusion:** $Y_i(t, z) = Y_i(t)$ for all $z$;
-3. **Relevance:** $\E[T(1) - T(0)] \neq 0$;
-4. **Monotonicity:** $T_i(1) \geq T_i(0)$ for all $i$.
+1. **Consistency:** $T = T(Z)$ and $Y = Y(T, Z)$;
+2. **Exogeneity (PO form):** $Z \indep \{T(z),\, Y(T(z), z)\}$ for each $z$, that is, @eq-w7-po-exog without $X$;
+3. **Exclusion:** $Y_i(t, z) = Y_i(t)$ for all $z$ (i.e., $Z$ enters $Y$ only through $T$);
+4. **Relevance:** $\E[T(1) - T(0)] \neq 0$;
+5. **Monotonicity:** $T_i(1) \geq T_i(0)$ for all $i$.
 
 Then the Wald estimand identifies the **Local Average Treatment Effect** (LATE):
-$$\frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}{\E[T \mid Z{=}1] - \E[T \mid Z{=}0]} \;=\; \E\!\bigl[Y(1) - Y(0) \;\big|\; T_i(1) > T_i(0)\bigr] \;\equiv\; \tau_{\mathrm{LATE}}.$$ {#eq-late}
-That is, the Wald estimand identifies the average causal effect for *compliers* only. When covariates are present, the same result holds with all assumptions and the Wald formula stated conditionally on $X$.
+$$\frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}{\E[T \mid Z{=}1] - \E[T \mid Z{=}0]}
+\;=\; \E\!\bigl[Y(1) - Y(0) \;\big|\; T_i(1) > T_i(0)\bigr]
+\;\equiv\; \tau_{\mathrm{LATE}}.$$ {#eq-late}
+
+That is, the Wald estimand identifies the average causal effect for *compliers* only. When covariates are present, the same result holds at each value $x$, with all assumptions and the Wald formula stated conditionally on $X = x$. Combining the conditional effects into a single estimand requires weights; how estimators such as 2SLS weight them is taken up in Chapter 13.
 :::
 
-*Proof.* We decompose the numerator and denominator by compliance type. Throughout, consistency gives $T_i = T_i(Z_i)$ and $Y_i = Y_i(T_i, Z_i)$, and exclusion reduces the latter to $Y_i = Y_i(T_i(Z_i))$.
+::: {.callout-note collapse=true icon=false}
+## Proof of the LATE Theorem
 
-**Denominator.** By consistency for $T$ and exogeneity ($Z \indep (T(0), T(1))$):
+We decompose the numerator and denominator by compliance type. Throughout, consistency gives $T_i = T_i(Z_i)$ and $Y_i = Y_i(T_i, Z_i)$, and exclusion reduces the latter to $Y_i = Y_i(T_i(Z_i))$.
+
+**Denominator.** By consistency for $T$ and exogeneity ($Z \indep T(z)$ for each $z$):
 $$\begin{aligned}
-\E[T \mid Z{=}1] - \E[T \mid Z{=}0] &= \E[T(1) \mid Z{=}1] - \E[T(0) \mid Z{=}0] \\
+\E[T \mid Z{=}1] - \E[T \mid Z{=}0]
+&= \E[T(1) \mid Z{=}1] - \E[T(0) \mid Z{=}0] \\
 &= \E[T(1)] - \E[T(0)] = \E[T(1) - T(0)],
 \end{aligned}$$
-and monotonicity gives $\E[T(1) - T(0)] = P(\text{complier})$, since always-takers contribute $1 - 1 = 0$ and never-takers contribute $0 - 0 = 0$.
+and monotonicity (no defiers) gives $\E[T(1) - T(0)] = P(\text{complier})$, since always-takers contribute $1 - 1 = 0$ and never-takers contribute $0 - 0 = 0$:
+$$\E[T \mid Z{=}1] - \E[T \mid Z{=}0] = P(\text{complier}).$$
 
 **Numerator.** By consistency, exclusion, and exogeneity:
 $$\begin{aligned}
-\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] &= \E[Y(T(1))] - \E[Y(T(0))] \\
-&= \sum_{c} P(c)\, \E\!\bigl[Y(T_c(1)) - Y(T_c(0)) \;\big|\; \text{type}=c\bigr].
+\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]
+&= \E[Y(T(1)) \mid Z{=}1] - \E[Y(T(0)) \mid Z{=}0] \\
+&= \E[Y(T(1))] - \E[Y(T(0))] \\
+&= \sum_{c} P(c)\, \E\!\bigl[Y(T_c(1)) - Y(T_c(0)) \;\big|\; \text{type}=c\bigr],
 \end{aligned}$$
-For always-takers, $T(1) = T(0) = 1$, so the contribution is $0$. For never-takers, $T(1) = T(0) = 0$, contribution $0$. For compliers, $T(1) = 1$ and $T(0) = 0$, so $Y(T(1)) - Y(T(0)) = Y(1) - Y(0)$. No defiers exist by monotonicity. Therefore
-$$\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] = P(\text{complier})\,\E\!\bigl[Y(1) - Y(0) \mid \text{complier}\bigr].$$
+where the second equality uses $Z \indep Y(T(z), z)$ for each $z$, together with $Y(T(z), z) = Y(T(z))$ by exclusion. For always-takers: $T(1) = T(0) = 1$, contribution $= 0$. For never-takers: $T(1) = T(0) = 0$, contribution $= 0$. For compliers: $T(1) = 1$, $T(0) = 0$, so $Y(T(1)) - Y(T(0)) = Y(1) - Y(0)$. No defiers exist by monotonicity. Therefore
+$$\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] = P(\text{complier})\, \E\!\bigl[Y(1) - Y(0) \;\big|\; \text{complier}\bigr].$$
 
-**Ratio.** Dividing numerator by denominator gives @eq-late. $\square$
+**Ratio.** Dividing numerator by denominator:
+$$\frac{\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]}{\E[T \mid Z{=}1] - \E[T \mid Z{=}0]}
+= \E\!\bigl[Y(1) - Y(0) \;\big|\; \text{complier}\bigr] = \tau_{\mathrm{LATE}}. \qquad\blacksquare$$
+:::
+
+::: {.callout-note icon=false}
+## Remark: Two Layers, and Where Exclusion Acts
+
+The proof has two layers. Monotonicity and exclusion alone give
+$$\tau_{\mathrm{LATE}} = \frac{\E[Y\{T(1), 1\} - Y\{T(0), 0\}]}{\E\{T(1) - T(0)\}},$$
+the average effect of $Z$ on $Y$ divided by the average effect of $Z$ on $T$; consistency and exogeneity then make each of these effects a difference of observed means, which is the representation of the remark "Instrument Validity Does Not Fix the Interpretation" in @sec-w7-assumptions. Exclusion does its work on the always-takers and never-takers, whose contributions $Y(1,1) - Y(1,0)$ and $Y(0,1) - Y(0,0)$ it sets to zero; for compliers it only fixes the meaning of $Y(1) - Y(0)$, since one may define $Y(1) = Y(1,1)$ and $Y(0) = Y(0,0)$ for them. @imbens2015causal state exclusion separately for noncompliers for this reason.
+:::
+
+::: {#exm-letter}
+## Recovering Complier Means: A Reminder Letter
+
+A clinic mails a reminder letter ($Z = 1$) to a randomly chosen half of its patients; $T = 1$ if a patient is vaccinated against influenza, and $Y = 1$ if the patient is hospitalized during the winter. The table gives illustrative population frequencies per 1,000 patients in each assignment group; sampling variability is ignored.
+
+|  | Letter ($Z=1$): vaccinated | Letter ($Z=1$): not vaccinated | No letter ($Z=0$): vaccinated | No letter ($Z=0$): not vaccinated |
+|---|---|---|---|---|
+| patients | 600 | 400 | 400 | 600 |
+| hospitalized | 26 | 74 | 16 | 104 |
+
+The Wald ratio is $(0.100 - 0.120)/(0.60 - 0.40) = -0.10$. Under the assumptions of @thm-late, the types can be recovered by counting. The 400 patients vaccinated without a letter are always-takers, and the 400 unvaccinated patients with a letter are never-takers, so each arm contains 200 compliers. By randomization, the always-takers in the letter arm resemble those in the other arm, of whom 16 were hospitalized. Hence $26 - 16 = 10$ of the 200 compliers are hospitalized when vaccinated, a rate of $0.05$. Likewise, never-takers account for 74 of the 104 hospitalizations among unvaccinated patients without a letter, so 30 compliers are hospitalized when not vaccinated, a rate of $0.15$. Thus $\tau_{\mathrm{LATE}} = 0.05 - 0.15 = -0.10$, as the theorem states [@imbens1997estimating].
+
+Three further lessons follow. First, the naive comparison of vaccinated and unvaccinated patients, $42/1000 - 178/1000 = -0.136$, pools different compliance types under different treatment states. The table gives $\E\{Y(1) \mid \mathrm{at}\} = 16/400 = 0.04$ and $\E\{Y(0) \mid \mathrm{nt}\} = 74/400 = 0.185$, but not the untreated risk of always-takers. The difference between the naive comparison and the LATE can reflect both selection and treatment-effect heterogeneity, and the table does not separate the two. Second, the recovered counts are a check on the model: in population frequencies, a negative complier count, or one larger than the number of compliers, would contradict the IV assumptions with monotonicity. In a sample, a negative estimate can arise by chance; formal tests account for sampling variability [@kitagawa2015test]. Third, the data never show $Y(0)$ for always-takers or $Y(1)$ for never-takers. With $a = \E\{Y(0) \mid \mathrm{at}\}$ and $n = \E\{Y(1) \mid \mathrm{nt}\}$ unrestricted in $[0, 1]$,
+$$\mathrm{ATE} = 0.2\,(-0.10) + 0.4\,(0.04 - a) + 0.4\,(n - 0.185)$$
+can be anywhere in $[-0.478,\ 0.322]$. The LATE is identified; the ATE is not (Chapter 9 develops such bounds). Because hospitalization is binary, a common individual effect of $-0.10$ is impossible, so the constant-effect reading of Framework 1 is not available and $-0.10$ is best read as a 10-percentage-point reduction in hospitalization risk among compliers.
+:::
 
 ::: {.callout-note icon=false}
 ## Remark: The Two Senses of "Local"
@@ -576,23 +664,25 @@ The LATE is local in two senses: it is local to the complier group defined by th
 
 ## Interpreting IV Estimands {#sec-w7-interpret}
 
-The two frameworks --- linear homogeneous effects and the LATE framework --- give the Wald estimand different interpretations. This section synthesizes those interpretations and clarifies when they agree, when they disagree, and what the difference means for applied work.
+The two frameworks --- linear homogeneous effects (@sec-w7-linear) and the LATE framework (@sec-w7-late) --- give the Wald estimand different interpretations. This section synthesizes those interpretations and clarifies when they agree, when they disagree, and what the difference means for applied work.
 
 ### What the Two Frameworks Say
 
-| | **Framework 1** (linear, homogeneous) | **Framework 2** (heterogeneous effects) |
+| | Framework 1 (linear, homogeneous) | Framework 2 (heterogeneous effects) |
 |---|---|---|
 | Key assumption | $\tau_i = \beta$ for all $i$ | Monotonicity; no defiers |
 | What IV identifies | $\beta = \mathrm{ATE} = \mathrm{ATT} = \mathrm{LATE}$ | $\tau_{\mathrm{LATE}} = \E[\tau_i \mid \text{complier}]$ |
-| Estimand depends on instrument? | No (same $\beta$ regardless of $Z$) | Yes (different $Z$ $\Longrightarrow$ different compliers $\Longrightarrow$ different LATE) |
-| Identifies the ATE? | Yes, automatically | Only if all units are compliers or effects homogeneous |
+| Estimand depends on instrument? | No (same $\beta$ regardless of $Z$) | Yes (different $Z$ $\Rightarrow$ different compliers $\Rightarrow$ different LATE) |
+| Equals the ATE? | Yes | Not in general; yes if the three types have equal mean effects, or if everyone is a complier (@sec-w7-late-ate) |
 
-Framework 1 is a special case of Framework 2: when $\tau_i = \beta$ for all $i$, the LATE equals the ATE equals $\beta$, and the instrument does not affect the estimand --- only identification. Framework 2 is the more general and realistic setting. In applied work, the default interpretation of the Wald estimand is the LATE; the ATE interpretation requires the additional homogeneity argument of Framework 1.
+: What IV identifies: a comparison of the two frameworks. {#tbl-w7-frameworks}
+
+The two frameworks overlap rather than nest: constant effects do not imply monotonicity, and monotonicity does not imply constant effects. When both hold, the Wald ratio equals both the ATE and the LATE, and the instrument affects only identification, not the estimand. Framework 2 is the more realistic setting for a binary treatment. In applied work, the default interpretation of the Wald estimand is the LATE; the ATE interpretation requires the additional homogeneity argument of Framework 1.
 
 ::: {.callout-note icon=false}
 ## Remark: Same Formula, Different Estimand
 
-The two frameworks illustrate a broader principle in IV analysis. Across a range of fourth assumptions --- constant effects, monotonicity, structural mean model restrictions, and others --- the conditional Wald formula serves as the identifying expression in many (though not all) cases [@levis2024nonparametric]. Accordingly, two researchers who use the same instrument and compute the same Wald ratio may be consistently estimating different causal quantities if they maintain different structural assumptions: one estimates the ATE (under constant effects), another estimates the LATE (under monotonicity), and a third estimates the ATT (under a structural mean model restriction). The point estimates and confidence intervals can be numerically identical; what differs is the causal quantity they represent.
+The two frameworks illustrate a broader principle in IV analysis. Across a range of fourth assumptions --- constant effects, monotonicity, structural mean model restrictions, and others --- the conditional Wald formula $\mathrm{Cov}(Z, Y \mid X)/\mathrm{Cov}(Z, T \mid X)$ serves as the identifying expression in many (though not all) cases [@levis2024nonparametric]. Accordingly, two researchers who use the same instrument and compute the same Wald ratio may be consistently estimating different causal quantities if they maintain different structural assumptions: one estimates the ATE (under constant effects), another estimates the LATE (under monotonicity), and a third estimates the ATT (under a structural mean model restriction). The point estimates and confidence intervals can be numerically identical; what differs is the causal quantity they represent.
 
 This is not a deficiency of IV but a precise illustration of why causal modeling is not merely a formal preliminary to estimation. The data alone cannot resolve which estimand the Wald ratio identifies; that determination requires the researcher to commit to a structural assumption about treatment response. Stating that commitment explicitly --- and defending it on substantive grounds --- is as important as any statistical calculation.
 :::
@@ -603,20 +693,46 @@ LATE equals ATE only under additional structure, most notably treatment-effect h
 
 In general, $\tau_{\mathrm{LATE}} \neq \mathrm{ATE}$ when treatment effects are heterogeneous and some units are not compliers. To see this, decompose the ATE by compliance type:
 $$\mathrm{ATE} = P(\mathrm{co})\,\E[\tau_i \mid \mathrm{co}] + P(\mathrm{at})\,\E[\tau_i \mid \mathrm{at}] + P(\mathrm{nt})\,\E[\tau_i \mid \mathrm{nt}],$$
-where co, at, and nt abbreviate complier, always-taker, and never-taker. The LATE equals only the first term divided by its probability weight. The ATE and LATE coincide if and only if:
+where $\mathrm{co}$, $\mathrm{at}$, and $\mathrm{nt}$ abbreviate complier, always-taker, and never-taker. The LATE equals only the first term divided by its probability weight. Since $P(\mathrm{co}) + P(\mathrm{at}) + P(\mathrm{nt}) = 1$,
+$$\mathrm{ATE} - \tau_{\mathrm{LATE}}
+= P(\mathrm{at})\bigl(\E[\tau_i \mid \mathrm{at}] - \tau_{\mathrm{LATE}}\bigr)
++ P(\mathrm{nt})\bigl(\E[\tau_i \mid \mathrm{nt}] - \tau_{\mathrm{LATE}}\bigr),$$
+so the two coincide exactly when this weighted sum is zero. Two sufficient conditions are:
 
-1. Mean treatment effects are equal across compliance types --- a strict weakening of the constant-effect assumption of @sec-w7-linear, but still a non-trivial restriction on heterogeneity; or
-2. Everyone is a complier ($P(\mathrm{at}) = P(\mathrm{nt}) = 0$), which would require $Z$ to perfectly determine $T$; or
-3. The average effects for always-takers and never-takers happen to equal the LATE --- an untestable coincidence.
+1. Mean treatment effects are equal across compliance types ($\E[\tau_i \mid \mathrm{co}] = \E[\tau_i \mid \mathrm{at}] = \E[\tau_i \mid \mathrm{nt}]$) --- a strict weakening of the constant-effect assumption of @sec-w7-linear, but still a nontrivial restriction on heterogeneity; or
+2. Everyone is a complier ($P(\mathrm{at}) = P(\mathrm{nt}) = 0$), which would require $Z$ to perfectly determine $T$.
 
-In practice, none of these conditions is likely to hold exactly. The LATE is a well-defined, identifiable parameter, but it is not the ATE.
+Otherwise, equality holds only if the deviations of always-takers and never-takers happen to cancel, an untestable coincidence. In practice, none of these conditions is likely to hold exactly. The LATE is a well-defined, identifiable parameter, but it is not the ATE.
+
+::: {#exm-ident-failure}
+## Same Observables, Different ATEs
+
+The following construction makes the remark "Instrument Validity Does Not Fix the Interpretation" in @sec-w7-assumptions and the nonidentification remark above concrete. Two distinct data-generating processes satisfy all three IV assumptions and produce identical observable statistics, yet imply different ATEs. No amount of data can distinguish them without a fourth structural assumption.
+
+**Observable statistics.** Let $Z, T \in \{0,1\}$ and let $Y$ be a continuous outcome. Suppose the joint distribution of $(Y, T, Z)$ satisfies
+$$\begin{aligned}
+\E[T \mid Z{=}1] - \E[T \mid Z{=}0] &= 0.2 \quad \text{(first stage)}, \\
+\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0] &= 0.1 \quad \text{(reduced form)},
+\end{aligned}$$
+giving a Wald ratio of $0.1/0.2 = 0.5$. Both DGPs share the same compliance structure --- under monotonicity (no defiers), $P(\mathrm{co}) = 0.2$, $P(\mathrm{at}) = 0.4$, $P(\mathrm{nt}) = 0.4$ --- though under DGP A the compliance types are simply a convenient labeling; what drives identification there is the constant-effect restriction, not monotonicity.
+
+**DGP A: Constant treatment effects.** Every unit has the same effect $\tau_i = 0.5$. Then
+$$\text{reduced form} = P(\mathrm{co}) \cdot \tau_{\mathrm{co}} = 0.2 \times 0.5 = 0.1 \;\checkmark, \qquad \mathrm{ATE} = 0.5.$$
+
+**DGP B: Heterogeneous treatment effects with monotonicity.** Effects differ by compliance type: $\tau_{\mathrm{co}} = 0.5$, $\tau_{\mathrm{at}} = 0$, $\tau_{\mathrm{nt}} = 0$. Then
+$$\text{reduced form} = P(\mathrm{co}) \cdot \tau_{\mathrm{co}} = 0.2 \times 0.5 = 0.1 \;\checkmark, \qquad \mathrm{ATE} = 0.2 \times 0.5 + 0.4 \times 0 + 0.4 \times 0 = 0.1.$$
+
+**What this shows.** Both DGPs produce the same first stage, the same reduced form, and therefore the same Wald ratio of $0.5$. Yet the ATE is $0.5$ under DGP A and $0.1$ under DGP B --- a fivefold difference. The three IV assumptions do not distinguish between them. The *fourth* assumption is what resolves the ambiguity: under DGP A, the constant effects assumption makes the Wald ratio equal to the ATE; under DGP B, the monotonicity assumption makes the Wald ratio equal to the LATE ($= 0.5$) for compliers, which is a different quantity from the ATE ($= 0.1$). Committing to one fourth assumption or the other changes not the estimator but what it estimates.
+
+Only means are displayed, but the full observed distributions can be made identical as well. Under monotonicity the data never reveal $Y(0)$ for always-takers or $Y(1)$ for never-takers (@exm-letter), and these are exactly the quantities on which the two DGPs differ.
+:::
 
 ### Different Instruments, Different Estimands {#sec-w7-diff-instr}
 
 Because the LATE is specific to the complier population, and different instruments select different complier populations, two valid instruments for the same treatment can legitimately identify different LATEs. This is a precise, substantive fact --- not a contradiction. Different instruments can legitimately identify different causal effects because they shift treatment for different margins of the population; the diversity of LATEs is informative about treatment effect heterogeneity, not a symptom of model failure.
 
-::: {.callout-note icon=false}
-## Example: Compulsory Schooling Laws vs. Distance to College
+::: {#exm-late-comparison}
+## Compulsory Schooling Laws vs. Distance to College
 
 Two classic instruments for years of schooling are (i) compulsory schooling laws [@angrist1991does] and (ii) distance to the nearest college [@card1995using]. The compliers for instrument (i) are individuals at the margin of dropping out before the compulsory leaving age --- typically lower-income students. The compliers for instrument (ii) are students deterred from college by geographic distance --- again, disproportionately lower-income. Both instruments identify the return to schooling for their respective complier populations, and the LATEs can legitimately differ even if both instruments are valid.
 :::
@@ -625,60 +741,46 @@ The dependence of the LATE on the instrument is sometimes described as a limitat
 
 ### The Policy Relevance of LATE
 
-For many policy questions, the LATE is exactly the right estimand. If a policy is designed to encourage a subset of the population to take treatment --- for example, an outreach program that reaches only some potential participants --- then the effect on compliers is precisely what the policy-maker wants to know. LATE is most policy-relevant when the contemplated intervention resembles the instrument, because then the complier population under the study design is close to the policy-relevant margin.
+Two numbers answer different policy questions. For an encouragement policy such as the reminder letter of @exm-letter, the reduced form measures the effect per person encouraged: there, $p_{\mathrm{C}}\,\tau_{\mathrm{C}} = 0.20 \times (-0.10) = -0.02$, a reduction of 2 percentage points per patient sent a letter. The LATE measures the effect of treatment among the people whose take-up the encouragement changes: a reduction of 10 percentage points among patients vaccinated because of the letter. Applying either number to a new population requires comparable responses and effects. The LATE is most informative when the contemplated intervention changes treatment for the same kind of people as the instrument did.
 
-When the ATE over the full population is required for policy analysis, IV alone is insufficient under heterogeneous effects. Additional assumptions --- such as an explicit model of treatment effect heterogeneity, or a second instrument that identifies effects for a different subpopulation --- are needed to extrapolate from the LATE to the ATE.
+Evaluating universal treatment requires effects for the groups whose treatment the instrument does not change. The ATE compares treating everyone with treating no one; a mandate compared with the current pattern of take-up is a different contrast. When such quantities are required, IV alone is insufficient under heterogeneous effects. Additional assumptions --- such as an explicit model of treatment effect heterogeneity, or a second instrument that identifies effects for a different subpopulation --- are needed to extrapolate from the LATE to the ATE.
 
-## IV versus Back-Door Adjustment {#sec-w7-compare}
+### IV versus Back-Door Adjustment {#sec-w7-compare}
 
-Having developed both strategies in full, it is instructive to compare them directly. The two strategies differ in what they require, what they identify, and how they fail.
+The two identification strategies of Chapters 6 and 7 differ in what they require, what they identify, and how they fail; @tbl-w7-compare collects the comparison. Back-door adjustment requires an observed set $X$ that blocks every back-door path from $T$ to $Y$, and fails when a path through an unobserved $U$ is left open. IV tolerates unobserved confounding but requires an exogenous source of variation in $T$ with no other causal route to $Y$, and fails when the instrument is confounded or has a side channel, with the error $\delta/\pi$ of @sec-w7-why-matter magnified by a weak first stage. Which assumption is more plausible in a given study decides the choice.
 
-### A Direct Comparison
-
-| **Dimension** | **Back-door / propensity score** | **Instrumental variables** |
+| Dimension | Back-door / propensity score | Instrumental variables |
 |---|---|---|
-| Core assumption | All confounders observed: $(Y(0),Y(1)) \indep T \mid X$ | Valid instrument: relevance, exogeneity, exclusion |
-| Unobserved confounders | Fatal: back-door adjustment fails | Permitted: IV routes around $U$ |
+| Core assumption | $X$ is a valid back-door adjustment set, so $Y(t) \indep T \mid X$ for each $t$ | Valid instrument: relevance, exogeneity, exclusion |
+| Residual confounding | Ruled out after adjusting for $X$ | Permitted: IV routes around $U$ |
 | Estimand | ATE, ATT, or ATC depending on design and overlap; all coincide under homogeneity | LATE (compliers only); reduces to a common $\beta$ under homogeneous effects |
-| Testability | Unconfoundedness untestable; overlap testable | Relevance testable; exogeneity and exclusion untestable (just-identified case) |
-| Main threat | Unmeasured confounder | Exclusion restriction violation |
-| Identifies the ATE? | Yes, under strong ignorability | Only under homogeneous effects |
-| Typical setting | Rich administrative or survey data; RCT with imperfect compliance | Natural experiment; RCT with non-compliance; policy change |
+| Testability | Unconfoundedness is untestable; overlap is testable | First stage testable; exogeneity and exclusion not separately testable |
+| Main threat | A back-door path left open by $X$ | Exclusion restriction violation |
+| Identifies ATE? | Yes, under strong ignorability | Not in general; yes under constant effects or equal mean effects across compliance types |
+| Typical setting | Rich administrative or survey data | Natural experiment; RCT with noncompliance; policy change |
 
-### Complementary Failure Modes
+: Back-door adjustment and instrumental variables compared. {#tbl-w7-compare}
 
-**Back-door adjustment fails** when $X$ does not capture all confounders --- that is, when an unobserved variable $U$ opens a back-door path. The estimator is then inconsistent even with infinite data, because the path $T \leftarrow U \rightarrow Y$ transmits spurious association that conditioning on $X$ cannot close.
+When a valid instrument *and* a sufficient adjustment set $X$ are both available, comparing the two estimates can be informative, but disagreement does not by itself say which method is wrong: the two strategies typically target different estimands (the ATE or ATT for back-door adjustment, the LATE for IV) and rest on different assumptions. Agreement is reassuring under treatment-effect homogeneity, and neither required nor sufficient otherwise.
 
-**IV fails** when the exclusion restriction is violated --- that is, when $Z$ has a direct effect on $Y$ beyond its effect through $T$. As derived in @sec-w7-why-matter, the bias in the Wald estimand is $\delta/\pi$, amplified by weak instruments.
-
-The two failures are in a sense orthogonal: back-door adjustment requires many observed covariates but tolerates no unobserved ones, while IV tolerates unobserved confounders but requires an instrument with no direct effect on the outcome. Back-door adjustment fails when confounding remains after conditioning; IV fails when the proposed source of exogenous variation is not truly exogenous or does not act solely through treatment. When designing a study, the choice of identification strategy should be guided by which assumption is more plausible in the specific empirical context.
-
-### When Both Strategies Are Available
-
-When a valid instrument *and* a sufficient adjustment set $X$ are both available, comparing the two estimates can be informative, but disagreement between them does not by itself tell us which method is wrong. The two strategies typically target different estimands --- back-door adjustment identifies the ATE or ATT over the full population or the treated, while IV identifies the LATE for compliers --- and they rely on different identifying assumptions. Agreement is therefore reassuring under treatment-effect homogeneity but is neither required nor sufficient otherwise.
-
-The @hausman1978specification endogeneity test operationalizes this comparison: under the null hypothesis that $T$ is exogenous given $X$, both the OLS and IV estimators are consistent, and a large discrepancy is evidence of endogeneity. Under the null and standard regularity conditions, an appropriately scaled quadratic form in the discrepancy $\hat\beta_{\mathrm{IV}} - \hat\beta_{\mathrm{OLS}}$ is asymptotically $\chi^2_p$-distributed, where $p$ is the number of components of $T$ tested for endogeneity; the formal construction is given in Chapter 13. Rejection means at least one strategy is inconsistent; it does not identify which.
+The @hausman1978specification endogeneity test operationalizes this comparison: under the null hypothesis that $T$ is exogenous given $X$, and with constant effects, both the OLS and IV estimators are consistent for the same $\beta$, and a large discrepancy is evidence of endogeneity. Under the null and standard regularity conditions, an appropriately scaled quadratic form in the discrepancy $\hat\beta_{\mathrm{IV}} - \hat\beta_{\mathrm{OLS}}$ is asymptotically $\chi^2_p$-distributed, where $p$ is the number of components of $T$ tested for endogeneity; the formal construction is given in Chapter 13. Under constant effects, rejection means at least one strategy is inconsistent; it does not identify which.
 
 ::: {.callout-note icon=false}
 ## Remark: Interpreting a Hausman Rejection
 
-A significant Hausman test can arise from two distinct sources: (a) back-door adjustment is biased because $T$ is endogenous, or (b) IV is biased because the exclusion restriction is violated or the instrument is weak. Even when the test is non-significant, the two estimates may still differ for the legitimate reason that they identify different estimands --- LATE versus ATE --- rather than because either strategy has failed. External evidence --- instrument strength diagnostics and institutional arguments for exclusion --- is needed to interpret any discrepancy.
+A significant Hausman test can arise from three distinct sources: (a) back-door adjustment is biased because $T$ is endogenous; (b) IV is biased because the exclusion restriction is violated or the instrument is weak; or (c) under heterogeneous effects, the two strategies are valid but identify different estimands --- LATE versus ATE. A rejection therefore need not mean that either strategy has failed. External evidence --- instrument strength diagnostics and institutional arguments for exclusion --- is needed to interpret any discrepancy.
 :::
 
 ## Practical Guidance on Defending an IV Design {#sec-w7-practical}
 
 There is no algorithm for finding a valid instrument; credible instruments arise from institutional knowledge and careful reasoning about the data-generating process. A strong IV design is defended primarily by institutional knowledge, design logic, and causal structure; statistical diagnostics are supportive but secondary.
 
-A researcher proposing an instrument should be able to answer five questions explicitly:
+A researcher proposing an instrument should be able to answer five questions explicitly.
 
 1. **What exactly is the instrument?** Specify $Z$ precisely: its source of variation, the level at which it varies, and the population to which it applies.
-
 2. **Why does it shift treatment?** Articulate the causal mechanism by which $Z$ moves $T$. Relevance can be verified empirically with the first-stage $F$-statistic, but the $F$-statistic is a diagnostic for instrument strength, not a substitute for a causal account of the $Z \to T$ link.
-
 3. **Why is it as-if random relative to latent outcome determinants?** Argue why $Z$ is unrelated to the unobserved causes of $Y$. The most credible sources are designed randomization (lotteries, randomized encouragement), natural experiments with institutional quasi-randomness (policy discontinuities, geographic boundaries, biological quirks), and shift-share designs [@bartik1991benefits; @goldsmith2020bartik]. Placebo regressions on pre-determined outcomes provide partial --- but not definitive --- evidence.
-
-4. **Why can it affect the outcome only through treatment?** The exclusion restriction is untestable in just-identified models, so it must rest on a structural argument that no direct path $Z \to Y$ exists. A useful diagnostic is to ask: how large would the direct effect $\delta$ have to be, relative to the first-stage coefficient $\pi$, to overturn the estimated causal effect? When the first stage is weak, the answer is: not very large at all.
-
+4. **Why can it affect the outcome only through treatment?** The exclusion restriction cannot be tested on its own, so it must rest on a structural argument that no direct path $Z \to Y$ exists. A useful diagnostic is to ask: how large would the direct effect $\delta$ have to be, relative to the first-stage coefficient $\pi$, to overturn the estimated causal effect? When the first stage is weak, the answer is: not very large at all.
 5. **What population margin does it shift?** Identify the complier population --- the units whose treatment status changes with $Z$. This determines the LATE that is being identified and governs the external validity of the estimates for other populations or policy margins.
 
 ## Applied Example: Charter School Lotteries and the KIPP Lynn Study {#sec-w7-kipp}
@@ -689,8 +791,7 @@ This distinction is exactly what makes the design an IV design rather than a ran
 
 ### Setting and Instrument
 
-KIPP (Knowledge Is Power Program) schools follow a "No Excuses" model: extended school days, a longer academic year, selective teacher hiring, and strict behavioral norms. KIPP Academy Lynn was substantially oversubscribed beginning in 2005. Massachusetts law requires oversubscribed charter schools to select students by lottery, so the school conducted randomized admissions lotteries from 2005 through 2008. The treatment is years of KIPP attendance $S$; in the panel structure of the data this is denoted $s_{igt}$, the number of calendar years student $i$ has spent at KIPP by the time of test $(g, t)$ --- a continuous, endogenous variable, because families self-select into applying and attending. The outcome $Y_{igt}$ is the student's standardized score on the Massachusetts Comprehensive Assessment System (MCAS), normalized to mean zero and standard deviation one within each subject--grade--year cell statewide.
-
+KIPP (Knowledge Is Power Program) schools follow a "No Excuses" model: extended school days, a longer academic year, selective teacher hiring, and strict behavioral norms. KIPP Academy Lynn was substantially oversubscribed beginning in 2005. Massachusetts law requires oversubscribed charter schools to select students by lottery, so the school conducted randomized admissions lotteries from 2005 through 2008. The treatment is years of KIPP attendance $S$; in the panel structure of the data this is denoted $s_{igt}$, the number of calendar years student $i$ has spent at KIPP by the time of test $(g, t)$, with partial years counted as full years --- a multivalued, endogenous variable, because families self-select into applying and attending. The outcome $Y_{igt}$ is the student's standardized score on the Massachusetts Comprehensive Assessment System (MCAS), normalized to mean zero and standard deviation one within each subject--grade--year cell statewide.
 ::: {.content-visible when-format="html"}
 ```{=html}
 <figure style="text-align:center;margin:1.5em auto;">
@@ -725,32 +826,38 @@ KIPP (Knowledge Is Power Program) schools follow a "No Excuses" model: extended 
 
 ### Mapping the Three Assumptions to the KIPP Context
 
-The KIPP lottery design makes the logic of the three IV assumptions unusually transparent. One point deserves emphasis before proceeding. Relevance and exogeneity are especially natural in a lottery-based design: because lottery sequence numbers are randomly assigned within cohort, offer status is independent of the latent determinants of achievement by construction. Exclusion, however, still requires institutional argument. Random assignment of the instrument does not, by itself, imply that the instrument has no direct effect on the outcome --- it only guarantees that the instrument is exogenous.
+The figure above displays the causal structure. The KIPP lottery design makes the logic of the three IV assumptions unusually transparent; the three paragraphs below trace each assumption to a specific feature of the design.
 
-**Relevance.** The lottery offer must shift years of KIPP attendance. Lottery winners were offered a seat and about 80 percent accepted; losers rarely enrolled elsewhere at KIPP. The first-stage regression of $s_{igt}$ on $Z_i$ (with year and grade controls) yields a coefficient of approximately $1.2$: at the time of each MCAS exam, lottery winners had spent about 1.2 more years at KIPP than lottery losers. The first-stage $F$-statistic is far above conventional thresholds. The first stage is less than the theoretical maximum because compliance is partial (some winners do not attend; some losers find entry through later cohorts or attrition slots) and the follow-up window captures students at different points in their KIPP tenure.
+One point deserves emphasis before proceeding. Relevance and exogeneity are especially natural in a lottery-based design: because lottery sequence numbers are randomly assigned within cohort, offer status is independent of the latent determinants of achievement by construction. Exclusion, however, still requires institutional argument. Random assignment of the instrument does not, by itself, imply that the instrument has no direct effect on the outcome --- it only guarantees that the instrument is exogenous.
 
-**Exogeneity.** The lottery offer must be independent of all potential outcomes and potential treatments --- formally, $Z \indep (Y(0), Y(1), T(0), T(1))$ within each application cohort. Because offer status was determined by randomly drawn lottery-sequence numbers, this independence holds by design --- an especially strong basis for exogeneity compared to most observational IV applications. The authors verify it empirically: a joint test of covariate balance across lottery winners and losers yields a $p$-value of $0.615$ for demographic characteristics and baseline test scores, consistent with the null of no pre-lottery differences. Pre-lottery variables are used for the balance check precisely because post-lottery variables such as LEP or SPED classification may themselves be affected by school attended.
+**Relevance.** The lottery offer must shift years of KIPP attendance. Lottery winners were offered a seat and about 80 percent accepted; few lottery losers attended KIPP. The first-stage regression of $s_{igt}$ on $Z_i$ (with year and grade controls) yields a coefficient of approximately $1.2$: at the time of each MCAS exam, lottery winners had spent about 1.2 more years at KIPP than lottery losers. The first-stage $F$-statistic is far above conventional thresholds. The first stage is less than the theoretical maximum because compliance is partial (some winners do not attend; some losers find entry through later cohorts or attrition slots) and the follow-up window captures students at different points in their KIPP tenure.
+
+**Exogeneity.** The lottery offer must be independent of all potential outcomes and potential treatments within each application cohort, which gives the single-world form @eq-w7-po-exog there. Because offer status was determined by randomly drawn lottery-sequence numbers, this independence holds by design --- an especially strong basis for exogeneity compared to most observational IV applications. The authors check for evidence against it: a joint test of covariate balance across lottery winners and losers yields a $p$-value of $0.615$ for demographic characteristics and baseline test scores, consistent with the null of no pre-lottery differences (Table 1 of @angrist2012benefits). Such a test can contradict exogeneity; it cannot verify it. Pre-lottery variables are used for the balance check precisely because post-lottery variables such as LEP or SPED classification may themselves be affected by school attended.
 
 **Exclusion.** The lottery offer must affect test scores only through KIPP attendance, not through any direct channel. Because the offer merely provides access to a school --- it does not itself deliver instruction --- this restriction is institutionally plausible. One potential violation is a discouragement effect: losing the lottery might demoralize students, suppressing their achievement regardless of where they enroll. The authors address this by noting that the scores of lottery losers are typical of demographically comparable students in Lynn, which is inconsistent with large discouragement effects.
 
 ### First Stage, Reduced Form, and the 2SLS Estimand
 
-The equations below illustrate the components of the Wald/2SLS logic --- first stage, reduced form, and their ratio. Formal estimation theory for 2SLS, including asymptotic variance and cluster-robust inference, is deferred to Chapter 13.
+The equations below are used here only to illustrate the components of the Wald/2SLS logic --- first stage, reduced form, and their ratio. Formal estimation theory for 2SLS, including asymptotic variance and cluster-robust inference, is deferred to Chapter 13.
 
 The structural equation for test scores is
 $$y_{igt} = \alpha_t + \beta_g + \sum_j \delta_j d_{ij} + \gamma' X_i + \theta\, s_{igt} + \varepsilon_{igt},$$ {#eq-kipp-structural}
-where $\alpha_t$ and $\beta_g$ are year-of-test and grade-of-test fixed effects, $d_{ij}$ are application-cohort dummies (cohort membership determines the probability of winning, so cohort is an essential control), $X_i$ is a vector of baseline demographics, and $\theta$ is the causal effect of interest per year at KIPP. We write $\theta$ rather than $\rho$ (as in the original paper) to avoid clashing with the endogeneity correlation parameter of the same name used earlier in this chapter. The first-stage equation is
+where $\alpha_t$ and $\beta_g$ are year-of-test and grade-of-test fixed effects, $d_{ij}$ are application-cohort dummies (cohort membership determines the probability of winning, so cohort is an essential control), $X_i$ is a vector of baseline demographics, and $\theta$ is the causal effect of interest per year at KIPP. We write $\theta$ here rather than $\rho$ (as in @angrist2012benefits) to avoid clashing with the endogeneity correlation parameter of the same name in @sec-w7-linear through @sec-w7-lab. The first-stage equation is
 $$s_{igt} = \lambda_t + \kappa_g + \sum_j \mu_j d_{ij} + \Gamma' X_i + \pi Z_i + \eta_{igt}.$$ {#eq-kipp-firststage}
-The model is just-identified (one excluded instrument per endogenous variable), so the 2SLS estimator of $\theta$ equals the ratio of the reduced-form coefficient on $Z_i$ to the first-stage coefficient $\pi$.
+The model is just-identified (one excluded instrument per endogenous variable) with the same controls in both stages, so the 2SLS estimator of $\theta$ equals the ratio of the reduced-form coefficient on $Z_i$ to the first-stage coefficient $\pi$, as the remark "From the Estimand to an Estimator" in @sec-w7-linear explains.
+
+Estimates from @angrist2012benefits (their Table 4, the specification with demographic and baseline-score controls) are summarized in @tbl-w7-kipp.
 
 | Subject | First stage | Reduced form | 2SLS |
 |---|---|---|---|
-| Math | $1.221$ $(0.068)$ | $0.430$ $(0.067)$ | $0.352$ $(0.053)$ |
-| ELA | $1.228$ $(0.068)$ | $0.164$ $(0.073)$ | $0.133$ $(0.059)$ |
+| Math | $1.221$ | $0.430$ | $0.352$ |
+|  | $(0.068)$ | $(0.067)$ | $(0.053)$ |
+| ELA | $1.228$ | $0.164$ | $0.133$ |
+|  | $(0.068)$ | $(0.073)$ | $(0.059)$ |
 
-: IV estimates of KIPP Lynn attendance on MCAS scores (per year at KIPP). Source: @angrist2012benefits, Table 4. Standard errors clustered at the student level in parentheses. $N = 833$ student-by-test observations for both subjects. All regressions include year-of-test, grade-of-test, and application-cohort fixed effects, plus demographic and baseline-score controls.
+: IV estimates of KIPP Lynn attendance on MCAS scores (per year at KIPP). Source: @angrist2012benefits, Table 4. Standard errors clustered at the student level in parentheses. $N = 833$ student-by-test observations for both subjects. All regressions include year-of-test, grade-of-test, and application-cohort fixed effects, plus demographic and baseline-score controls. {#tbl-w7-kipp}
 
-Each year at KIPP raises math scores by approximately $0.35$ standard deviations and ELA scores by approximately $0.13$ standard deviations. The reduced-form estimate for math ($0.43\sigma$) is larger than the 2SLS estimate ($0.35\sigma$) because the first stage exceeds $1$: lottery winners accumulated somewhat more than one additional year at KIPP per unit of follow-up time.
+The 2SLS estimates are weighted average gains per additional year at KIPP induced by the offer: about $0.35$ standard deviations in math and $0.13$ in ELA. The reduced-form estimate for math ($0.43\sigma$) is larger than the 2SLS estimate ($0.35\sigma$) because the first stage exceeds $1$: by the test dates, lottery winners had accumulated about 1.2 more years at KIPP than losers. The reduced form regression, the 2SLS estimator, and its asymptotic theory are all developed in Chapter 13.
 
 ::: {.callout-note icon=false}
 ## Remark: Treatment Heterogeneity and the Weighted-Average Interpretation
@@ -760,19 +867,19 @@ When the treatment is continuous, @angrist1995two show that the IV estimand is a
 
 ### LATE Interpretation
 
-The lottery design identifies the causal effect of KIPP attendance only for the students whose attendance behavior is changed by the lottery offer. These are the lottery compliers: students who attend KIPP if offered a seat and do not attend KIPP if not offered one. Compliance is partial in both directions: some lottery winners do not enroll and some lottery losers eventually find entry through later cohorts or attrition slots. Always-takers are largely ruled out at the extensive margin by the lottery's control over seat access; never-takers remain --- winners who decline the offer --- and both margins reappear in the intensive dimension (years of enrollment).
+The lottery design identifies the causal effect of KIPP attendance only for the students whose attendance is changed by the lottery offer. Because the treatment is years at KIPP rather than a binary enrollment indicator, "changed" means that the offer alters the number of years accumulated; under the IV assumptions and monotonicity in years of attendance, $\theta$ is a weighted average of the effects of additional years induced by the offer (the remark above). In the binary language of @sec-w7-late, compliance is partial in both directions: some lottery winners do not enroll (never-takers) and some losers find entry later through attrition slots (always-takers at the extensive margin), and with years as the treatment both margins reappear in the number of years a student stays.
 
 This is the key interpretive point of the example. The 2SLS estimand $\theta$ is not the effect of KIPP on all students in Lynn, nor on all applicants --- it is the average per-year treatment effect for the *lottery compliers*, the specific margin of students whose enrollment decision is altered by randomized access to the school.
 
-An important feature of this LATE is that it may differ from the effect the school would have on a randomly selected Lynn student who was not part of the applicant pool. KIPP applicants already had parents motivated enough to apply. The authors find that KIPP applicants have baseline test scores slightly *lower* than the district average, so the applicant pool is not positively selected on prior achievement, but it may still be selected on parental engagement in ways that affect how students respond to the KIPP environment.
+An important feature of this LATE is that it may differ from the effect the school would have on a randomly selected Lynn student who was not part of the applicant pool. KIPP applicants already had parents motivated enough to apply. The authors find that KIPP applicants have baseline test scores slightly *lower* than the LPS average (Table 1 of @angrist2012benefits), so the applicant pool is not positively selected on prior achievement, but it may still be selected on parental engagement in ways that affect how students respond to the KIPP environment.
 
 The design is therefore strongest not because it identifies a universally generalizable effect, but because it identifies a clearly interpretable causal effect for a well-defined subpopulation under highly credible exogeneity.
 
 ### Treatment Effect Heterogeneity
 
-Subgroup analysis reveals that the LATE varies substantially across observable student characteristics. Reading gains ($\approx 0.13\sigma$ overall) are driven almost entirely by students classified as having limited English proficiency (LEP, $\approx 0.43\sigma$) and special education needs (SPED, $\approx 0.27\sigma$); non-LEP, non-SPED students show negligible ELA gains. Math effects are large and positive across all subgroups but are largest for LEP and lower-achieving students. An interaction model that adds the product of baseline score with years at KIPP --- identified by including $Z_i \times \text{baseline score}$ as a second instrument --- yields a significantly negative interaction term in both subjects: each additional standard deviation of baseline disadvantage is associated with an additional $0.08$--$0.17\sigma$ gain per year at KIPP.
+Subgroup analysis reveals that the LATE varies substantially across observable student characteristics. Reading gains ($\approx 0.13\sigma$ overall) are driven almost entirely by students classified as having limited English proficiency (LEP, $\approx 0.43\sigma$) and special education needs (SPED, $\approx 0.27\sigma$); non-LEP, non-SPED students show negligible ELA gains. Math effects are large and positive across all subgroups but are largest for LEP and lower-achieving students. An interaction model that adds the product of baseline score with years at KIPP --- identified by including $Z_i \times \text{baseline score}$ as a second instrument --- yields a significantly negative interaction term in both subjects, about $-0.11$ in math and $-0.17$ in reading: a baseline score one standard deviation lower is associated with an additional gain per year at KIPP of about $0.11\sigma$ in math and $0.17\sigma$ in reading.
 
-These findings connect directly to @sec-w7-diff-instr: were we to define separate subgroup-specific instruments (LEP-lottery and non-LEP-lottery), each would identify a distinct subpopulation LATE. The overall 2SLS estimate is a weighted average of these subgroup LATEs, with weights proportional to each subgroup's share of the complier population. This heterogeneity is not a nuisance detail; it is exactly why IV estimates must be interpreted together with the margin of compliance they capture.
+These findings connect directly to @sec-w7-diff-instr: were we to define separate subgroup-specific instruments (LEP-lottery and non-LEP-lottery), each would identify a distinct subpopulation LATE. Pooled, the 2SLS estimate is a weighted average of these subgroup effects, with weights that depend on each subgroup's share of the sample and on how many additional years the offer induces there; with covariates entering linearly and lottery odds differing across cohorts, the exact weights are those of Chapter 13. This heterogeneity is not a nuisance detail; it is exactly why IV estimates must be interpreted together with the margin of compliance they capture.
 
 ::: {.callout-note icon=false}
 ## Remark: Lottery Design and Assumption Credibility
@@ -780,36 +887,36 @@ These findings connect directly to @sec-w7-diff-instr: were we to define separat
 The KIPP study illustrates a general principle: instruments derived from *designed* randomization --- lotteries, random assignment, randomized encouragement --- provide the most transparent basis for the exogeneity assumption, because the distribution of $Z$ is known by construction. The exclusion restriction still requires institutional argument (here, that the lottery offer affects only schooling, not morale or parental behavior in other dimensions), but exogeneity within the applicant sample, conditional on application cohort, is not merely plausible --- it follows from the randomization protocol. This is why lottery-based IV designs occupy a privileged position in the program evaluation literature [@angrist2009mostly].
 :::
 
-The KIPP example ties together the main lessons of this chapter. All three IV assumptions are visible in the design: relevance is confirmed by a strong, precisely estimated first stage; exogeneity within the applicant sample follows from the randomization protocol; and exclusion rests on an institutional argument that the lottery offer affects achievement only through attendance. Because compliance is partial, the resulting estimate is a LATE for lottery compliers, not an ATE for all applicants or all students in Lynn. A lottery-based IV design is strongest not because it answers every causal question, but because it answers a clearly defined causal question for a clearly defined subpopulation.
+The KIPP example ties together the main lessons of this chapter. All three IV assumptions are visible in the design: relevance is confirmed by a strong, precisely estimated first stage; exogeneity within the applicant sample (conditional on application cohort) follows from the randomization protocol; and exclusion rests on an institutional argument that the lottery offer affects achievement only through attendance. Because compliance is partial --- the lottery shifts actual attendance but does not fully determine it --- the resulting estimate is a LATE for lottery compliers, not an ATE for all applicants or all students in Lynn. A lottery-based IV design is strongest not because it answers every causal question, but because it answers a clearly defined causal question for a clearly defined subpopulation.
 
 ## Summary {#sec-w7-summary}
 
 1. **IV identifies effects from exogenous treatment variation.** When back-door adjustment fails because an unobserved $U$ creates a path $T \leftarrow U \rightarrow Y$, a valid instrument $Z$ identifies the causal effect by exploiting only the component of treatment variation that $Z$ induces. IV does not block the confounding path --- it avoids it by isolating exogenous variation and ignoring the rest.
 
-2. **Three assumptions, ordered by testability.** Relevance can be assessed with the first-stage $F$-statistic, though the $F$-statistic is a sample diagnostic, not the assumption itself. Exogeneity and exclusion are primarily substantive and must be defended by institutional knowledge, design logic, and causal structure. Each violated assumption produces a distinct, quantifiable bias in the Wald estimand, amplified by weak instruments (@sec-w7-why-matter).
+2. **Three assumptions, ordered by testability.** Relevance --- that $Z$ causally shifts $T$ --- can be assessed with the first-stage $F$-statistic, though the $F$-statistic is a sample diagnostic, not the assumption itself. Exogeneity and exclusion are primarily substantive: exogeneity requires that $Z$ carries no information about latent outcome determinants other than through $T$; exclusion requires that $Z$ has no direct effect on $Y$. Both must be defended by institutional knowledge, design logic, and causal structure --- statistical diagnostics are supportive but secondary. Each violated assumption produces a distinct, quantifiable bias in the Wald estimand, amplified by weak instruments (@sec-w7-why-matter).
 
-3. **Framework 1: homogeneous-effect SEM $\Longrightarrow$ Wald identifies $\beta$.** Under constant treatment effects and the linear structural model, the Wald estimand identifies the single causal parameter $\beta$, which equals the ATE, ATT, and LATE simultaneously. The identification follows from a three-step argument using the reduced form and first stage (@sec-w7-linear).
+3. **Framework 1: homogeneous-effect SEM $\Rightarrow$ Wald identifies $\beta$.** Under constant treatment effects and the linear structural model, the Wald estimand identifies the single causal parameter $\beta$, which equals the ATE, ATT, and LATE simultaneously. The identification follows from a four-step argument (exogeneity, exclusion, the moment equation, relevance) using the reduced form and first stage (@sec-w7-linear).
 
-4. **Framework 2: heterogeneity + monotonicity $\Longrightarrow$ Wald identifies LATE.** Under heterogeneous treatment effects and monotonicity, the Wald estimand identifies the average treatment effect for *compliers* only --- those whose treatment status changes with the instrument, a latent subgroup defined by potential treatment statuses $(T(0), T(1))$, not by observable characteristics (@sec-w7-late).
+4. **Framework 2: heterogeneity + monotonicity $\Rightarrow$ Wald identifies LATE.** Under heterogeneous treatment effects and the monotonicity assumption, the Wald estimand identifies the average treatment effect for *compliers* only --- those whose treatment status changes with the instrument, a latent subgroup defined by potential treatment statuses $(T(0), T(1))$, not by observable characteristics (@sec-w7-late and @sec-w7-interpret).
 
-5. **Different instruments identify different effects.** The LATE depends on the instrument through the complier population it selects. Different instruments can legitimately identify different causal effects because they shift treatment for different margins of the population. LATE equals ATE only under additional structure, most notably treatment-effect homogeneity (@sec-w7-interpret).
+5. **Different instruments identify different effects.** The LATE depends on the instrument through the complier population it selects. Different instruments can legitimately identify different causal effects because they shift treatment for different margins of the population. This is informative about treatment effect heterogeneity, not a contradiction. LATE equals ATE only under additional structure, most notably treatment-effect homogeneity (@sec-w7-interpret).
 
 6. **IV versus back-door adjustment.** The two strategies have complementary failure modes: back-door adjustment fails when confounders are unobserved; IV fails when the exclusion restriction is violated or the instrument is not truly exogenous. IV identifies the LATE (not the ATE) under heterogeneous effects; back-door adjustment identifies the ATE or ATT. They are tools for different identification problems, not competitors (@sec-w7-compare).
 
-7. **Applied example: the KIPP Lynn lottery.** @angrist2012benefits use a randomized admissions lottery as a canonical randomized-encouragement instrument for years of charter school attendance. Within the applicant sample, conditional on application cohort, random assignment of the offer supports exogeneity; exclusion is defended institutionally; relevance is confirmed by a first-stage coefficient of $1.2$. The estimates identify the LATE for lottery compliers --- $0.35\sigma$ per year in math, $0.13\sigma$ in ELA --- with the largest gains for LEP, SPED, and low-baseline-score students (@sec-w7-kipp).
+7. **Applied example: the KIPP Lynn lottery.** @angrist2012benefits use a randomized admissions lottery as a canonical randomized-encouragement instrument for years of charter school attendance. Within the applicant sample, conditional on application cohort, random assignment of the offer supports exogeneity; exclusion is defended institutionally; relevance is confirmed by a first-stage coefficient of $1.2$. The estimates identify the LATE for lottery compliers --- $0.35\sigma$ per year in math, $0.13\sigma$ in ELA --- with the largest gains for LEP, SPED, and low-baseline-score students, illustrating that the margin of compliance shapes which LATE is recovered (@sec-w7-kipp).
 
 8. **Estimation deferred to Chapter 13.** This chapter establishes what IV identifies and under what assumptions. How the Wald ratio is estimated from finite data --- the reduced form regression, two-stage least squares, asymptotic inference, and overidentification tests --- is the subject of Chapter 13.
 
-## Problems
+## Problems {.unnumbered}
 
 **1. The three IV assumptions in three languages.** Consider the DAG $\{Z \to T,\; T \to Y,\; U \to T,\; U \to Y,\; X \to T,\; X \to Y,\; X \to Z\}$ with $U$ unobserved.
 
 (a) List all back-door paths from $T$ to $Y$. Does $X$ alone satisfy the back-door criterion? Explain.
-(b) Verify the three IV assumptions using d-separation: (i) relevance: show $Z$ and $T$ are not d-separated in $\Gcal$; (ii) exogeneity: show $Z \indep U \mid X$ in $\Gcal$; (iii) exclusion: show $Y \indep Z \mid T, X$ in $\Gcal_{\overline{T}}$.
+(b) Verify the three IV assumptions using $d$-separation: (i) Relevance: identify the directed path from $Z$ to $T$ that makes relevance possible, and explain why the absence of $d$-separation does not by itself guarantee a nonzero first stage. (ii) Exogeneity: show $Z \indep U \mid X$ in $\Gcal$. (iii) Exclusion: show $Y \indep Z \mid T, X$ in $\Gcal_{\overline{T}\,\overline{Z}}$ (Rule 3), and explain why the same independence in $\Gcal_{\overline{T}}$ requires exogeneity as well.
 (c) Now add the arrow $Z \to Y$ to the DAG. Which IV assumption is violated? Show explicitly which step of the Wald derivation in @sec-w7-linear breaks down.
 (d) Translate each of the three IV assumptions into the structural language: write the equations for $T$ and $Y$ and identify which coefficient restriction corresponds to each assumption.
 
-**2. Bias under assumption violations.** Let $Y = \beta T + \varepsilon$ and $T = \pi Z + \eta$ with $\E[\varepsilon \mid Z] = 0$ and $\pi \neq 0$.
+**2. Bias under assumption violations.** Let $Z$ be binary with $0 < P(Z{=}1) < 1$, and let $Y = \beta T + \varepsilon$ and $T = \pi Z + \eta$ with $\E[\varepsilon \mid Z] = \E[\eta \mid Z] = 0$ and $\pi \neq 0$.
 
 (a) Starting from $\E[Y \mid Z{=}1] - \E[Y \mid Z{=}0]$, substitute the structural equation for $Y$ and simplify. What role does exogeneity play?
 (b) Show that $\E[T \mid Z{=}1] - \E[T \mid Z{=}0] = \pi$ in the linear first-stage model. What role does relevance play?
@@ -820,8 +927,8 @@ The KIPP example ties together the main lessons of this chapter. All three IV as
 **3. Order, rank, and the limits of overidentification.** Consider a model with one endogenous variable $T$ and two instruments $Z_1$ and $Z_2$, both satisfying exogeneity and exclusion.
 
 (a) State the order condition and verify it is satisfied.
-(b) State the rank condition. What would it mean geometrically if the rank condition failed --- i.e., if $Z_1$ and $Z_2$ were perfectly collinear in the first-stage regression?
-(c) Explain intuitively why having two valid instruments rather than one should improve estimation precision.
+(b) State the rank condition for this model. Show that it fails if and only if neither instrument moves $T$ after adjusting for $X$, and that two perfectly collinear instruments that are each relevant satisfy it (one of them is then redundant, which is a different matter from failure of identification).
+(c) Explain intuitively why a second valid instrument can improve estimation precision, and when it adds nothing.
 (d) Now suppose $Z_1$ is valid but $Z_2$ violates the exclusion restriction. The Sargan--Hansen $J$-test is applied. Under what conditions does the $J$-test have power to detect $Z_2$'s invalidity? Under what conditions does the test fail to detect it?
 (e) Why does passing the $J$-test not confirm that both $Z_1$ and $Z_2$ are valid? Give a concrete example of a situation in which both instruments are invalid and the $J$-test has no power.
 
@@ -835,22 +942,24 @@ The KIPP example ties together the main lessons of this chapter. All three IV as
 
 **5. The exclusion restriction: plausibility and violations.** Evaluate the exclusion restriction for each of the following proposed instruments. For each, (i) state whether the restriction is plausible and why; (ii) describe a specific mechanism by which it could be violated; and (iii) assess whether the violation would bias the IV estimate upward or downward.
 
-(a) *Instrument*: rainfall in the home region of a politician, used as an instrument for government infrastructure spending. *Outcome*: local economic growth.
-(b) *Instrument*: distance to the nearest hospital, used as an instrument for hospital admission. *Outcome*: 30-day mortality.
-(c) *Instrument*: a randomly assigned financial incentive to enroll in a health screening program, used as an instrument for screening uptake. *Outcome*: health status two years later.
-(d) *Instrument*: lottery number in the Vietnam-era draft lottery, used as an instrument for military service. *Outcome*: lifetime earnings. (This is the @angrist1990lifetime study; discuss why this instrument is widely regarded as satisfying the exclusion restriction.)
+(a) **Instrument**: rainfall in the home region of a politician, used as an instrument for government infrastructure spending. **Outcome**: local economic growth.
+(b) **Instrument**: distance to the nearest hospital, used as an instrument for hospital admission. **Outcome**: 30-day mortality.
+(c) **Instrument**: a randomly assigned financial incentive to enroll in a health screening program, used as an instrument for screening uptake. **Outcome**: health status two years later.
+(d) **Instrument**: lottery number in the Vietnam-era draft lottery, used as an instrument for military service. **Outcome**: lifetime earnings. [*This is the @angrist1990lifetime study. Assess the exclusion restriction rather than presupposing it: a low lottery number may have changed schooling or occupational choices made to avoid the draft, which affect earnings outside military service (Angrist and Krueger, 1992).*]
 
-**6. IV versus back-door adjustment.** A researcher studies the effect of job training ($T$) on earnings ($Y$). Two strategies are available: (A) a rich set of pre-treatment covariates $X$ and a propensity-score estimator; (B) a lottery that randomly selected units to be offered training (not required to attend), used as an instrument $Z$.
+**6. IV versus back-door adjustment.** A researcher studies the effect of job training ($T$) on earnings ($Y$). Two strategies are available: (A) a rich set of pre-treatment covariates $X$ (education, age, prior earnings, region) and a propensity-score estimator; (B) a lottery that randomly selected units to be offered training (not required to attend), used as an instrument $Z$.
 
 (a) Under what assumption does strategy (A) identify the ATE? What specific unobserved variable would most plausibly violate this assumption?
 (b) Strategy (B) identifies a LATE. Describe the complier population in words. Is the LATE likely to be larger or smaller than the ATE in this setting? Explain.
-(c) Both strategies are implemented and yield estimates of \$1,800 and \$2,400 per year, respectively. Describe a Hausman-type test that uses both estimates. Under what null hypothesis does the test have an approximate $\chi^2$ distribution?
+(c) Both strategies are implemented and yield estimates of \$1,800 and \$2,400 per year, respectively. Describe a Hausman-type test that uses both estimates. Under what null hypothesis does the test have an approximate $\chi^2$ distribution, and what must be assumed about the two estimands for the comparison to be meaningful?
 (d) If the two estimates differ significantly, which strategy would you trust more and why? What additional evidence would help distinguish the two explanations (endogeneity bias in (A) versus LATE $\neq$ ATE in (B))?
 
-**7. Nonparametric nonidentification of the ATE under valid IV assumptions** *(advanced / second pass)*. Consider the IV DAG $Z \to T$, $T \to Y$, $U \to T$, $U \to Y$, with $U$ unobserved, $Z \indep U$, and no direct $Z \to Y$ edge, so that relevance, exogeneity, and exclusion all hold. This problem shows constructively that these assumptions do *not* nonparametrically identify the ATE, even with a genuinely relevant instrument, as the nonidentification remark opening @sec-w7-late asserts.
+**7. Nonparametric nonidentification of the ATE under valid IV assumptions** *(advanced / second pass)*. Consider the IV DAG: $Z \to T$, $T \to Y$, $U \to T$, $U \to Y$, with $U$ unobserved, $Z \indep U$, and no direct $Z \to Y$ edge, so that relevance, exogeneity, and exclusion all hold. This problem shows constructively that these assumptions do *not* nonparametrically identify the ATE, even with a genuinely relevant instrument.
 
 (a) Construct two SEMs $\mathcal{M}_1$ and $\mathcal{M}_2$, each compatible with the IV graph, that are observationally indistinguishable but causally distinct:
 $$P_{\mathcal{M}_1}(Z, T, Y) = P_{\mathcal{M}_2}(Z, T, Y), \qquad P_{\mathcal{M}_1}\!\left(Y{=}1 \mid \doop(T{=}1)\right) \ne P_{\mathcal{M}_2}\!\left(Y{=}1 \mid \doop(T{=}1)\right).$$
-(*Hint*: let $Z \sim \mathrm{Bern}(1/2)$ independently of a latent type $U \in \{\mathrm{C}, \mathrm{A}, \mathrm{N}\}$ (complier, always-taker, never-taker) with $P(\mathrm{C}) = 1/2$ and $P(\mathrm{A}) = P(\mathrm{N}) = 1/4$, and in both models set $T = Z$ for $U = \mathrm{C}$, $T = 1$ for $U = \mathrm{A}$, and $T = 0$ for $U = \mathrm{N}$, so that $P(T{=}1 \mid Z{=}1) - P(T{=}1 \mid Z{=}0) = 1/2$: the instrument is relevant. In both models set $Y = T$ for $U = \mathrm{C}$ and $Y = 1$ for $U = \mathrm{A}$; let the models differ only for $U = \mathrm{N}$, with $Y = 0$ in $\mathcal{M}_1$ and $Y = T$ in $\mathcal{M}_2$.)
+(*Hint*: let $Z \sim \mathrm{Bern}(1/2)$ independently of a latent type $U \in \{\mathrm{C}, \mathrm{A}, \mathrm{N}\}$ ($\mathrm{C}$ = complier, $\mathrm{A}$ = always-taker, $\mathrm{N}$ = never-taker) with $P(\mathrm{C}) = 1/2$ and $P(\mathrm{A}) = P(\mathrm{N}) = 1/4$, and in both models set
+$$T = \begin{cases} Z, & U = \mathrm{C},\\ 1, & U = \mathrm{A},\\ 0, & U = \mathrm{N}, \end{cases}$$
+so that $P(T{=}1 \mid Z{=}1) - P(T{=}1 \mid Z{=}0) = 1/2$: the instrument is relevant. In both models set $Y = T$ for $U = \mathrm{C}$ and $Y = 1$ for $U = \mathrm{A}$; let the models differ only for $U = \mathrm{N}$, with $Y = 0$ in $\mathcal{M}_1$ and $Y = T$ in $\mathcal{M}_2$.)
 (b) Verify that both models generate the same joint $P(Z, T, Y)$, then compute $P(Y{=}1 \mid \doop(T{=}1))$ and $P(Y{=}1 \mid \doop(T{=}0))$ in each model and show that the two ATEs differ.
 (c) Verify that both models satisfy monotonicity (there are no defiers), compute the LATE $\E[Y(1) - Y(0) \mid U = \mathrm{C}]$ in each model, and confirm that it coincides across the two models and equals the Wald ratio computed from the common observed distribution. What does this comparison show about which causal quantity the instrument identifies without further assumptions?

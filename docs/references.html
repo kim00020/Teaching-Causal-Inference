@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>References – Theory and Methods in Causal Inference</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./appendix_A.html" rel="next">
+<link href="./chapter_13_supplement.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: {
+    tags: 'ams',
+    macros: {
+      doop:   ["\\operatorname{do}"],
+      indep:  ["\\perp\\!\\!\\!\\perp"],
+      nindep: ["\\not\\!\\perp\\!\\!\\!\\perp"],
+      E:      ["\\mathbb{E}"],
+      Gcal:   ["\\mathcal{G}"],
+      Pa:     ["\\mathrm{Pa}"],
+      De:     ["\\mathrm{De}"],
+      An:     ["\\mathrm{An}"],
+      Nd:     ["\\mathrm{Nd}"],
+      pto:    ["\\overset{p}{\\to}"],
+      expit:  ["\\operatorname{expit}"]
+    }
+  }
+};
+</script>
+<style>
+.quarto-download-btn {
+  background-color: #1e3864 !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.quarto-download-btn:hover {
+  background-color: #2e72b8 !important;
+  color: white !important;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./references.html">References</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Theory and Methods in Causal Inference</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Theory-and-Methods-in-Causal-Inference.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">DAGs and d-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Graphical Identification and the Do-Calculus</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Identification</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Potential Outcomes and Adjustment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomized Experiments, Regression Adjustment, and Calibration</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Propensity Score Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mediation and Front-Door Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Sensitivity Analysis and Partial Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_09_supplement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chapter 9 Supplement: Optional Proofs, Derivations, and Extended Lab</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Estimation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Estimating Equations and Influence Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Doubly Robust Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Cross-Fitting and Double Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Estimation for Instrumental Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapter_13_supplement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_B.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Single World Intervention Graphs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix_C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Pathwise Differentiability, Tangent Spaces, and the Efficient Influence Function</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">References</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-abadie2006large" class="csl-entry" role="listitem">
+Abadie, Alberto, and Guido W. Imbens. 2006. <span>“Large Sample
+Properties of Matching Estimators for Average Treatment Effects.”</span>
+<em>Econometrica</em> 74 (1): 235–67. <a href="https://doi.org/10.1111/j.1468-0262.2006.00655.x">https://doi.org/10.1111/j.1468-0262.2006.00655.x</a>.
+</div>
+<div id="ref-abadie2008failure" class="csl-entry" role="listitem">
+Abadie, Alberto, and Guido W. Imbens. 2008. <span>“On the Failure of the
+Bootstrap for Matching Estimators.”</span> <em>Econometrica</em> 76 (6):
+1537–57. <a href="https://doi.org/10.3982/ECTA6474">https://doi.org/10.3982/ECTA6474</a>.
+</div>
+<div id="ref-abadie2016matching" class="csl-entry" role="listitem">
+Abadie, Alberto, and Guido W. Imbens. 2016. <span>“Matching on the
+Estimated Propensity Score.”</span> <em>Econometrica</em> 84 (2):
+781–807. <a href="https://doi.org/10.3982/ECTA11293">https://doi.org/10.3982/ECTA11293</a>.
+</div>
+<div id="ref-andersonrubin1949" class="csl-entry" role="listitem">
+Anderson, T. W., and Herman Rubin. 1949. <span>“Estimation of the
+Parameters of a Single Equation in a Complete System of Stochastic
+Equations.”</span> <em>The Annals of Mathematical Statistics</em> 20
+(1): 46–63.
+</div>
+<div id="ref-andrews2017unbiased" class="csl-entry" role="listitem">
+Andrews, Isaiah, and Timothy B. Armstrong. 2017. <span>“Unbiased
+Instrumental Variables Estimation Under Known First-Stage Sign.”</span>
+<em>Quantitative Economics</em> 8 (2): 479–503.
+</div>
+<div id="ref-angrist1990lifetime" class="csl-entry" role="listitem">
+Angrist, Joshua D. 1990. <span>“Lifetime Earnings and the
+<span>Vietnam</span> Era Draft Lottery: Evidence from Social Security
+Administrative Records.”</span> <em>American Economic Review</em> 80
+(3): 313–36.
+</div>
+<div id="ref-angrist2012benefits" class="csl-entry" role="listitem">
+Angrist, Joshua D., Susan M. Dynarski, Thomas J. Kane, Parag A. Pathak,
+and Christopher R. Walters. 2012. <span>“Who Benefits from
+<span>KIPP</span>?”</span> <em>Journal of Policy Analysis and
+Management</em> 31 (4): 837–60. <a href="https://doi.org/10.1002/pam.21647">https://doi.org/10.1002/pam.21647</a>.
+</div>
+<div id="ref-angrist1995two" class="csl-entry" role="listitem">
+Angrist, Joshua D., and Guido W. Imbens. 1995. <span>“Two-Stage Least
+Squares Estimation of Average Causal Effects in Models with Variable
+Treatment Intensity.”</span> <em>Journal of the American Statistical
+Association</em> 90 (430): 431–42. <a href="https://doi.org/10.2307/2291054">https://doi.org/10.2307/2291054</a>.
+</div>
+<div id="ref-angrist1996identification" class="csl-entry" role="listitem">
+Angrist, Joshua D., Guido W. Imbens, and Donald B. Rubin. 1996.
+<span>“Identification of Causal Effects Using Instrumental
+Variables.”</span> <em>Journal of the American Statistical
+Association</em> 91 (434): 444–55.
+</div>
+<div id="ref-angrist1991does" class="csl-entry" role="listitem">
+Angrist, Joshua D., and Alan B. Krueger. 1991. <span>“Does Compulsory
+School Attendance Affect Schooling and Earnings?”</span> <em>Quarterly
+Journal of Economics</em> 106 (4): 979–1014. <a href="https://doi.org/10.2307/2937954">https://doi.org/10.2307/2937954</a>.
+</div>
+<div id="ref-angrist2009mostly" class="csl-entry" role="listitem">
+Angrist, Joshua D., and Jörn-Steffen Pischke. 2009. <em>Mostly Harmless
+Econometrics: An Empiricist’s Companion</em>. Princeton University
+Press.
+</div>
+<div id="ref-angrist2024one" class="csl-entry" role="listitem">
+Angrist, Joshua, and Michal Kolesár. 2024. <span>“One Instrument to Rule
+Them All: The Bias and Coverage of Just-<span>ID</span>
+<span>IV</span>.”</span> <em>Journal of Econometrics</em> 240 (2):
+105398.
+</div>
+<div id="ref-angrist2009incentives" class="csl-entry" role="listitem">
+Angrist, Joshua, Daniel Lang, and Philip Oreopoulos. 2009.
+<span>“Incentives and Services for College Achievement: Evidence from a
+Randomized Trial.”</span> <em>American Economic Journal: Applied
+Economics</em> 1 (1): 136–63.
+</div>
+<div id="ref-bang2005doubly" class="csl-entry" role="listitem">
+Bang, Heejung, and James M. Robins. 2005. <span>“Doubly Robust
+Estimation in Missing Data and Causal Inference Models.”</span>
+<em>Biometrics</em> 61 (4): 962–73. <a href="https://doi.org/10.1111/j.1541-0420.2005.00377.x">https://doi.org/10.1111/j.1541-0420.2005.00377.x</a>.
+</div>
+<div id="ref-baron1986moderator" class="csl-entry" role="listitem">
+Baron, Reuben M., and David A. Kenny. 1986. <span>“The
+Moderator–Mediator Variable Distinction in Social Psychological
+Research: Conceptual, Strategic, and Statistical Considerations.”</span>
+<em>Journal of Personality and Social Psychology</em> 51 (6): 1173–82.
+<a href="https://doi.org/10.1037/0022-3514.51.6.1173">https://doi.org/10.1037/0022-3514.51.6.1173</a>.
+</div>
+<div id="ref-bartik1991benefits" class="csl-entry" role="listitem">
+Bartik, Timothy J. 1991. <em>Who Benefits from State and Local Economic
+Development Policies?</em> W.&nbsp;E.&nbsp;Upjohn Institute for Employment
+Research.
+</div>
+<div id="ref-berkson1946limitations" class="csl-entry" role="listitem">
+Berkson, Joseph. 1946. <span>“Limitations of the Application of Fourfold
+Table Analysis to Hospital Data.”</span> <em>Biometrics Bulletin</em> 2
+(3): 47–53.
+</div>
+<div id="ref-bezuidenhout2025swigs" class="csl-entry" role="listitem">
+Bezuidenhout, Dana, Sarah Forthal, Kara Rudolph, and Matthew R. Lamb.
+2025. <span>“Single World Intervention Graphs (<span>SWIGs</span>): A
+Practical Guide.”</span> <em>American Journal of Epidemiology</em> 194:
+2047–52. <a href="https://doi.org/10.1093/aje/kwae353">https://doi.org/10.1093/aje/kwae353</a>.
+</div>
+<div id="ref-bickel1993" class="csl-entry" role="listitem">
+Bickel, Peter J., Chris A. J. Klaassen, Ya’acov Ritov, and Jon A.
+Wellner. 1993. <em>Efficient and Adaptive Estimation for Semiparametric
+Models</em>. Johns Hopkins University Press.
+</div>
+<div id="ref-bound1995problems" class="csl-entry" role="listitem">
+Bound, John, David A. Jaeger, and Regina M. Baker. 1995. <span>“Problems
+with Instrumental Variables Estimation When the Correlation Between the
+Instruments and the Endogenous Explanatory Variable Is Weak.”</span>
+<em>Journal of the American Statistical Association</em> 90 (430):
+443–50. <a href="https://doi.org/10.2307/2291055">https://doi.org/10.2307/2291055</a>.
+</div>
+<div id="ref-brookhart2006variable" class="csl-entry" role="listitem">
+Brookhart, M. Alan, Sebastian Schneeweiss, Kenneth J. Rothman, Robert J.
+Glynn, Jerry Avorn, and Til Stürmer. 2006. <span>“Variable Selection for
+Propensity Score Models.”</span> <em>American Journal of
+Epidemiology</em> 163 (12): 1149–56. <a href="https://doi.org/10.1093/aje/kwj149">https://doi.org/10.1093/aje/kwj149</a>.
+</div>
+<div id="ref-buckles2013season" class="csl-entry" role="listitem">
+Buckles, Kasey S., and Daniel M. Hungerman. 2013. <span>“Season of Birth
+and Later Outcomes: Old Questions, New Answers.”</span> <em>Review of
+Economics and Statistics</em> 95 (3): 711–24.
+</div>
+<div id="ref-card1995using" class="csl-entry" role="listitem">
+Card, David. 1995. <span>“Using Geographic Variation in College
+Proximity to Estimate the Return to Schooling.”</span> In <em>Aspects of
+Labour Market Behaviour: Essays in Honour of <span>John
+Vanderkamp</span></em>, edited by Louis N. Christofides, E. Kenneth
+Grant, and Robert Swidinsky. University of Toronto Press.
+</div>
+<div id="ref-chernozhukov2018double" class="csl-entry" role="listitem">
+Chernozhukov, Victor, Denis Chetverikov, Mert Demirer, et al. 2018.
+<span>“Double/Debiased Machine Learning for Treatment and Structural
+Parameters.”</span> <em>The Econometrics Journal</em> 21 (1): C1–68. <a href="https://doi.org/10.1111/ectj.12097">https://doi.org/10.1111/ectj.12097</a>.
+</div>
+<div id="ref-cinelli2020making" class="csl-entry" role="listitem">
+Cinelli, Carlos, and Chad Hazlett. 2020. <span>“Making Sense of
+Sensitivity: Extending Omitted Variable Bias.”</span> <em>Journal of the
+Royal Statistical Society, Series B</em> 82 (1): 39–67. <a href="https://doi.org/10.1111/rssb.12348">https://doi.org/10.1111/rssb.12348</a>.
+</div>
+<div id="ref-cochran1968effectiveness" class="csl-entry" role="listitem">
+Cochran, William G. 1968. <span>“The Effectiveness of Adjustment by
+Subclassification in Removing Bias in Observational Studies.”</span>
+<em>Biometrics</em> 24 (2): 295–313. <a href="https://doi.org/10.2307/2528036">https://doi.org/10.2307/2528036</a>.
+</div>
+<div id="ref-cochran1977sampling" class="csl-entry" role="listitem">
+Cochran, William G. 1977. <em>Sampling Techniques</em>. 3rd ed. Wiley.
+</div>
+<div id="ref-cornfield1959smoking" class="csl-entry" role="listitem">
+Cornfield, Jerome, William Haenszel, E. Cuyler Hammond, Abraham M.
+Lilienfeld, Michael B. Shimkin, and Ernst L. Wynder. 1959.
+<span>“Smoking and Lung Cancer: Recent Evidence and a Discussion of Some
+Questions.”</span> <em>Journal of the National Cancer Institute</em> 22
+(1): 173–203.
+</div>
+<div id="ref-cressieread1984" class="csl-entry" role="listitem">
+Cressie, Noel, and Timothy R. C. Read. 1984. <span>“Multinomial
+Goodness-of-Fit Tests.”</span> <em>Journal of the Royal Statistical
+Society, Series B</em> 46 (3): 440–64.
+</div>
+<div id="ref-crump2009dealing" class="csl-entry" role="listitem">
+Crump, Richard K., V. Joseph Hotz, Guido W. Imbens, and Oscar A. Mitnik.
+2009. <span>“Dealing with Limited Overlap in Estimation of Average
+Treatment Effects.”</span> <em>Biometrika</em> 96 (1): 187–99. <a href="https://doi.org/10.1093/biomet/asn055">https://doi.org/10.1093/biomet/asn055</a>.
+</div>
+<div id="ref-dale2002payoff" class="csl-entry" role="listitem">
+Dale, Stacy Berg, and Alan B. Krueger. 2002. <span>“Estimating the
+Payoff to Attending a More Selective College: An Application of
+Selection on Observables and Unobservables.”</span> <em>The Quarterly
+Journal of Economics</em> 117 (4): 1491–527.
+</div>
+<div id="ref-dawid1979conditional" class="csl-entry" role="listitem">
+Dawid, A. Philip. 1979. <span>“Conditional Independence in Statistical
+Theory.”</span> <em>Journal of the Royal Statistical Society, Series
+B</em> 41 (1): 1–31.
+</div>
+<div id="ref-dawid1980conditional" class="csl-entry" role="listitem">
+Dawid, A. Philip. 1980. <span>“Conditional Independence for Statistical
+Operations.”</span> <em>Annals of Statistics</em> 8 (3): 598–617. <a href="https://doi.org/10.1214/aos/1176345011">https://doi.org/10.1214/aos/1176345011</a>.
+</div>
+<div id="ref-dehejia1999causal" class="csl-entry" role="listitem">
+Dehejia, Rajeev H., and Sadek Wahba. 1999. <span>“Causal Effects in
+Nonexperimental Studies: Reevaluating the Evaluation of Training
+Programmes.”</span> <em>Journal of the American Statistical
+Association</em> 94 (448): 1053–62.
+</div>
+<div id="ref-deville1992calibration" class="csl-entry" role="listitem">
+Deville, Jean-Claude, and Carl-Erik Särndal. 1992. <span>“Calibration
+Estimators in Survey Sampling.”</span> <em>Journal of the American
+Statistical Association</em> 87 (418): 376–82. <a href="https://doi.org/10.2307/2290268">https://doi.org/10.2307/2290268</a>.
+</div>
+<div id="ref-ding2023first" class="csl-entry" role="listitem">
+Ding, Peng. 2024. <em>A First Course in Causal Inference</em>. CRC
+Press.
+</div>
+<div id="ref-ding2016randomization" class="csl-entry" role="listitem">
+Ding, Peng, Avi Feller, and Luke Miratrix. 2016. <span>“Randomization
+Inference for Treatment Effect Variation.”</span> <em>Journal of the
+Royal Statistical Society: Series B</em> 78 (3): 655–71. <a href="https://doi.org/10.1111/rssb.12124">https://doi.org/10.1111/rssb.12124</a>.
+</div>
+<div id="ref-ding2016sensitivity" class="csl-entry" role="listitem">
+Ding, Peng, and Tyler J. VanderWeele. 2016. <span>“Sensitivity Analysis
+Without Assumptions.”</span> <em>Epidemiology</em> 27 (3): 368–77. <a href="https://doi.org/10.1097/EDE.0000000000000457">https://doi.org/10.1097/EDE.0000000000000457</a>.
+</div>
+<div id="ref-dorn2023sharp" class="csl-entry" role="listitem">
+Dorn, Jacob, and Kevin Guo. 2023. <span>“Sharp Sensitivity Analysis for
+Inverse Propensity Weighting via Quantile Balancing.”</span> <em>Journal
+of the American Statistical Association</em> 118 (544): 2645–57. <a href="https://doi.org/10.1080/01621459.2022.2069572">https://doi.org/10.1080/01621459.2022.2069572</a>.
+</div>
+<div id="ref-firth1998robust" class="csl-entry" role="listitem">
+Firth, David, and Karen E. Bennett. 1998. <span>“Robust Models in
+Probability Sampling.”</span> <em>Journal of the Royal Statistical
+Society: Series B</em> 60 (1): 3–21. <a href="https://doi.org/10.1111/1467-9868.00105">https://doi.org/10.1111/1467-9868.00105</a>.
+</div>
+<div id="ref-fisher1935design" class="csl-entry" role="listitem">
+Fisher, Ronald A. 1935. <em>The Design of Experiments</em>. Oliver;
+Boyd.
+</div>
+<div id="ref-frangakis2002principal" class="csl-entry" role="listitem">
+Frangakis, Constantine E., and Donald B. Rubin. 2002. <span>“Principal
+Stratification in Causal Inference.”</span> <em>Biometrics</em> 58 (1):
+21–29. <a href="https://doi.org/10.1111/j.0006-341X.2002.00021.x">https://doi.org/10.1111/j.0006-341X.2002.00021.x</a>.
+</div>
+<div id="ref-frisch1933partial" class="csl-entry" role="listitem">
+Frisch, Ragnar, and Frederick V. Waugh. 1933. <span>“Partial Time
+Regressions as Compared with Individual Trends.”</span>
+<em>Econometrica</em> 1 (4): 387–401.
+</div>
+<div id="ref-fuller1975regression" class="csl-entry" role="listitem">
+Fuller, Wayne A. 1975. <span>“Regression Analysis for Sample
+Survey.”</span> <em>Sankhy<span>ā</span>, Series C</em> 37: 117–32.
+</div>
+<div id="ref-goldsmith2020bartik" class="csl-entry" role="listitem">
+Goldsmith-Pinkham, Paul, Isaac Sorkin, and Henry Swift. 2020.
+<span>“Bartik Instruments: What, When, Why, and How.”</span>
+<em>American Economic Review</em> 110 (8): 2586–624. <a href="https://doi.org/10.1257/aer.20181047">https://doi.org/10.1257/aer.20181047</a>.
+</div>
+<div id="ref-haavelmo1943statistical" class="csl-entry" role="listitem">
+Haavelmo, Trygve. 1943. <span>“The Statistical Implications of a System
+of Simultaneous Equations.”</span> <em>Econometrica</em> 11 (1): 1–12.
+</div>
+<div id="ref-hahn1998role" class="csl-entry" role="listitem">
+Hahn, Jinyong. 1998. <span>“On the Role of the Propensity Score in
+Efficient Semiparametric Estimation of Average Treatment
+Effects.”</span> <em>Econometrica</em> 66 (2): 315–31. <a href="https://doi.org/10.2307/2998560">https://doi.org/10.2307/2998560</a>.
+</div>
+<div id="ref-hainmueller2012entropy" class="csl-entry" role="listitem">
+Hainmueller, Jens. 2012. <span>“Entropy Balancing for Causal Effects: A
+Multivariate Reweighting Method to Produce Balanced Samples in
+Observational Studies.”</span> <em>Political Analysis</em> 20 (1):
+25–46. <a href="https://doi.org/10.1093/pan/mpr025">https://doi.org/10.1093/pan/mpr025</a>.
+</div>
+<div id="ref-hansen2008prognostic" class="csl-entry" role="listitem">
+Hansen, Ben B. 2008. <span>“The Prognostic Analogue of the Propensity
+Score.”</span> <em>Biometrika</em> 95 (2): 481–88. <a href="https://doi.org/10.1093/biomet/asn004">https://doi.org/10.1093/biomet/asn004</a>.
+</div>
+<div id="ref-hansen1982large" class="csl-entry" role="listitem">
+Hansen, Lars Peter. 1982. <span>“Large Sample Properties of Generalized
+Method of Moments Estimators.”</span> <em>Econometrica</em> 50 (4):
+1029–54. <a href="https://doi.org/10.2307/1912775">https://doi.org/10.2307/1912775</a>.
+</div>
+<div id="ref-hausman1978specification" class="csl-entry" role="listitem">
+Hausman, Jerry A. 1978. <span>“Specification Tests in
+Econometrics.”</span> <em>Econometrica</em> 46 (6): 1251–71. <a href="https://doi.org/10.2307/1913827">https://doi.org/10.2307/1913827</a>.
+</div>
+<div id="ref-hernan2006instruments" class="csl-entry" role="listitem">
+Hernán, Miguel A., and James M. Robins. 2006. <span>“Instruments for
+Causal Inference: An Epidemiologist’s Dream?”</span>
+<em>Epidemiology</em> 17 (4): 360–72. <a href="https://doi.org/10.1097/01.ede.0000222409.00878.37">https://doi.org/10.1097/01.ede.0000222409.00878.37</a>.
+</div>
+<div id="ref-hernan2020causal" class="csl-entry" role="listitem">
+Hernán, Miguel A., and James M. Robins. 2020. <em>Causal Inference: What
+If</em>. Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-hirano2003efficient" class="csl-entry" role="listitem">
+Hirano, Keisuke, Guido W. Imbens, and Geert Ridder. 2003.
+<span>“Efficient Estimation of Average Treatment Effects Using the
+Estimated Propensity Score.”</span> <em>Econometrica</em> 71 (4):
+1161–89. <a href="https://doi.org/10.1111/1468-0262.00442">https://doi.org/10.1111/1468-0262.00442</a>.
+</div>
+<div id="ref-holland1986statistics" class="csl-entry" role="listitem">
+Holland, Paul W. 1986. <span>“Statistics and Causal Inference.”</span>
+<em>Journal of the American Statistical Association</em> 81 (396):
+945–60.
+</div>
+<div id="ref-huang2006pearl" class="csl-entry" role="listitem">
+Huang, Yimin, and Marco Valtorta. 2006. <span>“Pearl’s Calculus of
+Intervention Is Complete.”</span> <em>Proceedings of the Twenty-Second
+Conference on Uncertainty in Artificial Intelligence (UAI)</em>
+(Arlington, VA), 217–24.
+</div>
+<div id="ref-imai2010identification" class="csl-entry" role="listitem">
+Imai, Kosuke, Luke Keele, and Teppei Yamamoto. 2010.
+<span>“Identification, Inference and Sensitivity Analysis for Causal
+Mediation Effects.”</span> <em>Statistical Science</em> 25 (1): 51–71.
+<a href="https://doi.org/10.1214/10-STS321">https://doi.org/10.1214/10-STS321</a>.
+</div>
+<div id="ref-imbens2003sensitivity" class="csl-entry" role="listitem">
+Imbens, Guido W. 2003. <span>“Sensitivity to Exogeneity Assumptions in
+Program Evaluation.”</span> <em>American Economic Review</em> 93 (2):
+126–32.
+</div>
+<div id="ref-imbens1994identification" class="csl-entry" role="listitem">
+Imbens, Guido W., and Joshua D. Angrist. 1994. <span>“Identification and
+Estimation of Local Average Treatment Effects.”</span>
+<em>Econometrica</em> 62 (2): 467–75.
+</div>
+<div id="ref-imbens2009" class="csl-entry" role="listitem">
+Imbens, Guido W., and Whitney K. Newey. 2009. <span>“Identification and
+Estimation of Triangular Simultaneous Equations Models Without
+Additivity.”</span> <em>Econometrica</em> 77 (5): 1481–512.
+</div>
+<div id="ref-imbens1997estimating" class="csl-entry" role="listitem">
+Imbens, Guido W., and Donald B. Rubin. 1997. <span>“Estimating Outcome
+Distributions for Compliers in Instrumental Variables Models.”</span>
+<em>Review of Economic Studies</em> 64 (4): 555–74.
+</div>
+<div id="ref-imbens2015causal" class="csl-entry" role="listitem">
+Imbens, Guido W., and Donald B. Rubin. 2015. <em>Causal Inference for
+Statistics, Social, and Biomedical Sciences: An Introduction</em>.
+Cambridge University Press.
+</div>
+<div id="ref-isaki1982survey" class="csl-entry" role="listitem">
+Isaki, Cary T., and Wayne A. Fuller. 1982. <span>“Survey Design Under
+the Regression Superpopulation Model.”</span> <em>Journal of the
+American Statistical Association</em> 77 (377): 89–96. <a href="https://doi.org/10.2307/2287773">https://doi.org/10.2307/2287773</a>.
+</div>
+<div id="ref-kennedy2017nonparametric" class="csl-entry" role="listitem">
+Kennedy, Edward H., Zongming Ma, Matthew D. McHugh, and Dylan S. Small.
+2017. <span>“Non-Parametric Methods for Doubly Robust Estimation of
+Continuous Treatment Effects.”</span> <em>Journal of the Royal
+Statistical Society: Series B</em> 79 (4): 1229–45.
+</div>
+<div id="ref-khan2010irregular" class="csl-entry" role="listitem">
+Khan, Shakeeb, and Elie Tamer. 2010. <span>“Irregular Identification,
+Support Conditions, and Inverse Weight Estimation.”</span>
+<em>Econometrica</em> 78 (6): 2021–42. <a href="https://doi.org/10.3982/ECTA7372">https://doi.org/10.3982/ECTA7372</a>.
+</div>
+<div id="ref-kitagawa2015test" class="csl-entry" role="listitem">
+Kitagawa, Toru. 2015. <span>“A Test for Instrument Validity.”</span>
+<em>Econometrica</em> 83 (5): 2043–63. <a href="https://doi.org/10.3982/ECTA11974">https://doi.org/10.3982/ECTA11974</a>.
+</div>
+<div id="ref-kwon2026generalized" class="csl-entry" role="listitem">
+Kwon, Yonghyun, Jae Kwang Kim, and Yumou Qiu. 2026. <span>“Generalized
+Entropy Calibration for Analyzing Voluntary Survey Data.”</span>
+<em>Biometrics</em> 82 (1): ujag041. <a href="https://doi.org/10.1093/biomtc/ujag041">https://doi.org/10.1093/biomtc/ujag041</a>.
+</div>
+<div id="ref-vanderLaan2011targeted" class="csl-entry" role="listitem">
+Laan, Mark J. van der, and Sherri Rose. 2011. <em>Targeted Learning:
+Causal Inference for Observational and Experimental Data</em>. Springer
+Series in Statistics. Springer.
+</div>
+<div id="ref-rose2020targeted" class="csl-entry" role="listitem">
+Laan, Mark J. van der, and Sherri Rose. 2018. <em>Targeted Learning in
+Data Science: Causal Inference for Complex Longitudinal Studies</em>.
+Springer Series in Statistics. Springer.
+</div>
+<div id="ref-vanderLaan2006targeted" class="csl-entry" role="listitem">
+Laan, Mark J. van der, and Daniel Rubin. 2006. <span>“Targeted Maximum
+Likelihood Learning.”</span> <em>The International Journal of
+Biostatistics</em> 2 (1): 1–40. <a href="https://doi.org/10.2202/1557-4679.1043">https://doi.org/10.2202/1557-4679.1043</a>.
+</div>
+<div id="ref-lalonde1986evaluating" class="csl-entry" role="listitem">
+LaLonde, Robert J. 1986. <span>“Evaluating the Econometric Evaluations
+of Training Programmes with Experimental Data.”</span> <em>American
+Economic Review</em> 76 (4): 604–20.
+</div>
+<div id="ref-lauritzen1996graphical" class="csl-entry" role="listitem">
+Lauritzen, Steffen L. 1996. <em>Graphical Models</em>. Oxford University
+Press.
+</div>
+<div id="ref-lee2022valid" class="csl-entry" role="listitem">
+Lee, David S., Justin McCrary, Marcelo J. Moreira, and Jack Porter.
+2022. <span>“Valid <span class="math inline"><em>t</em></span>-Ratio
+Inference for <span>IV</span>.”</span> <em>American Economic Review</em>
+112 (10): 3260–90.
+</div>
+<div id="ref-levis2024nonparametric" class="csl-entry" role="listitem">
+Levis, Alexander W., Edward H. Kennedy, and Luke Keele. 2024.
+<span>“Nonparametric Identification and Efficient Estimation of Causal
+Effects with Instrumental Variables.”</span> <em>arXiv Preprint
+arXiv:2402.09332</em>.
+</div>
+<div id="ref-li1989regression" class="csl-entry" role="listitem">
+Li, Ker-Chau, and Naihua Duan. 1989. <span>“Regression Analysis Under
+Link Violation.”</span> <em>The Annals of Statistics</em> 17 (3):
+1009–52. <a href="https://doi.org/10.1214/aos/1176347254">https://doi.org/10.1214/aos/1176347254</a>.
+</div>
+<div id="ref-li2017general" class="csl-entry" role="listitem">
+Li, Xinran, and Peng Ding. 2017. <span>“General Forms of Finite
+Population Central Limit Theorems with Applications to Causal
+Inference.”</span> <em>Journal of the American Statistical
+Association</em> 112 (520): 1759–69. <a href="https://doi.org/10.1080/01621459.2017.1295865">https://doi.org/10.1080/01621459.2017.1295865</a>.
+</div>
+<div id="ref-lin1998assessing" class="csl-entry" role="listitem">
+Lin, D. Y., Bruce M. Psaty, and Richard A. Kronmal. 1998.
+<span>“Assessing the Sensitivity of Regression Results to Unmeasured
+Confounders in Observational Studies.”</span> <em>Biometrics</em> 54
+(3): 948–63.
+</div>
+<div id="ref-lin2013agnostic" class="csl-entry" role="listitem">
+Lin, Winston. 2013. <span>“Agnostic Notes on Regression Adjustments to
+Experimental Data: Reexamining <span>Freedman</span>’s Critique.”</span>
+<em>The Annals of Applied Statistics</em> 7 (1): 295–318. <a href="https://doi.org/10.1214/12-AOAS583">https://doi.org/10.1214/12-AOAS583</a>.
+</div>
+<div id="ref-lovell1963seasonal" class="csl-entry" role="listitem">
+Lovell, Michael C. 1963. <span>“Seasonal Adjustment of Economic Time
+Series and Multiple Regression Analysis.”</span> <em>Journal of the
+American Statistical Association</em> 58 (304): 993–1010.
+</div>
+<div id="ref-manski1990nonparametric" class="csl-entry" role="listitem">
+Manski, Charles F. 1990. <span>“Nonparametric Bounds on Treatment
+Effects.”</span> <em>American Economic Review, Papers and
+Proceedings</em> 80 (2): 319–23.
+</div>
+<div id="ref-manski2003partial" class="csl-entry" role="listitem">
+Manski, Charles F. 2003. <em>Partial Identification of Probability
+Distributions</em>. Springer. <a href="https://doi.org/10.1007/b97478">https://doi.org/10.1007/b97478</a>.
+</div>
+<div id="ref-montielolea2013" class="csl-entry" role="listitem">
+Montiel Olea, José Luis, and Carolin Pflueger. 2013. <span>“A Robust
+Test for Weak Instruments.”</span> <em>Journal of Business &amp;
+Economic Statistics</em> 31 (3): 358–69.
+</div>
+<div id="ref-moreira2003" class="csl-entry" role="listitem">
+Moreira, Marcelo J. 2003. <span>“A Conditional Likelihood Ratio Test for
+Structural Models.”</span> <em>Econometrica</em> 71 (4): 1027–48.
+</div>
+<div id="ref-neweysmith2004" class="csl-entry" role="listitem">
+Newey, Whitney K., and Richard J. Smith. 2004. <span>“Higher Order
+Properties of <span>GMM</span> and Generalized Empirical Likelihood
+Estimators.”</span> <em>Econometrica</em> 72 (1): 219–55. <a href="https://doi.org/10.1111/j.1468-0262.2004.00482.x">https://doi.org/10.1111/j.1468-0262.2004.00482.x</a>.
+</div>
+<div id="ref-neyman1923application" class="csl-entry" role="listitem">
+Neyman, Jerzy Splawa. 1923. <span>“On the Application of Probability
+Theory to Agricultural Experiments: Essay on Principles,
+Section&nbsp;9.”</span> <em>Statistical Science</em> 5 (4): 465–72.
+</div>
+<div id="ref-pearl1993comment" class="csl-entry" role="listitem">
+Pearl, Judea. 1993. <span>“Comment: Graphical Models, Causality and
+Intervention.”</span> <em>Statistical Science</em> 8 (3): 266–69.
+</div>
+<div id="ref-pearl1995causal" class="csl-entry" role="listitem">
+Pearl, Judea. 1995a. <span>“Causal Diagrams for Empirical
+Research.”</span> <em>Biometrika</em> 82 (4): 669–88.
+</div>
+<div id="ref-pearl1995testability" class="csl-entry" role="listitem">
+Pearl, Judea. 1995b. <span>“On the Testability of Causal Models with
+Latent and Instrumental Variables.”</span> <em>Proceedings of the
+Eleventh Conference on Uncertainty in Artificial Intelligence (UAI)</em>
+(San Francisco, CA), 435–43.
+</div>
+<div id="ref-pearl2001direct" class="csl-entry" role="listitem">
+Pearl, Judea. 2001. <span>“Direct and Indirect Effects.”</span>
+<em>Proceedings of the Seventeenth Conference on Uncertainty in
+Artificial Intelligence (<span>UAI</span> 2001)</em>, 411–20.
+</div>
+<div id="ref-pearl2009causality" class="csl-entry" role="listitem">
+Pearl, Judea. 2009. <em>Causality: Models, Reasoning, and
+Inference</em>. 2nd ed. Cambridge University Press.
+</div>
+<div id="ref-phipson2010permutation" class="csl-entry" role="listitem">
+Phipson, Belinda, and Gordon K. Smyth. 2010. <span>“Permutation
+<span>P</span>-Values Should Never Be Zero: Calculating Exact
+<span>P</span>-Values When Permutations Are Randomly Drawn.”</span>
+<em>Statistical Applications in Genetics and Molecular Biology</em> 9
+(1): Article 39.
+</div>
+<div id="ref-qin1994empirical" class="csl-entry" role="listitem">
+Qin, Jin, and Jerry Lawless. 1994. <span>“Empirical Likelihood and
+General Estimating Equations.”</span> <em>Annals of Statistics</em> 22
+(1): 300–325.
+</div>
+<div id="ref-ragusa2011" class="csl-entry" role="listitem">
+Ragusa, Giuseppe. 2011. <span>“Minimum Divergence, Generalized Empirical
+Likelihoods, and Higher Order Expansions.”</span> <em>Econometric
+Reviews</em> 30 (4): 406–56. <a href="https://doi.org/10.1080/07474938.2011.553541">https://doi.org/10.1080/07474938.2011.553541</a>.
+</div>
+<div id="ref-reinisch1995utero" class="csl-entry" role="listitem">
+Reinisch, June M., Stephanie A. Sanders, Erik L. Mortensen, and Donald
+B. Rubin. 1995. <span>“In Utero Exposure to Phenobarbital and
+Intelligence Deficits in Adult Men.”</span> <em>Journal of the American
+Medical Association</em> 274 (19): 1518–25.
+</div>
+<div id="ref-richardson2013swig" class="csl-entry" role="listitem">
+Richardson, Thomas S., and James M. Robins. 2013. <em>Single World
+Intervention Graphs (<span>SWIGs</span>): A Unification of the
+Counterfactual and Graphical Approaches to Causality</em>. Working Paper
+No. 128. Center for Statistics; the Social Sciences, University of
+Washington.
+</div>
+<div id="ref-richardson2014ace" class="csl-entry" role="listitem">
+Richardson, Thomas S., and James M. Robins. 2014. <em><span>ACE</span>
+Bounds; Single World Intervention Graphs (<span>SWIGs</span>) and
+Identification of Causal Effects</em>. University of Washington.
+</div>
+<div id="ref-robins1986new" class="csl-entry" role="listitem">
+Robins, James M. 1986. <span>“A New Approach to Causal Inference in
+Mortality Studies with a Sustained Exposure Period—Application to
+Control of the Healthy Worker Survivor Effect.”</span> <em>Mathematical
+Modelling</em> 7 (9–12): 1393–512.
+</div>
+<div id="ref-robins1992estimating" class="csl-entry" role="listitem">
+Robins, James M., Steven D. Mark, and Whitney K. Newey. 1992.
+<span>“Estimating Exposure Effects by Modelling the Expectation of
+Exposure Conditional on Confounders.”</span> <em>Biometrics</em> 48 (2):
+479–95.
+</div>
+<div id="ref-robins1994estimation" class="csl-entry" role="listitem">
+Robins, James M., Andrea Rotnitzky, and Lue Ping Zhao. 1994.
+<span>“Estimation of Regression Coefficients When Some Regressors Are
+Not Always Observed.”</span> <em>Journal of the American Statistical
+Association</em> 89 (427): 846–66. <a href="https://doi.org/10.2307/2290910">https://doi.org/10.2307/2290910</a>.
+</div>
+<div id="ref-rosenbaum1987model" class="csl-entry" role="listitem">
+Rosenbaum, Paul R. 1987a. <span>“Model-Based Direct Adjustment.”</span>
+<em>Journal of the American Statistical Association</em> 82 (398):
+387–94. <a href="https://doi.org/10.1080/01621459.1987.10478441">https://doi.org/10.1080/01621459.1987.10478441</a>.
+</div>
+<div id="ref-rosenbaum1987sensitivity" class="csl-entry" role="listitem">
+Rosenbaum, Paul R. 1987b. <span>“Sensitivity Analysis for Certain
+Permutation Inferences in Matched Observational Studies.”</span>
+<em>Biometrika</em> 74 (1): 13–26.
+</div>
+<div id="ref-rosenbaum2002observational" class="csl-entry" role="listitem">
+Rosenbaum, Paul R. 2002. <em>Observational Studies</em>. 2nd ed.
+Springer. <a href="https://doi.org/10.1007/978-1-4757-3692-2">https://doi.org/10.1007/978-1-4757-3692-2</a>.
+</div>
+<div id="ref-rosenbaum1983assessing" class="csl-entry" role="listitem">
+Rosenbaum, Paul R., and Donald B. Rubin. 1983a. <span>“Assessing
+Sensitivity to an Unobserved Binary Covariate in an Observational Study
+with Binary Outcome.”</span> <em>Journal of the Royal Statistical
+Society, Series B</em> 45 (2): 212–18.
+</div>
+<div id="ref-rosenbaum1983central" class="csl-entry" role="listitem">
+Rosenbaum, Paul R., and Donald B. Rubin. 1983b. <span>“The Central Role
+of the Propensity Score in Observational Studies for Causal
+Effects.”</span> <em>Biometrika</em> 70 (1): 41–55.
+</div>
+<div id="ref-rubin1974estimating" class="csl-entry" role="listitem">
+Rubin, Donald B. 1974. <span>“Estimating Causal Effects of Treatments in
+Randomized and Nonrandomized Studies.”</span> <em>Journal of Educational
+Psychology</em> 66 (5): 688–701.
+</div>
+<div id="ref-rubin1980randomization" class="csl-entry" role="listitem">
+Rubin, Donald B. 1980. <span>“Randomization Analysis of Experimental
+Data: The <span>Fisher</span> Randomization Test.”</span> <em>Journal of
+the American Statistical Association</em> 75 (371): 591–93.
+</div>
+<div id="ref-rubin1986which" class="csl-entry" role="listitem">
+Rubin, Donald B. 1986. <span>“Which Ifs Have Causal Answers.”</span>
+<em>Journal of the American Statistical Association</em> 81 (396):
+961–62.
+</div>
+<div id="ref-rubin2008objective" class="csl-entry" role="listitem">
+Rubin, Donald B. 2008. <span>“For Objective Causal Inference, Design
+Trumps Analysis.”</span> <em>The Annals of Applied Statistics</em> 2
+(3): 808–40. <a href="https://doi.org/10.1214/08-AOAS187">https://doi.org/10.1214/08-AOAS187</a>.
+</div>
+<div id="ref-sargan1958estimation" class="csl-entry" role="listitem">
+Sargan, John D. 1958. <span>“The Estimation of Economic Relationships
+Using Instrumental Variables.”</span> <em>Econometrica</em> 26 (3):
+393–415. <a href="https://doi.org/10.2307/1907619">https://doi.org/10.2307/1907619</a>.
+</div>
+<div id="ref-shachter1998bayesball" class="csl-entry" role="listitem">
+Shachter, Ross D. 1998. <span>“Bayes-Ball: The Rational Pastime (for
+Determining Irrelevance and Requisite Information in Belief Networks and
+Influence Diagrams).”</span> <em>Proceedings of the Fourteenth
+Conference on Uncertainty in Artificial Intelligence (UAI)</em>, 480–87.
+</div>
+<div id="ref-shpitser2023id" class="csl-entry" role="listitem">
+Shpitser, Ilya. 2023. <span>“When Does the <span>ID</span> Algorithm
+Fail?”</span> <em>arXiv Preprint arXiv:2307.03750</em>.
+</div>
+<div id="ref-shpitser2006identification" class="csl-entry" role="listitem">
+Shpitser, Ilya, and Judea Pearl. 2006. <span>“Identification of Joint
+Interventional Distributions in Recursive Semi-<span>M</span>arkovian
+Causal Models.”</span> <em>Proceedings of the Twenty-First National
+Conference on Artificial Intelligence (AAAI)</em> 21: 1219–26.
+</div>
+<div id="ref-sobel1982asymptotic" class="csl-entry" role="listitem">
+Sobel, Michael E. 1982. <span>“Asymptotic Confidence Intervals for
+Indirect Effects in Structural Equation Models.”</span> <em>Sociological
+Methodology</em> 13: 290–312. <a href="https://doi.org/10.2307/270723">https://doi.org/10.2307/270723</a>.
+</div>
+<div id="ref-staiger1997instrumental" class="csl-entry" role="listitem">
+Staiger, Douglas, and James H. Stock. 1997. <span>“Instrumental
+Variables Regression with Weak Instruments.”</span>
+<em>Econometrica</em> 65 (3): 557–86.
+</div>
+<div id="ref-stensrud2023generalized" class="csl-entry" role="listitem">
+Stensrud, Mats J., James M. Robins, Torben Martinussen, and Jessica G.
+Young. 2023. <span>“Generalized Separable Effects for Mediation Analysis
+with a Mediator–Outcome Confounder.”</span> <em>Journal of the American
+Statistical Association</em> 118 (543): 1736–48. <a href="https://doi.org/10.1080/01621459.2022.2071276">https://doi.org/10.1080/01621459.2022.2071276</a>.
+</div>
+<div id="ref-stensrud2022separable" class="csl-entry" role="listitem">
+Stensrud, Mats J., Jessica G. Young, Vanessa Didelez, James M. Robins,
+and Miguel A. Hernán. 2022. <span>“Separable Effects for Causal
+Inference in the Presence of Competing Events.”</span> <em>Journal of
+the American Statistical Association</em> 117 (537): 175–83. <a href="https://doi.org/10.1080/01621459.2020.1765783">https://doi.org/10.1080/01621459.2020.1765783</a>.
+</div>
+<div id="ref-stockyogo2005" class="csl-entry" role="listitem">
+Stock, James H., and Motohiro Yogo. 2005. <span>“Testing for Weak
+Instruments in Linear <span>IV</span> Regression.”</span> In
+<em>Identification and Inference for Econometric Models: Essays in Honor
+of Thomas Rothenberg</em>, edited by Donald W. K. Andrews and James H.
+Stock. Cambridge University Press.
+</div>
+<div id="ref-tan2006distributional" class="csl-entry" role="listitem">
+Tan, Zhiqiang. 2006. <span>“A Distributional Approach for Causal
+Inference Using Propensity Scores.”</span> <em>Journal of the American
+Statistical Association</em> 101 (476): 1619–37. <a href="https://doi.org/10.1198/016214506000000023">https://doi.org/10.1198/016214506000000023</a>.
+</div>
+<div id="ref-tan2020regularized" class="csl-entry" role="listitem">
+Tan, Zhiqiang. 2020. <span>“Regularized Calibrated Estimation of
+Propensity Scores with Model Misspecification and High-Dimensional
+Data.”</span> <em>Biometrika</em> 107 (1): 137–58. <a href="https://doi.org/10.1093/biomet/asz059">https://doi.org/10.1093/biomet/asz059</a>.
+</div>
+<div id="ref-tian2002general" class="csl-entry" role="listitem">
+Tian, Jin, and Judea Pearl. 2002. <span>“A General Identification
+Condition for Causal Effects.”</span> <em>Proceedings of the Eighteenth
+National Conference on Artificial Intelligence (AAAI)</em> (Menlo Park,
+CA), 567–73.
+</div>
+<div id="ref-tsiatis2006semiparametric" class="csl-entry" role="listitem">
+Tsiatis, Anastasios A. 2006. <em>Semiparametric Theory and Missing
+Data</em>. Springer.
+</div>
+<div id="ref-tukey1962future" class="csl-entry" role="listitem">
+Tukey, John W. 1962. <span>“The Future of Data Analysis.”</span> <em>The
+Annals of Mathematical Statistics</em> 33 (1): 1–67.
+</div>
+<div id="ref-vandervaart1998" class="csl-entry" role="listitem">
+Vaart, Aad W. van der. 1998. <em>Asymptotic Statistics</em>. Cambridge
+University Press.
+</div>
+<div id="ref-vanderweele2019principles" class="csl-entry" role="listitem">
+VanderWeele, Tyler J. 2019. <span>“Principles of Confounder
+Selection.”</span> <em>European Journal of Epidemiology</em> 34 (3):
+211–19. <a href="https://doi.org/10.1007/s10654-019-00494-6">https://doi.org/10.1007/s10654-019-00494-6</a>.
+</div>
+<div id="ref-vanderweele2017sensitivity" class="csl-entry" role="listitem">
+VanderWeele, Tyler J., and Peng Ding. 2017. <span>“Sensitivity Analysis
+in Observational Research: Introducing the <span>E</span>-Value.”</span>
+<em>Annals of Internal Medicine</em> 167 (4): 268–74. <a href="https://doi.org/10.7326/M16-2607">https://doi.org/10.7326/M16-2607</a>.
+</div>
+<div id="ref-vanderweele2014effect" class="csl-entry" role="listitem">
+VanderWeele, Tyler J., Stijn Vansteelandt, and James M. Robins. 2014.
+<span>“Effect Decomposition in the Presence of an Exposure-Induced
+Mediator-Outcome Confounder.”</span> <em>Epidemiology</em> 25 (2):
+300–306.
+</div>
+<div id="ref-vansteelandt2017interventional" class="csl-entry" role="listitem">
+Vansteelandt, Stijn, and Rhian M. Daniel. 2017. <span>“Interventional
+Effects for Mediation Analysis with Multiple Mediators.”</span>
+<em>Epidemiology</em> 28 (2): 258–65.
+</div>
+<div id="ref-waernbaum2012model" class="csl-entry" role="listitem">
+Waernbaum, Ingeborg. 2012. <span>“Model Misspecification and Robustness
+in Causal Inference: Comparing Matching with Doubly Robust
+Estimation.”</span> <em>Statistics in Medicine</em> 31 (15): 1572–81.
+</div>
+<div id="ref-wang2025information" class="csl-entry" role="listitem">
+Wang, Hengfang, and Jae Kwang Kim. 2025. <span>“Information Projection
+Approach to Smoothed Propensity Score Weighting for Handling Selection
+Bias Under Missing at Random.”</span> <em>Annals of the Institute of
+Statistical Mathematics</em> 77: 127–53. <a href="https://doi.org/10.1007/s10463-024-00913-w">https://doi.org/10.1007/s10463-024-00913-w</a>.
+</div>
+<div id="ref-wang2026tale" class="csl-entry" role="listitem">
+Wang, Linbo, Thomas S. Richardson, and James M. Robins. 2026.
+<span>“Causal Inference: <span>A</span> Tale of Three
+Frameworks.”</span> <em>Journal of Data Science</em> 24 (1): 53–85. <a href="https://doi.org/10.6339/25-JDS1211">https://doi.org/10.6339/25-JDS1211</a>.
+</div>
+<div id="ref-wang2018bounded" class="csl-entry" role="listitem">
+Wang, Linbo, and Eric Tchetgen Tchetgen. 2018. <span>“Bounded, Efficient
+and Multiply Robust Estimation of Average Treatment Effects Using
+Instrumental Variables.”</span> <em>Biometrika</em> 105 (2): 387–97. <a href="https://doi.org/10.1093/biomet/asy015">https://doi.org/10.1093/biomet/asy015</a>.
+</div>
+<div id="ref-yang2018asymptotic" class="csl-entry" role="listitem">
+Yang, Shu, and Peng Ding. 2018. <span>“Asymptotic Inference of Causal
+Effects with Observational Studies Trimmed by the Estimated Propensity
+Scores.”</span> <em>Biometrika</em> 105 (2): 487–93. <a href="https://doi.org/10.1093/biomet/asy008">https://doi.org/10.1093/biomet/asy008</a>.
+</div>
+<div id="ref-yang2016multilevel" class="csl-entry" role="listitem">
+Yang, Shu, Guido W. Imbens, Zhanglin Cui, Douglas E. Faries, and
+Zbigniew Kadziola. 2016. <span>“Propensity Score Matching and
+Stratification in Observational Studies with Multi-Level
+Treatments.”</span> <em>Biometrics</em> 72: 1055–65.
+</div>
+<div id="ref-yang2023multiply" class="csl-entry" role="listitem">
+Yang, Shu, and Yunshu Zhang. 2023. <span>“Multiply Robust Matching
+Estimators of Average and Quantile Treatment Effects.”</span>
+<em>Scandinavian Journal of Statistics</em> 50: 235–65.
+</div>
+<div id="ref-zhao2017entropy" class="csl-entry" role="listitem">
+Zhao, Qingyuan, and Daniel Percival. 2017. <span>“Entropy Balancing Is
+Doubly Robust.”</span> <em>Journal of Causal Inference</em> 5 (1):
+20160010. <a href="https://doi.org/10.1515/jci-2016-0010">https://doi.org/10.1515/jci-2016-0010</a>.
+</div>
+<div id="ref-zhao2019sensitivity" class="csl-entry" role="listitem">
+Zhao, Qingyuan, Dylan S. Small, and Bhaswar B. Bhattacharya. 2019.
+<span>“Sensitivity Analysis for Inverse Probability Weighting Estimators
+via the Percentile Bootstrap.”</span> <em>Journal of the Royal
+Statistical Society, Series B</em> 81 (4): 735–61. <a href="https://doi.org/10.1111/rssb.12327">https://doi.org/10.1111/rssb.12327</a>.
+</div>
+<div id="ref-zheng2011cross" class="csl-entry" role="listitem">
+Zheng, Wenjing, and Mark J. van der Laan. 2011. <span>“Cross-Validated
+Targeted Minimum-Loss-Based Estimation.”</span> In <em>Targeted
+Learning: Causal Inference for Observational and Experimental Data</em>,
+edited by Mark J. van der Laan and Sherri Rose. Springer Series in
+Statistics. Springer.
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./chapter_13_supplement.html" class="pagination-link" aria-label="Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Chapter 13 Supplement: Convex Duality, Minimum Discrepancy, and Computation</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./appendix_A.html" class="pagination-link" aria-label="Graphical Intuition for Conditional Independence and $d$-Separation">
+        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Graphical Intuition for Conditional Independence and <span class="math inline">\(d\)</span>-Separation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

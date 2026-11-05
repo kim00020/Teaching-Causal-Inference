@@ -249,7 +249,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapter_05.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomization and Back-Door Adjustment</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomized Experiments, Regression Adjustment, and Calibration</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -325,6 +325,12 @@ window.Quarto = {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
@@ -395,7 +401,7 @@ window.Quarto = {
 </header>
 
 
-<p>This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by <span class="citation" data-cites="richardson2014ace">Richardson and Robins (<a href="#ref-richardson2014ace" role="doc-biblioref">2014</a>)</span> and given an accessible practical treatment by <span class="citation" data-cites="bezuidenhout2025swigs">Bezuidenhout et al. (<a href="#ref-bezuidenhout2025swigs" role="doc-biblioref">2025</a>)</span>. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram; see <span class="citation" data-cites="wang2026tale">Wang et al. (<a href="#ref-wang2026tale" role="doc-biblioref">2026</a>)</span> for a recent overview situating SWIGs within the broader landscape of causal inference frameworks. A reader familiar with Chapters 2–4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.</p>
+<p>This appendix develops single world intervention graphs (SWIGs), a graphical device introduced by <span class="citation" data-cites="richardson2014ace">Richardson and Robins (<a href="references.html#ref-richardson2014ace" role="doc-biblioref">2014</a>)</span> and given an accessible practical treatment by <span class="citation" data-cites="bezuidenhout2025swigs">Bezuidenhout et al. (<a href="references.html#ref-bezuidenhout2025swigs" role="doc-biblioref">2025</a>)</span>. A SWIG provides a formal bridge between the potential outcomes framework and the do-calculus by encoding both in a single diagram; see <span class="citation" data-cites="wang2026tale">Wang et al. (<a href="references.html#ref-wang2026tale" role="doc-biblioref">2026</a>)</span> for a recent overview situating SWIGs within the broader landscape of causal inference frameworks. A reader familiar with Chapters 2–4 will find that SWIGs require no new conceptual ingredients: they are ordinary DAGs in which the treatment node is split into two pieces, making potential outcomes and identifiability assumptions graphically explicit rather than leaving them implicit.</p>
 <p>Chapter 4 used the back-door criterion and the adjustment formula to identify causal effects. SWIGs make that identification argument graphically explicit: potential outcomes appear as labeled nodes inside the graph, so ignorability becomes a routine d-separation statement rather than a free-standing probabilistic assumption. <a href="#sec-appB-biconditional" class="quarto-xref"><span>Section B.5</span></a> restates the back-door identification result of Chapter 4 as a graph-theoretic theorem inside the SWIG, and examines a partial converse: under faithfulness of the SWIG and a restriction of the adjustment set to nondescendants of the treatment, the single-world ignorability statement <span class="math inline">\(Y(t) \indep T \mid X\)</span> entails the back-door criterion.</p>
 <section id="sec-appB-swig-def" class="level2" data-number="B.1">
 <h2 data-number="B.1" class="anchored" data-anchor-id="sec-appB-swig-def"><span class="header-section-number">B.1</span> The SWIG Construction</h2>
@@ -410,7 +416,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Definition: Single World Intervention Graph <span class="citation" data-cites="richardson2014ace">(<a href="#ref-richardson2014ace" role="doc-biblioref">Richardson and Robins 2014</a>)</span>
+<span class="screen-reader-only">Note</span>Definition: Single World Intervention Graph <span class="citation" data-cites="richardson2014ace">(<a href="references.html#ref-richardson2014ace" role="doc-biblioref">Richardson and Robins 2014</a>)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -666,7 +672,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A binary example, following <span class="citation" data-cites="wang2026tale">Wang et al. (<a href="#ref-wang2026tale" role="doc-biblioref">2026</a>)</span>, makes the comparison quantitative. Take <span class="math inline">\(X\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(Y\)</span> all binary, so the full joint distribution of <span class="math inline">\((X,\, T(x),\, Y(t,x))\)</span> for <span class="math inline">\(t, x \in \{0,1\}\)</span> has <span class="math inline">\(2^{1 + 2 + 4} - 1 = 127\)</span> free parameters. Three nested assumptions shrink this model:</p>
+<p>A binary example, following <span class="citation" data-cites="wang2026tale">Wang et al. (<a href="references.html#ref-wang2026tale" role="doc-biblioref">2026</a>)</span>, makes the comparison quantitative. Take <span class="math inline">\(X\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(Y\)</span> all binary, so the full joint distribution of <span class="math inline">\((X,\, T(x),\, Y(t,x))\)</span> for <span class="math inline">\(t, x \in \{0,1\}\)</span> has <span class="math inline">\(2^{1 + 2 + 4} - 1 = 127\)</span> free parameters. Three nested assumptions shrink this model:</p>
 <ul>
 <li>Weak (single-world) ignorability <span class="math inline">\(T \indep Y(t) \mid X\)</span> for each <span class="math inline">\(t\)</span> separately: 123 parameters.</li>
 <li>Strong cross-world ignorability <span class="math inline">\((Y(0), Y(1)) \indep T \mid X\)</span>: 121 parameters.</li>
@@ -702,7 +708,7 @@ window.Quarto = {
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-bezuidenhout2025swigs" class="csl-entry" role="listitem">
 Bezuidenhout, Dana, Sarah Forthal, Kara Rudolph, and Matthew R. Lamb. 2025. <span>“Single World Intervention Graphs (<span>SWIGs</span>): A Practical Guide.”</span> <em>American Journal of Epidemiology</em> 194: 2047–52. <a href="https://doi.org/10.1093/aje/kwae353">https://doi.org/10.1093/aje/kwae353</a>.
 </div>

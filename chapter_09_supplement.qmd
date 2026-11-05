@@ -112,7 +112,7 @@ together with overlap, moment, consistency, and score-regularity conditions. The
 
 ## S.8 Lab: Monte Carlo SD versus Single-Replicate Standard Error {#sec-w9s-lab-se}
 
-The Monte Carlo standard deviation describes the repeated-sampling spread of the estimator across simulation runs. It is not itself the standard error an analyst would compute from a single realized data set; that requires a replicate-specific variance estimator, here the usual OLS standard error for the coefficient on $T$, which in this design tracks the Monte Carlo standard deviation closely. Using that estimator, a typical single-replicate 95% interval is approximately $[2.98,\, 3.37]$. The naive estimator is badly biased, and the interval is narrow and does not contain the truth.
+The Monte Carlo standard deviation describes the repeated-sampling spread of the estimator across simulation runs. It is not itself the standard error an analyst would compute from a single realized data set; that requires a replicate-specific variance estimator, here the usual OLS standard error for the coefficient on $T$, which in this design tracks the Monte Carlo standard deviation closely: in `Codes/lab24.py` (seed 2024) the Monte Carlo standard deviation is $0.096$ and the OLS standard error averages $0.097$ over the replicates. Using that estimator, a typical single-replicate 95% interval is approximately $[2.98,\, 3.37]$. The naive estimator is badly biased, and the interval is narrow and does not contain the truth.
 
 ## S.9 Lab: Extended Sensitivity Grid, Tipping Table, and Oracle Benchmarking {#sec-w9s-lab-grid}
 

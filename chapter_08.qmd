@@ -602,11 +602,11 @@ Students who learn the Baron--Kenny decomposition first often overgeneralize it.
 
 *Running example: a numerical walk-through.* Suppose a randomized trial of the behavioral intervention ($T$) on depression ($Y$), with sleep quality ($M$) as the mediator and baseline covariates $\mathbf{X}$, yields
 $$\hat\tau = 0.50, \qquad \hat a = 0.40, \qquad \hat b = 0.60, \qquad \hat\tau' = 0.26.$$
-For concreteness, orient the outcome so that larger $Y$ means greater improvement (e.g. $Y$ is the *reduction* in PHQ-9 score from baseline); a beneficial intervention then has positive coefficients throughout. Then:
+Here $\hat\tau$ is the total effect of the intervention on depression (@eq-bk1), $\hat a$ the first-stage effect on sleep (@eq-bk2), and $\hat b$, $\hat\tau'$ the coefficients from the full second-stage regression (@eq-bk3). For concreteness, orient the outcome so that larger $Y$ means greater improvement (e.g. $Y$ is the *reduction* in PHQ-9 score from baseline); a beneficial intervention then has positive coefficients throughout. Then:
 
 - *Indirect effect via sleep* (product method): $\hat a \hat b = 0.40 \times 0.60 = 0.24$.
-- *Direct effect* (difference method): $\hat\tau - \hat a \hat b = 0.50 - 0.24 = 0.26 = \hat\tau'$, which matches the fitted $\hat\tau'$, illustrating the algebraic identity.
-- *Proportion mediated*: $0.24/0.50 = 0.48$, so roughly 48% of the total effect operates through sleep improvement in this sample.
+- *Direct effect* (difference method): $\hat\tau - \hat a \hat b = 0.50 - 0.24 = 0.26 = \hat\tau'$, which matches the fitted $\hat\tau'$, illustrating the algebraic identity $\tau = \tau' + ab$.
+- *Proportion mediated*: $\hat a \hat b / \hat\tau = 0.24 / 0.50 = 0.48$, so roughly 48% of the total effect of the intervention operates through sleep improvement in this sample.
 
 These numbers serve the illustration only; Problem 4 asks students to recompute them and to construct a Sobel confidence interval.
 
@@ -647,7 +647,7 @@ These are causal identification assumptions. They concern unmeasured confounding
 2. **No unmeasured $T$--$M$ confounding.** $\varepsilon_2 \indep T \mid \mathbf{X}$. Graphically: $\mathbf{X}$ blocks all back-door paths from $T$ to $M$.
 3. **No unmeasured $M$--$Y$ confounding given $T$.** $\varepsilon_3 \indep M \mid T, \mathbf{X}$. Graphically: $(T, \mathbf{X})$ blocks all back-door paths from $M$ to $Y$. This condition is *not* implied by randomization of $T$.
 
-A caution on reading these displays: the $\varepsilon_j$ are *structural* errors of the SEM, not fitted residuals. Population least-squares residuals are orthogonal to the regressors by construction, so the displayed independences are substantive restrictions only under the structural reading; they cannot be checked by inspecting regression output.
+A caution on reading these displays: the $\varepsilon_j$ are *structural* errors of the SEM, not fitted residuals. Population least-squares residuals are orthogonal to the regressors by construction, so the displayed independences are substantive restrictions only under the structural reading; they are one linear-SEM representation of the graphical and counterfactual conditions stated alongside them, and cannot be checked by inspecting regression output.
 :::
 
 ::: {.callout-note icon=false}
@@ -656,14 +656,14 @@ A caution on reading these displays: the $\varepsilon_j$ are *structural* errors
 These are parametric modeling assumptions. They concern the functional form of the structural equations, not unmeasured confounding. Violating them does not introduce identification bias in the causal sense, but it does mean that the product formula $ab$ and the coefficient $\tau'$ no longer equal the NDE and NIE.
 
 4. **Linearity and additivity.** The structural equations @eq-bk1--@eq-bk3 are correctly specified as linear and additive in their arguments.
-5. **No $T \times M$ interaction.** The effect of $M$ on $Y$ does not depend on the level of $T$.
+5. **No $T \times M$ interaction.** The effect of $M$ on $Y$ does not depend on the level of $T$, i.e. the coefficient $b$ in @eq-bk3 is the same for all values of $T$.
 
-Restrictions 4 and 5 can be probed by residual diagnostics and interaction terms, but model adequacy cannot be conclusively established from observed data alone. Conditions 1--3 cannot be tested from the observed data at all.
+Restrictions 4 and 5 can be probed by residual diagnostics and interaction terms, but model adequacy cannot be conclusively established from observed data alone, and the broader question of whether the SEM is structurally correct is not data-resolvable. Conditions 1--3 cannot be tested from the observed data at all.
 :::
 
-In the reduced prototype graph, Conditions 1 and 2 hold because $\mathbf{X}$ blocks every $T$--$Y$ and $T$--$M$ back-door path by construction. Condition 3 is different: it requires the absence of any variable $V \to M$ and $V \to Y$ not captured by $(T, \mathbf{X})$, and it is never guaranteed by randomization of $T$ because $M$ is a post-treatment variable that is not itself randomized. Restrictions 4 and 5 have no graphical counterpart.
+In the reduced prototype graph of @sec-w8-working-graph, Conditions 1 and 2 hold because $\mathbf{X}$ blocks every $T$--$Y$ and $T$--$M$ back-door path by construction. Condition 3 is different: it requires the absence of any variable $V \to M$ and $V \to Y$ not captured by $(T, \mathbf{X})$ --- the figure in @sec-w8-linear above shows such a violation --- and it is never guaranteed by randomization of $T$ because $M$ is a post-treatment variable that is not itself randomized. Restrictions 4 and 5 have no graphical counterpart: they must be justified by domain knowledge and can be partially probed by adding a $T \times M$ term to @eq-bk3 and inspecting residual and interaction diagnostics.
 
-**Baron--Kenny as a special case of the modern framework.** Under Conditions 1--3 and Restrictions 4--5, the Baron--Kenny decomposition delivers valid *identification formulas* for the NDE and NIE: linearity and no interaction guarantee that the population coefficients satisfy $\mathrm{NDE} = \tau'$ and $\mathrm{NIE} = ab$. Translating these identification formulas into *consistent estimators* requires a separate set of conditions. Outside Conditions 1--3 and Restrictions 4--5, $\tau'$ and $ab$ *need not* identify the CDE or the natural effects: the listed conditions are sufficient rather than necessary, and special structures can restore particular equalities, but in general the coefficients of a misspecified structural system carry no causal interpretation.
+**Baron--Kenny as a special case of the modern framework.** Under Conditions 1--3 and Restrictions 4--5, the Baron--Kenny decomposition delivers valid *identification formulas* for the NDE and NIE: linearity and no interaction guarantee that the population coefficients satisfy $\mathrm{NDE} = \tau'$ and $\mathrm{NIE} = ab$. Translating these identification formulas into *consistent estimators* requires a separate set of conditions: the regressions @eq-bk1--@eq-bk3 must be correctly specified, the mediator and outcome models must be estimated under standard regularity conditions (e.g., finite second moments, full-rank design), and any sample-level adjustments (e.g., bootstrap inference for $ab$) must be valid in the data at hand. Outside Conditions 1--3 and Restrictions 4--5, $\tau'$ and $ab$ *need not* identify the CDE or the natural effects: the listed conditions are sufficient rather than necessary, and special structures can restore particular equalities, but in general the coefficients of a misspecified structural system carry no causal interpretation.
 
 ::: {.callout-note icon=false}
 ## Framework Map
